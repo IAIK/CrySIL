@@ -1,0 +1,53 @@
+<project name="PKCS11" basedir="." default="main">
+
+    <property name="name"     value="PKCS11"/>
+    <property name="java.src.dir"     value="JAVA/src"/>
+    <property name="java.build.dir"   value="JAVA/build"/>
+    <property name="java.classes.dir" value="${build.dir}/classes"/>
+    <property name="java.exec.dir"     value="${build.dir}/jar"/>
+    <property name="main-class"  value="oata.HelloWorld"/>
+
+    <property name="c.src.dir"     value="C/src"/>
+    <property name="c.build.dir"   value="C/build"/>
+    <property name="c.classes.dir" value="${build.dir}/classes"/>
+    <property name="c.exec.dir"     value="${build.dir}"/>
+
+    <target name="JAVA-clean">
+        <delete dir="${java.build.dir}"/>
+    </target>
+    <target name="C-clean" >
+        <delete dir="${c.build.dir}"/>
+    </target>
+    <target name="clean" depends="C-clean,JAVA-clean"/>
+ 
+    <target name="JAVA-compile">
+        <mkdir dir="${java.classes.dir}"/>
+        <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
+    </target>
+    
+    <target name="C-compile">
+    <fileset id="cfiles" dir="${c.src.dir}" includes="**/*.c" />
+
+        <exec osfamily="Linux" failonerror="true" executable="gcc" searchpath="true">
+          <arg pathref="cfiles"/>
+          <arg value="-o ${c.build.dir}/${name}.so"/>
+          <arg value="-shared -fPIC -g"/>
+        </exec>
+        <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
+        </exec>
+    </target>
+    <target name="compile" depends="C-compile,JAVA-compile"/>
+    
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+
+    <target name="main" depends="clean,run"/>
+</project>
