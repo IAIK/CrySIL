@@ -1,33 +1,56 @@
-<project name="PKCS11" basedir="." default="main">
+<project name="PKCS11" basedir=".">
 
     <property name="name"     value="PKCS11"/>
+	
+	<property name="java.dir"     value="JAVA"/>
     <property name="java.src.dir"     value="JAVA/src"/>
     <property name="java.build.dir"   value="JAVA/build"/>
-    <property name="java.classes.dir" value="${build.dir}/classes"/>
-    <property name="java.exec.dir"     value="${build.dir}/jar"/>
-    <property name="main-class"  value="oata.HelloWorld"/>
+    <property name="java.classes.dir" value="${java.build.dir}/classes"/>
+    <property name="java.exec.dir"     value="${java.build.dir}/jar"/>
 
-    <property name="c.src.dir"     value="C/src"/>
+	<property name="c.dir"     value="C"/>
+	<property name="c.src.dir"     value="C/src"/>
     <property name="c.build.dir"   value="C/build"/>
-    <property name="c.classes.dir" value="${build.dir}/classes"/>
-    <property name="c.exec.dir"     value="${build.dir}"/>
+    <property name="c.classes.dir" value="${c.build.dir}/classes"/>
+    <property name="c.exec.dir"     value="${c.build.dir}"/>
 
+	<property name="swig.dir"     value="swig"/>
+    <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
+	<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
+    <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
+ 
+	
+    <target name="init" depends="clean,swig_preprocess,swig"/>
+    	
     <target name="JAVA-clean">
         <delete dir="${java.build.dir}"/>
     </target>
     <target name="C-clean" >
         <delete dir="${c.build.dir}"/>
+    	
     </target>
-    <target name="clean" depends="C-clean,JAVA-clean"/>
- 
+    <target name="SWIG-clean" >
+        <delete dir="${swig.generated.dir}"/>
+    	<delete file="${swig.dir}/pkcs11t_processed.h"/> 
+    </target>
+    <target name="clean" depends="C-clean,JAVA-clean,SWIG-clean"/>
+<!-- SWIG -->  
+    <target name="swig_preprocess">
+      <exec input="${c.src.dir}/pkcs11t.h" executable="${swig.preproc.file}" output="${swig.dir}/pkcs11t_processed.h" failonerror="true"/>
+    </target>
+    <target name="swig">
+      <mkdir dir="${swig.generated.dir}"/>
+      <exec executable="swig2.0" failonerror="true" searchpath="true">
+        <arg line="-java -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
+      </exec>
+    </target>
+<!-- COMPILE -->    
     <target name="JAVA-compile">
         <mkdir dir="${java.classes.dir}"/>
         <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
     </target>
-    
     <target name="C-compile">
     <fileset id="cfiles" dir="${c.src.dir}" includes="**/*.c" />
-
         <exec osfamily="Linux" failonerror="true" executable="gcc" searchpath="true">
           <arg pathref="cfiles"/>
           <arg value="-o ${c.build.dir}/${name}.so"/>
@@ -37,17 +60,11 @@
         </exec>
     </target>
     <target name="compile" depends="C-compile,JAVA-compile"/>
-    
-    <target name="jar" depends="compile">
-        <mkdir dir="${jar.dir}"/>
-        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
-            <manifest>
-                <attribute name="Main-Class" value="${main-class}"/>
-            </manifest>
-        </jar>
+<!-- JAR -->   
+    <target name="jar" depends="JAVA-compile">
+        <mkdir dir="${java.jar.dir}"/>
+        <jar destfile="${java.jar.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
     </target>
 
     <target name="clean-build" depends="clean,jar"/>
-
-    <target name="main" depends="clean,run"/>
 </project>
