@@ -1,6 +1,6 @@
 <project name="PKCS11" basedir=".">
 
-    <property name="name"     value="PKCS11"/>
+    <property name="name" value="PKCS11"/>
 	
 	<property name="java.dir"     value="JAVA"/>
     <property name="java.src.dir"     value="JAVA/src"/>
@@ -31,7 +31,7 @@
     </target>
     <target name="SWIG-clean" >
         <delete dir="${swig.generated.dir}"/>
-    	<delete file="${swig.dir}/pkcs11t_processed.h"/> 
+    	<delete file="${c.src.dir}/pkcs11_java_wrap.c"/>
     </target>
     <target name="clean" depends="C-clean,JAVA-clean,SWIG-clean"/>
 <!-- SWIG -->  
@@ -50,7 +50,7 @@
         <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
     </target>
     <target name="C-compile">
-    <fileset id="cfiles" dir="${c.src.dir}" includes="**/*.c" />
+    	<fileset id="cfiles" dir="${c.src.dir}" includes="**/*.c" />
         <exec osfamily="Linux" failonerror="true" executable="gcc" searchpath="true">
           <arg pathref="cfiles"/>
           <arg value="-o ${c.build.dir}/${name}.so"/>

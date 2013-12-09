@@ -13,11 +13,6 @@
     swigCMemOwn = cMemoryOwn;
   }
 
-  public $javaclassname() {
-    swigCPtr = 0;
-    swigCMemOwn = false;
-  }
-
   public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
