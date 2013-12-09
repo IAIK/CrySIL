@@ -50,11 +50,11 @@
         <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
     </target>
     <target name="C-compile">
+    	<mkdir dir="${c.build.dir}"/>
     	<fileset id="cfiles" dir="${c.src.dir}" includes="**/*.c" />
-        <exec osfamily="Linux" failonerror="true" executable="gcc" searchpath="true">
-          <arg pathref="cfiles"/>
-          <arg value="-o ${c.build.dir}/${name}.so"/>
-          <arg value="-shared -fPIC -g"/>
+        <exec osfamily="Unix" failonerror="true" executable="gcc" searchpath="true">
+          <arg value="${c.src.dir}/pkcs11.c"/>
+          <arg line="-o ${c.build.dir}/lib${name}.so -shared -fPIC -g"/>
         </exec>
         <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
         </exec>
