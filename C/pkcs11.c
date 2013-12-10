@@ -1,4 +1,5 @@
 #include"pkcs11.h"
+#include"jvm.h"
 
 #include"stdio.h"
 
