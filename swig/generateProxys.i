@@ -18,6 +18,8 @@
   }
 %}
 
+%apply char * { CK_CHAR [ANY]}
+
 %{
 
 /* Includes the header in the wrapper code */
@@ -25,6 +27,7 @@
 /* #include "pkcs11f_funcdecl.h"	*/
 /* #include "pkcs11f_funcpointer.h" */
 %}
+
 
 
 /* Parse the header file to generate wrappers */

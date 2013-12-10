@@ -41,7 +41,7 @@
     <target name="swig">
       <mkdir dir="${swig.generated.dir}"/>
       <exec executable="swig2.0" failonerror="true" searchpath="true">
-        <arg line="-java -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
+        <arg line="-java -package proxys -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
       </exec>
     </target>
 <!-- COMPILE -->    
