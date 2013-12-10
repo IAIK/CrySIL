@@ -22,17 +22,17 @@ typedef struct jvm_singleton
 	jclass cls;
 	jmethodID mid;
 	jint square;
-	//jboolean not;
+	jboolean not;
 }sing;
 
-struct jvm_singleton* get_instance()
+sing* get_instance()
 {
     static struct jvm_singleton* instance = NULL;
 
     if (instance == NULL)
     {
 
-	instance =(jvm_singleton*) malloc(sizeof(jvm_singleton));
+	instance =(sing*) malloc(sizeof(sing));
 	if(instance==NULL){
 		//out of memory --> die gracefully
 	}
@@ -45,7 +45,8 @@ struct jvm_singleton* get_instance()
 	if(instance->status==JNI_ERR){
 		//VM - Error --> cleanup & die gracefully 
 	}
-	instance->cls = ((instance->env))->FindClass(JAVACLASSNAME);
+	instance->cls = (*(instance->env))->FindClass(instance->env,"pkcs11Interface");
+
 	if(instance->cls ==0){
 		printf("Class not found!");
 
@@ -58,7 +59,7 @@ struct jvm_singleton* get_instance()
 }
 
 void destroyVM(){
-struct jvm_singleton* dings = get_instance();
+sing* dings = get_instance();
 //(dings->jvm)->DestroyJavaVM(jvm);
 
 }
