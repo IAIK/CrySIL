@@ -156,36 +156,41 @@ printf("GetAttributeValue");
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 {
-printf("GetInfo");
-pInfo->cryptokiVersion.major=2;
-pInfo->cryptokiVersion.minor=0;
-pInfo->flags=0;
-pInfo->libraryVersion.major=1;
-pInfo->libraryVersion.minor=0;
-
+	long retVal=CKR_GENERAL_ERROR;
 	sing* dings = get_instance();
 	if(dings->cls !=0)
 	{
-		dings->mid = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls, "C_GetInfo", "(Lproxys/CK_INFO)l");
-		if(dings->mid !=0)
+		jmethodID C_GetInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls, "C_GetInfo", "(Lproxys/CK_INFO;)J");
+		jboolean not;
+		if(C_GetInfoJava !=0)
 		{ 
-			//(*(dings->env))->CallStaticVoidMethod(dings->env,dings->cls, dings->mid, 5);
-
-
-
-
+			printf("method found\n");
+			jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_INFO");
+			if(cls1==0){
+				printf("CK_INFO class not found... problem in CK_GETINFO");
+			}else{
+				printf("CK_INFO class found.... constructing....");
+				jmethodID constructor = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
+				if(constructor == 0){
+					printf("constructor not found... shit"); 
+				}else{
+					printf("constructor found... woohooo");
+					jobject info=(*(dings->env))->NewObject(dings->env, cls1, constructor, pInfo, JNI_FALSE);//, pInfo,hmm);
+					if(info==NULL){
+						printf("object is null... shit happens");
+					}else{
+						printf("object is not null.... going on and calling java function");
+						retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetInfoJava, info);
+					}
+				}
+			}
 		}else{
-		printf("method not found!....");
+			printf("method not found!....");
 		}
 	}else{
 		printf("hmm... class not found... intresting...");
 	}
-
-
-
-
-return CKR_OK;
-
+return retVal;
 }
 
 

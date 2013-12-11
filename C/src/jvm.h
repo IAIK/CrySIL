@@ -6,7 +6,7 @@
 #ifndef __JVM_H
 #define __JVM_H
 
-#define JAVACLASSNAME "pkcs11Interface.class"
+#define JAVACLASSNAME "pkcs11Interface"
 
 
 
