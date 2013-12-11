@@ -60,8 +60,7 @@ sing* get_instance()
 
 void destroyVM(){
 sing* dings = get_instance();
-//(dings->jvm)->DestroyJavaVM(jvm);
-
+(*(dings->jvm))->DestroyJavaVM(jvm);
 }
 
 #ifdef _WIN32
