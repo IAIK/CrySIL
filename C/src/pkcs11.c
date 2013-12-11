@@ -1,5 +1,6 @@
 #include"pkcs11.h"
 #include"jvm.h"
+#include"unistd.h"
 
 #include"stdio.h"
 
@@ -84,8 +85,8 @@ static CK_FUNCTION_LIST pkcs11_logger_functions =
 
 
 CK_DEFINE_FUNCTION(CK_RV, C_GetFunctionList)(CK_FUNCTION_LIST_PTR_PTR ppFunctionList){
-	*ppFunctionList=&pkcs11_logger_functions;
 	printf("functionList set!");
+	*ppFunctionList=&pkcs11_logger_functions;
 	return CKR_OK;
 }
 
@@ -155,14 +156,26 @@ printf("GetAttributeValue");
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 {
+printf("GetInfo");
+pInfo->cryptokiVersion.major=2;
+pInfo->cryptokiVersion.minor=0;
+pInfo->flags=0;
+pInfo->libraryVersion.major=1;
+pInfo->libraryVersion.minor=0;
 
-	sing* bla = get_instance();
+	sing* dings = get_instance();
 	if(dings->cls !=0)
 	{
-		dings->mid = (dings->env)->GetStaticMethodID(dings->cls, "test", "()V");
+		dings->mid = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls, "C_GetInfo", "(Lproxys/CK_INFO)l");
 		if(dings->mid !=0)
 		{ 
-			(dings->env)->CallStaticVoidMethod(dings->cls, dings->mid, 5);
+			//(*(dings->env))->CallStaticVoidMethod(dings->env,dings->cls, dings->mid, 5);
+
+
+
+
+		}else{
+		printf("method not found!....");
 		}
 	}else{
 		printf("hmm... class not found... intresting...");
@@ -171,13 +184,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 
 
 
-//printf("GetInfo");
-//pInfo->cryptokiVersion.major=2;
-//pInfo->cryptokiVersion.minor=0;
-//pInfo->flags=0;
-//pInfo->libraryVersion.major=1;
-//pInfo->libraryVersion.minor=0;
-//return CKR_OK;
+return CKR_OK;
 
 }
 
