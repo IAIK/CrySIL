@@ -155,13 +155,29 @@ printf("GetAttributeValue");
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 {
-printf("GetInfo");
-pInfo->cryptokiVersion.major=2;
-pInfo->cryptokiVersion.minor=0;
-pInfo->flags=0;
-pInfo->libraryVersion.major=1;
-pInfo->libraryVersion.minor=0;
-return CKR_OK;
+
+	sing* bla = get_instance();
+	if(dings->cls !=0)
+	{
+		dings->mid = (dings->env)->GetStaticMethodID(dings->cls, "test", "()V");
+		if(dings->mid !=0)
+		{ 
+			(dings->env)->CallStaticVoidMethod(dings->cls, dings->mid, 5);
+		}
+	}else{
+		printf("hmm... class not found... intresting...");
+	}
+
+
+
+
+//printf("GetInfo");
+//pInfo->cryptokiVersion.major=2;
+//pInfo->cryptokiVersion.minor=0;
+//pInfo->flags=0;
+//pInfo->libraryVersion.major=1;
+//pInfo->libraryVersion.minor=0;
+//return CKR_OK;
 
 }
 
