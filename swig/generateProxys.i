@@ -3,7 +3,7 @@
 %include "typemaps.i"
 %include "cpointer.i"
 %include "carrays.i"
-%include "enums.swg"
+//%include "enums.swg"
 /*alter default proxy classes for public access to cPtr*/
 %typemap(javabody) SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) %{
   private long swigCPtr;
@@ -40,58 +40,9 @@ TYPE value() {
 TYPE value() {
   return *self;
 }
-}
+};
 %types(NAME = TYPE);
 %enddef
-
-typedef struct {
-  CK_NOTIFY func;
-} CK_NOTIFY_CALLBACK;
-
-%extend CK_NOTIFY_CALLBACK {
-CK_RV call(CK_SESSION_HANDLE para1,CK_NOTIFICATION para2,CK_VOID_PTR para3){
-  return func(para1,para2,para3);
-}
-}
-
-
-%typemap(jni) char "jbyte"
-%typemap(jtype) char "byte"
-%typemap(jstype) char "byte"
-%mypointer(char,CK_VOID_PTR)
-%include "java.swg"           //reset old typemaps
-
-//%typemap(jni) CK_VOID_PTR "jlong"
-//%typemap(jtype) CK_VOID_PTR "long"
-%typemap(jstype) CK_VOID_PTR "CK_VOID_PTR"
-%typemap(javain) CK_VOID_PTR "CK_VOID_PTR.getCPtr($javainput)"
-
-%typemap(jstype) CK_OBJECT_HANDLE_PTR "CK_ULONG_PTR"
-%typemap(javain) CK_OBJECT_HANDLE_PTR "CK_ULONG_PTR.getCPtr($javainput)"
-
-
-
-%{
-/* Includes the header in the wrapper code */
-#include "pkcs11t_processed.h"
-#include "CKA_enum.h"
-#include "CKC_enum.h"
-#include "CKS_enum.h"
-#include "CKM_enum.h"
-/* #include "pkcs11f_funcdecl.h"	*/
-/* #include "pkcs11f_funcpointer.h" */
-%}
-
-/* Parse the header file to generate wrappers */
-%include "pkcs11t_processed.h"
-%include "CKA_enum.h"
-%include "CKC_enum.h"
-%include "CKS_enum.h"
-%include "CKM_enum.h"
-
-%apply char * { CK_CHAR_PTR }
-
-
 
 %define %myarray(TYPE,NAME)
 %{
@@ -103,7 +54,6 @@ typedef struct NAME {
 %extend NAME {
 NAME(CK_ULONG nelements) {
   len = nelements;
-  
 }
 ~NAME() {
 }
@@ -120,12 +70,44 @@ void setitem(int index, TYPE value) {
 %types(NAME = TYPE);
 %enddef
 
+%typemap(jni) char "jbyte"
+%typemap(jtype) char "byte"
+%typemap(jstype) char "byte"
+%mypointer(char,CK_VOID_PTR)
+%include "java.swg"           //reset old typemaps
+
+//%typemap(jni) CK_VOID_PTR "jlong"
+//%typemap(jtype) CK_VOID_PTR "long"
+%typemap(jstype) CK_VOID_PTR "CK_VOID_PTR"
+%typemap(javain) CK_VOID_PTR "CK_VOID_PTR.getCPtr($javainput)"
+
+%typemap(jstype) CK_OBJECT_HANDLE_PTR "CK_ULONG_PTR"
+%typemap(javain) CK_OBJECT_HANDLE_PTR "CK_ULONG_PTR.getCPtr($javainput)"
+
+typedef struct {
+  CK_NOTIFY func;
+} CK_NOTIFY_CALLBACK;
+
+%extend CK_NOTIFY_CALLBACK {
+CK_RV call(CK_SESSION_HANDLE para1,CK_NOTIFICATION para2,CK_VOID_PTR para3){
+  return func(para1,para2,para3);
+}
+}
+
+
+/* Parse the header file to generate wrappers */
+%include "pkcs11t_processed.h"
+%include "CKA_enum.h"
+%include "CKC_enum.h"
+%include "CKS_enum.h"
+%include "CKM_enum.h"
+%include "CKR_enum.h"
+
+%apply char * { CK_CHAR_PTR }
+
 %myarray(CK_BYTE,CK_BYTE_ARRAY)
 %myarray(CK_ULONG,CK_ULONG_ARRAY)
-%pointer_class(unsigned long int,CK_ULONG_PTR)
-
-%pointer_class(CK_SESSION_HANDLE,CK_SESSION_HANDLE_PTR)
-
+%mypointer(unsigned long int,CK_ULONG_PTR)
 
 CK_RV C_CloseAllSessions(CK_SLOT_ID slotID);
 

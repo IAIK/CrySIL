@@ -38,3 +38,9 @@ name="MECHANISM_TYPE"
 prefix="CKM"
 createEnum $name $prefix
 
+name="RETURN_TYPE"
+prefix="CKR"
+createEnum $name $prefix
+
+
+
