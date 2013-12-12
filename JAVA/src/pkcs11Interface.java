@@ -3,6 +3,8 @@ import proxys.CK_BYTE_ARRAY;
 import proxys.CK_INFO;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
+import proxys.CK_NOTIFY_CALLBACK;
+import proxys.CK_SESSION_HANDLE_PTR;
 import proxys.CK_SESSION_INFO;
 import proxys.CK_SLOT_INFO;
 import proxys.CK_TOKEN_INFO;
@@ -39,6 +41,7 @@ public class pkcs11Interface implements pkcs11Constants {
   public static long C_Logout(long hSession) {
 	  return RETURN_TYPE.OK.swigValue();
   }
+
 
   public static long C_SetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[]  pTemplate, long ulCount) {
 	  return RETURN_TYPE.OK.swigValue();
