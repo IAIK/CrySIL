@@ -29,13 +29,13 @@ typedef struct jvm_singleton
 sing* get_instance()
 {
     static struct jvm_singleton* instance = NULL;
-printf("\ncreating singleton... starting up vm\n");
-    char my_cwd[1024];
-    getcwd(my_cwd, 1024);
-    printf("\nPath: %s\n", my_cwd);
-
+    //char my_cwd[1024];
+    //getcwd(my_cwd, 1024);
+    //printf("\nPath: %s\n", my_cwd);
+    printf("in get_instance()\n");
     if (instance == NULL)
     {
+	printf("\ncreating new singleton... starting up vm\n");
 
 	instance =(sing*) malloc(sizeof(sing));
 	if(instance==NULL){
@@ -61,12 +61,14 @@ printf("\ncreating singleton... starting up vm\n");
 
     }
 
+    printf("returning instance....\n");
     return instance;
 }
 
 void destroyVM(){
-//sing* dings = get_instance();
-//(*(dings->jvm))->DestroyJavaVM(jvm);
+printf("destroyVM called....\n");
+sing* dings = get_instance();
+(*(dings->jvm))->DestroyJavaVM(dings->jvm);
 }
 
 #ifdef _WIN32

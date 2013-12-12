@@ -156,41 +156,50 @@ printf("GetAttributeValue");
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetInfo)(CK_INFO_PTR pInfo)
 {
-	long retVal=CKR_GENERAL_ERROR;
-	sing* dings = get_instance();
-	if(dings->cls !=0)
-	{
-		jmethodID C_GetInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls, "C_GetInfo", "(Lproxys/CK_INFO;)J");
-		jboolean not;
-		if(C_GetInfoJava !=0)
-		{ 
-			printf("method found\n");
-			jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_INFO");
-			if(cls1==0){
-				printf("CK_INFO class not found... problem in CK_GETINFO");
-			}else{
-				printf("CK_INFO class found.... constructing....");
-				jmethodID constructor = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-				if(constructor == 0){
-					printf("constructor not found... shit"); 
-				}else{
-					printf("constructor found... woohooo");
-					jobject info=(*(dings->env))->NewObject(dings->env, cls1, constructor, pInfo, JNI_FALSE);//, pInfo,hmm);
-					if(info==NULL){
-						printf("object is null... shit happens");
-					}else{
-						printf("object is not null.... going on and calling java function");
-						retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetInfoJava, info);
-					}
-				}
-			}
-		}else{
-			printf("method not found!....");
-		}
-	}else{
-		printf("hmm... class not found... intresting...");
-	}
-return retVal;
+
+
+
+//	long retVal=CKR_GENERAL_ERROR;
+//	sing* dings = get_instance();
+//	if(dings->cls !=0)
+//	{
+//		jmethodID C_GetInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls, "C_GetInfo", "(Lproxys/CK_INFO;)J");
+//		jboolean not;
+//		if(C_GetInfoJava !=0)
+//		{ 
+//			printf("CK_GetInfo method found\n");
+//			jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_INFO"); //			if(cls1==0){
+//				printf("CK_GetInfo  class not found... problem in CK_GETINFO");
+//			}else{
+//				printf("CK_GetInfo class found.... constructing....");
+//				jmethodID constructor = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
+//				if(constructor == 0){
+//					printf("CK_GetInfo constructor not found... shit"); 
+//				}else{
+//					printf("CK_GetInfo constructor found... woohooo");
+//					jobject info=(*(dings->env))->NewObject(dings->env, cls1, constructor, pInfo, JNI_FALSE);
+//					if(info==NULL){
+//						printf("CK_GetInfo object is null... shit happens");
+//					}else{
+//						printf("CK_GetInfo object is not null.... going on and calling java function");
+//						retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetInfoJava, info);
+//					}
+//				}
+//			}
+//		}else{
+//			printf("CK_GetInfo method not found!....");
+//		}
+//	}else{
+//		printf("hmm... class not found... intresting...");
+//	}
+printf("GetInfo");
+pInfo->cryptokiVersion.major=2;
+pInfo->cryptokiVersion.minor=0;
+pInfo->flags=0;
+pInfo->libraryVersion.major=1;
+pInfo->libraryVersion.minor=0;
+return CKR_OK;
+//return retVal;
 }
 
 
@@ -215,8 +224,73 @@ printf("GetSlotInfo");
 
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
+//  public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_PTR pulCount) {
 {
+//return CKR_GENERAL_ERROR;
+if(pSlotList==NULL){
+printf("slotlist is null\n");
+*pulCount=0;
+return CKR_OK;
+}
+if(pulCount!=NULL){
+	printf("pulcount: %d\n",pulCount);
+
+}
+*pulCount=0;
+
+
 printf("GetSlotList...");
+	long retVal=CKR_GENERAL_ERROR;
+	sing* dings = get_instance();
+	if(dings!=NULL && dings->cls !=0 )
+	{
+		jmethodID C_GET_SLOT_LIST = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls, "C_GetSlotList","(SLproxys/CK_ULONG_ARRAY;Lproxys/CK_ULONG_PTR;)J");
+
+		jclass CK_ULONG_ARRAY_CLASS = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_ARRAY");
+		jmethodID CK_ULONG_ARRAY_CONSTRUCTOR = (*(dings->env))->GetMethodID(dings->env, CK_ULONG_ARRAY_CLASS, "<init>", "(JZ)V");
+		jobject CK_ULONG_ARRAY_OBJECT=(*(dings->env))->NewObject(dings->env, CK_ULONG_ARRAY_CLASS, CK_ULONG_ARRAY_CONSTRUCTOR, pSlotList, JNI_TRUE);
+
+		jclass CK_ULONG_PTR_CLASS = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR");
+		jmethodID CK_ULONG_PTR_CONSTRUCTOR = (*(dings->env))->GetMethodID(dings->env, CK_ULONG_PTR_CLASS, "<init>", "(JZ)V");
+		jobject CK_ULONG_PTR_OBJECT=(*(dings->env))->NewObject(dings->env, CK_ULONG_PTR_CLASS, CK_ULONG_PTR_CONSTRUCTOR, pSlotList, JNI_TRUE);
+
+
+		retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GET_SLOT_LIST, tokenPresent, CK_ULONG_ARRAY_OBJECT, CK_ULONG_PTR_OBJECT);
+
+
+
+
+		/*if(C_GetInfoJava !=0)
+		{ 
+			printf("CK_GetSlotList method found\n");
+			if(cls1==0){
+				printf("CK_GetSlotList  class not found... problem in CK_GETINFO");
+			}else{
+				printf("CK_GetSlotList class found.... constructing....");
+				if(constructor == 0){
+					printf("CK_GetSlotList constructor not found... shit"); 
+				}else{
+					printf("CK_GetSlotList constructor found... woohooo");
+					if(CK_ULONG_ARRAY_JAVA==NULL){
+						printf("CK_GetSlotList object is null... shit happens");
+					}else{
+						printf("CK_GetSlotList object is not null.... going on and calling java function");
+					}
+				}
+			}
+		}else{
+			printf("CK_GetSlotList method not found!....");
+		}
+		*/
+	}else{
+		printf("hmm... class not found... intresting...");
+	}
+return retVal;
+
+
+
+
+
 
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
