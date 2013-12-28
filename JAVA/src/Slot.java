@@ -1,5 +1,6 @@
 import gui.Credential;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -8,12 +9,17 @@ import proxys.RETURN_TYPE;
 
 
 
-public class Slot {
+/**
+ * A Slot is combines a Server an an user 
+ * it is serializable to safe its description in a file
+ */
+public class Slot implements Serializable{
+	private static final long serialVersionUID = -3120831695066891518L;
 	private Server server;
 	private Credential authenticationMethod;
 	private long slotID;
 	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
-	private ArrayList<Session> sessionList = null;
+	transient private ArrayList<Session> sessionList = null; 
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
 	public Slot(Credential user,long slotid, Server server){
@@ -92,7 +98,7 @@ public class Slot {
 	public void logout(){
 		utype = Session.USER_TYPE.PUBLIC;
 	}
-	/*
+	/**
 	 * A Token is Present if the user is authenticated to the Skytrust Server
 	 */
 	public boolean isTokenPresent(){

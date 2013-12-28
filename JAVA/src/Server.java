@@ -1,9 +1,10 @@
 import gui.Credential;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Server {
+public class Server implements Serializable{
 	private String url;
 	private ArrayList<?> supported_authTypes;
 	private boolean authenticated;
@@ -21,7 +22,7 @@ public class Server {
 	}
 	// is the user authenticated
 	public boolean isAutheticated(){
-		return authenticated;
+		return false;
 	}
 	public String toString(){
 		return "url: "+url;
