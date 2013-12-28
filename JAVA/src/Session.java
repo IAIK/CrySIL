@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import proxys.CK_NOTIFY_CALLBACK;
 import proxys.CK_VOID_PTR;
 import proxys.RETURN_TYPE;
@@ -5,32 +7,39 @@ import proxys.SESSION_STATE;
 
 
 public class Session {
-	private SESSION_STATE state;
+	public enum ACCESS_TYPE {
+		RO,RW
+	}
+	public enum USER_TYPE {
+		PUBLIC,USER,SO
+	}
+//	private USER_TYPE utype;
+	private ACCESS_TYPE atype;
 	private CK_VOID_PTR pApplication;
 	private CK_NOTIFY_CALLBACK notify_callback;
-	private long slotID;
+	private Slot slot;
 	private long flags;
 	private long handle;
-	
-	private static long new_handle = 0;
-	
-	private long getNewHandle(){
-		return ++new_handle; //TODO overflow?
-	}
 
-	protected Session(long slotID,long flags){
-		this.flags = flags;
-		this.slotID = slotID;
-		handle = getNewHandle();
-		state = SESSION_STATE.RO_PUBLIC_SESSION;
+
+	public Session(Slot slot,long handle,ACCESS_TYPE atype){
+	//	this.flags = flags;
+		this.atype = atype;
+		this.slot = slot;
+		this.handle = handle;
 	}
+	public boolean isRW(){
+		return (atype==ACCESS_TYPE.RW)?true:false;
+	}
+	//handle = SlotID + SessionID
 	public long getHandle(){
 		return handle;
 	}
-	public RETURN_TYPE login(){
-		return RETURN_TYPE.OK;
+	//ID = SessionID (Slot local)
+	protected long getID(){
+		return handle%Slot.MAX_SESSIONS_PER_SLOT;
 	}
-	public RETURN_TYPE logout(){
-		return RETURN_TYPE.OK;
+	public Slot getSlot(){
+		return slot;
 	}
 }

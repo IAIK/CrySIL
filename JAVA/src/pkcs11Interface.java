@@ -4,7 +4,6 @@ import proxys.CK_INFO;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
 import proxys.CK_NOTIFY_CALLBACK;
-import proxys.CK_SESSION_HANDLE_PTR;
 import proxys.CK_SESSION_INFO;
 import proxys.CK_SLOT_INFO;
 import proxys.CK_TOKEN_INFO;
@@ -19,26 +18,52 @@ import proxys.CK_NOTIFY_CALLBACK;
 public class pkcs11Interface implements pkcs11Constants {
 	
   public static long C_OpenSession(long slotID, long flags, CK_VOID_PTR pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_PTR phSession) {
+	  /* v0.1 */
+	  //public session erstellen
+	  /* v0.2 */	  
+	  //public session erstellen
+	  //in proxy gui: 	create Eintrag f. application
+	  //				show to which user-server pair the application wants to connect
+	  //				create one time pass
+	  return RETURN_TYPE.OK.swigValue();
+  }
+
+  public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
+	  //if user is auth to skytrust -> Token is present
+	  return RETURN_TYPE.OK.swigValue();
+  }
+
+  public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_PTR pulCount) {
+	  //show all user/server pairs configured in gui 
+	  
+	  return RETURN_TYPE.OK.swigValue();
+  }
+
+  public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
+	  return RETURN_TYPE.OK.swigValue();
+  }
+  public static long C_Login(long hSession, long userType, String pPin, long ulPinLen) {
+	  /* v0.1 */
+	  //pPin = user:password for skytrust server
+	  /* v0.2 */
+	  //pPin = one time password showed in in the skytrust gui 
+	  //in proxy: 	if correct change to user session 
+	  return RETURN_TYPE.OK.swigValue();
+  }
+
+  public static long C_Logout(long hSession) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_CloseSession(long hSession) {
 	  return RETURN_TYPE.OK.swigValue();
   }
-
+  
   public static long C_CloseAllSessions(long slotID) {
 	  return RETURN_TYPE.OK.swigValue();
   }
-
+  
   public static long C_Initialize(CK_VOID_PTR pInitArgs) {
-	  return RETURN_TYPE.OK.swigValue();
-  }
-
-  public static long C_Login(long hSession, long userType, String pPin, long ulPinLen) {
-	  return RETURN_TYPE.OK.swigValue();
-  }
-
-  public static long C_Logout(long hSession) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -102,19 +127,6 @@ public class pkcs11Interface implements pkcs11Constants {
   public static long C_GetSessionInfo(long hSession, CK_SESSION_INFO pInfo) {
 	  return RETURN_TYPE.OK.swigValue();
   }
-
-  public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
-	  return RETURN_TYPE.OK.swigValue();
-  }
-
-  public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_PTR pulCount) {
-	  return RETURN_TYPE.OK.swigValue();
-  }
-
-  public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
-	  return RETURN_TYPE.OK.swigValue();
-  }
-
 
   public static long C_SeedRandom(long hSession, String pSeed, long ulSeedLen) {
 	  return RETURN_TYPE.OK.swigValue();
