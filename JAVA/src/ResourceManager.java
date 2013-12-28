@@ -18,6 +18,14 @@ public class ResourceManager {
 		Slot slot = getSlotByID(slotid);
 		return slot.newSession(atype);
 	}
+	public void delSession(long handle) throws PKCS11Error{
+		long slot = handle / Slot.MAX_SESSIONS_PER_SLOT;
+		long sessionid = handle % Slot.MAX_SESSIONS_PER_SLOT;
+		getSlotByID(slot).delSession(sessionid);
+	}
+	public void delAllSessionsToSlot(long slotid) throws PKCS11Error{
+		getSlotByID(slotid).delAllSessions();
+	}
 	public Session getSessionByHandle(long handle) throws PKCS11Error{
 		//sessionIndex = Handle%MAX_SESSIONS_PER_SLOT
 		//slotIndex = Handle/MAX_SESSIONS_PER_SLOT

@@ -1,6 +1,7 @@
 import gui.Credential;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import proxys.RETURN_TYPE;
 
@@ -54,6 +55,19 @@ public class Slot {
 		long handle = slotID*MAX_SESSIONS_PER_SLOT + id;
 		sessionList.add(new Session(this,handle ,atype));
 		return handle;
+	}
+	public void delSession(long sessionid) throws PKCS11Error{
+		Iterator<Session> it = sessionList.iterator();
+		for(Session s = null;it.hasNext();s = it.next()){
+			if(s.getID() == sessionid){
+				it.remove();
+				return;
+			}
+		}
+		throw new PKCS11Error(RETURN_TYPE.SESSION_HANDLE_INVALID);	
+	}
+	public void delAllSessions(){
+		sessionList.clear();
 	}
 	public Session getSessionByID(long sessionID) throws PKCS11Error{
 		for(Session s:sessionList){
