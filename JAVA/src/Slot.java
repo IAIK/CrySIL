@@ -1,4 +1,4 @@
-import gui.Credential;
+import gui.Server;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,22 +10,24 @@ import proxys.RETURN_TYPE;
 
 
 /**
- * A Slot is combines a Server an an user 
- * it is serializable to safe its description in a file
+ * A Slot is a ServerInfo
+ * 
  */
-public class Slot implements Serializable{
-	private static final long serialVersionUID = -3120831695066891518L;
-	private Server server;
-	private Credential authenticationMethod;
+public class Slot{
+	private ServerSession serversession;
 	private long slotID;
+	private boolean roToken = false;
 	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
-	transient private ArrayList<Session> sessionList = null; 
+	private ArrayList<Session> sessionList = null; 
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
-	public Slot(Credential user,long slotid, Server server){
-		authenticationMethod = null;
+	//private String pin;
+	
+	public Slot(long slotid, Server.ServerInfo server){
 		server = null;
 		slotID = slotid;
+		serversession = new ServerSession(server);
+		//generate PIN
 	}
 	protected Session.USER_TYPE getAllSessionUserType(){
 		return utype;
@@ -38,6 +40,7 @@ public class Slot implements Serializable{
 		}
 		return false;
 	}
+
 	//Handle = slotIndex*MAX_SESSIONS_PER_SLOT+sessionIndex
 	//sessionIndex = Handle%MAX_SESSIONS_PER_SLOT
 	//slotIndex = Handle/MAX_SESSIONS_PER_SLOT
@@ -56,6 +59,9 @@ public class Slot implements Serializable{
 	public long newSession(Session.ACCESS_TYPE atype) throws PKCS11Error{
 		if(atype == Session.ACCESS_TYPE.RO && utype == Session.USER_TYPE.SO){
 			throw new PKCS11Error(RETURN_TYPE.SESSION_READ_WRITE_SO_EXISTS);
+		}
+		if(roToken && atype == Session.ACCESS_TYPE.RW){
+			throw new PKCS11Error(RETURN_TYPE.TOKEN_WRITE_PROTECTED);
 		}
 		long id = getNewSessionID();
 		long handle = slotID*MAX_SESSIONS_PER_SLOT + id;
@@ -93,6 +99,7 @@ public class Slot implements Serializable{
 		if(new_utype == Session.USER_TYPE.SO && isAnySessionRO()){
 			throw new PKCS11Error(RETURN_TYPE.SESSION_READ_ONLY_EXISTS);
 		}
+		
 		utype = new_utype;
 	}
 	public void logout(){
@@ -112,6 +119,9 @@ public class Slot implements Serializable{
 	}
 	public ArrayList<Session> getSessionList(){
 		return sessionList; 
+	}
+	public String getServerName(){
+		return "nameParsedfromServerURL";
 	}
 }
 

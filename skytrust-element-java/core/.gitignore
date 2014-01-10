@@ -1,0 +1,26 @@
+<<<<<<< HEAD
+*.class
+
+bin
+# Created Keystore #
+###################
+ks.keystore
+/.idea/
+/SkytrustElement-Java.iml
+target/SkyTrustElement-Java-1.0-SNAPSHOT.jar
+target/maven-archiver/pom.properties
+#Eclipse Project Files#
+/.classpath
+/.project
+/target
+/SkyTrustElement-Java.iml
+=======
+
+*.class
+
+*.ipr
+
+*.iml
+
+*.iws
+>>>>>>> actors/master

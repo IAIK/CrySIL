@@ -1,0 +1,17 @@
+*.class
+bin
+ks.keystore
+.idea/
+SkytrustElement-Java.iml
+#Eclipse Project Files#
+.classpath
+.project
+.settings
+target
+SkyTrustElement-Java.iml
+*.ipr
+*.iml
+*.iws
+*.DS_Store
+META-INF
+test-output

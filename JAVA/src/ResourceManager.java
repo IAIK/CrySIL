@@ -1,5 +1,8 @@
-import gui.Credential;
+import gui.Server;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import proxys.RETURN_TYPE;
 
 
@@ -13,6 +16,16 @@ public class ResourceManager {
 
 	private ArrayList<Slot> slotList = null;
 	static final public long MAX_SLOT = 1000;
+	static public ArrayList<Server> serverList;
+	
+	private String appID;
+	
+	public ResourceManager(String appID){
+		this.appID = appID;
+		//generate slotList
+		//// ask GUI for ServerInfos
+		//// build Slots from ServerInfos
+	}
 	
 	public long newSession(long slotid,Session.ACCESS_TYPE atype) throws PKCS11Error{
 		Slot slot = getSlotByID(slotid);
@@ -56,9 +69,21 @@ public class ResourceManager {
 		}
 		throw new ;
 	}
-	public long newSlot(Server s,Credential user){
+	public long newSlot(Server.ServerInfo s){
 		long id = newSlotID();
-		slotList.add(new Slot(user,id,s));
+		slotList.add(new Slot(id,s));
 		return id;
+	}
+	public void delSlot(long slotid){
+		Iterator<Slot> it = slotList.iterator();
+		for(Slot s = null;it.hasNext();s = it.next()){
+			if(s.getID() == slotid){
+				it.remove();
+				return;
+			}
+		}
+	}
+	public ArrayList<Slot> getSlotList(){
+		return slotList;
 	}
 }

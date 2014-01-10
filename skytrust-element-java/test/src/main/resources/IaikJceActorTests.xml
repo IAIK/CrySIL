@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+   <!-- the authentication plugin used by the actor for everything except from discover keys -->
+   <bean id="authPlugin" class="at.iaik.skytrust.element.actors.gatekeeper.authentication.username.UsernamePasswordAuthPlugin" />
+   
+   <bean id="actor-jce" class="at.iaik.skytrust.element.actors.iaikjce.IaikJceActor">
+      <constructor-arg type="java.lang.String"><value>https://skytrust.iaik.tugraz.at/RestKeyStorage/api/</value></constructor-arg>
+      <property name="authPlugin" ref="authPlugin" /> 
+   </bean>
+   
+   <bean id="receiver-test" class="at.iaik.skytrust.element.receiver.test.TestReceiver" />
+</beans>

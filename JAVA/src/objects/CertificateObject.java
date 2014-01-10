@@ -1,5 +1,6 @@
 package objects;
-import proxys.CERT_TYPE;;
+
+import proxys.CERT_TYPE;
 import proxys.CK_DATE;
 
 public class CertificateObject extends StorageObject {

@@ -21,8 +21,6 @@
   }
 %}
 
-
-
 %define %mypointer(TYPE, NAME)
 %{
 typedef TYPE NAME;
@@ -94,6 +92,13 @@ CK_RV call(CK_SESSION_HANDLE para1,CK_NOTIFICATION para2,CK_VOID_PTR para3){
 }
 }
 
+%typemap(memberin) SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) %{
+   if(arg1){ printf("NULLPointer check failed");
+   $1 = $input;
+   }
+%}
+%apply char* { CK_CHAR_PTR,CK_CHAR[ANY] }
+
 
 /* Parse the header file to generate wrappers */
 %include "pkcs11t_processed.h"
@@ -103,7 +108,7 @@ CK_RV call(CK_SESSION_HANDLE para1,CK_NOTIFICATION para2,CK_VOID_PTR para3){
 %include "CKM_enum.h"
 %include "CKR_enum.h"
 
-%apply char * { CK_CHAR_PTR }
+
 
 %myarray(CK_BYTE,CK_BYTE_ARRAY)
 %myarray(CK_ULONG,CK_ULONG_ARRAY)

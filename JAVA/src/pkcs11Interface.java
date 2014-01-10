@@ -1,4 +1,9 @@
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import com.sun.org.apache.bcel.internal.generic.RET;
+
 import proxys.CK_BYTE_ARRAY;
 import proxys.CK_INFO;
 import proxys.CK_MECHANISM;
@@ -16,7 +21,25 @@ import proxys.CK_ATTRIBUTE;
 import proxys.CK_NOTIFY_CALLBACK;
 
 public class pkcs11Interface implements pkcs11Constants {
+
+	private static ResourceManager rm = null;
+	private static ResourceManager getRM() throws PKCS11Error{
+		if(rm == null){
+			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
+		}
+		return rm;
+	}
 	
+	public static long C_Initialize(CK_VOID_PTR  pInitArgs){
+		String appID = "newRandomID";
+		if(rm != null){
+			RETURN_TYPE.FUNCTION_FAILED.swigValue();
+		}
+		
+		rm = new ResourceManager(appID);
+		
+		return RETURN_TYPE.OK.swigValue();
+	}
   public static long C_OpenSession(long slotID, long flags, CK_VOID_PTR pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_PTR phSession) {
 	  /* v0.1 */
 	  //public session erstellen
@@ -25,18 +48,79 @@ public class pkcs11Interface implements pkcs11Constants {
 	  //in proxy gui: 	create Eintrag f. application
 	  //				show to which user-server pair the application wants to connect
 	  //				create one time pass
+	  
+	  
+	//	  #define CKF_EXCLUSIVE_SESSION   0x00000001  /* session is exclusive */
+	//	  #define CKF_RW_SESSION          0x00000002  /* session is read/write */
+	//	  #define CKF_SERIAL_SESSION      0x00000004  /* doesn't support parallel */
+	//	  /* CKF_INSERTION_CALLBACK is new for v2.0.  If it is set in the
+	//	   * flags supplied to a C_OpenSession call, then instead of actually
+	//	   * opening a session, the call is a request to get a callback when
+	//	   * the token is inserted. */
+	//	  #define CKF_INSERTION_CALLBACK  0x00000008  /* app. gets insertion notice */
+
+	  if(! Util.isFlagSet(flags, CKF_SERIAL_SESSION)){
+		 return RETURN_TYPE.GENERAL_ERROR.swigValue(); //CKR_PARALLEL_NOT_SUPPORTED
+	  }
+//	  Util.isFlagSet(flags, CKF_INSERTION_CALLBACK);
+//	  Util.isFlagSet(flags, CKF_EXCLUSIVE_SESSION);
+	  Session.ACCESS_TYPE atype = Session.ACCESS_TYPE.RO;
+	  if(Util.isFlagSet(flags, CKF_RW_SESSION)){
+		  atype = Session.ACCESS_TYPE.RW;
+	  }
+	  try {
+		  phSession.assign(getRM().newSession(slotID, atype));
+	  } catch (PKCS11Error e) {
+		  return e.getCode();
+	  } 
 	  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
 	  //if user is auth to skytrust -> Token is present
+		  
+	  Slot s = getRM().getSlotByID(slotID);
+	  long flags = Util.initFlags;
+	  if(s.isTokenPresent()){
+		  Util.setFlag(flags, CKF_TOKEN_PRESENT);
+	  }
+	  pInfo.setFlags(flags);
+	  pInfo.setManufacturerID("IAIK Skytrust");
+	  pInfo.setSlotDescription(slot.getServerName());
 	  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_PTR pulCount) {
-	  //show all user/server pairs configured in gui 
-	  
-	  return RETURN_TYPE.OK.swigValue();
+	  try {
+		ArrayList<Slot> slotlist = null;
+		slotlist = getRM().getSlotList();			
+		if(tokenPresent == 1) {
+			Iterator<Slot> it = slotlist.iterator();
+			while(it.hasNext()){
+				if(!it.next().isTokenPresent()){
+					it.remove();
+				}
+			}
+		}
+		int buffersize = (int) pulCount.value();
+		
+		pulCount.assign(slotlist.size());
+		if(pSlotList.getCPtr() != 0){
+			if(buffersize < slotlist.size()){
+				return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
+			}else{
+				pulCount.assign(slotlist.size());
+				Iterator<Slot> it = slotlist.iterator();
+				for(int i=0;it.hasNext();i++){
+					pSlotList.setitem(i, it.next().getID());
+				}
+			}
+		}
+	} catch (PKCS11Error e) {
+		e.printStackTrace();
+		return e.getCode();
+	}  
+	return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
@@ -62,11 +146,6 @@ public class pkcs11Interface implements pkcs11Constants {
   public static long C_CloseAllSessions(long slotID) {
 	  return RETURN_TYPE.OK.swigValue();
   }
-  
-  public static long C_Initialize(CK_VOID_PTR pInitArgs) {
-	  return RETURN_TYPE.OK.swigValue();
-  }
-
 
   public static long C_SetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[]  pTemplate, long ulCount) {
 	  return RETURN_TYPE.OK.swigValue();

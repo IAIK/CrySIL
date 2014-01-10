@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+   <!-- the authentication plugin used by the actor for everything except from discover keys -->
+   <bean id="authPlugin" class="at.iaik.skytrust.element.actors.gatekeeper.authentication.plugins.oauth.handysignatur.HandySigOAuthPlugin" >
+   		<property name="clientID" value="61b642f1d1699303c53aa4ad4481c0" />
+   		<property name="clientSecret" value="41899de393eaba59dc13f7aec9b73d"/>
+   		<property name="identityLink_URI" value="https://sso-service.appspot.com/resources/identity_link/"/>
+   </bean>
+   
+   <bean id="actor-jce" class="at.iaik.skytrust.element.actors.iaikjce.IaikJceActor">
+      <constructor-arg type="java.lang.String"><value>https://127.0.0.1:8081/database/api/</value></constructor-arg>
+      <property name="authPlugin" ref="authPlugin" /> 
+   </bean>
+   
+   <bean id="receiver-http" class="at.iaik.skytrust.element.receiver.http.HTTPReceiver" />
+</beans>
