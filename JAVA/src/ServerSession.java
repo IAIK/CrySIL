@@ -2,8 +2,12 @@ import gui.Server;
 
 import java.util.List;
 
+import at.iaik.skytrust.element.skytrustprotocol.SResponse;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 /*
  * Stellt verbindung zum Server dar ist für kommunikation zuständig
@@ -14,7 +18,8 @@ public class ServerSession {
 	
 	private String sessionID;
 	private Server.ServerInfo server;
-	
+    protected RestTemplate restTemplate;
+    
 	private SAuthInfo credentials;
 	private boolean rememberCredentialsForSession = true;
 	
@@ -33,10 +38,25 @@ public class ServerSession {
 	public void encrypt(){
 		
 	}
-	public void handleAuth(){
+	public SResponse handleAuth(SResponse skyTrustResponse){
 		//auth response
 		// send possible AuthTypes to GUI
 		// get SAuthInfo back
 		//build and send authrequest
+        SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
+        SAuthType authType = authResponse.getAuthType();
+        
+        SAuthInfo credentials = RMICALL(gui.getAuthInfo(authType,server));
+        
+        SRequest authRequest = createBasicRequest();
+        SPayloadAuthRequest authRequestPayload = new SPayloadAuthRequest();
+        authRequestPayload.setAuthInfo(credentials);
+        authRequestPayload.setCommand("authenticate");
+        authRequest.setPayload(authRequestPayload);
+        authRequest.getHeader().setCommandId(skyTrustResponse.getHeader().getCommandId());
+
+        skyTrustResponse = restTemplate.postForObject(server,authRequest,SResponse.class);
+        sessionID=skyTrustResponse.getHeader().getSessionId();
+        return skyTrustResponse;
 	}
 }
