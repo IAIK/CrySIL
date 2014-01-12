@@ -1,3 +1,4 @@
+import gui.DataVaultSingleton;
 import gui.Server;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class ServerSession {
         SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
         
-        SAuthInfo credentials = RMICALL(gui.getAuthInfo(authType,server));
+        SAuthInfo credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);
         
         SRequest authRequest = createBasicRequest();
         SPayloadAuthRequest authRequestPayload = new SPayloadAuthRequest();

@@ -1,3 +1,4 @@
+import gui.DataVaultSingleton;
 import gui.Server;
 
 import java.util.ArrayList;
@@ -22,9 +23,12 @@ public class ResourceManager {
 	
 	public ResourceManager(String appID){
 		this.appID = appID;
-		//generate slotList
-		//// ask GUI for ServerInfos
-		//// build Slots from ServerInfos
+		DataVaultSingleton.getInstance().registerClient(appID, notifyCallback);
+		ArrayList<Server.ServerInfo> l = DataVaultSingleton.getInstance().getServerInfoList();
+		slotList = new ArrayList<Slot>();
+		for(Server.ServerInfo i:l){
+			slotList.add(new Slot(newSlotID(),i));
+		}
 	}
 	
 	public long newSession(long slotid,Session.ACCESS_TYPE atype) throws PKCS11Error{
@@ -57,7 +61,7 @@ public class ResourceManager {
 		}
 		return r;
 	}
-	protected long newSlotID(){
+	protected long newSlotID() throws PKCS11Error{
 		long id=1;
 		for(Slot s:slotList){
 			if(s.getID() != id){
@@ -67,12 +71,7 @@ public class ResourceManager {
 			}
 			id++;
 		}
-		throw new ;
-	}
-	public long newSlot(Server.ServerInfo s){
-		long id = newSlotID();
-		slotList.add(new Slot(id,s));
-		return id;
+		throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
 	}
 	public void delSlot(long slotid){
 		Iterator<Slot> it = slotList.iterator();
