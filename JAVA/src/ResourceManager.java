@@ -1,4 +1,6 @@
+import gui.Client;
 import gui.DataVaultSingleton;
+import gui.NotifyInterface;
 import gui.Server;
 
 import java.util.ArrayList;
@@ -15,20 +17,37 @@ import proxys.RETURN_TYPE;
  * */
 public class ResourceManager {
 
-	private ArrayList<Slot> slotList = null;
+	private ArrayList<Slot> slotList = new ArrayList<Slot>();;
 	static final public long MAX_SLOT = 1000;
-	static public ArrayList<Server> serverList;
-	
 	private String appID;
+	
+	
+	public class DefaultClient implements Client {
+		private String id;
+		private ResourceManager lib;
+		
+		public DefaultClient(String id,ResourceManager lib){
+			this.lib = lib;
+			this.id = id;
+		}
+		public String getID(){
+			return id;
+		}
+		public void inform(){
+			try {
+				lib.updateSlotList();
+			} catch (PKCS11Error e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	
 	public ResourceManager(String appID){
 		this.appID = appID;
-		DataVaultSingleton.getInstance().registerClient(appID, notifyCallback);
-		ArrayList<Server.ServerInfo> l = DataVaultSingleton.getInstance().getServerInfoList();
-		slotList = new ArrayList<Slot>();
-		for(Server.ServerInfo i:l){
-			slotList.add(new Slot(newSlotID(),i));
-		}
+		DataVaultSingleton.getInstance().registerClient(new DefaultClient(appID,this));
+		updateSlotList();
 	}
 	
 	public long newSession(long slotid,Session.ACCESS_TYPE atype) throws PKCS11Error{
@@ -84,5 +103,18 @@ public class ResourceManager {
 	}
 	public ArrayList<Slot> getSlotList(){
 		return slotList;
+	}
+
+	public void updateSlotList() throws PKCS11Error{
+		ArrayList<Server.ServerInfo> info_list = DataVaultSingleton.getInstance().getServerInfoList();
+		if(info_list.size()>MAX_SLOT){
+			while(info_list.remove(MAX_SLOT));
+		}
+		for(Slot s:slotList){
+			info_list.remove(s.getServerInfo());
+		}
+		for(Server.ServerInfo info:info_list){
+			slotList.add(new Slot(newSlotID(),info));
+		}
 	}
 }

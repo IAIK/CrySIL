@@ -3,8 +3,13 @@ import gui.Server;
 
 import java.util.List;
 
+import at.iaik.skytrust.element.skytrustprotocol.SRequest;
 import at.iaik.skytrust.element.skytrustprotocol.SResponse;
+import at.iaik.skytrust.element.skytrustprotocol.header.SkyTrustHeader;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
+import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthType;
+import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthRequest;
+import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthResponse;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
@@ -27,6 +32,9 @@ public class ServerSession {
 	public ServerSession(Server.ServerInfo s){
 		server = s;
 	}
+	public Server.ServerInfo getInfo(){
+		return server;
+	}
 	public List<SKey> getKeyList(){
 		return null;
 	}
@@ -40,24 +48,30 @@ public class ServerSession {
 		
 	}
 	public SResponse handleAuth(SResponse skyTrustResponse){
-		//auth response
-		// send possible AuthTypes to GUI
-		// get SAuthInfo back
-		//build and send authrequest
+		//get possible authType(s)
         SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
-        
+        //ask User for Credentials
         SAuthInfo credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);
-        
+        //build authRequest
         SRequest authRequest = createBasicRequest();
         SPayloadAuthRequest authRequestPayload = new SPayloadAuthRequest();
         authRequestPayload.setAuthInfo(credentials);
         authRequestPayload.setCommand("authenticate");
         authRequest.setPayload(authRequestPayload);
         authRequest.getHeader().setCommandId(skyTrustResponse.getHeader().getCommandId());
-
+        //send authRequest and wait for Response
         skyTrustResponse = restTemplate.postForObject(server,authRequest,SResponse.class);
+        //save new (authenticated) SessionID
         sessionID=skyTrustResponse.getHeader().getSessionId();
         return skyTrustResponse;
 	}
+	private SRequest createBasicRequest() {
+        SRequest request = new SRequest();
+        SkyTrustHeader header = new SkyTrustHeader();
+        header.setSessionId(sessionID);
+        header.setProtocolVersion("0.1");
+        request.setHeader(header);
+        return request;
+    }
 }

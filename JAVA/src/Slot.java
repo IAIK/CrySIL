@@ -120,8 +120,8 @@ public class Slot{
 	public ArrayList<Session> getSessionList(){
 		return sessionList; 
 	}
-	public String getServerName(){
-		return "nameParsedfromServerURL";
+	public Server.ServerInfo getServerInfo(){
+		return serversession.getInfo();
 	}
 }
 

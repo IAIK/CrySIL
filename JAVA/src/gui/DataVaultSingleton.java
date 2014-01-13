@@ -1,4 +1,6 @@
 package gui;
+import gui.Server;
+import gui.Server.ServerInfo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +16,7 @@ public class DataVaultSingleton {
 	private static DataVaultSingleton _instance;
 	
 	private ArrayList<Server> servers;
+	private ArrayList<Client> clients;
 	
 	public static DataVaultSingleton getInstance(){
 		if(_instance==null){
@@ -28,7 +31,7 @@ public class DataVaultSingleton {
 		doStuff();
 	}
 	
-	public ArrayList<Server.ServerInfo> getServerInfoList(){
+	public ArrayList<ServerInfo> getServerInfoList(){
 		ArrayList<Server.ServerInfo> res = new ArrayList<Server.ServerInfo>();
 		for(Server s:servers){
 			res.add(s.getInfo());
@@ -65,6 +68,10 @@ public class DataVaultSingleton {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void registerClient(Client c) {
+		clients.add(c);
 	}
 
 }
