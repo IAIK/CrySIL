@@ -88,10 +88,13 @@ if(dings->cls !=0)
         {
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_CloseAllSessionsJava, slotID);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
+CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
 { printf("C: called: C_CloseSession    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -103,10 +106,13 @@ if(dings->cls !=0)
         {
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_CloseSessionJava, hSession);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject)
+CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject)
 { printf("C: called: C_CreateObject    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -156,10 +162,13 @@ jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_CreateObjectJava, hSession, ulCount, obj3);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 { printf("C: called: C_DecryptInit    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -180,10 +189,13 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_DecryptInitJava, hSession, obj1, hKey);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
+CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
 { printf("C: called: C_DecryptUpdate    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -220,10 +232,13 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_DecryptUpdateJava, hSession, ulEncryptedPartLen, obj3, obj4);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
+CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
 { printf("C: called: C_DestroyObject    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -235,21 +250,23 @@ if(dings->cls !=0)
         {
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_DestroyObjectJava, hSession, hObject);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_Finalize(CK_VOID_PTR pReserved)
+CK_RV C_Finalize(CK_VOID_PTR pReserved)
 { printf("C: called: C_Finalize    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
-
 if(dings->cls !=0)
 {
         jmethodID C_FinalizeJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_Finalize", "(Lproxys/CK_VOID_PTR;)J");
         
         if(C_FinalizeJava !=0)
         {
-	jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_VOID_PTR"); //
+jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_VOID_PTR"); //
          jmethodID constructor0 = (*(dings->env))->GetMethodID(dings->env, cls0, "<init>", "(JZ)V");
                                 printf("CK_GetInfo constructor found... woohooo");
                                 jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pReserved, JNI_FALSE);
@@ -263,8 +280,10 @@ if(dings->cls !=0)
 }}
 destroyVM();
 return retVal;
+}
 
-}CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, CK_ULONG ulMaxObjectCount, CK_ULONG_PTR pulObjectCount)
+
+CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, CK_ULONG ulMaxObjectCount, CK_ULONG_PTR pulObjectCount)
 { printf("C: called: C_FindObjects    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -294,10 +313,13 @@ jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_FindObjectsJava, hSession, obj1, ulMaxObjectCount, obj3);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
+CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
 { printf("C: called: C_FindObjectsFinal    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -309,10 +331,13 @@ if(dings->cls !=0)
         {
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_FindObjectsFinalJava, hSession);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 { printf("C: called: C_FindObjectsInit    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -353,10 +378,13 @@ obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate+i, JNI
 }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_FindObjectsInitJava, hSession, ulCount);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_ULONG ulRandomLen)
+CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_ULONG ulRandomLen)
 { printf("C: called: C_GenerateRandom    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -375,10 +403,13 @@ fill[j] =RandomData[j]; }
 (*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulRandomLen, fill);
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GenerateRandomJava, hSession, ulRandomLen);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 { printf("C: called: C_GetAttributeValue    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -419,10 +450,13 @@ obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i, JNI
 }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetAttributeValueJava, hSession, hObject, ulCount);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetInfo(CK_INFO_PTR pInfo)
+CK_RV C_GetInfo(CK_INFO_PTR pInfo)
 { printf("C: called: C_GetInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -443,10 +477,13 @@ jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_INFO"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetInfoJava, obj0);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM_INFO_PTR pInfo)
+CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM_INFO_PTR pInfo)
 { printf("C: called: C_GetMechanismInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -467,10 +504,13 @@ jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM_INFO")
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetMechanismInfoJava, slotID, type, obj2);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList, CK_ULONG_PTR pulCount)
+CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList, CK_ULONG_PTR pulCount)
 { printf("C: called: C_GetMechanismList    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -500,10 +540,13 @@ jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetMechanismListJava, slotID, obj1, obj2);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
+CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
 { printf("C: called: C_GetSessionInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -524,10 +567,13 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_SESSION_INFO"); 
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetSessionInfoJava, hSession, obj1);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
+CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
 { printf("C: called: C_GetSlotInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -548,10 +594,13 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_SLOT_INFO"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetSlotInfoJava, slotID, obj1);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
+CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
 { printf("C: called: C_GetSlotList    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -581,10 +630,13 @@ jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetSlotListJava, tokenPresent, obj1, obj2);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
+CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
 { printf("C: called: C_GetTokenInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -605,10 +657,13 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_TOKEN_INFO"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetTokenInfoJava, slotID, obj1);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
+CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
 { printf("C: called: C_Initialize    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -629,10 +684,13 @@ jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_VOID_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_InitializeJava, obj0);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
+CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
 { printf("C: called: C_Login    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -653,10 +711,13 @@ jclass cls2 = (*(dings->env))->FindClass(dings->env, "java/lang/String"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_LoginJava, hSession, userType, obj2, ulPinLen);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_Logout(CK_SESSION_HANDLE hSession)
+CK_RV C_Logout(CK_SESSION_HANDLE hSession)
 { printf("C: called: C_Logout    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -668,10 +729,13 @@ if(dings->cls !=0)
         {
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_LogoutJava, hSession);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
+CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
 { printf("C: called: C_OpenSession    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -710,10 +774,13 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_SESSION_HANDLE_P
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_OpenSessionJava, slotID, flags, obj2, obj3, obj4);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSeedLen)
+CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSeedLen)
 { printf("C: called: C_SeedRandom    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -734,10 +801,13 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "java/lang/String"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SeedRandomJava, hSession, obj1, ulSeedLen);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 { printf("C: called: C_SetAttributeValue    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -778,10 +848,13 @@ obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i, JNI
 }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SetAttributeValueJava, hSession, hObject, ulCount);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLen, CK_CHAR_PTR pNewPin, CK_ULONG ulNewLen)
+CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLen, CK_CHAR_PTR pNewPin, CK_ULONG ulNewLen)
 { printf("C: called: C_SetPIN    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -811,10 +884,13 @@ jclass cls3 = (*(dings->env))->FindClass(dings->env, "java/lang/String"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SetPINJava, hSession, obj1, ulOldLen, obj3, ulNewLen);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
+CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
 { printf("C: called: C_Namesn    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -851,10 +927,13 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_NamesnJava, hSession, ulDataLen, obj3, obj4);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 { printf("C: called: C_NamesnInit    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -875,10 +954,13 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_NamesnInitJava, hSession, obj1, hKey);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hUnwrappingKey, CK_BYTE_PTR pWrappedKey, CK_ULONG ulWrappedKeyLen, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
+CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hUnwrappingKey, CK_BYTE_PTR pWrappedKey, CK_ULONG ulWrappedKeyLen, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
 { printf("C: called: C_UnwrapKey    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -944,10 +1026,13 @@ jclass cls7 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_UnwrapKeyJava, hSession, obj1, hUnwrappingKey, ulWrappedKeyLen, ulAttributeCount, obj7);
-}}return retVal;
+}}
+
+return retVal;
+}
 
 
-}CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hWrappingKey, CK_OBJECT_HANDLE hKey, CK_BYTE_PTR pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen)
+CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hWrappingKey, CK_OBJECT_HANDLE hKey, CK_BYTE_PTR pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen)
 { printf("C: called: C_WrapKey    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
@@ -986,10 +1071,13 @@ jclass cls5 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
 				   }
 
                                         retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_WrapKeyJava, hSession, obj1, hWrappingKey, hKey, obj4, obj5);
-}}return retVal;
+}}
 
-
+return retVal;
 }
+
+
+
 
 #define CK_DEFINE_FUNCTION(returnType, name) returnType name
 CK_DEFINE_FUNCTION(CK_RV, C_InitPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
