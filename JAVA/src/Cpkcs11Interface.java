@@ -4,10 +4,11 @@ import java.util.Iterator;
 
 import com.sun.org.apache.bcel.internal.generic.RET;
 
-import proxys.CK_CHAR_ARRAY;
+import proxys.CK_BYTE_ARRAY;
 import proxys.CK_INFO;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
+import proxys.CK_NOTIFY_CALLBACK;
 import proxys.CK_SESSION_INFO;
 import proxys.CK_SLOT_INFO;
 import proxys.CK_TOKEN_INFO;
@@ -17,7 +18,7 @@ import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
 import proxys.CK_ATTRIBUTE;
 
-public class pkcs11Interface implements pkcs11Constants {
+public class Cpkcs11Interface implements pkcs11Constants {
 	  static {
 		    System.loadLibrary("example");
 		  }
@@ -29,7 +30,7 @@ public class pkcs11Interface implements pkcs11Constants {
 		return rm;
 	}
 	
-	public static long C_Initialize(CK_VOID_PTR  pInitArgs){
+	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
 		String appID = "newRandomID";
 		if(rm != null){
 			RETURN_TYPE.FUNCTION_FAILED.swigValue();
@@ -39,7 +40,7 @@ public class pkcs11Interface implements pkcs11Constants {
 		
 		return RETURN_TYPE.OK.swigValue();
 	}
-  public static long C_OpenSession(long slotID, long flags, CK_VOID_PTR pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_JPTR phSession) {
+  public static long C_OpenSession(long slotID, long flags, CK_BYTE_ARRAY pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_JPTR phSession) {
 	  /* v0.1 */
 	  //public session erstellen
 	  /* v0.2 */	  

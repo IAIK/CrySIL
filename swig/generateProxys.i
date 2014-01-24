@@ -1,6 +1,10 @@
 %module pkcs11
 %{
 #include "pkcs11.h"
+
+typedef struct {
+  CK_NOTIFY func;
+} CK_NOTIFY_CALLBACK;
 %}
 %javaconst(1);
 %include "typemaps.i"
@@ -44,7 +48,15 @@
 %include "CKR_enum.h"
 
 
+typedef struct {
+  CK_NOTIFY func;
+} CK_NOTIFY_CALLBACK;
 
+%extend CK_NOTIFY_CALLBACK {
+CK_RV call(CK_SESSION_HANDLE para1,CK_NOTIFICATION para2,CK_VOID_PTR para3){
+  return self->func(para1,para2,para3);
+}
+}
 
 
 CK_RV C_CloseAllSessions(CK_SLOT_ID slotID);
