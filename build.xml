@@ -51,16 +51,17 @@
         <mkdir dir="${java.classes.dir}"/>
         <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
     </target>
+    <target name="genPkcs11">
+        <exec osfamily="Unix" failonerror="true" executable="java" searchpath="true">
+          <arg line="-C ${c.dir} all"/>
+        </exec>
+        <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
+        </exec>
+    </target>
     <target name="C-compile">
     	<mkdir dir="${c.build.dir}"/>
-        <exec osfamily="Unix" failonerror="true" executable="gcc" searchpath="true">
-          <arg value="${c.src.dir}/pkcs11.c"/>
-          <arg value="${c.src.dir}/pkcs11_java_wrap.c"/>
-          <arg line="-I${c.jni.dir} -I/usr/lib/jvm/j2sdk1.6-oracle/include/ -L/usr/bin/java -L${c.jvm.dir} -o ${c.build.dir}/lib${name}.so -shared -fPIC -g -ljvm"/>
-        </exec>
-        <exec osfamily="Unix" failonerror="true" executable="gcc" searchpath="true">
-          <arg value="${c.src.dir}/pkcs11_java_wrap.c"/>
-          <arg line="-I${c.jni.dir} -I/usr/lib/jvm/j2sdk1.6-oracle/include/ -L/usr/bin/java -L${c.jvm.dir} -o ${c.build.dir}/lib${name}wrapper.so -shared -fPIC -g -ljvm"/>
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.dir} all"/>
         </exec>
         <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
         </exec>

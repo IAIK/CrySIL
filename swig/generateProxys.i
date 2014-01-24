@@ -26,12 +26,25 @@
 
 
 /* Parse the header file to generate wrappers */
+
+%apply char[] { CK_CHAR_PTR }
+%apply char[] { CK_CHAR[ANY] }
+
+%pointer_class(unsigned long int,CK_ULONG_JPTR)
+
+
+%array_class(CK_ULONG,CK_ULONG_ARRAY)
+%array_class(CK_CHAR,CK_BYTE_ARRAY)
+
 %include "pkcs11t_processed.h"
 %include "CKA_enum.h"
 %include "CKC_enum.h"
 %include "CKS_enum.h"
 %include "CKM_enum.h"
 %include "CKR_enum.h"
+
+
+
 
 
 CK_RV C_CloseAllSessions(CK_SLOT_ID slotID);
