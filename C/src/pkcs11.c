@@ -231,7 +231,7 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
                                         printf("CK_GetInfo object is not null.... going on and calling java function");
 				   }
 
-                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_DecryptUpdateJava, hSession, ulEncryptedPartLen, obj3, obj4);
+                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_DecryptUpdateJava, hSession, result, ulEncryptedPartLen, obj3, obj4);
 }}
 
 return retVal;
@@ -402,7 +402,7 @@ for (j = 0; j < ulRandomLen; j++) {
 fill[j] =RandomData[j]; }
 (*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulRandomLen, fill);
 
-                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GenerateRandomJava, hSession, ulRandomLen);
+                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GenerateRandomJava, hSession, result, ulRandomLen);
 }}
 
 return retVal;
@@ -700,17 +700,9 @@ if(dings->cls !=0)
         
         if(C_LoginJava !=0)
         {
-jclass cls2 = (*(dings->env))->FindClass(dings->env, "java/lang/String"); //
-         jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-                                printf("CK_GetInfo constructor found... woohooo");
-                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pPin, JNI_FALSE);
-								   if(obj2==NULL){
-                                        printf("CK_GetInfo object is null... shit happens");
-                                }else{
-                                        printf("CK_GetInfo object is not null.... going on and calling java function");
-				   }
-
-                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_LoginJava, hSession, userType, obj2, ulPinLen);
+			jobject string2;
+			string2 =(*(dings->env))->NewStringUTF(dings->env, pPin);
+                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_LoginJava, hSession, userType, string2, ulPinLen);
 }}
 
 return retVal;
@@ -790,17 +782,9 @@ if(dings->cls !=0)
         
         if(C_SeedRandomJava !=0)
         {
-jclass cls1 = (*(dings->env))->FindClass(dings->env, "java/lang/String"); //
-         jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                printf("CK_GetInfo constructor found... woohooo");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pSeed, JNI_FALSE);
-								   if(obj1==NULL){
-                                        printf("CK_GetInfo object is null... shit happens");
-                                }else{
-                                        printf("CK_GetInfo object is not null.... going on and calling java function");
-				   }
-
-                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SeedRandomJava, hSession, obj1, ulSeedLen);
+			jobject string1;
+			string1 =(*(dings->env))->NewStringUTF(dings->env, pSeed);
+                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SeedRandomJava, hSession, string1, ulSeedLen);
 }}
 
 return retVal;
@@ -864,26 +848,10 @@ if(dings->cls !=0)
         
         if(C_SetPINJava !=0)
         {
-jclass cls1 = (*(dings->env))->FindClass(dings->env, "java/lang/String"); //
-         jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                printf("CK_GetInfo constructor found... woohooo");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pOldPin, JNI_FALSE);
-								   if(obj1==NULL){
-                                        printf("CK_GetInfo object is null... shit happens");
-                                }else{
-                                        printf("CK_GetInfo object is not null.... going on and calling java function");
-				   }
-jclass cls3 = (*(dings->env))->FindClass(dings->env, "java/lang/String"); //
-         jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
-                                printf("CK_GetInfo constructor found... woohooo");
-                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, pNewPin, JNI_FALSE);
-								   if(obj3==NULL){
-                                        printf("CK_GetInfo object is null... shit happens");
-                                }else{
-                                        printf("CK_GetInfo object is not null.... going on and calling java function");
-				   }
-
-                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SetPINJava, hSession, obj1, ulOldLen, obj3, ulNewLen);
+			jobject string1;
+			string1 =(*(dings->env))->NewStringUTF(dings->env, pOldPin);			jobject string3;
+			string3 =(*(dings->env))->NewStringUTF(dings->env, pNewPin);
+                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SetPINJava, hSession, string1, ulOldLen, string3, ulNewLen);
 }}
 
 return retVal;
@@ -926,7 +894,7 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
                                         printf("CK_GetInfo object is not null.... going on and calling java function");
 				   }
 
-                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_NamesnJava, hSession, ulDataLen, obj3, obj4);
+                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_NamesnJava, hSession, result, ulDataLen, obj3, obj4);
 }}
 
 return retVal;
@@ -1025,7 +993,7 @@ jclass cls7 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_PTR"); //
                                         printf("CK_GetInfo object is not null.... going on and calling java function");
 				   }
 
-                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_UnwrapKeyJava, hSession, obj1, hUnwrappingKey, ulWrappedKeyLen, ulAttributeCount, obj7);
+                                        retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_UnwrapKeyJava, hSession, obj1, hUnwrappingKey, result, ulWrappedKeyLen, ulAttributeCount, obj7);
 }}
 
 return retVal;
