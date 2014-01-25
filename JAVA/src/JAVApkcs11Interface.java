@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -12,15 +13,16 @@ import proxys.CK_SESSION_INFO;
 import proxys.CK_SLOT_INFO;
 import proxys.CK_TOKEN_INFO;
 import proxys.CK_ULONG_ARRAY;
+import proxys.CK_ULONG_JPTR;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
-import proxys.CK_VOID_PTR;
-import proxys.CK_ULONG_PTR;
 import proxys.CK_ATTRIBUTE;
-import proxys.CK_NOTIFY_CALLBACK;
 
-public class pkcs11Interface implements pkcs11Constants {
 
+public class JAVApkcs11Interface implements pkcs11Constants {
+	  static {
+		    System.loadLibrary("example");
+		  }
 	private static ResourceManager rm = null;
 	private static ResourceManager getRM() throws PKCS11Error{
 		if(rm == null){
@@ -29,7 +31,7 @@ public class pkcs11Interface implements pkcs11Constants {
 		return rm;
 	}
 	
-	public static long C_Initialize(CK_VOID_PTR  pInitArgs){
+	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
 		String appID = "newRandomID";
 		if(rm != null){
 			RETURN_TYPE.FUNCTION_FAILED.swigValue();
@@ -39,7 +41,7 @@ public class pkcs11Interface implements pkcs11Constants {
 		
 		return RETURN_TYPE.OK.swigValue();
 	}
-  public static long C_OpenSession(long slotID, long flags, CK_VOID_PTR pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_PTR phSession) {
+  public static long C_OpenSession(long slotID, long flags, CK_BYTE_ARRAY pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_JPTR phSession) {
 	  /* v0.1 */
 	  //public session erstellen
 	  /* v0.2 */	  
@@ -78,9 +80,9 @@ public class pkcs11Interface implements pkcs11Constants {
   public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
 	  //if user is auth to skytrust -> Token is present
 		  
-	  Slot s = getRM().getSlotByID(slotID);
+	  Slot slot = getRM().getSlotByID(slotID);
 	  long flags = Util.initFlags;
-	  if(s.isTokenPresent()){
+	  if(slot.isTokenPresent()){
 		  Util.setFlag(flags, CKF_TOKEN_PRESENT);
 	  }
 	  pInfo.setFlags(flags);
@@ -89,7 +91,7 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_PTR pulCount) {
+  public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_JPTR pulCount) {
 	  try {
 		ArrayList<Slot> slotlist = null;
 		slotlist = getRM().getSlotList();			
@@ -126,11 +128,6 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
   public static long C_Login(long hSession, long userType, String pPin, long ulPinLen) {
-	  /* v0.1 */
-	  //pPin = user:password for skytrust server
-	  /* v0.2 */
-	  //pPin = one time password showed in in the skytrust gui 
-	  //in proxy: 	if correct change to user session 
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -150,7 +147,7 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_PTR phObject) {
+  public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -158,7 +155,7 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_DecryptUpdate(long hSession, byte[] pEncryptedPart, long ulEncryptedPartLen, CK_BYTE_ARRAY pPart, CK_ULONG_PTR pulPartLen) {
+  public static long C_DecryptUpdate(long hSession, byte[] pEncryptedPart, long ulEncryptedPartLen, CK_BYTE_ARRAY pPart, CK_ULONG_JPTR pulPartLen) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -166,11 +163,11 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_Finalize(CK_VOID_PTR pReserved) {
+  public static long C_Finalize(CK_BYTE_ARRAY pReserved) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_FindObjects(long hSession, CK_ULONG_PTR phObject, long ulMaxObjectCount, CK_ULONG_PTR pulObjectCount) {
+  public static long C_FindObjects(long hSession, CK_ULONG_JPTR phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -182,7 +179,7 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_GenerateRandom(long hSession, byte[] RandomData, long ulRandomLen) {
+  public static long C_GenerateRandom(long hSession, CK_BYTE_ARRAY RandomData, long ulRandomLen) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -198,7 +195,7 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_GetMechanismList(long slotID, CK_ULONG_ARRAY pMechanismList, CK_ULONG_PTR pulCount) {
+  public static long C_GetMechanismList(long slotID, CK_ULONG_ARRAY pMechanismList, CK_ULONG_JPTR pulCount) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -214,7 +211,7 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_Sign(long hSession, byte[] pData, long ulDataLen, CK_BYTE_ARRAY pSignature, CK_ULONG_PTR pulSignatureLen) {
+  public static long C_Sign(long hSession, byte[] pData, long ulDataLen, CK_BYTE_ARRAY pSignature, CK_ULONG_JPTR pulSignatureLen) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -222,11 +219,11 @@ public class pkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_PTR phKey) {
+  public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_WrapKey(long hSession, CK_MECHANISM pMechanism, long hWrappingKey, long hKey, CK_BYTE_ARRAY pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen) {
+  public static long C_WrapKey(long hSession, CK_MECHANISM pMechanism, long hWrappingKey, long hKey, CK_BYTE_ARRAY pWrappedKey, CK_ULONG_JPTR pulWrappedKeyLen) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 

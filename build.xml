@@ -13,7 +13,8 @@
     <property name="c.build.dir"   value="C/build"/>
     <property name="c.classes.dir" value="${c.build.dir}/classes"/>
     <property name="c.exec.dir"     value="${c.build.dir}"/>
-
+    <property name="c.jni.dir"     value="/usr/lib/jvm/java-7-openjdk-amd64/include/"/>
+    <property name="c.jvm.dir"     value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server/"/>
 	<property name="swig.dir"     value="swig"/>
     <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
 	<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
@@ -50,11 +51,17 @@
         <mkdir dir="${java.classes.dir}"/>
         <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
     </target>
+    <target name="genPkcs11">
+        <exec osfamily="Unix" failonerror="true" executable="java" searchpath="true">
+          <arg line="-C ${c.dir} all"/>
+        </exec>
+        <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
+        </exec>
+    </target>
     <target name="C-compile">
     	<mkdir dir="${c.build.dir}"/>
-        <exec osfamily="Unix" failonerror="true" executable="gcc" searchpath="true">
-          <arg value="${c.src.dir}/pkcs11.c"/>
-          <arg line="-I/usr/lib/jvm/j2sdk1.6-oracle/include/ -I/usr/lib/jvm/j2sdk1.6-oracle/include/linux/ -L/usr/bin/java -L/usr/lib/jvm/j2sdk1.6-oracle/jre/lib/amd64/server/ -o ${c.build.dir}/lib${name}.so -shared -fPIC -g -ljvm"/>
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.dir} all"/>
         </exec>
         <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
         </exec>
