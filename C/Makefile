@@ -1,8 +1,8 @@
-CC = g++
+CC = gcc
 WRAPSOURCES = pkcs11_java_wrap.c
 SOURCES = pkcs11.c
-INCLUDE_DIRS := /usr/lib/jvm/java-7-openjdk-amd64/include/
-LIBRARY_DIRS := /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server
+INCLUDE_DIRS := ../include/java/
+LIBRARY_DIRS := ../lib/
 LIBRARIES := jvm
 
 CFLAGS = -Wall 
@@ -25,23 +25,17 @@ pkcs11wrapper: $(SRCDIR)/$(WRAPSOURCES)
 
 all: pkcs11
 
-TESTDIR = test
-TESTNAME = $(TESTDIR)/mytest
-TESTSOURCES = $(TESTDIR)/maintest.cpp $(TESTDIR)/easytests.cpp
-TESTOBJS := ${TESTSOURCES:.cpp=.o}
-TEST_INCLUDE_DIRS := -I/home/cloud/uni/ACN/pkcs11_private/include/
-TEST_LIBRARY_DIRS := -L/home/cloud/uni/ACN/pkcs11_private/lib/
-TEST_LIBRARIES := -lgtest -lpthread
+clean: 
+	rm -f $(BINDIR)/lib$(NAME).so
+	rm -f $(BINDIR)/lib$(WRAPNAME).so
 
-%.o: %.cpp 
-	$(CC) -c -o $@ $< $(CFLAGS) $(TEST_INCLUDE_DIRS)
 
-test: $(TESTOBJS)
-		$(CC) $(TESTOBJS) -o $(TESTNAME) $(TEST_INCLUDE_DIRS) $(TEST_LIBRARY_DIRS) $(TEST_LIBRARIES)
+test: pkcs11
+		$(MAKE) -C ./test/ test
 
 testclean:
-	rm -f $(TESTOBJS)
-	rm -f $(TESTNAME)
+	$(MAKE) -C ./test/ clean
+	
 runtest: test
-	$(TESTDIR)/teste
+	$(MAKE) -C ./test/ run
 
