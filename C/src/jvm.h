@@ -6,7 +6,6 @@
 #ifndef __JVM_H
 #define __JVM_H
 
-#define JAVACLASSNAME "pkcs11Interface"
 
 
 
@@ -42,7 +41,7 @@ sing* get_instance()
 		printf("\n malloc jvm.h failed \n");
 		//out of memory --> die gracefully
 	}
-	instance->options[0].optionString = "-Djava.class.path=.";
+	instance->options[0].optionString = "-Djava.class.path=/home/faxxe/pkcs11/pkcs11_private/C/src/pkcs11Interface.jar";
 	memset(&(instance->vm_args), 0, sizeof(instance->vm_args));
 	instance->vm_args.version = JNI_VERSION_1_2;
 	instance->vm_args.nOptions = 1;
@@ -52,10 +51,21 @@ sing* get_instance()
 		//VM - Error --> cleanup & die gracefully 
 		printf("jvm startup error");
 	}
-	instance->cls = (*(instance->env))->FindClass(instance->env,JAVACLASSNAME); 
+	instance->cls = (*(instance->env))->FindClass(instance->env,"pkcs11Interface");
 	if(instance->cls ==0){
-		printf("Class not found!....");
+		char* buf = malloc(99);
 
+		buf= getcwd(buf, 99);
+
+		printf("Class not found!....%s",buf);
+		return NULL;
+
+	}else{
+		char* buf = malloc(99);
+
+		buf= getcwd(buf, 99);
+
+		printf("Class found... hooorrrrraaaaaayyyyy! %s   ",buf);
 	}
 
 
