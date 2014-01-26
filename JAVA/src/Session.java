@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 
 import proxys.CK_NOTIFY_CALLBACK;
@@ -20,7 +21,8 @@ public class Session {
 	private Slot slot;
 	private long flags;
 	private long handle;
-
+	
+	public SignHelper signHelper;
 
 	public Session(Slot slot,long handle,ACCESS_TYPE atype){
 	//	this.flags = flags;

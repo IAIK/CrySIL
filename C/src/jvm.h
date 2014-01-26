@@ -14,7 +14,7 @@
 
 typedef struct jvm_singleton
 {
-	JavaVMOption options[1];
+	JavaVMOption options[2];
 	JNIEnv *env;
 	JavaVM *jvm;
 	JavaVMInitArgs vm_args;
@@ -41,7 +41,7 @@ sing* get_instance()
 		printf("\n malloc jvm.h failed \n");
 		//out of memory --> die gracefully
 	}
-	instance->options[0].optionString = "-Djava.class.path=/home/faxxe/pkcs11/pkcs11_private/C/src/pkcs11Interface.jar";
+	instance->options[0].optionString = "-Djava.class.path=/home/faxxe/pkcs11/pkcs11_private/C/src/";
 	memset(&(instance->vm_args), 0, sizeof(instance->vm_args));
 	instance->vm_args.version = JNI_VERSION_1_2;
 	instance->vm_args.nOptions = 1;
@@ -51,12 +51,11 @@ sing* get_instance()
 		//VM - Error --> cleanup & die gracefully 
 		printf("jvm startup error");
 	}
-	instance->cls = (*(instance->env))->FindClass(instance->env,"pkcs11Interface");
+	instance->cls = (*(instance->env))->FindClass(instance->env,"pkcs11/JAVApkcs11Interface");
 	if(instance->cls ==0){
 		char* buf = malloc(99);
 
 		buf= getcwd(buf, 99);
-
 		printf("Class not found!....%s",buf);
 		return NULL;
 

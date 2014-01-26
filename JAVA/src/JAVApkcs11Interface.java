@@ -1,7 +1,30 @@
 
+
+
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
+import org.springframework.web.client.RestTemplate;
+
+import objects.PKCS11Object;
+
+
+import at.iaik.skytrust.common.SkyTrustAlgorithm;
+import at.iaik.skytrust.element.skytrustprotocol.SRequest;
+import at.iaik.skytrust.element.skytrustprotocol.SResponse;
+import at.iaik.skytrust.element.skytrustprotocol.header.SkyTrustHeader;
+import at.iaik.skytrust.element.skytrustprotocol.payload.SPayloadResponse;
+import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthResponse;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyIdentifier;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SCryptoParams;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadCryptoOperationRequest;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadWithLoadResponse;
+
+import com.sun.corba.se.spi.protocol.RetryType;
 import com.sun.org.apache.bcel.internal.generic.RET;
 
 import proxys.CK_BYTE_ARRAY;
@@ -17,12 +40,16 @@ import proxys.CK_ULONG_JPTR;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
 import proxys.CK_ATTRIBUTE;
-
+import sun.awt.HKSCS;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
-		    System.loadLibrary("example");
+		    System.load("/usr/lib/pkcs11_java_wrap.so");
 		  }
+	public static String serverLocation="http://skytrust-dev.iaik.tugraz.at/skytrust-server/rest/json";
+
 	private static ResourceManager rm = null;
 	private static ResourceManager getRM() throws PKCS11Error{
 		if(rm == null){
@@ -30,6 +57,8 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		}
 		return rm;
 	}
+	
+    protected static RestTemplate restTemplate;
 	
 	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
 		String appID = "newRandomID";
@@ -80,15 +109,21 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
 	  //if user is auth to skytrust -> Token is present
 		  
-	  Slot slot = getRM().getSlotByID(slotID);
+	  Slot slot;
+	try {
+		slot = getRM().getSlotByID(slotID);
+
 	  long flags = Util.initFlags;
 	  if(slot.isTokenPresent()){
 		  Util.setFlag(flags, CKF_TOKEN_PRESENT);
 	  }
 	  pInfo.setFlags(flags);
 	  pInfo.setManufacturerID("IAIK Skytrust");
-	  pInfo.setSlotDescription(slot.getServerName());
-	  return RETURN_TYPE.OK.swigValue();
+//	  pInfo.setSlotDescription(slot.getServerName()); //faxxe --- auskommentiert... error
+		} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_JPTR pulCount) {
@@ -212,19 +247,163 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_Sign(long hSession, byte[] pData, long ulDataLen, CK_BYTE_ARRAY pSignature, CK_ULONG_JPTR pulSignatureLen) {
-	  return RETURN_TYPE.OK.swigValue();
+	  try {
+		Session session = getRM().getSessionByHandle(hSession);
+		if(session.signHelper==null){
+			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
+		}
+		if(session.signHelper.pData==null){
+			session.signHelper.pData=pData;
+			try {
+				session.getSlot().getServersession().sign(pData, session.signHelper.hkey);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+			}
+		}
+		
+		if(pSignature.getCPtr() == 0L){
+			pulSignatureLen.assign(session.signHelper.cData.length);
+			throw new PKCS11Error(RETURN_TYPE.OK);
+		}else if(pulSignatureLen.value() >= session.signHelper.cData.length){
+			for(int i=0; i<session.signHelper.cData.length; i++){
+				pSignature.setitem(i, session.signHelper.cData[i]);
+			}
+			session.signHelper = null;// signing finished, so let's flush the signhelper
+			throw new PKCS11Error(RETURN_TYPE.OK);
+		}else{
+			throw new PKCS11Error(RETURN_TYPE.BUFFER_TOO_SMALL);
+		}
+		
+	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return e.getCode();
+	}
   }
 
   public static long C_SignInit(long hSession, CK_MECHANISM pMechanism, long hKey) {
+	  try {
+		Session session = getRM().getSessionByHandle(hSession);
+		if(session==null){
+			throw new PKCS11Error(RETURN_TYPE.SESSION_HANDLE_INVALID);
+		}
+		if(session.signHelper==null){
+			session.signHelper = new SignHelper(hSession, pMechanism, hKey);
+		}else{
+			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
+		}
+	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return e.getCode();
+	}
+	  
 	  return RETURN_TYPE.OK.swigValue();
   }
 
+  
+  /**
+ 	 * unwraps (i.e. decrypts) a wrapped key, creating a new private key or secret key object
+ 	 * @param   hSession   			current session's handle
+ 	 * @param	pMechanism 			wrapping mechanism
+ 	 * @param	hUnwrappingKey		the unwrappingKey
+ 	 * @param	pWrappedKey			the wrapped key
+ 	 * @param	ulWrappedKeyLen		length of the wrapped key
+ 	 * @param	pTemplate			template for the new key
+ 	 * @param	ulAttributeCount	number of attributes
+ 	 * @param	phKey				pointer to the key
+ 	 * 
+ 	 */
   public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey) {
+		Session session;
+		try {
+			session = getRM().getSessionByHandle(hSession);
+		ServerSession sSession =  session.getSlot().getServersession();
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	  
+	  
+	  
+	  
 	  return RETURN_TYPE.OK.swigValue();
+	  
   }
 
+  /**
+	 * wraps (i.e., encrypts) a private or secret
+	 * @param   hSession   			current session's handle
+	 * @param	pMechanism 			wrapping mechanism
+	 * @param	hWrappingKey 		handle of the wrapping-key
+	 * @param	hKey 				handle of the key to be wrapped
+	 * @param	pWrappedKey 		buffer for the wrapped key
+	 * @param	pulWrappedKeyLen	pointer to the length of the wrapped key
+	 * 
+	 */
   public static long C_WrapKey(long hSession, CK_MECHANISM pMechanism, long hWrappingKey, long hKey, CK_BYTE_ARRAY pWrappedKey, CK_ULONG_JPTR pulWrappedKeyLen) {
+	  try {
+		Session session = getRM().getSessionByHandle(hSession);
+		
+		
+		ServerSession sSession =  session.getSlot().getServersession();
+		try {
+			sSession.wrapKey(pMechanism, hWrappingKey, hKey);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+		}
+		
+	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return e.getCode();
+	}
+	  
+	  
+	  
+	  
 	  return RETURN_TYPE.OK.swigValue();
   }
+  
+  
+  protected static String doCryptoCommand(SRequest request, String command, String algorithm, String load,String keyId,String keySubId) {
+      
+      SPayloadCryptoOperationRequest payload = new SPayloadCryptoOperationRequest();
+
+      SCryptoParams params = new SCryptoParams();
+
+      SKey keyHandle = new SKeyIdentifier();
+      keyHandle.setId(keyId);
+      keyHandle.setSubId(keySubId);
+      params.setKey(keyHandle);
+      params.setAlgorithm(algorithm);
+      payload.setCryptoParams(params);
+      payload.setCommand(command);
+      payload.setLoad(load);
+      request.setPayload(payload);
+
+//      logJSON(request);
+      //request.getHeader().setSessionId("123");
+      SResponse skyTrustResponse = restTemplate.postForObject(serverLocation,request,SResponse.class);
+//      logJSON(skyTrustResponse);
+
+      SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
+      if (payloadResponse instanceof SPayloadAuthResponse) {
+//          skyTrustResponse = handleAuthentication(skyTrustResponse); //not authenticated yet;
+      }
+
+      if (payloadResponse instanceof SPayloadWithLoadResponse) {
+          SPayloadWithLoadResponse payLoadWithLoadResponse = (SPayloadWithLoadResponse)payloadResponse;
+          return ((SPayloadWithLoadResponse) payloadResponse).getLoad();
+      }
+      return null;
+
+
+  }
+
 
 }
