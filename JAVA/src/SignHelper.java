@@ -1,0 +1,32 @@
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import proxys.CK_MECHANISM;
+
+
+public class SignHelper {
+
+	public final long hSession;
+	public final CK_MECHANISM mechanism;
+	public final long hkey;
+	
+	public byte[] pData;
+	public byte[] cData;
+	
+	
+	public SignHelper(long hSession, CK_MECHANISM pMechanism, long hKey){
+		this.hSession = hSession;
+		this.mechanism = pMechanism;
+		this.hkey=hKey;
+	}
+
+
+	public SKey getKey() {
+		
+		//TODO: key mapping ;)
+		
+		return null;
+	}
+	
+
+	
+	
+}
