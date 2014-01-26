@@ -1,3 +1,4 @@
+
 import gui.Server;
 
 import java.io.Serializable;
@@ -21,6 +22,11 @@ public class Slot{
 	private ArrayList<Session> sessionList = null; 
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
+	
+	
+	public ServerSession getServersession() {
+		return serversession;
+	}
 	//private String pin;
 	
 	public Slot(long slotid, Server.ServerInfo server){

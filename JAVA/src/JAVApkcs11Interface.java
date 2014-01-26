@@ -48,7 +48,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
 		    System.load("/usr/lib/pkcs11_java_wrap.so");
 		  }
-	public static String serverLocation="http://skytrust-dev.iaik.tugraz.at/skytrust-server/rest/json";
 
 	private static ResourceManager rm = null;
 	private static ResourceManager getRM() throws PKCS11Error{
@@ -369,41 +368,5 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
   
-  
-  protected static String doCryptoCommand(SRequest request, String command, String algorithm, String load,String keyId,String keySubId) {
-      
-      SPayloadCryptoOperationRequest payload = new SPayloadCryptoOperationRequest();
-
-      SCryptoParams params = new SCryptoParams();
-
-      SKey keyHandle = new SKeyIdentifier();
-      keyHandle.setId(keyId);
-      keyHandle.setSubId(keySubId);
-      params.setKey(keyHandle);
-      params.setAlgorithm(algorithm);
-      payload.setCryptoParams(params);
-      payload.setCommand(command);
-      payload.setLoad(load);
-      request.setPayload(payload);
-
-//      logJSON(request);
-      //request.getHeader().setSessionId("123");
-      SResponse skyTrustResponse = restTemplate.postForObject(serverLocation,request,SResponse.class);
-//      logJSON(skyTrustResponse);
-
-      SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
-      if (payloadResponse instanceof SPayloadAuthResponse) {
-//          skyTrustResponse = handleAuthentication(skyTrustResponse); //not authenticated yet;
-      }
-
-      if (payloadResponse instanceof SPayloadWithLoadResponse) {
-          SPayloadWithLoadResponse payLoadWithLoadResponse = (SPayloadWithLoadResponse)payloadResponse;
-          return ((SPayloadWithLoadResponse) payloadResponse).getLoad();
-      }
-      return null;
-
-
-  }
-
 
 }

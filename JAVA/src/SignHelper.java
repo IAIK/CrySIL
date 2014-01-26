@@ -18,15 +18,4 @@ public class SignHelper {
 		this.hkey=hKey;
 	}
 
-
-	public SKey getKey() {
-		
-		//TODO: key mapping ;)
-		
-		return null;
-	}
-	
-
-	
-	
 }
