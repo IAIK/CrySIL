@@ -1,19 +1,34 @@
+
 import gui.DataVaultSingleton;
 import gui.Server;
 
+import java.io.IOException;
 import java.util.List;
 
+import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.SRequest;
 import at.iaik.skytrust.element.skytrustprotocol.SResponse;
 import at.iaik.skytrust.element.skytrustprotocol.header.SkyTrustHeader;
+import at.iaik.skytrust.element.skytrustprotocol.payload.SPayloadResponse;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthType;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthRequest;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthResponse;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyIdentifier;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SCryptoParams;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadCryptoOperationRequest;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadWithLoadResponse;
+
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import proxys.CK_MECHANISM;
+import proxys.RETURN_TYPE;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 /*
  * Stellt verbindung zum Server dar ist für kommunikation zuständig
@@ -29,6 +44,8 @@ public class ServerSession {
 	private SAuthInfo credentials;
 	private boolean rememberCredentialsForSession = true;
 	
+	private ObjectStorage keyStorage = new ObjectStorage();
+	
 	public ServerSession(Server.ServerInfo s){
 		server = s;
 	}
@@ -38,15 +55,60 @@ public class ServerSession {
 	public List<SKey> getKeyList(){
 		return null;
 	}
-	public void sign(SKey key){
+	
+	public byte[] sign(byte[] pData, long hKey) throws IOException, PKCS11Error{
+		byte[] cData = null;
+		String b64Data=null;
 		
+		SKey key = (SKey) keyStorage.getObjectById(hKey);
+		
+		if(key == null){
+			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
+		}
+		
+		b64Data = new BASE64Encoder().encode(pData);
+        b64Data = doCryptoCommand("sign", SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_1.getAlgorithmName(), b64Data,key.getId(),key.getSubId()); //FIXME: right algorithm?
+        cData = new BASE64Decoder().decodeBuffer(b64Data);
+	
+		return cData;
 	}
+	
 	public void verify(){
 		
 	}
 	public void encrypt(){
 		
 	}
+	  /**
+		 * wraps (i.e., encrypts) a private or secret
+		 * @param	pMechanism 			wrapping mechanism
+		 * @param	hWrappingKey 		handle of the wrapping-key
+		 * @param	hKey 				handle of the key to be wrapped
+		 * @return	returns a byte-Array containing the wraped key or null in case of fire ;)
+		 */
+	
+	public byte[] wrapKey(CK_MECHANISM pMechanism, long wrappingKey, long hKey) throws IOException{
+		//TODO: do something with the mechanism
+		
+		SKey keyToWrap = (SKey) keyStorage.getObjectById(hKey);
+		SKey wrapKey = (SKey) keyStorage.getObjectById(wrappingKey);
+		
+		String data = new BASE64Encoder().encode(keyToWrap.getRepresentation().getBytes());
+		
+		data = doCryptoCommand("encrypt", SkyTrustAlgorithm.RSAES_RAW.getAlgorithmName(), data, wrapKey.getId(), wrapKey.getSubId());
+		
+		return new BASE64Decoder().decodeBuffer(data);
+		
+	}
+	
+	
+	public byte[] unwrapKey(){
+		
+		return null;
+	}
+	
+	
+	
 	public SResponse handleAuth(SResponse skyTrustResponse){
 		//get possible authType(s)
         SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
@@ -61,7 +123,7 @@ public class ServerSession {
         authRequest.setPayload(authRequestPayload);
         authRequest.getHeader().setCommandId(skyTrustResponse.getHeader().getCommandId());
         //send authRequest and wait for Response
-        skyTrustResponse = restTemplate.postForObject(server,authRequest,SResponse.class);
+        skyTrustResponse = restTemplate.postForObject(server.url,authRequest,SResponse.class);
         //save new (authenticated) SessionID
         sessionID=skyTrustResponse.getHeader().getSessionId();
         return skyTrustResponse;
@@ -74,4 +136,38 @@ public class ServerSession {
         request.setHeader(header);
         return request;
     }
+	
+    protected String doCryptoCommand(String command, String algorithm, String load,String keyId,String keySubId) {
+        SRequest request = createBasicRequest();
+        SPayloadCryptoOperationRequest payload = new SPayloadCryptoOperationRequest();
+
+        SCryptoParams params = new SCryptoParams();
+
+        SKey keyHandle = new SKeyIdentifier();
+        keyHandle.setId(keyId);
+        keyHandle.setSubId(keySubId);
+        params.setKey(keyHandle);
+        params.setAlgorithm(algorithm);
+        payload.setCryptoParams(params);
+        payload.setCommand(command);
+        payload.setLoad(load);
+        request.setPayload(payload);
+
+        SResponse skyTrustResponse = restTemplate.postForObject(server.url,request,SResponse.class);
+
+        SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
+        if (payloadResponse instanceof SPayloadAuthResponse) {
+            skyTrustResponse = handleAuth(skyTrustResponse);
+        }
+
+        if (payloadResponse instanceof SPayloadWithLoadResponse) {
+            SPayloadWithLoadResponse payLoadWithLoadResponse = (SPayloadWithLoadResponse)payloadResponse;
+            return ((SPayloadWithLoadResponse) payloadResponse).getLoad();
+        }
+        return null;
+
+
+    }
+	
+	
 }
