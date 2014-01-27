@@ -1,6 +1,6 @@
 import gui.Client;
 import gui.DataVaultSingleton;
-import gui.NotifyInterface;
+//import gui.NotifyInterface;
 import gui.Server;
 
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ import proxys.RETURN_TYPE;
  * */
 public class ResourceManager {
 
+	private static ResourceManager _instance;
 	private ArrayList<Slot> slotList = new ArrayList<Slot>();;
 	static final public long MAX_SLOT = 1000;
 	private String appID;
@@ -43,11 +44,24 @@ public class ResourceManager {
 		}
 	}
 
+	public static ResourceManager getInstance(){
+		if(_instance==null){
+			
+			try {
+				_instance=new ResourceManager("newRandomID");
+			} catch (PKCS11Error e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return _instance;
+	}
 	
-	public ResourceManager(String appID){
+	private ResourceManager(String appID) throws PKCS11Error {
 		this.appID = appID;
 		DataVaultSingleton.getInstance().registerClient(new DefaultClient(appID,this));
 		updateSlotList();
+
 	}
 	
 	public long newSession(long slotid,Session.ACCESS_TYPE atype) throws PKCS11Error{
@@ -82,6 +96,9 @@ public class ResourceManager {
 	}
 	protected long newSlotID() throws PKCS11Error{
 		long id=1;
+		if(slotList.size()==0){
+			return id;
+		}
 		for(Slot s:slotList){
 			if(s.getID() != id){
 				if(id < MAX_SLOT){

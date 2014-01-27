@@ -24,7 +24,9 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import proxys.CK_ATTRIBUTE;
 import proxys.CK_MECHANISM;
+import proxys.CK_ULONG_JPTR;
 import proxys.RETURN_TYPE;
 
 import sun.misc.BASE64Decoder;
@@ -102,9 +104,19 @@ public class ServerSession {
 	}
 	
 	
-	public byte[] unwrapKey(){
+	public long unwrapKey(CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey){
 		
-		return null;
+		SKey unWrappingKey = (SKey) keyStorage.getObjectById(hUnwrappingKey);
+		
+		
+		String data = new BASE64Encoder().encode(pWrappedKey);
+		
+		data = doCryptoCommand("decrypt", SkyTrustAlgorithm.RSAES_RAW.getAlgorithmName(), data, unWrappingKey.getId(), unWrappingKey.getSubId());
+		
+		SKey key = new SKey();
+		
+		
+		return 0L;
 	}
 	
 	
@@ -168,6 +180,10 @@ public class ServerSession {
 
 
     }
+	public boolean isAutheticated() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 	
 }

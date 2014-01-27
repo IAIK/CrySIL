@@ -115,7 +115,7 @@ public class Slot{
 	 * A Token is Present if the user is authenticated to the Skytrust Server
 	 */
 	public boolean isTokenPresent(){
-		return (server == null)?false:server.isAutheticated();
+		return (serversession == null)?false:serversession.isAutheticated();
 	}
 	public long getID(){
 		return slotID;
@@ -128,6 +128,11 @@ public class Slot{
 	}
 	public Server.ServerInfo getServerInfo(){
 		return serversession.getInfo();
+	}
+
+	public String getServerName() {
+		
+		return "exampleSlot";
 	}
 }
 

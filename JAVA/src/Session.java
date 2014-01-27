@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 
 import proxys.CK_NOTIFY_CALLBACK;
-import proxys.CK_VOID_PTR;
+//import proxys.CK_VOID_PTR;
 import proxys.RETURN_TYPE;
 import proxys.SESSION_STATE;
 
@@ -16,7 +16,7 @@ public class Session {
 	}
 //	private USER_TYPE utype;
 	private ACCESS_TYPE atype;
-	private CK_VOID_PTR pApplication;
+//	private CK_VOID_PTR pApplication; //;alksdjf;alksjf;ladks
 	private CK_NOTIFY_CALLBACK notify_callback;
 	private Slot slot;
 	private long flags;

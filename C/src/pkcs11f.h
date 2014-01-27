@@ -842,4 +842,13 @@ CK_EXTERN _CK_RV CK_FUNC(C_CancelFunction)
 (
   CK_SESSION_HANDLE hSession  /* the session's handle */
 );
+
+#endif
+CK_EXTERN _CK_RV CK_FUNC(C_WaitForSlotEvent)
+#ifdef CK_NEED_ARG_LIST
+(
+  CK_FLAGS flags,
+  CK_SLOT_ID_PTR pSlot,
+  CK_VOID_PTR pReserved
+);
 #endif

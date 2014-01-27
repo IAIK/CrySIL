@@ -28,6 +28,8 @@ public class DataVaultSingleton {
 	}
 	
 	private DataVaultSingleton(){
+		servers = new ArrayList<Server>();
+		clients = new ArrayList<Client>();
 		doStuff();
 	}
 	

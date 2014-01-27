@@ -27,6 +27,7 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPaylo
 import com.sun.corba.se.spi.protocol.RetryType;
 import com.sun.org.apache.bcel.internal.generic.RET;
 
+import proxys.ATTRIBUTE_TYPE;
 import proxys.CK_BYTE_ARRAY;
 import proxys.CK_INFO;
 import proxys.CK_MECHANISM;
@@ -37,38 +38,50 @@ import proxys.CK_SLOT_INFO;
 import proxys.CK_TOKEN_INFO;
 import proxys.CK_ULONG_ARRAY;
 import proxys.CK_ULONG_JPTR;
+import proxys.CK_VERSION;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
 import proxys.CK_ATTRIBUTE;
 import sun.awt.HKSCS;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+import sun.security.action.GetBooleanAction;
 
 public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
 		    System.load("/usr/lib/pkcs11_java_wrap.so");
 		  }
 
-	private static ResourceManager rm = null;
 	private static ResourceManager getRM() throws PKCS11Error{
-		if(rm == null){
+		ResourceManager _instance = ResourceManager.getInstance();
+		if(_instance == null){
 			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
 		}
-		return rm;
+		return _instance;
 	}
 	
     protected static RestTemplate restTemplate;
 	
 	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
-		String appID = "newRandomID";
-		if(rm != null){
-			RETURN_TYPE.FUNCTION_FAILED.swigValue();
-		}
-		
-		rm = new ResourceManager(appID);
+//		String appID = "newRandomID";
+//		if(rm != null){
+//			return RETURN_TYPE.FUNCTION_FAILED.swigValue();
+//		}
+//		
+//		try {
+//			rm = new ResourceManager(appID);
+//		} catch (PKCS11Error e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return e.getCode();
+//		}
 		
 		return RETURN_TYPE.OK.swigValue();
 	}
+	
+
+	
+	
   public static long C_OpenSession(long slotID, long flags, CK_BYTE_ARRAY pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_JPTR phSession) {
 	  /* v0.1 */
 	  //public session erstellen
@@ -107,6 +120,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 
   public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
 	  //if user is auth to skytrust -> Token is present
+	  System.out.println("\n\n bis do her kummta!\n\n");
 		  
 	  Slot slot;
 	try {
@@ -116,9 +130,14 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  if(slot.isTokenPresent()){
 		  Util.setFlag(flags, CKF_TOKEN_PRESENT);
 	  }
+	  System.out.println("flags: "+flags);
 	  pInfo.setFlags(flags);
 	  pInfo.setManufacturerID("IAIK Skytrust");
-//	  pInfo.setSlotDescription(slot.getServerName()); //faxxe --- auskommentiert... error
+	  pInfo.setSlotDescription(slot.getServerName());
+	  pInfo.getFirmwareVersion().setMajor((short) 1); //just some hardcoded numbers
+	  pInfo.getFirmwareVersion().setMinor((short) 0);
+	  pInfo.getHardwareVersion().setMajor((short) 2);
+	  pInfo.getHardwareVersion().setMinor((short) 0);
 		} catch (PKCS11Error e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -128,7 +147,13 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_JPTR pulCount) {
 	  try {
 		ArrayList<Slot> slotlist = null;
+		try{
 		slotlist = getRM().getSlotList();			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
+		}
+		
 		if(tokenPresent == 1) {
 			Iterator<Slot> it = slotlist.iterator();
 			while(it.hasNext()){
@@ -159,6 +184,27 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
+	  System.out.println("\n in: C_GetTokenInfo....."+slotID);
+	  pInfo.setLabel("exampletoken                    ");
+	  pInfo.setManufacturerID("manufacturerid: 0815            ");
+	  pInfo.setModel("skytrust0.1");
+	  pInfo.setUlMaxSessionCount(1);
+	  pInfo.setUlSessionCount(1L);
+	  pInfo.setUlMaxRwSessionCount(1);
+	  pInfo.setUlRwSessionCount(1);
+	  pInfo.setUlMaxPinLen(12);
+	  pInfo.setUlMinPinLen(0);
+	  pInfo.setUlTotalPublicMemory(100L);
+	  pInfo.setUlFreePublicMemory(90L);
+	  pInfo.setUlTotalPrivateMemory(100L);
+	  pInfo.setUlFreePrivateMemory(80L);
+	  pInfo.getHardwareVersion().setMajor((short) 1);
+	  pInfo.getHardwareVersion().setMinor((short) 1);
+	  pInfo.getFirmwareVersion().setMajor((short) 2);
+	  pInfo.getFirmwareVersion().setMinor((short) 3);
+	  pInfo.setFlags(CKF_WRITE_PROTECTED);
+	  
+	  
 	  return RETURN_TYPE.OK.swigValue();
   }
   public static long C_Login(long hSession, long userType, String pPin, long ulPinLen) {
@@ -181,7 +227,47 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
+  private static short[] getByteArray(CK_ATTRIBUTE attribute){
+	  
+			CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
+			short[] a = new short[ (int) attribute.getUlValueLen()];
+			for(int i =0; i< attribute.getUlValueLen(); i++){
+				a[i] =  array.getitem(i);
+			}
+			
+			return a;
+  }
+  
   public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
+	  
+	try {
+	 Session session = getRM().getSessionByHandle(hSession);
+	 ServerSession sSession = session.getSlot().getServersession();
+	 
+	 for(CK_ATTRIBUTE tmp: pTemplate){
+		 tmp.getType();
+		 if(tmp.getType() == ATTRIBUTE_TYPE.CLASS.swigValue()){
+			 short[] array = getByteArray(tmp);
+			 
+			 
+		 }
+		 
+		 
+		 
+	 }
+	 
+	 
+	 
+	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	  
+	  
+	  
+	  
+	  
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -222,6 +308,14 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_GetInfo(CK_INFO pInfo) {
+	  System.out.println("\n java is calling, C_GetINFO");
+	  
+	  pInfo.getCryptokiVersion().setMajor((short) 0x02);
+	  pInfo.getCryptokiVersion().setMinor((short) 0x14);
+	  
+	  pInfo.getLibraryVersion().setMajor((short) 1);
+	  pInfo.getLibraryVersion().setMinor((short) 0);
+	  
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -230,6 +324,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_GetMechanismList(long slotID, CK_ULONG_ARRAY pMechanismList, CK_ULONG_JPTR pulCount) {
+	  pulCount.assign(0L);
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -318,10 +413,15 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
-		ServerSession sSession =  session.getSlot().getServersession();
+			ServerSession sSession =  session.getSlot().getServersession();
+			
+			long hKey = sSession.unwrapKey(pMechanism, hUnwrappingKey, pWrappedKey, ulWrappedKeyLen, pTemplate, ulAttributeCount, phKey);
+			phKey.assign(hKey);
+
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return e.getCode();
 		}
 	  
 	  

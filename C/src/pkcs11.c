@@ -72,7 +72,7 @@ static CK_FUNCTION_LIST pkcs11_functions =  { {2, 20},
  &C_GenerateRandom,
  &C_GetFunctionStatus,
  &C_CancelFunction,
- /*&C_WaitForSlotEvent*/ }; 
+ &C_WaitForSlotEvent }; 
 
 CK_RV C_GetFunctionList(CK_FUNCTION_LIST_PTR_PTR ppFunctionList){fprintf(stderr, "error!"); *ppFunctionList=&pkcs11_functions; return CKR_OK; }
 
@@ -460,6 +460,16 @@ return retVal;
 
 CK_RV C_GetInfo(CK_INFO_PTR pInfo)
 { printf("C: called: C_GetInfo    "); 
+
+//printf("GetInfo");
+//pInfo->cryptokiVersion.major=2;
+//pInfo->cryptokiVersion.minor=0;
+//pInfo->flags=0;
+//pInfo->libraryVersion.major=1;
+//pInfo->libraryVersion.minor=0;
+//return CKR_OK;
+
+
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -471,7 +481,7 @@ if(dings->cls !=0)
 jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_INFO"); //
          jmethodID constructor0 = (*(dings->env))->GetMethodID(dings->env, cls0, "<init>", "(JZ)V");
                                 printf("CK_GetInfo constructor found... woohooo");
-                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pInfo, JNI_FALSE);
+                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pInfo, JNI_TRUE);
 								   if(obj0==NULL){
                                         printf("CK_GetInfo object is null... shit happens");
                                 }else{
@@ -603,7 +613,9 @@ return retVal;
 
 
 CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
-{ printf("C: called: C_GetSlotList    "); 
+{ printf("\n C: called: C_GetSlotList   \n "); 
+
+
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -1123,4 +1135,5 @@ CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDa
 { printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
 { printf("not implemented shit called"); return CKR_OK;}
-
+CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved)
+{ printf("not implemented shit called"); return 0x00000008;}

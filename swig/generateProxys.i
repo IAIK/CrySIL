@@ -33,6 +33,7 @@ typedef struct {
 
 %apply char[] { CK_CHAR_PTR }
 %apply char[] { CK_CHAR[ANY] }
+%apply unsigned long int {CK_ATTRIBUTE_TYPE}
 
 %pointer_class(unsigned long int,CK_ULONG_JPTR)
 
