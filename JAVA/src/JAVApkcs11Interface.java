@@ -1,30 +1,8 @@
 
-
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
-import org.springframework.web.client.RestTemplate;
-
-import objects.PKCS11Object;
-
-
-import at.iaik.skytrust.common.SkyTrustAlgorithm;
-import at.iaik.skytrust.element.skytrustprotocol.SRequest;
-import at.iaik.skytrust.element.skytrustprotocol.SResponse;
-import at.iaik.skytrust.element.skytrustprotocol.header.SkyTrustHeader;
-import at.iaik.skytrust.element.skytrustprotocol.payload.SPayloadResponse;
-import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthResponse;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyIdentifier;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SCryptoParams;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadCryptoOperationRequest;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadWithLoadResponse;
-
-import com.sun.corba.se.spi.protocol.RetryType;
 import com.sun.org.apache.bcel.internal.generic.RET;
 
 import proxys.ATTRIBUTE_TYPE;
@@ -59,8 +37,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		}
 		return _instance;
 	}
-	
-    protected static RestTemplate restTemplate;
 	
 	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
 //		String appID = "newRandomID";
@@ -119,93 +95,80 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
-	  //if user is auth to skytrust -> Token is present
-	  System.out.println("\n\n bis do her kummta!\n\n");
-		  
-	  Slot slot;
-	try {
-		slot = getRM().getSlotByID(slotID);
+      Slot slot = null;
+      try {
+              slot = getRM().getSlotByID(slotID);
+      } catch (PKCS11Error e) {
+              return e.getCode();
+      }
 
-	  long flags = Util.initFlags;
-	  if(slot.isTokenPresent()){
-		  Util.setFlag(flags, CKF_TOKEN_PRESENT);
-	  }
-	  System.out.println("flags: "+flags);
-	  pInfo.setFlags(flags);
-	  pInfo.setManufacturerID("IAIK Skytrust");
-	  pInfo.setSlotDescription(slot.getServerName());
-	  pInfo.getFirmwareVersion().setMajor((short) 1); //just some hardcoded numbers
-	  pInfo.getFirmwareVersion().setMinor((short) 0);
-	  pInfo.getHardwareVersion().setMajor((short) 2);
-	  pInfo.getHardwareVersion().setMinor((short) 0);
-		} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}  return RETURN_TYPE.OK.swigValue();
+      long flags = Util.initFlags;
+      flags = Util.setFlag(flags, CKF_TOKEN_PRESENT);
+      pInfo.setFlags(flags);
+      
+      pInfo.setManufacturerID("IAIK Skytrust"); //32
+      pInfo.setSlotDescription(slot.getServerInfo().getName().substring(0, 30)); //32
+      
+      return RETURN_TYPE.OK.swigValue();
   }
 
+
   public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_JPTR pulCount) {
-	  try {
-		ArrayList<Slot> slotlist = null;
-		try{
-		slotlist = getRM().getSlotList();			
-		}catch(Exception e){
+	  		try {
+			ArrayList<Slot> slotlist = null;
+			slotlist = getRM().getSlotList();			
+
+			int buffersize = (int) pulCount.value();
+			pulCount.assign(slotlist.size());
+
+			if(pSlotList.getCPtr() != 0){
+				if(buffersize < slotlist.size()){
+					return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
+				}else{
+					Iterator<Slot> it = slotlist.iterator();
+					for(int i=0;it.hasNext();i++){
+						pSlotList.setitem(i, it.next().getID());
+					}
+				}
+			}
+		} catch (PKCS11Error e) {
 			e.printStackTrace();
-			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
-		}
-		
-		if(tokenPresent == 1) {
-			Iterator<Slot> it = slotlist.iterator();
-			while(it.hasNext()){
-				if(!it.next().isTokenPresent()){
-					it.remove();
-				}
-			}
-		}
-		int buffersize = (int) pulCount.value();
-		
-		pulCount.assign(slotlist.size());
-		if(pSlotList.getCPtr() != 0){
-			if(buffersize < slotlist.size()){
-				return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
-			}else{
-				pulCount.assign(slotlist.size());
-				Iterator<Slot> it = slotlist.iterator();
-				for(int i=0;it.hasNext();i++){
-					pSlotList.setitem(i, it.next().getID());
-				}
-			}
-		}
-	} catch (PKCS11Error e) {
-		e.printStackTrace();
-		return e.getCode();
-	}  
-	return RETURN_TYPE.OK.swigValue();
+			return e.getCode();
+		}  
+		return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
-	  System.out.println("\n in: C_GetTokenInfo....."+slotID);
-	  pInfo.setLabel("exampletoken                    ");
-	  pInfo.setManufacturerID("manufacturerid: 0815            ");
-	  pInfo.setModel("skytrust0.1");
-	  pInfo.setUlMaxSessionCount(1);
-	  pInfo.setUlSessionCount(1L);
-	  pInfo.setUlMaxRwSessionCount(1);
-	  pInfo.setUlRwSessionCount(1);
-	  pInfo.setUlMaxPinLen(12);
-	  pInfo.setUlMinPinLen(0);
-	  pInfo.setUlTotalPublicMemory(100L);
-	  pInfo.setUlFreePublicMemory(90L);
-	  pInfo.setUlTotalPrivateMemory(100L);
-	  pInfo.setUlFreePrivateMemory(80L);
-	  pInfo.getHardwareVersion().setMajor((short) 1);
-	  pInfo.getHardwareVersion().setMinor((short) 1);
-	  pInfo.getFirmwareVersion().setMajor((short) 2);
-	  pInfo.getFirmwareVersion().setMinor((short) 3);
-	  pInfo.setFlags(CKF_WRITE_PROTECTED);
-	  
-	  
-	  return RETURN_TYPE.OK.swigValue();
+		Slot slot = null;
+		try {
+			slot = getRM().getSlotByID(slotID);
+		} catch (PKCS11Error e) {
+			return e.getCode();
+		}
+
+		pInfo.setLabel(slot.getServerInfo().getName());//32 char
+		pInfo.setManufacturerID("IAIK");
+		pInfo.setModel("");//32
+
+		long flags = Util.initFlags;
+		flags = Util.setFlag(flags,CKF_WRITE_PROTECTED);
+		flags = Util.setFlag(flags,CKF_PROTECTED_AUTHENTICATION_PATH);
+		pInfo.setFlags(flags);
+
+		pInfo.setUlRwSessionCount(Long.MAX_VALUE);
+		pInfo.setUlSessionCount(Long.MAX_VALUE);
+		pInfo.setUlMaxSessionCount(Long.MAX_VALUE);
+		pInfo.setUlMaxRwSessionCount(Long.MAX_VALUE);
+
+		pInfo.setUlFreePrivateMemory(0);
+		pInfo.setUlFreePublicMemory(0);
+		pInfo.setUlTotalPrivateMemory(0);
+		pInfo.setUlTotalPublicMemory(0);
+
+		pInfo.setUlMaxPinLen(0);
+		pInfo.setUlMinPinLen(0);
+
+		return RETURN_TYPE.OK.swigValue();
   }
   public static long C_Login(long hSession, long userType, String pPin, long ulPinLen) {
 	  return RETURN_TYPE.OK.swigValue();
@@ -216,11 +179,21 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_CloseSession(long hSession) {
-	  return RETURN_TYPE.OK.swigValue();
+		try {
+			getRM().delSession(hSession);
+		} catch (PKCS11Error e) {
+			return e.getCode();
+		}
+		return RETURN_TYPE.OK.swigValue();
   }
   
   public static long C_CloseAllSessions(long slotID) {
-	  return RETURN_TYPE.OK.swigValue();
+		try {
+			getRM().delAllSessionsToSlot(slotID);
+		} catch (PKCS11Error e) {
+			return e.getCode();
+		}
+		return RETURN_TYPE.OK.swigValue();	
   }
 
   public static long C_SetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[]  pTemplate, long ulCount) {

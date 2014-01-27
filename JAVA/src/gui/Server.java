@@ -9,12 +9,16 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 
 
 public class Server implements Serializable{
-	public class ServerInfo{
-		public String url;
-	}
+
 	private ServerInfo info;
 	private SAuthInfo credentials = null;
 	
+	public class ServerInfo{
+		public String url;
+		public String getName(){
+			return "serverNameFromserverInfo";
+		}
+	}
 	public Server(String url){
 		info = new ServerInfo();
 		info.url = url;

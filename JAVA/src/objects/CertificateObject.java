@@ -3,6 +3,8 @@ package objects;
 import proxys.CERT_TYPE;
 import proxys.CK_DATE;
 
+
+
 public class CertificateObject extends StorageObject {
 	private CERT_TYPE CKA_CERTIFICATE_TYPE;
 	private long CKA_CERTIFICATE_CATEGORY;
