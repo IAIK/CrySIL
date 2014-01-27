@@ -1,6 +1,5 @@
 import gui.Client;
 import gui.DataVaultSingleton;
-import gui.NotifyInterface;
 import gui.Server;
 
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class ResourceManager {
 	}
 
 	
-	public ResourceManager(String appID){
+	public ResourceManager(String appID) throws PKCS11Error{
 		this.appID = appID;
 		DataVaultSingleton.getInstance().registerClient(new DefaultClient(appID,this));
 		updateSlotList();
@@ -88,10 +87,11 @@ public class ResourceManager {
 					return id;
 				}
 			}
-			id++;
+			id = id+1;
 		}
 		throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
 	}
+
 	public void delSlot(long slotid){
 		Iterator<Slot> it = slotList.iterator();
 		for(Slot s = null;it.hasNext();s = it.next()){

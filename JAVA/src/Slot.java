@@ -105,12 +105,7 @@ public class Slot{
 	public void logout(){
 		utype = Session.USER_TYPE.PUBLIC;
 	}
-	/**
-	 * A Token is Present if the user is authenticated to the Skytrust Server
-	 */
-	public boolean isTokenPresent(){
-		return (server == null)?false:server.isAutheticated();
-	}
+
 	public long getID(){
 		return slotID;
 	}

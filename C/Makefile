@@ -11,7 +11,7 @@ SRCDIR = src
 SHAREDFLAGS = -shared -fPIC -g 
 
 NAME = skytrustpkcs11
-WRAPNAME = $(NAME)_wrapper
+WRAPNAME = pkcs11_java_wrap
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir))

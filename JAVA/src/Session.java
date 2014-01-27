@@ -15,12 +15,11 @@ public class Session {
 	}
 //	private USER_TYPE utype;
 	private ACCESS_TYPE atype;
-	private CK_VOID_PTR pApplication;
+	private byte[] pApplication;
 	private CK_NOTIFY_CALLBACK notify_callback;
 	private Slot slot;
 	private long flags;
 	private long handle;
-
 
 	public Session(Slot slot,long handle,ACCESS_TYPE atype){
 	//	this.flags = flags;
