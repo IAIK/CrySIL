@@ -20,7 +20,6 @@ import proxys.CK_VERSION;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
 import proxys.CK_ATTRIBUTE;
-import sun.awt.HKSCS;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 import sun.security.action.GetBooleanAction;

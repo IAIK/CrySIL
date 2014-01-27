@@ -41,9 +41,11 @@ sing* get_instance()
 		printf("\n malloc jvm.h failed \n");
 		//out of memory --> die gracefully
 	}
-	instance->options[0].optionString = "-Djava.class.path=/home/faxxe/pkcs11/pkcs11_private/C/src/";
-	memset(&(instance->vm_args), 0, sizeof(instance->vm_args));
-	instance->vm_args.version = JNI_VERSION_1_2;
+	instance->options[0].optionString = "-Djava.class.path=../../lib/PKCS11.jar";
+
+//	memset(&(instance->vm_args), 0, sizeof(instance->vm_args));
+	JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
+	instance->vm_args.version = JNI_VERSION_1_4;
 	instance->vm_args.nOptions = 1;
 	instance->vm_args.options = instance->options;
 	instance->status = JNI_CreateJavaVM(&instance->jvm, (void**)&(instance->env), &(instance->vm_args));

@@ -7,6 +7,7 @@
     <property name="java.build.dir"   value="JAVA/build"/>
     <property name="java.classes.dir" value="${java.build.dir}/classes"/>
     <property name="java.exec.dir"     value="${java.build.dir}/jar"/>
+    <property name="java.jar.dir"     value="lib/"/>
 
 	<property name="c.dir"     value="C"/>
 	<property name="c.src.dir"     value="C/src"/>
