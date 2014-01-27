@@ -14,6 +14,7 @@ clean: JAVA-clean, C-clean, SWIG-clean
 skytrust
 
 maven
+
 musste java version händisch auf 1.7 setzen 
 in skytrust-element-java/pom.xml
     <build>
@@ -33,3 +34,10 @@ in skytrust-element-java/pom.xml
 packete: (über apt)
  libjackson-json-java
  libspring-web-java
+ libspring-core-java
+ iaikjce
+ 
+ compile mit 
+ 		mvn compile -pl common -am
+ 		mvn compile -pl core -am
+ 		falls von maven aufgefordert iaikjce händisch installieren
