@@ -19,7 +19,18 @@
     <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
 	<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
     <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
- 
+     <property name="debuglevel" value="source,lines,vars"/>
+     <path id="skytrust.classpath">
+     		<pathelement location="skytrust-element-java/common/target/classes/"/>
+        <pathelement location="skytrust-element-java/core/target/classes/"/>
+        <pathelement location="/usr/share/java/spring3-web.jar"/>
+        <pathelement location="/usr/share/java/spring3-core.jar"/>
+        <pathelement location="/usr/share/java/jackson-core.jar"/>
+        <pathelement location="/usr/share/java/jackson-mapper.jar"/>
+        <pathelement location="/usr/share/java/jackson-jaxrs.jar"/>
+        <pathelement location="/usr/share/java/jackson-smile.jar"/>
+        <pathelement location="/usr/share/java/jackson-xc.jar"/>
+    </path>
 	
     <target name="init" depends="clean,swig_preprocess,swig"/>
     	
@@ -48,10 +59,13 @@
         <arg line="-java -package proxys -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
       </exec>
     </target>
-<!-- COMPILE -->    
+<!-- COMPILE -->   
+    
     <target name="JAVA-compile">
         <mkdir dir="${java.classes.dir}"/>
-        <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
+        <javac srcdir="${java.src.dir}" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
+            <classpath refid="skytrust.classpath"/>
+        </javac>
     </target>
     <target name="genPkcs11">
         <exec osfamily="Unix" failonerror="true" executable="java" searchpath="true">

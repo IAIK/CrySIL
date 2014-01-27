@@ -27,7 +27,7 @@ import sun.security.action.GetBooleanAction;
 
 public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
-		    System.load("/usr/lib/pkcs11_java_wrap.so");
+		    System.load("/usr/lib/libpkcs11_java_wrap.so");
 		  }
 
 	private static ResourceManager getRM() throws PKCS11Error{

@@ -22,6 +22,7 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPaylo
 
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import proxys.CK_ATTRIBUTE;
@@ -135,7 +136,11 @@ public class ServerSession {
         authRequest.setPayload(authRequestPayload);
         authRequest.getHeader().setCommandId(skyTrustResponse.getHeader().getCommandId());
         //send authRequest and wait for Response
-        skyTrustResponse = restTemplate.postForObject(server.url,authRequest,SResponse.class);
+        try{
+        	skyTrustResponse = restTemplate.postForObject(server.url,authRequest,SResponse.class);
+        }catch(RestClientException e){
+        	return null;
+        }
         //save new (authenticated) SessionID
         sessionID=skyTrustResponse.getHeader().getSessionId();
         return skyTrustResponse;

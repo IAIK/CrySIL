@@ -34,7 +34,7 @@ public class DataVaultSingleton {
 	}
 	
 	public ArrayList<ServerInfo> getServerInfoList(){
-		ArrayList<Server.ServerInfo> res = new ArrayList<Server.ServerInfo>();
+		ArrayList<Server.ServerInfo> res = new ArrayList<ServerInfo>();
 		for(Server s:servers){
 			res.add(s.getInfo());
 		} 
@@ -59,7 +59,7 @@ public class DataVaultSingleton {
 	private void doStuff(){
 		Properties configFile = new Properties();
 	    try {
-			configFile.load(new FileInputStream("/home/faxxe/pkcs11/pkcs11_private/my_config.properties"));
+			configFile.load(new FileInputStream("my_config.properties"));
 			SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
 			Server ser = new Server(configFile.getProperty("url"));
 			cre.setUserName(configFile.getProperty("username"));
