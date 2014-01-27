@@ -31,26 +31,15 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  }
 
 	private static ResourceManager getRM() throws PKCS11Error{
-		ResourceManager _instance = ResourceManager.getInstance();
+		ResourceManager _instance = ResourceManager.getInstance(appID);
 		if(_instance == null){
 			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
 		}
 		return _instance;
 	}
-	
+	private static String appID;
 	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
-//		String appID = "newRandomID";
-//		if(rm != null){
-//			return RETURN_TYPE.FUNCTION_FAILED.swigValue();
-//		}
-//		
-//		try {
-//			rm = new ResourceManager(appID);
-//		} catch (PKCS11Error e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			return e.getCode();
-//		}
+		appID = "newRandomID";
 		
 		return RETURN_TYPE.OK.swigValue();
 	}

@@ -43,11 +43,11 @@ public class ResourceManager {
 		}
 	}
 
-	public static ResourceManager getInstance(){
+	public static ResourceManager getInstance(String appID){
 		if(_instance==null){
 			
 			try {
-				_instance=new ResourceManager("newRandomID");
+				_instance=new ResourceManager(appID);
 			} catch (PKCS11Error e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
