@@ -94,7 +94,9 @@
 			    JARNAME='{c.absolute.lib.dir}/${ant.project.name}.jar'
            all"/>
         </exec>
-    
+   <symlink link="${c.absolute.lib.dir}/lib${c.wrapperlib.name}.so" resource="${c.build.dir}/lib${c.wrapperlib.name}.so"/>
+   <symlink link="${c.absolute.lib.dir}/lib${c.lib.name}.so" resource="${c.build.dir}/lib${c.lib.name}.so"/>
+   
     </target>
         <target name="C-test">
     	<mkdir dir="${c.build.dir}"/>
