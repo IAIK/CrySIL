@@ -2,25 +2,29 @@
 
     <property name="name" value="PKCS11"/>
 	
-	<property name="java.dir"     value="JAVA"/>
+		<property name="java.dir"     value="JAVA"/>
     <property name="java.src.dir"     value="JAVA/src"/>
     <property name="java.build.dir"   value="JAVA/build"/>
     <property name="java.classes.dir" value="${java.build.dir}/classes"/>
-    <property name="java.exec.dir"     value="${java.build.dir}/jar"/>
-    <property name="java.jar.dir"     value="lib/"/>
 
-	<property name="c.dir"     value="C"/>
-	<property name="c.src.dir"     value="C/src"/>
-    <property name="c.build.dir"   value="C/build"/>
-    <property name="c.classes.dir" value="${c.build.dir}/classes"/>
+		<property name="c.dir"     value="C"/>
+		<property name="c.src.dir"     value="C/src"/>
+    <property name="c.build.dir"   location="C/build"/>
+    <property name="c.lib.name"   value="skytrustpkcs11"/>
+    <property name="c.wrapperlib.name"   value="pkcs11_java_wrap"/>
     <property name="c.exec.dir"     value="${c.build.dir}"/>
-    <property name="c.jni.dir"     value="include/java/"/>
-    <property name="c.jvm.dir"     value="lib/"/>
-	<property name="swig.dir"     value="swig"/>
+
+		<property name="c.absolute.lib.dir" location="lib/"/>
+		<property name="c.absolute.include.dir" location="include/"/>
+    <property name="c.absolute.include.java.dir" location="include/java/"/>
+
+		<property name="swig.dir"     value="swig"/>
     <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
-	<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
+		<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
     <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
-     <property name="debuglevel" value="source,lines,vars"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+     
+     
      <path id="skytrust.classpath">
      		<pathelement location="skytrust-element-java/common/target/classes/"/>
         <pathelement location="skytrust-element-java/core/target/classes/"/>
@@ -41,7 +45,12 @@
     <target name="C-clean" >
         <delete dir="${c.build.dir}"/>
     		<exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} clean"/>
+          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.absolute.lib.dir} 
+          INCLUDE_DIRS='${c.absolute.include.dir} ${c.absolute.include.java.dir}'
+          NAME=${c.lib.name}
+			    WRAPNAME=${c.wrapperlib.name}
+			    BINDIR=${c.build.dir}
+           clean"/>
         </exec>
     </target>
     <target name="SWIG-clean" >
@@ -61,7 +70,6 @@
       </exec>
     </target>
 <!-- COMPILE -->   
-    
     <target name="JAVA-compile">
         <mkdir dir="${java.classes.dir}"/>
         <javac srcdir="${java.src.dir}" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
@@ -78,16 +86,32 @@
     <target name="C-compile">
     	<mkdir dir="${c.build.dir}"/>
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} all"/>
+          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.absolute.lib.dir} 
+          INCLUDE_DIRS='${c.absolute.include.dir} ${c.absolute.include.java.dir}'
+          NAME=${c.lib.name}
+			    WRAPNAME=${c.wrapperlib.name}
+			    BINDIR=${c.build.dir}
+			    JARNAME='{c.absolute.lib.dir}/${ant.project.name}.jar'
+           all"/>
         </exec>
-        <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
+    
+    </target>
+        <target name="C-test">
+    	<mkdir dir="${c.build.dir}"/>
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.absolute.lib.dir} 
+          INCLUDE_DIRS='${c.absolute.include.dir} ${c.absolute.include.java.dir}'
+          NAME=${c.lib.name}
+			    WRAPNAME=${c.wrapperlib.name}
+			    BINDIR=${c.build.dir}
+           test"/>
         </exec>
     </target>
     <target name="compile" depends="C-compile,JAVA-compile"/>
 <!-- JAR -->   
     <target name="jar" depends="JAVA-compile">
-        <mkdir dir="${java.jar.dir}"/>
-        <jar destfile="${java.jar.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
+        <mkdir dir="${c.absolute.lib.dir}"/>
+        <jar destfile="${c.absolute.lib.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
     </target>
 
     <target name="clean-build" depends="clean,jar"/>

@@ -6,9 +6,9 @@
 #ifndef __JVM_H
 #define __JVM_H
 
-
-
-
+#ifndef SYKTRUSTJAR
+#define SYKTRUSTJAR "/no path defined in gcc commandline/"
+#endif
 //struct jvm_singleton;
 
 
@@ -27,6 +27,7 @@ typedef struct jvm_singleton
 
 sing* get_instance()
 {
+
     static struct jvm_singleton* instance = NULL;
     //char my_cwd[1024];
     //getcwd(my_cwd, 1024);
@@ -35,13 +36,13 @@ sing* get_instance()
     if (instance == NULL)
     {
 	printf("\ncreating new singleton... starting up vm\n");
-
+	printf("-Djava.class.path="SYKTRUSTJAR" \n");
 	instance =(sing*) malloc(sizeof(sing));
 	if(instance==NULL){
 		printf("\n malloc jvm.h failed \n");
 		//out of memory --> die gracefully
 	}
-	instance->options[0].optionString = "-Djava.class.path=../../lib/PKCS11.jar";
+	instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
 
 //	memset(&(instance->vm_args), 0, sizeof(instance->vm_args));
 	JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
@@ -58,7 +59,8 @@ sing* get_instance()
 		char* buf = malloc(99);
 
 		buf= getcwd(buf, 99);
-		printf("Class not found!....%s",buf);
+		printf("Class not found!....%s\n",buf);
+
 		return NULL;
 
 	}else{

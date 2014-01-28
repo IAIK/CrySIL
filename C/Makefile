@@ -1,21 +1,25 @@
 CC = gcc
 WRAPSOURCES = pkcs11_java_wrap.c
 SOURCES = pkcs11.c
-INCLUDE_DIRS := ../include/java/
-LIBRARY_DIRS := ../lib/
 LIBRARIES := jvm
 
 CFLAGS = -Wall 
-BINDIR = build
 SRCDIR = src
 SHAREDFLAGS = -shared -fPIC -g 
 
+#following variables get overwritten through commandline from ant
+BINDIR = build
+INCLUDE_DIRS := ../include/java/ ../include/
+LIBRARY_DIRS := ../lib/
 NAME = skytrustpkcs11
 WRAPNAME = pkcs11_java_wrap
-
+JAR = /home/cloud/uni/ACN/pkcs11_private/lib/PKCS11.jar
+#end
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(LIBRARIES),-l$(library))
+
+CFLAGS += -DSYKTRUSTJAR=\"$(JAR)\"
 
 pkcs11: $(SRCDIR)/$(SOURCES) pkcs11wrapper
 				$(CC) $(CFLAGS) $(SHAREDFLAGS) $(SRCDIR)/$(SOURCES) -o $(BINDIR)/lib$(NAME).so $(LDFLAGS)
