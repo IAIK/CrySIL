@@ -97,6 +97,9 @@
      <jar destfile="${c.lib.dir}/${ant.project.name}.jar">
 				<fileset dir="${java.classes.dir}"/>
 				<fileset dir="skytrust-element-java/common/target/classes/"/>
+	<zipgroupfileset file="/usr/share/java/spring3-web.jar"/>
+	<zipgroupfileset file="/usr/share/java/spring3-core.jar"/>
+	<zipgroupfileset file="/usr/share/java/jackson-core.jar"/>
         <fileset dir="skytrust-element-java/core/target/classes/"/>
      </jar>
     </target>
