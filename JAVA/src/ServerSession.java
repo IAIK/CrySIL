@@ -28,7 +28,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.AttributeType;
 
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CERT_TYPE;
@@ -149,7 +148,8 @@ public class ServerSession {
 	
 	
 	public SResponse handleAuth(SResponse skyTrustResponse){
-		//get possible authType(s) SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
+		//get possible authType(s) 
+		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
         //ask User for Credentials
         SAuthInfo credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);

@@ -39,7 +39,6 @@
         <delete dir="${java.build.dir}"/>
     </target>
     <target name="C-clean" >
-        <delete dir="${c.build.dir}"/>
     		<exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
           <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
           INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
@@ -95,7 +94,11 @@
     <target name="compile" depends="C-compile,JAVA-compile"/>
 <!-- JAR -->   
     <target name="jar" depends="JAVA-compile">
-        <jar destfile="${c.lib.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
+     <jar destfile="${c.lib.dir}/${ant.project.name}.jar">
+				<fileset dir="${java.classes.dir}"/>
+				<fileset dir="skytrust-element-java/common/target/classes/"/>
+        <fileset dir="skytrust-element-java/core/target/classes/"/>
+     </jar>
     </target>
 
     <target name="clean-build" depends="clean,jar"/>
