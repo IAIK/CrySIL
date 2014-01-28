@@ -80,10 +80,7 @@
     </target>
     <target name="C-compile">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
-          INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
-          NAME=${c.lib.name}
-			    WRAPNAME=${c.wrapperlib.name}
+          <arg line="-C ${c.dir} 
 			    JARNAME='{c.lib.dir}/${ant.project.name}.jar'
            all"/>
         </exec>
@@ -91,10 +88,7 @@
     </target>
         <target name="C-test">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
-          INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
-          NAME=${c.lib.name}
-			    WRAPNAME=${c.wrapperlib.name}
+          <arg line="-C ${c.dir} 
            test"/>
         </exec>
     </target>

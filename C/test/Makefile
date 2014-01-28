@@ -9,8 +9,8 @@ TESTOBJS := ${TESTSOURCES:.cpp=.o}
 TEST_LIBRARIES := gtest pthread skytrustpkcs11
 
 #following variables get overwritten through commandline from ant
-INCLUDE_DIRS := ../../include/java/ ../../include/
-LIBRARY_DIRS := ../../lib/
+#INCLUDE_DIRS := ../../include/java/ ../../include/
+#LIBRARY_DIRS := ../../lib/
 #
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
