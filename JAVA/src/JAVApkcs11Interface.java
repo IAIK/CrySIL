@@ -43,7 +43,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	
 	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
 		appID = "newRandomID";
-		
 		return RETURN_TYPE.OK.swigValue();
 	}
 	
@@ -242,33 +241,23 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
 	  
 	try {
-	 Session session = getRM().getSessionByHandle(hSession);
-	 ServerSession sSession = session.getSlot().getServersession();
+		Session session = getRM().getSessionByHandle(hSession);
+		ServerSession Session = session.getSlot().getServersession();
 	 
 	 for(CK_ATTRIBUTE tmp: pTemplate){
 		 tmp.getType();
 		 if(tmp.getType() == ATTRIBUTE_TYPE.CLASS.swigValue()){
 //			 short[] array = getByteArray(tmp);
-			 
-			 
+		 
 		 }
-		 
-		 
-		 
+	 
 	 }
-	 
-	 
-	 
+
 	} catch (PKCS11Error e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	 
-	  
-	  
-	  
-	  
-	  
+
 	  return RETURN_TYPE.OK.swigValue();
   }
 

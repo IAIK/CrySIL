@@ -27,6 +27,12 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SCrypt
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadCryptoOperationRequest;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadWithLoadResponse;
 
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CERT_TYPE;
@@ -147,6 +153,10 @@ public class ServerSession {
 	
 	
 	public SResponse handleAuth(SResponse skyTrustResponse){
+<<<<<<< HEAD
+=======
+		//get possible authType(s) 
+>>>>>>> c18617568b126e932131692e614ec5be46e8ef5a
 		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
         //ask User for Credentials

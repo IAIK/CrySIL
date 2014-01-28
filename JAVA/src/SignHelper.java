@@ -1,4 +1,3 @@
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import proxys.CK_MECHANISM;
 
 
