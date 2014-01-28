@@ -24,6 +24,7 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPaylo
 
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
@@ -144,29 +145,30 @@ public class ServerSession {
 
 		return 0L;
 	}
-
-	public SResponse handleAuth(SResponse skyTrustResponse) {
-		// get possible authType(s)
-		SPayloadAuthResponse authResponse = (SPayloadAuthResponse) skyTrustResponse
-				.getPayload();
-		SAuthType authType = authResponse.getAuthType();
-		// ask User for Credentials
-		SAuthInfo credentials = DataVaultSingleton.getInstance()
-				.askForAuthInfo(authType, server);
-		// build authRequest
-		SRequest authRequest = createBasicRequest();
-		SPayloadAuthRequest authRequestPayload = new SPayloadAuthRequest();
-		authRequestPayload.setAuthInfo(credentials);
-		authRequestPayload.setCommand("authenticate");
-		authRequest.setPayload(authRequestPayload);
-		authRequest.getHeader().setCommandId(
-				skyTrustResponse.getHeader().getCommandId());
-		// send authRequest and wait for Response
-		skyTrustResponse = restTemplate.postForObject(server.url, authRequest,
-				SResponse.class);
-		// save new (authenticated) SessionID
-		sessionID = skyTrustResponse.getHeader().getSessionId();
-		return skyTrustResponse;
+	
+	
+	
+	public SResponse handleAuth(SResponse skyTrustResponse){
+		//get possible authType(s) SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
+        SAuthType authType = authResponse.getAuthType();
+        //ask User for Credentials
+        SAuthInfo credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);
+        //build authRequest
+        SRequest authRequest = createBasicRequest();
+        SPayloadAuthRequest authRequestPayload = new SPayloadAuthRequest();
+        authRequestPayload.setAuthInfo(credentials);
+        authRequestPayload.setCommand("authenticate");
+        authRequest.setPayload(authRequestPayload);
+        authRequest.getHeader().setCommandId(skyTrustResponse.getHeader().getCommandId());
+        //send authRequest and wait for Response
+        try{
+        	skyTrustResponse = restTemplate.postForObject(server.url,authRequest,SResponse.class);
+        }catch(RestClientException e){
+        	return null;
+        }
+        //save new (authenticated) SessionID
+        sessionID=skyTrustResponse.getHeader().getSessionId();
+        return skyTrustResponse;
 	}
 
 	private SRequest createBasicRequest() {

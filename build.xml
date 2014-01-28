@@ -2,24 +2,36 @@
 
     <property name="name" value="PKCS11"/>
 	
-	<property name="java.dir"     value="JAVA"/>
+		<property name="java.dir"     value="JAVA"/>
     <property name="java.src.dir"     value="JAVA/src"/>
     <property name="java.build.dir"   value="JAVA/build"/>
     <property name="java.classes.dir" value="${java.build.dir}/classes"/>
-    <property name="java.exec.dir"     value="${java.build.dir}/jar"/>
 
-	<property name="c.dir"     value="C"/>
-	<property name="c.src.dir"     value="C/src"/>
-    <property name="c.build.dir"   value="C/build"/>
-    <property name="c.classes.dir" value="${c.build.dir}/classes"/>
+		<property name="c.dir"     value="C"/>
+		<property name="c.src.dir"     value="C/src"/>
+    <property name="c.build.dir"   location="C/build"/>
+    <property name="c.lib.name"   value="skytrustpkcs11"/>
+    <property name="c.wrapperlib.name"   value="pkcs11_java_wrap"/>
     <property name="c.exec.dir"     value="${c.build.dir}"/>
-    <property name="c.jni.dir"     value="include/java/"/>
-    <property name="c.jvm.dir"     value="lib/"/>
-	<property name="swig.dir"     value="swig"/>
+
+		<property name="c.lib.dir" location="lib/"/>
+		<property name="c.include.dir" location="include/"/>
+    <property name="c.include.java.dir" location="include/java/"/>
+
+		<property name="swig.dir"     value="swig"/>
     <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
-	<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
+		<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
     <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
- 
+    <property name="debuglevel" value="source,lines,vars"/>
+     
+     
+     <path id="skytrust.classpath">
+     		<pathelement location="skytrust-element-java/common/target/classes/"/>
+        <pathelement location="skytrust-element-java/core/target/classes/"/>
+        <pathelement location="/usr/share/java/spring3-web.jar"/>
+        <pathelement location="/usr/share/java/spring3-core.jar"/>
+        <pathelement location="/usr/share/java/jackson-core.jar"/>
+    </path>
 	
     <target name="init" depends="clean,swig_preprocess,swig"/>
     	
@@ -29,7 +41,11 @@
     <target name="C-clean" >
         <delete dir="${c.build.dir}"/>
     		<exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} clean"/>
+          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
+          INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
+          NAME=${c.lib.name}
+			    WRAPNAME=${c.wrapperlib.name}
+           clean"/>
         </exec>
     </target>
     <target name="SWIG-clean" >
@@ -48,10 +64,12 @@
         <arg line="-java -package proxys -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
       </exec>
     </target>
-<!-- COMPILE -->    
+<!-- COMPILE -->   
     <target name="JAVA-compile">
         <mkdir dir="${java.classes.dir}"/>
-        <javac srcdir="${java.src.dir}" destdir="${java.classes.dir}"/>
+        <javac srcdir="${java.src.dir}" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
+            <classpath refid="skytrust.classpath"/>
+        </javac>
     </target>
     <target name="genPkcs11">
         <exec osfamily="Unix" failonerror="true" executable="java" searchpath="true">
@@ -61,18 +79,23 @@
         </exec>
     </target>
     <target name="C-compile">
-    	<mkdir dir="${c.build.dir}"/>
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} all"/>
+          <arg line="-C ${c.dir} 
+			    JARNAME='{c.lib.dir}/${ant.project.name}.jar'
+           all"/>
         </exec>
-        <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
+
+    </target>
+        <target name="C-test">
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.dir} 
+           test"/>
         </exec>
     </target>
     <target name="compile" depends="C-compile,JAVA-compile"/>
 <!-- JAR -->   
     <target name="jar" depends="JAVA-compile">
-        <mkdir dir="${java.jar.dir}"/>
-        <jar destfile="${java.jar.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
+        <jar destfile="${c.lib.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
     </target>
 
     <target name="clean-build" depends="clean,jar"/>

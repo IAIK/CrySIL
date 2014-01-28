@@ -23,15 +23,13 @@ import proxys.RETURN_TYPE;
 import proxys.SESSION_STATE;
 import proxys.pkcs11Constants;
 import proxys.CK_ATTRIBUTE;
-import sun.awt.HKSCS;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 import sun.security.action.GetBooleanAction;
 
 public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
-			System.out.println("static shit happens...");
-		    System.load("/usr/lib/pkcs11_java_wrap.so");
+		    System.load("/usr/lib/libpkcs11_java_wrap.so");
 		  }
 
 	private static ResourceManager getRM() throws PKCS11Error{
@@ -42,6 +40,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		return _instance;
 	}
 	private static String appID;
+	
 	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
 		appID = "newRandomID";
 		
