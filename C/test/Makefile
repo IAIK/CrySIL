@@ -27,6 +27,7 @@ test: $(TESTOBJS)
 testclean:
 	rm -f $(TESTOBJS)
 	rm -f $(TESTNAME)
+	rm -f $(TESTDIR)/hs_err_pid*.log
 
 run: test
 	$(TESTNAME)
