@@ -153,10 +153,6 @@ public class ServerSession {
 	
 	
 	public SResponse handleAuth(SResponse skyTrustResponse){
-<<<<<<< HEAD
-=======
-		//get possible authType(s) 
->>>>>>> c18617568b126e932131692e614ec5be46e8ef5a
 		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
         //ask User for Credentials
