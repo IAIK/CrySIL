@@ -14,9 +14,9 @@
     <property name="c.wrapperlib.name"   value="pkcs11_java_wrap"/>
     <property name="c.exec.dir"     value="${c.build.dir}"/>
 
-		<property name="c.absolute.lib.dir" location="lib/"/>
-		<property name="c.absolute.include.dir" location="include/"/>
-    <property name="c.absolute.include.java.dir" location="include/java/"/>
+		<property name="c.lib.dir" location="lib/"/>
+		<property name="c.include.dir" location="include/"/>
+    <property name="c.include.java.dir" location="include/java/"/>
 
 		<property name="swig.dir"     value="swig"/>
     <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
@@ -31,10 +31,6 @@
         <pathelement location="/usr/share/java/spring3-web.jar"/>
         <pathelement location="/usr/share/java/spring3-core.jar"/>
         <pathelement location="/usr/share/java/jackson-core.jar"/>
-        <pathelement location="/usr/share/java/jackson-mapper.jar"/>
-        <pathelement location="/usr/share/java/jackson-jaxrs.jar"/>
-        <pathelement location="/usr/share/java/jackson-smile.jar"/>
-        <pathelement location="/usr/share/java/jackson-xc.jar"/>
     </path>
 	
     <target name="init" depends="clean,swig_preprocess,swig"/>
@@ -45,11 +41,10 @@
     <target name="C-clean" >
         <delete dir="${c.build.dir}"/>
     		<exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.absolute.lib.dir} 
-          INCLUDE_DIRS='${c.absolute.include.dir} ${c.absolute.include.java.dir}'
+          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
+          INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
           NAME=${c.lib.name}
 			    WRAPNAME=${c.wrapperlib.name}
-			    BINDIR=${c.build.dir}
            clean"/>
         </exec>
     </target>
@@ -84,36 +79,29 @@
         </exec>
     </target>
     <target name="C-compile">
-    	<mkdir dir="${c.build.dir}"/>
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.absolute.lib.dir} 
-          INCLUDE_DIRS='${c.absolute.include.dir} ${c.absolute.include.java.dir}'
+          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
+          INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
           NAME=${c.lib.name}
 			    WRAPNAME=${c.wrapperlib.name}
-			    BINDIR=${c.build.dir}
-			    JARNAME='{c.absolute.lib.dir}/${ant.project.name}.jar'
+			    JARNAME='{c.lib.dir}/${ant.project.name}.jar'
            all"/>
         </exec>
-   <symlink link="${c.absolute.lib.dir}/lib${c.wrapperlib.name}.so" resource="${c.build.dir}/lib${c.wrapperlib.name}.so"/>
-   <symlink link="${c.absolute.lib.dir}/lib${c.lib.name}.so" resource="${c.build.dir}/lib${c.lib.name}.so"/>
-   
+
     </target>
         <target name="C-test">
-    	<mkdir dir="${c.build.dir}"/>
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.absolute.lib.dir} 
-          INCLUDE_DIRS='${c.absolute.include.dir} ${c.absolute.include.java.dir}'
+          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
+          INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
           NAME=${c.lib.name}
 			    WRAPNAME=${c.wrapperlib.name}
-			    BINDIR=${c.build.dir}
            test"/>
         </exec>
     </target>
     <target name="compile" depends="C-compile,JAVA-compile"/>
 <!-- JAR -->   
     <target name="jar" depends="JAVA-compile">
-        <mkdir dir="${c.absolute.lib.dir}"/>
-        <jar destfile="${c.absolute.lib.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
+        <jar destfile="${c.lib.dir}/${ant.project.name}.jar" basedir="${java.classes.dir}"/>
     </target>
 
     <target name="clean-build" depends="clean,jar"/>

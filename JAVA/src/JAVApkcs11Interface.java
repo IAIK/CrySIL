@@ -37,6 +37,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		return _instance;
 	}
 	private static String appID;
+	
 	public static long C_Initialize(CK_BYTE_ARRAY  pInitArgs){
 		appID = "newRandomID";
 		
