@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import proxys.MECHANISM_TYPE;
 import proxys.RETURN_TYPE;
 
 
@@ -16,10 +17,11 @@ import proxys.RETURN_TYPE;
  */
 public class Slot{
 	private ServerSession serversession;
+	private ArrayList<Long> mechanisms = new ArrayList<Long>();
 	private long slotID;
 	private boolean roToken = false;
 	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
-	private ArrayList<Session> sessionList = null; 
+	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
 	
@@ -59,6 +61,9 @@ public class Slot{
 				}
 			}
 			id++;
+		}
+		if(sessionList.size()==0){
+			return 1;
 		}
 		throw new PKCS11Error(RETURN_TYPE.SESSION_COUNT);
 	}
@@ -113,6 +118,7 @@ public class Slot{
 	}
 
 	public long getID(){
+		System.out.println("returning slot id: "+slotID);
 		return slotID;
 	}
 	public void setID(long id){
@@ -126,9 +132,59 @@ public class Slot{
 	}
 
 	public String getServerName() {
-		
 		return "exampleSlot";
 	}
+
+
+	public ArrayList<Long> getMechanisms(){
+		
+		
+		mechanisms.add(new Long(MECHANISM_TYPE.RSA_PKCS_KEY_PAIR_GEN.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES_KEY_GEN.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES3_KEY_GEN.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.RSA_PKCS.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.RSA_X_509.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.MD5_RSA_PKCS.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SHA1_RSA_PKCS.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES_ECB.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES_CBC.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES_CBC_PAD.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES3_ECB.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES3_CBC.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.DES3_CBC_PAD.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SHA_1.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SHA_1_HMAC.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SHA_1_HMAC_GENERAL.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.MD5.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.MD5_HMAC.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.MD5_HMAC_GENERAL.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_PRE_MASTER_KEY_GEN.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_MASTER_KEY_DERIVE.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_KEY_AND_MAC_DERIVE.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_MD5_MAC.swigValue()));
+		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_SHA1_MAC.swigValue()));
+		
+		
+		
+		mechanisms.add(new Long(MECHANISM_TYPE.RSA_PKCS.swigValue()));
+
+		
+		
+		
+//		RSAES_RAW("RSAES-RAW"),
+//	    RSAES_PKCS1_V1_5("RSAES-PKCS1-v1_5"),
+//	    RSA_OAEP("RSA-OAEP"),
+//	    RSASSA_PKCS1_V1_5_SHA_1("RSASSA-PKCS1-v1_5-SHA-1"),
+//	    RSASSA_PKCS1_V1_5_SHA_224("RSASSA-PKCS1-v1_5-SHA-224"),
+//	    RSASSA_PKCS1_V1_5_SHA_256("RSASSA-PKCS1-v1_5-SHA-256"),
+//	    RSASSA_PKCS1_V1_5_SHA_512("RSASSA-PKCS1-v1_5-SHA-512"),
+//
+//	    RSA_PSS("RSA-PSS");
+
+
+		return mechanisms;
+	}
+
 }
 
 

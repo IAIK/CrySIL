@@ -1,4 +1,6 @@
 
+import gui.Server.ServerInfo;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,6 +20,7 @@ import proxys.CK_ULONG_ARRAY;
 import proxys.CK_ULONG_JPTR;
 import proxys.CK_VERSION;
 import proxys.RETURN_TYPE;
+import proxys.SESSION_STATE;
 import proxys.pkcs11Constants;
 import proxys.CK_ATTRIBUTE;
 import sun.awt.HKSCS;
@@ -27,6 +30,7 @@ import sun.security.action.GetBooleanAction;
 
 public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
+			System.out.println("static shit happens...");
 		    System.load("/usr/lib/pkcs11_java_wrap.so");
 		  }
 
@@ -48,6 +52,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	
 	
   public static long C_OpenSession(long slotID, long flags, CK_BYTE_ARRAY pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_JPTR phSession) {
+		  System.out.println("C_OpenSession ............start.............");
 	  /* v0.1 */
 	  //public session erstellen
 	  /* v0.2 */	  
@@ -67,6 +72,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	//	  #define CKF_INSERTION_CALLBACK  0x00000008  /* app. gets insertion notice */
 
 	  if(! Util.isFlagSet(flags, CKF_SERIAL_SESSION)){
+		  System.out.println("C_OpenSession ............error.............");
 		 return RETURN_TYPE.GENERAL_ERROR.swigValue(); //CKR_PARALLEL_NOT_SUPPORTED
 	  }
 //	  Util.isFlagSet(flags, CKF_INSERTION_CALLBACK);
@@ -78,12 +84,16 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  try {
 		  phSession.assign(getRM().newSession(slotID, atype));
 	  } catch (PKCS11Error e) {
+		  System.out.println("C_OpenSession ............error1.............");
+		  e.printStackTrace();
 		  return e.getCode();
 	  } 
+		  System.out.println("C_OpenSession ............end.............");
 	  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
+	  System.out.println("\n slotinfo..start..............................................");
       Slot slot = null;
       try {
               slot = getRM().getSlotByID(slotID);
@@ -92,17 +102,24 @@ public class JAVApkcs11Interface implements pkcs11Constants {
       }
 
       long flags = Util.initFlags;
+
       flags = Util.setFlag(flags, CKF_TOKEN_PRESENT);
       pInfo.setFlags(flags);
       
       pInfo.setManufacturerID("IAIK Skytrust"); //32
+	  try{
       pInfo.setSlotDescription(slot.getServerInfo().getName().substring(0, 30)); //32
+	  }catch (NullPointerException e){
+		  pInfo.setSlotDescription("example description");
+	  }
       
+	  System.out.println("\n slotinfo..ende..............................................");
       return RETURN_TYPE.OK.swigValue();
   }
 
 
   public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_JPTR pulCount) {
+	  System.out.println("\n slotlist..start.............................................."+pulCount.value());
 	  		try {
 			ArrayList<Slot> slotlist = null;
 			slotlist = getRM().getSlotList();			
@@ -122,12 +139,15 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			}
 		} catch (PKCS11Error e) {
 			e.printStackTrace();
+	  System.out.println("\n slotlist..exception..............................................");
 			return e.getCode();
 		}  
+	  System.out.println("\n slotlist..ende..............................................");
 		return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
+	  System.out.println("\n tokeninfo..start..............................................");
 		Slot slot = null;
 		try {
 			slot = getRM().getSlotByID(slotID);
@@ -135,13 +155,28 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			return e.getCode();
 		}
 
-		pInfo.setLabel(slot.getServerInfo().getName());//32 char
+	  try{
+		  String label="skytrust_test";
+		  ServerInfo s = slot.getServerInfo();
+		  if(s!=null){
+			 label= s.getName(); 
+		  }
+		  
+		pInfo.setLabel(label);//32 char
 		pInfo.setManufacturerID("IAIK");
 		pInfo.setModel("");//32
 
 		long flags = Util.initFlags;
+		
 		flags = Util.setFlag(flags,CKF_WRITE_PROTECTED);
 		flags = Util.setFlag(flags,CKF_PROTECTED_AUTHENTICATION_PATH);
+		flags = Util.setFlag(flags, CKF_SERIAL_SESSION);
+		flags = Util.setFlag(flags, CKF_VERIFY);
+		flags = Util.setFlag(flags, CKF_SIGN);
+		flags = Util.setFlag(flags, CKF_ENCRYPT);
+		flags = Util.setFlag(flags, CKF_DECRYPT);
+		flags = Util.setFlag(flags, 0x00000400);
+
 		pInfo.setFlags(flags);
 
 		pInfo.setUlRwSessionCount(Long.MAX_VALUE);
@@ -156,7 +191,12 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 
 		pInfo.setUlMaxPinLen(0);
 		pInfo.setUlMinPinLen(0);
+	  }catch (Exception e){
+		  e.printStackTrace();
+	  }
 
+		
+	  System.out.println("\n tokeninfo..ende..............................................");
 		return RETURN_TYPE.OK.swigValue();
   }
   public static long C_Login(long hSession, long userType, String pPin, long ulPinLen) {
@@ -189,7 +229,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  private static short[] getByteArray(CK_ATTRIBUTE attribute){
+  public static short[] getByteArrayAsShort(CK_ATTRIBUTE attribute){
 	  
 			CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
 			short[] a = new short[ (int) attribute.getUlValueLen()];
@@ -209,7 +249,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	 for(CK_ATTRIBUTE tmp: pTemplate){
 		 tmp.getType();
 		 if(tmp.getType() == ATTRIBUTE_TYPE.CLASS.swigValue()){
-			 short[] array = getByteArray(tmp);
+//			 short[] array = getByteArray(tmp);
 			 
 			 
 		 }
@@ -250,14 +290,59 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_FindObjects(long hSession, CK_ULONG_JPTR phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) {
-	  return RETURN_TYPE.OK.swigValue();
+	  System.out.println("\nthis is java calling Findobjects");
+	pulObjectCount.assign(0);
+	  
+
+//
+//	  try {
+//		Session session = getRM().getSessionByHandle(hSession);
+//		ServerSession sSession = session.getSlot().getServersession();
+//		if(session.findObjectsHelper == null){
+//			return RETURN_TYPE.OPERATION_NOT_INITIALIZED.swigValue();
+//		}
+//		
+//		sSession.findObjects(session.findObjectsHelper, phObject, ulMaxObjectCount, pulObjectCount);
+//		
+//		
+//		
+//	} catch (PKCS11Error e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//		return e.getCode();
+//	} catch (Exception e){
+//		e.printStackTrace();
+//	}
+	 return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_FindObjectsFinal(long hSession) {
+//	  System.out.println("\nthis is java calling FindobjectsFinal");
+//	  try {
+//		Session session = getRM().getSessionByHandle(hSession);
+//		session.findObjectsHelper = null; 
+//	} catch (PKCS11Error e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//		return e.getCode();
+//	}
 	  return RETURN_TYPE.OK.swigValue();
   }
+	  
 
   public static long C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount) {
+	  System.out.println("\nthis is java calling FindobjectsInit");
+//	  try {
+//		Session session = getRM().getSessionByHandle(hSession);
+//		ServerSession sSession = session.getSlot().getServersession();
+//		session.findObjectsHelper = new FindObjectsHelper(pTemplate, ulCount);
+//	} catch (PKCS11Error e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//		return e.getCode();
+//	}catch (Exception e){
+//		e.printStackTrace();
+//	}
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -282,15 +367,72 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_GetMechanismInfo(long slotID, long type, CK_MECHANISM_INFO pInfo) {
+	  System.out.println("java: C_GetMechanismInfo........start");
+	  
+	  
+	  
+	  
 	  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetMechanismList(long slotID, CK_ULONG_ARRAY pMechanismList, CK_ULONG_JPTR pulCount) {
-	  pulCount.assign(0L);
+	  System.out.println("\nC_GetMechanismList...........................");
+		try {
+			Slot slot=getRM().getSlotByID(slotID);
+			
+			if(pMechanismList.getCPtr()==0L){
+				pulCount.assign(slot.getMechanisms().size());
+		  System.out.println("\nC_GetMechanismList.........ende0  ...........");
+				return RETURN_TYPE.OK.swigValue();
+			}
+			if(pulCount.value() < slot.getMechanisms().size()){
+				pulCount.assign(slot.getMechanisms().size());
+		  System.out.println("\nC_GetMechanismList.........buffer  ...........");
+				return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
+			}
+			
+			int range = slot.getMechanisms().size();
+			pulCount.assign(range);
+			for(int i=0; i<range; i++){
+				pMechanismList.setitem(i, slot.getMechanisms().get(i));
+			}
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e1){
+			e1.printStackTrace();
+		}
+	  System.out.println("\nC_GetMechanismList.........ende  ...........");
 	  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_GetSessionInfo(long hSession, CK_SESSION_INFO pInfo) {
+	  System.out.println("\njava: getSessionInfo start.................");
+	  if(pInfo.getCPtr()==0L){
+	  System.out.println("\njava: getSessionInfo error.................");
+		  return RETURN_TYPE.GENERAL_ERROR.swigValue();
+	  }
+	  try {
+		
+		pInfo.setSlotID(1);
+		long flags = Util.initFlags;
+		
+		flags = Util.setFlag(flags,CKF_RW_SESSION);
+		flags = Util.setFlag(flags,CKF_SERIAL_SESSION);
+		
+		pInfo.setFlags(flags);
+		
+		flags = Util.initFlags;
+		
+		flags = Util.setFlag(flags,SESSION_STATE.RW_USER_FUNCTIONS.swigValue());
+		pInfo.setState(flags);
+		
+		
+	  }catch (Exception e){
+		  e.printStackTrace();
+	  }
+	  
+	  System.out.println("java: getSessionInfo end.................");
 	  return RETURN_TYPE.OK.swigValue();
   }
 

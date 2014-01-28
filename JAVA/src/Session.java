@@ -22,6 +22,7 @@ public class Session {
 	private long handle;
 	
 	public SignHelper signHelper;
+	public FindObjectsHelper findObjectsHelper;
 
 	public Session(Slot slot,long handle,ACCESS_TYPE atype){
 	//	this.flags = flags;

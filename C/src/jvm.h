@@ -52,6 +52,12 @@ sing* get_instance()
 		printf("jvm startup error");
 	}
 	instance->cls = (*(instance->env))->FindClass(instance->env,"JAVApkcs11Interface");
+	if ((*(instance->env))->ExceptionCheck(instance->env)) {
+
+	  printf("\n\n exception..... \n\n");
+	(*(instance->env))->ExceptionDescribe(instance->env);
+	  return NULL;
+	}
 	if(instance->cls ==0){
 		char* buf = malloc(99);
 

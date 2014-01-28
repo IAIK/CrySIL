@@ -48,6 +48,7 @@ public class ResourceManager {
 			
 			try {
 				_instance=new ResourceManager(appID);
+				_instance.updateSlotList();
 			} catch (PKCS11Error e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,6 +94,8 @@ public class ResourceManager {
 		}
 		return r;
 	}
+	
+	
 	protected long newSlotID() throws PKCS11Error{
 		long id=1;
 		if(slotList.size()==0){
@@ -133,5 +136,8 @@ public class ResourceManager {
 		for(Server.ServerInfo info:info_list){
 			slotList.add(new Slot(newSlotID(),info));
 		}
+			for(int i =0; i< slotList.size(); i++){
+			System.out.println("new Slot id for new slot......"+ slotList.get(i).getID());
+			}
 	}
 }

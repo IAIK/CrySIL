@@ -5,6 +5,7 @@ public class ObjectStorage {
 
 	private ArrayList<Long> ids = new ArrayList<Long>();
 	private ArrayList<Object> objects = new ArrayList<Object>();
+	private int lastID;
 
 	/*
 	 * 
@@ -13,6 +14,7 @@ public class ObjectStorage {
 //	private static ObjectStorage _instance;
 
 	public ObjectStorage() {
+		lastID=0;
 	}
 
 //	public static ObjectStorage getInstance() {
@@ -32,12 +34,14 @@ public class ObjectStorage {
 		return null;
 	}
 
-	public void addNewObject(long id, Object object) {
-		if (getObjectById(id) == null && getIdByObject(object) == -1) {
-			ids.add(new Long(id));
+	public long addNewObject(Object object) {
+		lastID++;
+		if (getIdByObject(object) == -1) {
+			ids.add(new Long(lastID));
 			objects.add(object);
-		} else {
-
+			return lastID;
+		} else{
+			return getIdByObject(object);
 		}
 
 	}
