@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.SRequest;
 import at.iaik.skytrust.element.skytrustprotocol.SResponse;
@@ -22,13 +27,6 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SCrypt
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadCryptoOperationRequest;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadWithLoadResponse;
 
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.AttributeType;
 
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CERT_TYPE;
@@ -149,7 +147,7 @@ public class ServerSession {
 	
 	
 	public SResponse handleAuth(SResponse skyTrustResponse){
-		//get possible authType(s) SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
+		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
         //ask User for Credentials
         SAuthInfo credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);

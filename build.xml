@@ -26,7 +26,7 @@
      
      
      <path id="skytrust.classpath">
-     		<pathelement location="skytrust-element-java/common/target/classes/"/>
+	<pathelement location="skytrust-element-java/common/target/classes/"/>
         <pathelement location="skytrust-element-java/core/target/classes/"/>
         <pathelement location="/usr/share/java/spring3-web.jar"/>
         <pathelement location="/usr/share/java/spring3-core.jar"/>
