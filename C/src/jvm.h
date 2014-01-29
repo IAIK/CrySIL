@@ -14,7 +14,7 @@
 
 typedef struct jvm_singleton
 {
-	JavaVMOption options[2];
+	JavaVMOption options[1];
 	JNIEnv *env;
 	JavaVM *jvm;
 	JavaVMInitArgs vm_args;
@@ -62,19 +62,13 @@ sing* get_instance()
 	  return NULL;
 	}
 	if(instance->cls ==0){
-		char* buf = malloc(99);
-
-		buf= getcwd(buf, 99);
-		printf("Class not found!....%s\n",buf);
+		printf("Class not found!....\n");
 
 		return NULL;
 
 	}else{
-		char* buf = malloc(99);
 
-		buf= getcwd(buf, 99);
-
-		printf("Class found... hooorrrrraaaaaayyyyy! %s   ",buf);
+		printf("Class found... hooorrrrraaaaaayyyyy!    ");
 	}
 
 

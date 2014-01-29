@@ -279,10 +279,16 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 
   public static long C_FindObjects(long hSession, CK_ULONG_JPTR phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) {
 	  System.out.println("\nthis is java calling Findobjects");
-	pulObjectCount.assign(0);
-	  
+	//pulObjectCount.assign(0);
+	  if(ulMaxObjectCount>0){
+		  
+		  phObject.assign(815L);
+		  pulObjectCount.assign(1);
+		  
+		  
+	  }
 
-//
+
 //	  try {
 //		Session session = getRM().getSessionByHandle(hSession);
 //		ServerSession sSession = session.getSlot().getServersession();
@@ -305,32 +311,32 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_FindObjectsFinal(long hSession) {
-//	  System.out.println("\nthis is java calling FindobjectsFinal");
-//	  try {
-//		Session session = getRM().getSessionByHandle(hSession);
-//		session.findObjectsHelper = null; 
-//	} catch (PKCS11Error e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//		return e.getCode();
-//	}
+	  System.out.println("\nthis is java calling FindobjectsFinal");
+	  try {
+		Session session = getRM().getSessionByHandle(hSession);
+		session.findObjectsHelper = null; 
+	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return e.getCode();
+	}
 	  return RETURN_TYPE.OK.swigValue();
   }
 	  
 
   public static long C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount) {
 	  System.out.println("\nthis is java calling FindobjectsInit");
-//	  try {
-//		Session session = getRM().getSessionByHandle(hSession);
-//		ServerSession sSession = session.getSlot().getServersession();
-//		session.findObjectsHelper = new FindObjectsHelper(pTemplate, ulCount);
-//	} catch (PKCS11Error e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//		return e.getCode();
-//	}catch (Exception e){
-//		e.printStackTrace();
-//	}
+	  try {
+		Session session = getRM().getSessionByHandle(hSession);
+		ServerSession sSession = session.getSlot().getServersession();
+		session.findObjectsHelper = new FindObjectsHelper(pTemplate, ulCount);
+	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return e.getCode();
+	}catch (Exception e){
+		e.printStackTrace();
+	}
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -339,6 +345,14 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_GetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[] pTemplate, long ulCount) {
+	 System.out.println("C_GetAttributeValue.........................."); 
+	  for(int i=0; i<pTemplate.length; i++){
+		  
+		  pTemplate[i].setUlValueLen(-1);
+		  
+	  }
+	  
+	 System.out.println("C_GetAttributeValue....end................."); 
 	  return RETURN_TYPE.OK.swigValue();
   }
 
