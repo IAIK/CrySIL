@@ -1,5 +1,7 @@
 package objects;
-import proxys.*;
+
+import proxys.KEY_TYP;
+import proxys.MECHANISM_TYPE;
 
 public class KeyObject extends StorageObject{
 	private KEY_TYP CKA_KEY_TYPE;

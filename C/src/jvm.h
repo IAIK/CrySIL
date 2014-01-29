@@ -53,12 +53,19 @@ sing* get_instance()
 		//out of memory --> die gracefully
 	}
 	instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
+	instance->options[1].optionString = "-Djava.library.path="SWIGLIBPATH;  /* set native library path */
+	instance->options[2].optionString = "-verbose:jni";                   /* print JNI-related messages */
+#ifdef DEBUG
+//	instance->options[3].optionString = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000";	pre JAVA 5
+	instance->options[3].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,address=8000";
+#endif
 
 	instance->vm_args.version = JNI_VERSION_1_4;
-	JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
 	instance->vm_args.nOptions = NUMJAVAOPTIONS;
 	instance->vm_args.ignoreUnrecognized = JNI_FALSE;
+	JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
 	instance->vm_args.options = instance->options;
+
 	instance->status = JNI_CreateJavaVM(&instance->jvm, (void**)&(instance->env), &(instance->vm_args));
 	if(instance->status==JNI_ERR){
 		//VM - Error --> cleanup & die gracefully 
@@ -72,14 +79,19 @@ sing* get_instance()
 	  return NULL;
 	}
 	if(instance->cls ==0){
-		printf("Class not found!....\n");
+		char* buf = malloc(99);
+
+		buf= getcwd(buf, 99);
+		printf("Class not found!....%s\n",buf);
 
 		return NULL;
 
 	}else{
+		char* buf = malloc(99);
 
+		buf= getcwd(buf, 99);
 
-		printf("Class found... hooorrrrraaaaaayyyyy!    ");
+		printf("Class found... hooorrrrraaaaaayyyyy! %s   ",buf);
 	}
 
 

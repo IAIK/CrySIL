@@ -201,7 +201,7 @@ public class ServerSession {
 		payload.setLoad(load);
 		request.setPayload(payload);
 
-		SResponse skyTrustResponse = restTemplate.postForObject(server.url,
+		SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),
 				request, SResponse.class);
 
 		SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
@@ -224,7 +224,7 @@ public class ServerSession {
         SRequest request = createBasicRequest();
         request.setPayload(payload);
 
-        SResponse skyTrustResponse = restTemplate.postForObject(server.url,request,SResponse.class);
+        SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),request,SResponse.class);
         SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
         if (payloadResponse instanceof SPayloadAuthResponse) {
             skyTrustResponse = handleAuth(skyTrustResponse);
