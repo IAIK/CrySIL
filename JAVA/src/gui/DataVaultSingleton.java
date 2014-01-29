@@ -30,7 +30,8 @@ public class DataVaultSingleton {
 	private DataVaultSingleton(){
 		servers = new ArrayList<Server>();
 		clients = new ArrayList<Client>();
-		doStuff();
+		Server ser = new Server("http://test.com");
+		servers.add(ser);
 	}
 	
 	public ArrayList<ServerInfo> getServerInfoList(){
@@ -56,21 +57,7 @@ public class DataVaultSingleton {
 		}
 		return null;
 	}
-	private void doStuff(){
-		Properties configFile = new Properties();
-	    try {
-			configFile.load(new FileInputStream("my_config.properties"));
-			SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
-			Server ser = new Server(configFile.getProperty("url"));
-			cre.setUserName(configFile.getProperty("username"));
-			cre.setPassWord(configFile.getProperty("password"));
-			ser.setCredentials(cre);
-			servers.add(ser);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 
 	public void registerClient(Client c) {
 		clients.add(c);

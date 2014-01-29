@@ -32,7 +32,6 @@ public class Slot{
 	//private String pin;
 	
 	public Slot(long slotid, Server.ServerInfo server){
-		server = null;
 		slotID = slotid;
 		serversession = new ServerSession(server);
 		//generate PIN
@@ -118,7 +117,6 @@ public class Slot{
 	}
 
 	public long getID(){
-		System.out.println("returning slot id: "+slotID);
 		return slotID;
 	}
 	public void setID(long id){
@@ -131,9 +129,6 @@ public class Slot{
 		return serversession.getInfo();
 	}
 
-	public String getServerName() {
-		return "exampleSlot";
-	}
 
 
 	public ArrayList<Long> getMechanisms(){
