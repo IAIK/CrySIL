@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.SRequest;
 import at.iaik.skytrust.element.skytrustprotocol.SResponse;
@@ -148,7 +153,6 @@ public class ServerSession {
 	
 	
 	public SResponse handleAuth(SResponse skyTrustResponse){
-		//get possible authType(s) 
 		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
         //ask User for Credentials
