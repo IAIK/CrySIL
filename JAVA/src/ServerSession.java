@@ -201,7 +201,7 @@ public class ServerSession {
 		payload.setLoad(load);
 		request.setPayload(payload);
 
-		SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),
+		SResponse skyTrustResponse = restTemplate.postForObject(server.url,
 				request, SResponse.class);
 
 		SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
@@ -224,7 +224,7 @@ public class ServerSession {
         SRequest request = createBasicRequest();
         request.setPayload(payload);
 
-        SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),request,SResponse.class);
+        SResponse skyTrustResponse = restTemplate.postForObject(server.url,request,SResponse.class);
         SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
         if (payloadResponse instanceof SPayloadAuthResponse) {
             skyTrustResponse = handleAuth(skyTrustResponse);
@@ -253,45 +253,58 @@ public class ServerSession {
 			pulObjectCount.assign(0L);
 			return;
 		}
-
-		List<SKey> list = new ArrayList<SKey>();
-		CK_ATTRIBUTE[] template = findObjectsHelper.pTemplate;
-		for (CK_ATTRIBUTE tmp : template) {
-
-			if(tmp.getType()==ATTRIBUTE_TYPE.CLASS.swigValue()){
-				
-				short[] array = JAVApkcs11Interface.getByteArrayAsShort(tmp);
-				
-				if(OBJECT_CLASS.SECRET_KEY.swigValue() == array[array.length-1] ){
-					list = discoverKeys("SECRET_KEY");
-				}
-				if(OBJECT_CLASS.PUBLIC_KEY.swigValue() == array[array.length-1] ){
-					list = discoverKeys("PUBLIC_KEY");
-				}
-				if(OBJECT_CLASS.PRIVATE_KEY.swigValue() == array[array.length-1] ){
-					list = discoverKeys("PRIVATE_KEY");
-				}
-				if(OBJECT_CLASS.CERTIFICATE.swigValue() == array[array.length-1] ){
-					list = discoverKeys("certificate");
-				}
-				
-			}else if(tmp.getType()==ATTRIBUTE_TYPE.KEY_TYPE.swigValue()){
-			}else if(tmp.getType()==ATTRIBUTE_TYPE.TOKEN.swigValue()){
-			}else if(tmp.getType()==ATTRIBUTE_TYPE.ID.swigValue()){
-			}else if(tmp.getType()==ATTRIBUTE_TYPE.VALUE.swigValue()){
-			}
-		}
-			if(list==null){
-					pulObjectCount.assign(0L);
-					return;
-				}
-			CK_ULONG_ARRAY ar = new CK_ULONG_ARRAY(phObject.getCPtr(), false);
-			pulObjectCount.assign(list.size() > ulMaxObjectCount ? ulMaxObjectCount : list.size());
-			for(long i=findObjectsHelper.actualCount; i<pulObjectCount.value(); i++){
-				long handle = keyStorage.addNewObject(list.get((int) i));
-				ar.setitem((int) i, handle);
-			}
-			findObjectsHelper.actualCount=pulObjectCount.value();
+		
+//		try{
+//			
+//		if (pulObjectCount.getCPtr() == 0L || phObject.getCPtr() == 0L) {
+//			throw new PKCS11Error(RETURN_TYPE.DEVICE_MEMORY);
+//		}
+//
+//		if (ulMaxObjectCount == 0L) {
+//			pulObjectCount.assign(0L);
+//			return;
+//		}
+//
+//		List<SKey> list = new ArrayList<SKey>();
+//		CK_ATTRIBUTE[] template = findObjectsHelper.pTemplate;
+//		for (CK_ATTRIBUTE tmp : template) {
+//
+//			if(tmp.getType()==ATTRIBUTE_TYPE.CLASS.swigValue()){
+//				
+//				short[] array = JAVApkcs11Interface.getByteArrayAsShort(tmp);
+//				
+//				if(OBJECT_CLASS.SECRET_KEY.swigValue() == array[array.length-1] ){
+//					list = discoverKeys("SECRET_KEY");
+//				}
+//				if(OBJECT_CLASS.PUBLIC_KEY.swigValue() == array[array.length-1] ){
+//					list = discoverKeys("PUBLIC_KEY");
+//				}
+//				if(OBJECT_CLASS.PRIVATE_KEY.swigValue() == array[array.length-1] ){
+//					list = discoverKeys("PRIVATE_KEY");
+//				}
+//				if(OBJECT_CLASS.CERTIFICATE.swigValue() == array[array.length-1] ){
+//					list = discoverKeys("certificate");
+//				}
+//			}else if(tmp.getType()==ATTRIBUTE_TYPE.KEY_TYPE.swigValue()){
+//			}else if(tmp.getType()==ATTRIBUTE_TYPE.TOKEN.swigValue()){
+//			}else if(tmp.getType()==ATTRIBUTE_TYPE.ID.swigValue()){
+//			}else if(tmp.getType()==ATTRIBUTE_TYPE.VALUE.swigValue()){
+//			}
+//		}
+//			if(list==null){
+//					pulObjectCount.assign(0L);
+//					return;
+//				}
+//			CK_ULONG_ARRAY ar = new CK_ULONG_ARRAY(phObject.getCPtr(), false);
+//			pulObjectCount.assign(list.size() > ulMaxObjectCount ? ulMaxObjectCount : list.size());
+//			for(long i=findObjectsHelper.actualCount; i<pulObjectCount.value(); i++){
+//				long handle = keyStorage.addNewObject(list.get((int) i));
+//				ar.setitem((int) i, handle);
+//			}
+//			findObjectsHelper.actualCount=pulObjectCount.value();
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
 			
 
 	}

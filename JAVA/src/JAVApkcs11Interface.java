@@ -303,15 +303,15 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_FindObjectsFinal(long hSession) {
-//	  System.out.println("\nthis is java calling FindobjectsFinal");
-//	  try {
-//		Session session = getRM().getSessionByHandle(hSession);
-//		session.findObjectsHelper = null; 
-//	} catch (PKCS11Error e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//		return e.getCode();
-//	}
+	  System.out.println("\nthis is java calling FindobjectsFinal");
+	  try {
+		Session session = getRM().getSessionByHandle(hSession);
+		session.findObjectsHelper = null; 
+	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return e.getCode();
+	}
 	  return RETURN_TYPE.OK.swigValue();
   }
 	  
@@ -337,6 +337,14 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_GetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[] pTemplate, long ulCount) {
+	 System.out.println("C_GetAttributeValue.........................."); 
+	  for(int i=0; i<pTemplate.length; i++){
+		  
+		  pTemplate[i].setUlValueLen(-1);
+		  
+	  }
+	  
+	 System.out.println("C_GetAttributeValue....end................."); 
 	  return RETURN_TYPE.OK.swigValue();
   }
 
