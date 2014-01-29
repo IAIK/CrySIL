@@ -5,7 +5,7 @@ LIBRARIES := jvm
 
 CFLAGS = -Wall
 SRCDIR = src
-SHAREDFLAGS = -shared -fPIC -g 
+SHAREDFLAGS = -shared -fPIC
 BINDIR = build
 export INCLUDE_DIRS := $(realpath ../include/java/ ../include/)
 export LIBRARY_DIRS := $(realpath ../lib/)
@@ -13,14 +13,19 @@ NAME = skytrustpkcs11
 WRAPNAME = pkcs11_java_wrap
 
 #following variables get overwritten through commandline from ant
-
 JAR = $(realpath ../lib/PKCS11.jar)
 #end
+
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(LIBRARIES),-l$(library))
 
 CFLAGS += -DSYKTRUSTJAR=\"$(JAR)\"
+CFLAGS += -DSWIGLIBPATH=\"$(LIBRARY_DIRS)\"
+
+ifeq ($(DEBUG),1)
+CFLAGS += -g -DDEBUG
+endif
 
 pkcs11: $(SRCDIR)/$(SOURCES) pkcs11wrapper
 				$(CC) $(CFLAGS) $(SHAREDFLAGS) $(SRCDIR)/$(SOURCES) -o $(BINDIR)/lib$(NAME).so $(LDFLAGS)

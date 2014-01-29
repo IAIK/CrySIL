@@ -166,7 +166,7 @@ public class ServerSession {
         authRequest.getHeader().setCommandId(skyTrustResponse.getHeader().getCommandId());
         //send authRequest and wait for Response
         try{
-        	skyTrustResponse = restTemplate.postForObject(server.url,authRequest,SResponse.class);
+        	skyTrustResponse = restTemplate.postForObject(server.getUrl(),authRequest,SResponse.class);
         }catch(RestClientException e){
         	return null;
         }
@@ -201,7 +201,7 @@ public class ServerSession {
 		payload.setLoad(load);
 		request.setPayload(payload);
 
-		SResponse skyTrustResponse = restTemplate.postForObject(server.url,
+		SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),
 				request, SResponse.class);
 
 		SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
@@ -224,7 +224,7 @@ public class ServerSession {
         SRequest request = createBasicRequest();
         request.setPayload(payload);
 
-        SResponse skyTrustResponse = restTemplate.postForObject(server.url,request,SResponse.class);
+        SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),request,SResponse.class);
         SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
         if (payloadResponse instanceof SPayloadAuthResponse) {
             skyTrustResponse = handleAuth(skyTrustResponse);
@@ -274,6 +274,7 @@ public class ServerSession {
 				if(OBJECT_CLASS.CERTIFICATE.swigValue() == array[array.length-1] ){
 					list = discoverKeys("certificate");
 				}
+				
 			}else if(tmp.getType()==ATTRIBUTE_TYPE.KEY_TYPE.swigValue()){
 			}else if(tmp.getType()==ATTRIBUTE_TYPE.TOKEN.swigValue()){
 			}else if(tmp.getType()==ATTRIBUTE_TYPE.ID.swigValue()){

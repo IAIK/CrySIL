@@ -22,6 +22,8 @@
     <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
 		<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
     <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
+
+    <property name="debug" value="1"/>
     <property name="debuglevel" value="source,lines,vars"/>
      
      
@@ -80,12 +82,12 @@
     <target name="C-compile">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
           <arg line="-C ${c.dir} 
-			    JARNAME='{c.lib.dir}/${ant.project.name}.jar'
+			    JARNAME='${c.lib.dir}/${ant.project.name}.jar'
+			    DEBUG=${debug}
            all"/>
         </exec>
-
     </target>
-        <target name="C-test">
+    <target name="C-test">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
           <arg line="-C ${c.dir} 
            test"/>

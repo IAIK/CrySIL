@@ -44,12 +44,11 @@ typedef struct {
 %include "CKA_enum.h"
 %include "CKC_enum.h"
 %include "CKS_enum.h"
+%include "CKK_enum.h"
 %include "CKM_enum.h"
 %include "CKR_enum.h"
 %include "CKO_enum.h"
-%include "CKD_enum.h"
-%include "CKH_enum.h"
-%include "CKK_enum.h"
+
 
 typedef struct {
   CK_NOTIFY func;

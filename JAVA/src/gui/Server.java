@@ -21,6 +21,9 @@ public class Server implements Serializable{
 		public String getName(){
 			return url;
 		}
+		public String getUrl(){
+			return url;
+		}
 	}
 	public Server(String url){
 		info = new ServerInfo(url);

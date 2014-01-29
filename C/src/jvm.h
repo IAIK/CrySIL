@@ -9,12 +9,22 @@
 #ifndef SYKTRUSTJAR
 #define SYKTRUSTJAR "/no path defined in gcc commandline/"
 #endif
+
+#ifndef SWIGLIBPATH
+#define SWIGLIBPATH "/no libpath defined in gcc commandline/"
+#endif
+
 //struct jvm_singleton;
 
+#ifdef DEBUG
+#define NUMJAVAOPTIONS 4
+#else
+#define NUMJAVAOPTIONS 3
+#endif
 
 typedef struct jvm_singleton
 {
-	JavaVMOption options[2];
+	JavaVMOption options[NUMJAVAOPTIONS];
 	JNIEnv *env;
 	JavaVM *jvm;
 	JavaVMInitArgs vm_args;
@@ -43,12 +53,19 @@ sing* get_instance()
 		//out of memory --> die gracefully
 	}
 	instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
+	instance->options[1].optionString = "-Djava.library.path="SWIGLIBPATH;  /* set native library path */
+	instance->options[2].optionString = "-verbose:jni";                   /* print JNI-related messages */
+#ifdef DEBUG
+//	instance->options[3].optionString = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000";	pre JAVA 5
+	instance->options[3].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,address=8000";
+#endif
 
-//	memset(&(instance->vm_args), 0, sizeof(instance->vm_args));
-	JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
 	instance->vm_args.version = JNI_VERSION_1_4;
-	instance->vm_args.nOptions = 1;
+	instance->vm_args.nOptions = NUMJAVAOPTIONS;
+	instance->vm_args.ignoreUnrecognized = JNI_FALSE;
+	JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
 	instance->vm_args.options = instance->options;
+
 	instance->status = JNI_CreateJavaVM(&instance->jvm, (void**)&(instance->env), &(instance->vm_args));
 	if(instance->status==JNI_ERR){
 		//VM - Error --> cleanup & die gracefully 
