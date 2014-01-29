@@ -771,10 +771,11 @@ return retVal;
 
 
 CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
-{ printf("C: called: C_OpenSession    "); 
-long retVal=CKR_GENERAL_ERROR;
-sing* dings = get_instance();
-if(dings->cls !=0)
+{
+	printf("C: called: C_OpenSession    ");
+	long retVal=CKR_GENERAL_ERROR;
+	sing* dings = get_instance();
+	if(dings->cls !=0)
 {
         jmethodID C_OpenSessionJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_OpenSession", "(JJLproxys/CK_BYTE_ARRAY;Lproxys/CK_NOTIFY_CALLBACK;Lproxys/CK_ULONG_JPTR;)J");
         

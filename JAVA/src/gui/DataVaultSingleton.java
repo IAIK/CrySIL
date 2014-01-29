@@ -31,7 +31,8 @@ public class DataVaultSingleton {
 	private DataVaultSingleton() {
 		servers = new ArrayList<Server>();
 		clients = new ArrayList<Client>();
-		doStuff();
+		Server ser = new Server("http://test.com");
+		servers.add(ser);
 	}
 
 	public ArrayList<ServerInfo> getServerInfoList() {

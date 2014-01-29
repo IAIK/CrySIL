@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall 
+CFLAGS = -g -Wall 
 
 TESTDIR = .
 TESTNAME = $(TESTDIR)/runallTests
@@ -8,7 +8,7 @@ TESTOBJS := ${TESTSOURCES:.cpp=.o}
 
 TEST_LIBRARIES := gtest pthread skytrustpkcs11
 
-#following variables get overwritten through commandline from ant
+#following variables get from above makefile
 #INCLUDE_DIRS := ../../include/java/ ../../include/
 #LIBRARY_DIRS := ../../lib/
 #
@@ -24,6 +24,9 @@ LDFLAGS += $(foreach library,$(TEST_LIBRARIES),-l$(library))
 test: $(TESTOBJS)
 		$(CC) $(CFLAGS) $(TESTOBJS) -o $(TESTNAME) $(LDFLAGS) 
 
+ptest: plaintest.cpp
+		$(CC) $(CFLAGS) plaintest.cpp -o plain -lskytrustpkcs11 -L$(realpath ../../lib/) -Wl,-rpath,$(realpath ../../lib/)
+		
 testclean:
 	rm -f $(TESTOBJS)
 	rm -f $(TESTNAME)

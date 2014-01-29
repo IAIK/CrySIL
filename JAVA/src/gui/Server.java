@@ -14,14 +14,16 @@ public class Server implements Serializable{
 	private SAuthInfo credentials = null;
 	
 	public class ServerInfo{
-		public String url;
+		ServerInfo(String url){
+			this.url = url;
+		}
+		private String url;
 		public String getName(){
-			return "serverNameFromserverInfo";
+			return url;
 		}
 	}
 	public Server(String url){
-		info = new ServerInfo();
-		info.url = url;
+		info = new ServerInfo(url);
 	}
 	public void setCredentials(SAuthInfo cre){
 		credentials = cre;

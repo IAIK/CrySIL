@@ -69,7 +69,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	//	   * the token is inserted. */
 	//	  #define CKF_INSERTION_CALLBACK  0x00000008  /* app. gets insertion notice */
 
-	  if(! Util.isFlagSet(flags, CKF_SERIAL_SESSION)){
+	  if(!Util.isFlagSet(flags, CKF_SERIAL_SESSION)){
 		  System.out.println("C_OpenSession ............error.............");
 		 return RETURN_TYPE.GENERAL_ERROR.swigValue(); //CKR_PARALLEL_NOT_SUPPORTED
 	  }
@@ -86,7 +86,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  e.printStackTrace();
 		  return e.getCode();
 	  } 
-		  System.out.println("C_OpenSession ............end.............");
+	  System.out.println("C_OpenSession ............end.............");
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -115,16 +115,19 @@ public class JAVApkcs11Interface implements pkcs11Constants {
       return RETURN_TYPE.OK.swigValue();
   }
 
-
   public static long C_GetSlotList(short tokenPresent, CK_ULONG_ARRAY pSlotList, CK_ULONG_JPTR pulCount) {
 	  System.out.println("\n slotlist..start.............................................."+pulCount.value());
-	  		try {
+	try{
+	  try {
 			ArrayList<Slot> slotlist = null;
-			slotlist = getRM().getSlotList();			
+			slotlist = getRM().getSlotList();
 
 			int buffersize = (int) pulCount.value();
 			pulCount.assign(slotlist.size());
-
+			
+			for(Slot s:slotlist){
+				System.out.println("\n slotlist return slot: "+s.getServerInfo().getName());
+			}
 			if(pSlotList.getCPtr() != 0){
 				if(buffersize < slotlist.size()){
 					return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
@@ -137,10 +140,13 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			}
 		} catch (PKCS11Error e) {
 			e.printStackTrace();
-	  System.out.println("\n slotlist..exception..............................................");
+			System.out.println("\n slotlist..exception..............................................");
 			return e.getCode();
-		}  
-	  System.out.println("\n slotlist..ende..............................................");
+		} 
+  }catch(Exception e){
+			e.printStackTrace();
+		}
+	  	System.out.println("\n slotlist..ende..............................................");
 		return RETURN_TYPE.OK.swigValue();
   }
 
@@ -227,15 +233,14 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
+  // only for inputs!!
   public static short[] getByteArrayAsShort(CK_ATTRIBUTE attribute){
-	  
-			CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
-			short[] a = new short[ (int) attribute.getUlValueLen()];
-			for(int i =0; i< attribute.getUlValueLen(); i++){
-				a[i] =  array.getitem(i);
-			}
-			
-			return a;
+	CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
+	short[] a = new short[ (int) attribute.getUlValueLen()];
+	for(int i =0; i< attribute.getUlValueLen(); i++){
+		a[i] =  array.getitem(i);
+	}
+	return a;
   }
   
   public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
@@ -246,9 +251,9 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	 
 	 for(CK_ATTRIBUTE tmp: pTemplate){
 		 tmp.getType();
-		 if(tmp.getType() == ATTRIBUTE_TYPE.CLASS.swigValue()){
-//			 short[] array = getByteArray(tmp);
 		 
+		 if(tmp.getType() == ATTRIBUTE_TYPE.CLASS.swigValue()){
+			 short[] array = getByteArrayAsShort(tmp);
 		 }
 	 
 	 }

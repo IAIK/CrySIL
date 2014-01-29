@@ -3,7 +3,11 @@ import gui.DataVaultSingleton;
 import gui.Server;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import proxys.RETURN_TYPE;
 
@@ -101,15 +105,29 @@ public class ResourceManager {
 		if(slotList.size()==0){
 			return id;
 		}
-		for(Slot s:slotList){
-			if(s.getID() != id){
-				if(id < MAX_SLOT){
-					return id;
+		class SlotComparator implements Comparator<Slot> {
+			@Override
+			public int compare(Slot arg0, Slot arg1) {
+				if(arg0.getID() < arg1.getID()){
+					return -1;
+				}else if(arg0.getID() == arg1.getID()){
+					return 0;
+				}else{
+					return 1;
 				}
 			}
-			id = id+1;
 		}
-		throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
+		Collections.sort(slotList,new SlotComparator());
+		for(Slot s:slotList){
+			if(s.getID() != id){
+				break;
+			}
+			id = id+1;		
+		}
+		if(id >= MAX_SLOT){
+			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
+		}
+		return id;
 	}
 
 	public void delSlot(long slotid){
@@ -136,8 +154,8 @@ public class ResourceManager {
 		for(Server.ServerInfo info:info_list){
 			slotList.add(new Slot(newSlotID(),info));
 		}
-			for(int i =0; i< slotList.size(); i++){
-			System.out.println("new Slot id for new slot......"+ slotList.get(i).getID());
-			}
+		for(int i =0; i< slotList.size(); i++){
+		System.out.println("new Slot id for new server......"+ slotList.get(i).getServerInfo().getName());
+		}
 	}
 }
