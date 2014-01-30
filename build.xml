@@ -68,7 +68,7 @@
 <!-- COMPILE -->   
     <target name="JAVA-compile">
         <mkdir dir="${java.classes.dir}"/>
-        <javac srcdir="${java.src.dir}" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
+        <javac srcdir="${java.src.dir}" debug="true" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
             <classpath refid="skytrust.classpath"/>
         </javac>
     </target>

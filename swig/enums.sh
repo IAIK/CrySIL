@@ -22,7 +22,7 @@ name="CERT_TYPE"
 prefix="CKC"
 createEnum $name $prefix
 
-name="KEY_TYPE"
+name="KEY_TYP"
 prefix="CKK"
 echo "enum ${name} {" > ${prefix}_enum.h
 cat pkcs11t_processed.h | \

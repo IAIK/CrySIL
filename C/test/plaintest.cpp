@@ -12,6 +12,9 @@
 
 using namespace std;
 
+typedef CK_ULONG_PTR CK_ULONG_JPTR;
+typedef CK_ULONG_PTR CK_ULONG_ARRAY;
+
 int main(int argc, char **argv) {
 	string id = "testing";
 	CK_RV ret;

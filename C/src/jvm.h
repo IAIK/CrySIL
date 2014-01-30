@@ -35,10 +35,10 @@ typedef struct jvm_singleton
 	jboolean not;
 }sing;
 
+static struct jvm_singleton* instance = NULL;
+
 sing* get_instance()
 {
-
-    static struct jvm_singleton* instance = NULL;
     //char my_cwd[1024];
     //getcwd(my_cwd, 1024);
     //printf("\nPath: %s\n", my_cwd);
@@ -102,9 +102,10 @@ sing* get_instance()
 }
 
 void destroyVM(){
-printf("destroyVM called....\n");
-sing* dings = get_instance();
-(*(dings->jvm))->DestroyJavaVM(dings->jvm);
+	printf("destroyVM called....\n");
+	sing* dings = get_instance();
+	(*(dings->jvm))->DestroyJavaVM(dings->jvm);
+	instance = NULL;
 }
 
 #ifdef _WIN32
