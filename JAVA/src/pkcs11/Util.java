@@ -1,3 +1,4 @@
+package pkcs11;
 
 public class Util {
 	public static boolean isFlagSet(long bitfield, int flag){

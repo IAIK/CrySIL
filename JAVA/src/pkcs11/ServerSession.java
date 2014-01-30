@@ -1,3 +1,4 @@
+package pkcs11;
 import gui.DataVaultSingleton;
 import gui.Server;
 

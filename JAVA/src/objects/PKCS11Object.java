@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import PKCS11Error;
+import pkcs11.PKCS11Error;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.RETURN_TYPE;
 
