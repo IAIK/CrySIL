@@ -32,7 +32,20 @@ typedef struct {
 /* Parse the header file to generate wrappers */
 
 %apply char[] { CK_CHAR_PTR }
-%apply char[] { CK_CHAR[ANY] }
+%apply char[] { CK_UTF8CHAR[ANY],CK_CHAR[ANY] }
+%typemap(memberin)  CK_UTF8CHAR[ANY],CK_CHAR[ANY] { //MEMBERIN 
+	memset($1,0,$1_dim0);
+  if ($input) {
+	  jsize len = 0;
+	  len = (*jenv)->GetStringUTFLength(jenv, $input);
+  	memmove($1,$input,MIN(len,$1_dim0));
+  }
+}
+//%typemap(jstype) CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*jstype*/ String %}
+//%typemap(jtype) CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*jtype*/ jstring %}
+//%typemap(jni) CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*jni*/ jstring %}
+
+
 %apply unsigned long int {CK_ATTRIBUTE_TYPE, CK_MECHANISM_TYPE}
 
 %pointer_class(unsigned long int,CK_ULONG_JPTR)

@@ -3,7 +3,7 @@ package objects;
 
 import java.nio.ByteBuffer;
 
-import PKCS11Error;
+import pkcs11.PKCS11Error;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CK_ATTRIBUTE;
 import proxys.CK_BYTE_ARRAY;
