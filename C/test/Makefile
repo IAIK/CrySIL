@@ -34,8 +34,8 @@ test: $(TESTOBJS)
 ptest: plaintest.cpp
 		$(CC) $(CFLAGS) plaintest.cpp -o plain -lskytrustpkcs11 -L$(realpath ../../lib/) -Wl,-rpath,$(realpath ../../lib/)
 
-.PHONY:	testclean run	
-testclean:
+.PHONY:	clean run	
+clean:
 	rm -f $(TESTOBJS)
 	rm -f $(TESTNAME)
 	rm -f $(TESTDIR)/hs_err_pid*.log

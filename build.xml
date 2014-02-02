@@ -35,7 +35,7 @@
         <pathelement location="/usr/share/java/jackson-core.jar"/>
     </path>
 	
-    <target name="init" depends="clean,swig_preprocess,swig"/>
+    <target name="init" depends="clean,SWIG-preprocess,SWIG"/>
     	
     <target name="JAVA-clean">
         <delete dir="${java.build.dir}"/>
@@ -74,7 +74,6 @@
     </target>
     <target name="C-genPkcs11">
         <exec osfamily="Unix" failonerror="true" executable="java" searchpath="true">
-          <arg line="-C ${c.dir} all"/>
         </exec>
         <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
         </exec>

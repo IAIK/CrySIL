@@ -36,7 +36,7 @@ pkcs11wrapper: $(SRCDIR)/$(WRAPSOURCES)
 				ln -s -f $(realpath $(BINDIR)/lib$(WRAPNAME).so) $(LIBRARY_DIRS)/lib$(WRAPNAME).so
 all: pkcs11
 
-.PHONY all clean test testclean runtest
+.PHONY: all clean test testclean runtest
 
 clean: testclean
 	rm -f $(BINDIR)/lib$(NAME).so
