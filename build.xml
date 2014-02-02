@@ -23,7 +23,7 @@
 		<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
     <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
 
-    <property name="debug" value="1"/>
+    <property name="debug" value="true"/>
     <property name="debuglevel" value="source,lines,vars"/>
      
      
@@ -68,7 +68,7 @@
 <!-- COMPILE -->   
     <target name="JAVA-compile">
         <mkdir dir="${java.classes.dir}"/>
-        <javac srcdir="${java.src.dir}" debug="true" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
+        <javac srcdir="${java.src.dir}" debug="${debug}" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
             <classpath refid="skytrust.classpath"/>
         </javac>
     </target>

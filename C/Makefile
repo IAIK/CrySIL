@@ -11,9 +11,10 @@ export INCLUDE_DIRS := $(realpath ../include/java/ ../include/)
 export LIBRARY_DIRS := $(realpath ../lib/)
 NAME = skytrustpkcs11
 WRAPNAME = pkcs11_java_wrap
-
+export $(DEBUG)
 #following variables get overwritten through commandline from ant
 JAR = $(realpath ../lib/PKCS11.jar)
+DEBUG = 'true'
 #end
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
@@ -23,7 +24,7 @@ LDFLAGS += $(foreach library,$(LIBRARIES),-l$(library))
 CFLAGS += -DSYKTRUSTJAR=\"$(JAR)\"
 CFLAGS += -DSWIGLIBPATH=\"$(LIBRARY_DIRS)\"
 
-ifeq ($(DEBUG),1)
+ifeq ($(DEBUG),true)
 CFLAGS += -g -DDEBUG
 endif
 

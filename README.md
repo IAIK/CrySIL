@@ -1,7 +1,6 @@
 pkcs11_private
 ==============
 
-
 to build shared object: 
 
 build.xml
@@ -10,11 +9,20 @@ swig: generates Proxy classes and jni interface
 JAVA-compile: 
 compile: JAVA-compile, C-compile
 clean: JAVA-clean, C-clean, SWIG-clean
+C-compile: führt make im C ordner aus; übergibt Variablen JAR (pfad zum .jar) und DEBUG (ob VM im debug mode anstarten)
 
-skytrust
+Makefiles:
+C/Makefile
+	targets for swig wrapper lib and pkcs11 lib
+	calls test/Makefile for test targets
+	commandline Variable:
+		 DEBUG=true/false (default true) 
+		 JAR=path_to_JAR (default ../lib/PKCS11.jar)
+C/test/Makefile
 
+
+Skytrust-element compile
 maven
-
 musste java version händisch auf 1.7 setzen 
 in skytrust-element-java/pom.xml
     <build>
@@ -35,7 +43,6 @@ packete: (über apt)
  libjackson-json-java
  libspring-web-java
  libspring-core-java
- iaikjce
  
  compile mit 
  		mvn compile -pl common -am
