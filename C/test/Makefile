@@ -11,6 +11,9 @@ TEST_LIBRARIES := gtest pthread skytrustpkcs11
 #following variables get from above makefile
 #INCLUDE_DIRS := ../../include/java/ ../../include/
 #LIBRARY_DIRS := ../../lib/
+ifndef $(DEBUG)
+DEBUG = true
+endif
 #
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
@@ -30,8 +33,9 @@ test: $(TESTOBJS)
 
 ptest: plaintest.cpp
 		$(CC) $(CFLAGS) plaintest.cpp -o plain -lskytrustpkcs11 -L$(realpath ../../lib/) -Wl,-rpath,$(realpath ../../lib/)
-		
-testclean:
+
+.PHONY:	clean run	
+clean:
 	rm -f $(TESTOBJS)
 	rm -f $(TESTNAME)
 	rm -f $(TESTDIR)/hs_err_pid*.log

@@ -35,7 +35,7 @@
         <pathelement location="/usr/share/java/jackson-core.jar"/>
     </path>
 	
-    <target name="init" depends="clean,swig_preprocess,swig"/>
+    <target name="init" depends="clean,SWIG-preprocess,SWIG"/>
     	
     <target name="JAVA-clean">
         <delete dir="${java.build.dir}"/>
@@ -55,11 +55,11 @@
     </target>
     <target name="clean" depends="C-clean,JAVA-clean,SWIG-clean"/>
 <!-- SWIG -->  
-    <target name="swig_preprocess">
+    <target name="SWIG-preprocess">
       <exec input="${c.src.dir}/pkcs11t.h" executable="${swig.preproc.file}" output="${swig.dir}/pkcs11t_processed.h" failonerror="true"/>
             <exec dir="${swig.dir}" executable="./enums.sh" failonerror="true"/>
     </target>
-    <target name="swig">
+    <target name="SWIG">
       <mkdir dir="${swig.generated.dir}"/>
       <exec executable="swig2.0" failonerror="true" searchpath="true">
         <arg line="-java -package proxys -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
@@ -72,9 +72,8 @@
             <classpath refid="skytrust.classpath"/>
         </javac>
     </target>
-    <target name="genPkcs11">
+    <target name="C-genPkcs11">
         <exec osfamily="Unix" failonerror="true" executable="java" searchpath="true">
-          <arg line="-C ${c.dir} all"/>
         </exec>
         <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
         </exec>
@@ -87,10 +86,10 @@
            all"/>
         </exec>
     </target>
-    <target name="C-test">
+    <target name="C-runtest">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
           <arg line="-C ${c.dir} DEBUG=${debug}
-           test"/>
+           runtest"/>
         </exec>
     </target>
     <target name="compile" depends="C-compile,JAVA-compile"/>
