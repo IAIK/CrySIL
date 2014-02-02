@@ -14,7 +14,7 @@ WRAPNAME = pkcs11_java_wrap
 export $(DEBUG)
 #following variables get overwritten through commandline from ant
 JAR = $(realpath ../lib/PKCS11.jar)
-DEBUG = 'true'
+DEBUG = true
 #end
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
@@ -36,10 +36,11 @@ pkcs11wrapper: $(SRCDIR)/$(WRAPSOURCES)
 				ln -s -f $(realpath $(BINDIR)/lib$(WRAPNAME).so) $(LIBRARY_DIRS)/lib$(WRAPNAME).so
 all: pkcs11
 
-clean: 
+.PHONY all clean test testclean runtest
+
+clean: testclean
 	rm -f $(BINDIR)/lib$(NAME).so
 	rm -f $(BINDIR)/lib$(WRAPNAME).so
-
 
 test: pkcs11
 		$(MAKE) -C ./test/ test
