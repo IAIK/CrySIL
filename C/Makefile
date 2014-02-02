@@ -14,7 +14,7 @@ WRAPNAME = pkcs11_java_wrap
 export $(DEBUG)
 #following variables get overwritten through commandline from ant
 JAR = $(realpath ../lib/PKCS11.jar)
-DEBUG = 'true'
+DEBUG =true
 #end
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
