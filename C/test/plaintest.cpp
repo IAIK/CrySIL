@@ -29,6 +29,14 @@ int main(int argc, char **argv) {
 	ret = C_GetSlotList(TRUE,ids,&size);
 	assert(ret==CKR_OK);
 
+	if(size > 0){
+		CK_TOKEN_INFO tinfo;
+		ret = C_GetTokenInfo(ids[0],&tinfo);
+		assert(ret==CKR_OK);
+		tinfo.label[31] = '\0';
+		cout << "Label: " << tinfo.label << endl;
+	}
+
 	CK_SESSION_HANDLE sess;
 	ret = C_OpenSession(ids[0],4,(void*)(id.c_str()),0,&sess);
 	assert(ret==CKR_OK);

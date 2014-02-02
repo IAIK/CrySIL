@@ -37,8 +37,8 @@ typedef struct {
 	memset($1,0,$1_dim0);
   if ($input) {
 	  jsize len = 0;
-	  len = (*jenv)->GetStringUTFLength(jenv, $input);
-  	memmove($1,$input,MIN(len,$1_dim0));
+	  len = (*jenv)->GetStringUTFLength(jenv, j$input);
+  	memmove($1,$input,(len<$1_dim0)?len:$1_dim0);
   }
 }
 //%typemap(jstype) CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*jstype*/ String %}

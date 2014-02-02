@@ -18,6 +18,10 @@ CFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-Wl,-rpath,$(librarydir))
 LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(TEST_LIBRARIES),-l$(library))
 
+ifeq ($(DEBUG),1)
+CFLAGS += -g -DDEBUG
+endif
+
 %.o: %.cpp 
 	$(CC) $(CFLAGS) -c -o $@ $< $(CFLAGS)
 

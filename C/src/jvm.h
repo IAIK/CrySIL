@@ -17,9 +17,9 @@
 //struct jvm_singleton;
 
 #ifdef DEBUG
-#define NUMJAVAOPTIONS 4
-#else
 #define NUMJAVAOPTIONS 3
+#else
+#define NUMJAVAOPTIONS 2
 #endif
 
 typedef struct jvm_singleton
@@ -54,10 +54,9 @@ sing* get_instance()
 	}
 	instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
 	instance->options[1].optionString = "-Djava.library.path="SWIGLIBPATH;  /* set native library path */
-	instance->options[2].optionString = "-verbose:jni";                   /* print JNI-related messages */
 #ifdef DEBUG
 //	instance->options[3].optionString = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000";	pre JAVA 5
-	instance->options[3].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,address=8000";
+	instance->options[2].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,address=8000";
 #endif
 
 	instance->vm_args.version = JNI_VERSION_1_4;
@@ -65,13 +64,16 @@ sing* get_instance()
 	instance->vm_args.ignoreUnrecognized = JNI_FALSE;
 	JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
 	instance->vm_args.options = instance->options;
-
+	printf("\npre create vm\n");
 	instance->status = JNI_CreateJavaVM(&instance->jvm, (void**)&(instance->env), &(instance->vm_args));
 	if(instance->status==JNI_ERR){
 		//VM - Error --> cleanup & die gracefully 
-		printf("jvm startup error");
+		printf("jvm startup error %d",instance->status);
+		free(instance);
+		instance = NULL;
+		return NULL;
 	}
-	instance->cls = (*(instance->env))->FindClass(instance->env,"JAVApkcs11Interface");
+	instance->cls = (*(instance->env))->FindClass(instance->env,"pkcs11/JAVApkcs11Interface");
 	if ((*(instance->env))->ExceptionCheck(instance->env)) {
 
 	  printf("\n\n exception..... \n\n");
@@ -105,6 +107,7 @@ void destroyVM(){
 	printf("destroyVM called....\n");
 	sing* dings = get_instance();
 	(*(dings->jvm))->DestroyJavaVM(dings->jvm);
+	free(instance);
 	instance = NULL;
 }
 

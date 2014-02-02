@@ -11,10 +11,11 @@
 using namespace std;
 
 class FooTest: public ::testing::Test {
+private:
+	static bool initialized;
 protected:
 	// You can remove any or all of the following functions if its body
 	// is empty.
-
 	FooTest() {
 		// You can do set-up work for each test here.
 	}
@@ -27,22 +28,23 @@ protected:
 	// and cleaning up each test, you can define the following methods:
 
 	virtual void SetUp() {
-		std::string id = "testing";
-		CK_RV ret;
-		ret = C_Initialize((void*)(id.c_str()));
+		if(!initialized){
+			std::string id = "testing";
+			CK_RV ret;
+			ret = C_Initialize((void*)(id.c_str()));
+			initialized = true;
+		}
 	}
 
 	virtual void TearDown() {
-		void* tmp = NULL;
-		C_Finalize(tmp);
 	}
 };
+bool FooTest::initialized = false;
 
-TEST(CJAVATests, getslots){
+TEST(FooTest, getslots){
 	std::string id = "testing";
 	CK_RV ret;
-	ret = C_Initialize((void*)(id.c_str()));
-		ASSERT_EQ(ret,CKR_OK);
+
 	CK_SLOT_ID_PTR ids = NULL;
 	CK_ULONG size = 0;
 	ret = C_GetSlotList(TRUE,ids,&size);
@@ -58,11 +60,7 @@ TEST(CJAVATests, getslots){
 		ASSERT_EQ(ret,CKR_OK);
 	CK_OBJECT_HANDLE objs = 0;
 	size = 0;
-	while (1) {
-		ret = C_FindObjects(sess, &objs, 1,&size);
-		if (ret != CKR_OK || size == 0)
-			break;
-	}
+	ret = C_FindObjects(sess, &objs, 1,&size);
 	ASSERT_EQ(ret,CKR_OK);
 
 	ret = C_FindObjectsFinal(sess);
@@ -72,32 +70,34 @@ TEST(CJAVATests, getslots){
 		ASSERT_EQ(ret,CKR_OK);
 	objs = 0;
 	size = 0;
-	while (1) {
-		ret = C_FindObjects(sess, &objs, 1,&size);
-		if (ret != CKR_OK || size == 0)
-			break;
-	}
+	ret = C_FindObjects(sess, &objs, 1,&size);
+
 	ASSERT_EQ(ret,CKR_OK);
 	ret = C_FindObjectsFinal(sess);
 	ASSERT_EQ(ret,CKR_OK);
-
-	ret = C_Finalize(NULL);
-		ASSERT_EQ(ret,CKR_OK);
 }
 
-//TEST(CJAVATests, init){
-//	std::string id = "testing";
-//	CK_RV ret;
-//	ret = C_Initialize((void*)(id.c_str()));
-//	ASSERT_EQ(ret,CKR_OK);
-//	ret = C_Finalize(NULL);
-//	ASSERT_EQ(ret,CKR_OK);
-//}
-//TEST(CJAVATests, init0){
-//	std::string id = "testing";
-//	CK_RV ret;
-//	ret = C_Initialize((void*)(id.c_str()));
-//	ASSERT_EQ(ret,CKR_OK);
-//	ret = C_Finalize(NULL);
-//	ASSERT_EQ(ret,CKR_OK);
-//}
+TEST(FooTest, init){
+	std::string id = "testing";
+	CK_RV ret;
+	CK_SLOT_ID_PTR ids = NULL;
+	CK_ULONG size = 0;
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+	ids = new CK_SLOT_ID[size];
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+	if(size > 0){
+		CK_TOKEN_INFO tinfo;
+		ret = C_GetTokenInfo(ids[0],&tinfo);
+		ASSERT_EQ(ret,CKR_OK);
+	}
+}
+TEST(CJAVATests, init0){
+	std::string id = "testing";
+	CK_RV ret;
+	ret = C_Initialize((void*)(id.c_str()));
+	ASSERT_EQ(ret,CKR_OK);
+	ret = C_Finalize(NULL);
+	ASSERT_EQ(ret,CKR_OK);
+}
