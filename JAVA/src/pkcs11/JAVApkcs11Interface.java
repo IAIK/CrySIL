@@ -103,15 +103,12 @@ public class JAVApkcs11Interface implements pkcs11Constants {
       long flags = Util.initFlags;
 
       flags = Util.setFlag(flags, CKF_TOKEN_PRESENT);
+      flags = Util.setFlag(flags, CKF_HW_SLOT);
       pInfo.setFlags(flags);
       
       pInfo.setManufacturerID("IAIK Skytrust"); //32
-	  try{
-      pInfo.setSlotDescription(slot.getServerInfo().getName().substring(0, 30)); //32
-	  }catch (NullPointerException e){
-		  pInfo.setSlotDescription("example description");
-	  }
-      
+      pInfo.setSlotDescription(slot.getServerInfo().getName()); //32
+     
 	  System.out.println("\n slotinfo..ende..............................................");
       return RETURN_TYPE.OK.swigValue();
   }

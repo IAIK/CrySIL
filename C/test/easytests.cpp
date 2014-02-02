@@ -41,7 +41,45 @@ protected:
 };
 bool FooTest::initialized = false;
 
-TEST(FooTest, getslots){
+TEST(FooTest, getSlots){
+	std::string id = "testing";
+	CK_RV ret;
+
+	CK_SLOT_ID_PTR ids = NULL;
+	CK_ULONG size = 0;
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+		ASSERT_GT(size,0);
+	ids = new CK_SLOT_ID[size];
+	CK_ULONG oldsize = size;
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+		ASSERT_EQ(size,oldsize);
+}
+
+TEST(FooTest, getSlotInfo){
+	std::string id = "testing";
+	CK_RV ret;
+
+	CK_SLOT_ID_PTR ids = NULL;
+	CK_ULONG size = 0;
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+		ASSERT_GT(size,0);
+	ids = new CK_SLOT_ID[size];
+	CK_ULONG oldsize = size;
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+		ASSERT_EQ(size,oldsize);
+	CK_SLOT_INFO sInfo;
+	ret = C_GetSlotInfo(ids[0],&sInfo);
+	ASSERT_EQ(ret,CKR_OK);
+	ASSERT_TRUE(sInfo.flags&CKF_TOKEN_PRESENT);
+	ASSERT_TRUE(~(sInfo.flags&CKF_REMOVABLE_DEVICE));
+	ASSERT_TRUE(sInfo.flags&CKF_HW_SLOT);
+}
+
+TEST(FooTest, findobj){
 	std::string id = "testing";
 	CK_RV ret;
 
@@ -77,7 +115,7 @@ TEST(FooTest, getslots){
 	ASSERT_EQ(ret,CKR_OK);
 }
 
-TEST(FooTest, init){
+TEST(FooTest, tokeninfo){
 	std::string id = "testing";
 	CK_RV ret;
 	CK_SLOT_ID_PTR ids = NULL;
@@ -93,11 +131,5 @@ TEST(FooTest, init){
 		ASSERT_EQ(ret,CKR_OK);
 	}
 }
-TEST(CJAVATests, init0){
-	std::string id = "testing";
-	CK_RV ret;
-	ret = C_Initialize((void*)(id.c_str()));
-	ASSERT_EQ(ret,CKR_OK);
-	ret = C_Finalize(NULL);
-	ASSERT_EQ(ret,CKR_OK);
-}
+
+
