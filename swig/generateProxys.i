@@ -33,14 +33,17 @@ typedef struct {
 
 %apply char[] { CK_CHAR_PTR }
 %apply char[] { CK_UTF8CHAR[ANY],CK_CHAR[ANY] }
+%typemap(javaimports) SWIGTYPE %{
+	import pkcs11.Util;
+%}
+%typemap(javain)  CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*JAVAIN*/ Util.fixStringLen($javainput,$1_dim0)
+%}
 %typemap(memberin)  CK_UTF8CHAR[ANY],CK_CHAR[ANY] { //MEMBERIN 
-	memset($1,0,$1_dim0);
   if ($input) {
-	  jsize len = 0;
-	  len = (*jenv)->GetStringUTFLength(jenv, j$input);
-  	memmove($1,$input,(len<$1_dim0)?len:$1_dim0);
+  	memmove($1,$input,$1_dim0);
   }
 }
+
 //%typemap(jstype) CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*jstype*/ String %}
 //%typemap(jtype) CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*jtype*/ jstring %}
 //%typemap(jni) CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*jni*/ jstring %}
