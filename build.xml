@@ -89,7 +89,7 @@
     </target>
     <target name="C-test">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} 
+          <arg line="-C ${c.dir} DEBUG=${debug}
            test"/>
         </exec>
     </target>
