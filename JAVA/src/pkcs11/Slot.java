@@ -17,6 +17,7 @@ import proxys.RETURN_TYPE;
  * 
  */
 public class Slot{
+	
 	private ServerSession serversession;
 	private ArrayList<Long> mechanisms = new ArrayList<Long>();
 	private long slotID;
@@ -25,7 +26,7 @@ public class Slot{
 	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
-	
+	private ObjectStorage storage;
 	
 	public ServerSession getServersession() {
 		return serversession;

@@ -45,4 +45,15 @@ public class Session {
 	public Slot getSlot(){
 		return slot;
 	}
+	
+	
+	delObject
+	createObject
+	newObject
+	findObject
+	decrypt
+	encrypt
+	sign
+	verify
+	
 }

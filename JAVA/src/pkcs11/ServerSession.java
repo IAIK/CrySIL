@@ -52,7 +52,7 @@ import sun.misc.BASE64Encoder;
  * ist für authentifizierung über Authenticator Plugins zuständig
  * könnte caching übernehmen
  * */
-public class ServerSession {
+public class ServerSession implements IServerSession {
 
 	private String sessionID;
 	private Server.ServerInfo server;

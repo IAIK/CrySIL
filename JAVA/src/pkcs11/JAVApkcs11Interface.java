@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import objects.PKCS11Object;
+
 import com.sun.org.apache.bcel.internal.generic.RET;
 
 import proxys.ATTRIBUTE_TYPE;
@@ -509,8 +511,14 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
-			ServerSession sSession =  session.getSlot().getServersession();
+			PKCS11Object key = session.getObject(hUnwrappingKey);
 			
+			byte[] unwrappedKey = session.decrypt(pMechanism,pWrappedKey);
+			long hKey = session.newObject(pTemplate);
+			phKey.assign(hKey); 
+			
+			
+			ServerSession sSession =  session.getSlot().getServersession();
 			long hKey = sSession.unwrapKey(pMechanism, hUnwrappingKey, pWrappedKey, ulWrappedKeyLen, pTemplate, ulAttributeCount, phKey);
 			phKey.assign(hKey);
 
