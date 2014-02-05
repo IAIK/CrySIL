@@ -58,10 +58,9 @@ public class ServerSession implements IServerSession {
 	private Server.ServerInfo server;
 	protected RestTemplate restTemplate;
 
-	private SAuthInfo credentials;
+	private SAuthInfo credentials = null;
 	private boolean rememberCredentialsForSession = true;
 
-	private ObjectStorage keyStorage = new ObjectStorage();
 
 	public ServerSession(Server.ServerInfo s) {
 		server = s;
@@ -70,94 +69,74 @@ public class ServerSession implements IServerSession {
 	public Server.ServerInfo getInfo() {
 		return server;
 	}
-
+	@Override
 	public List<SKey> getKeyList() {
-		return null;
+		return discoverKeys("handle");
 	}
+	protected List<SKey> discoverKeys(String representation) {
+        SPayloadDiscoverKeysRequest payload = new SPayloadDiscoverKeysRequest();
+        payload.setRepresentation(representation);
 
-	public byte[] sign(byte[] pData, long hKey) throws IOException, PKCS11Error {
+        SRequest request = createBasicRequest();
+        request.setPayload(payload);
+
+        SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),request,SResponse.class);
+        SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
+        if (payloadResponse instanceof SPayloadAuthResponse) {
+            skyTrustResponse = handleAuth(skyTrustResponse);
+        }
+        payloadResponse = skyTrustResponse. getPayload();
+
+        if (payloadResponse instanceof SPayloadDiscoverKeysResponse) {
+            SPayloadDiscoverKeysResponse discoverKeysResponse = (SPayloadDiscoverKeysResponse)payloadResponse;
+            List<SKey> keys = discoverKeysResponse.getKey();
+            return keys;
+        }
+        return null;
+    }
+	@Override
+	public byte[] sign(byte[] pData, SKey key, SkyTrustAlgorithm mech)
+			throws IOException, PKCS11Error {
 		byte[] cData = null;
 		String b64Data = null;
-
-		SKey key = (SKey) keyStorage.getObjectById(hKey);
-
+		
+		
 		if (key == null) {
 			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
 		}
-
+		
 		b64Data = new BASE64Encoder().encode(pData);
 		b64Data = doCryptoCommand("sign",
 				SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_1.getAlgorithmName(),
 				b64Data, key.getId(), key.getSubId()); // FIXME: right
-														// algorithm?
+		// algorithm?
 		cData = new BASE64Decoder().decodeBuffer(b64Data);
-
+		
 		return cData;
 	}
 
-	public void verify() {
-
+	@Override
+	public void decrypt() {
+		// TODO Auto-generated method stub
+		
 	}
-
+	@Override
+	public byte[] verify(byte[] pData, SKey key,SkyTrustAlgorithm mech) {
+		return null;
+	}
+	@Override
 	public void encrypt() {
 
 	}
 
-	/**
-	 * wraps (i.e., encrypts) a private or secret
-	 * 
-	 * @param pMechanism
-	 *            wrapping mechanism
-	 * @param hWrappingKey
-	 *            handle of the wrapping-key
-	 * @param hKey
-	 *            handle of the key to be wrapped
-	 * @return returns a byte-Array containing the wraped key or null in case of
-	 *         fire ;)
-	 */
-
-	public byte[] wrapKey(CK_MECHANISM pMechanism, long wrappingKey, long hKey)
-			throws IOException {
-		// TODO: do something with the mechanism
-
-		SKey keyToWrap = (SKey) keyStorage.getObjectById(hKey);
-		SKey wrapKey = (SKey) keyStorage.getObjectById(wrappingKey);
-
-		String data = new BASE64Encoder().encode(keyToWrap.getRepresentation()
-				.getBytes());
-
-		data = doCryptoCommand("encrypt",
-				SkyTrustAlgorithm.RSAES_RAW.getAlgorithmName(), data,
-				wrapKey.getId(), wrapKey.getSubId());
-
-		return new BASE64Decoder().decodeBuffer(data);
-
-	}
-
-	public long unwrapKey(CK_MECHANISM pMechanism, long hUnwrappingKey,
-			byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate,
-			long ulAttributeCount, CK_ULONG_JPTR phKey) {
-
-		SKey unWrappingKey = (SKey) keyStorage.getObjectById(hUnwrappingKey);
-
-		String data = new BASE64Encoder().encode(pWrappedKey);
-
-		data = doCryptoCommand("decrypt",
-				SkyTrustAlgorithm.RSAES_RAW.getAlgorithmName(), data,
-				unWrappingKey.getId(), unWrappingKey.getSubId());
-
-		SKey key = new SKey();
-
-		return 0L;
-	}
-	
-	
 	
 	public SResponse handleAuth(SResponse skyTrustResponse){
 		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
         SAuthType authType = authResponse.getAuthType();
         //ask User for Credentials
-        SAuthInfo credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);
+        if(credentials == null){
+        	credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);
+        }
         //build authRequest
         SRequest authRequest = createBasicRequest();
         SPayloadAuthRequest authRequestPayload = new SPayloadAuthRequest();
@@ -170,6 +149,10 @@ public class ServerSession implements IServerSession {
         	skyTrustResponse = restTemplate.postForObject(server.getUrl(),authRequest,SResponse.class);
         }catch(RestClientException e){
         	return null;
+        }
+        //TODO wie erkennen wir ob Auth erfolgreich war
+        if(!rememberCredentialsForSession){
+        	credentials = null;
         }
         //save new (authenticated) SessionID
         sessionID=skyTrustResponse.getHeader().getSessionId();
@@ -217,46 +200,64 @@ public class ServerSession implements IServerSession {
 		return null;
 
 	}
-	
-	protected List<SKey> discoverKeys(String representation) {
-        SPayloadDiscoverKeysRequest payload = new SPayloadDiscoverKeysRequest();
-        payload.setRepresentation(representation);
-
-        SRequest request = createBasicRequest();
-        request.setPayload(payload);
-
-        SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),request,SResponse.class);
-        SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
-        if (payloadResponse instanceof SPayloadAuthResponse) {
-            skyTrustResponse = handleAuth(skyTrustResponse);
-        }
-        payloadResponse = skyTrustResponse. getPayload();
-
-        if (payloadResponse instanceof SPayloadDiscoverKeysResponse) {
-            SPayloadDiscoverKeysResponse discoverKeysResponse = (SPayloadDiscoverKeysResponse)payloadResponse;
-            List<SKey> keys = discoverKeysResponse.getKey();
-            return keys;
-        }
-        return null;
-    }
 
 	public boolean isAutheticated() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
-	public void findObjects(FindObjectsHelper findObjectsHelper, CK_ULONG_JPTR phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) throws PKCS11Error {
-		if (pulObjectCount.getCPtr() == 0L || phObject.getCPtr() == 0L) {
-			throw new PKCS11Error(RETURN_TYPE.DEVICE_MEMORY);
-		}
 
-		if (ulMaxObjectCount == 0L) {
-			pulObjectCount.assign(0L);
-			return;
-		}
-		
-//		try{
-//			
+}
+
+
+
+/**
+ * wraps (i.e., encrypts) a private or secret
+ * 
+ * @param pMechanism
+ *            wrapping mechanism
+ * @param hWrappingKey
+ *            handle of the wrapping-key
+ * @param hKey
+ *            handle of the key to be wrapped
+ * @return returns a byte-Array containing the wraped key or null in case of
+ *         fire ;)
+ */
+//public byte[] wrapKey(CK_MECHANISM pMechanism, long wrappingKey, long hKey)
+//throws IOException {
+//// TODO: do something with the mechanism
+//
+//SKey keyToWrap = (SKey) keyStorage.getObjectById(hKey);
+//SKey wrapKey = (SKey) keyStorage.getObjectById(wrappingKey);
+//
+//String data = new BASE64Encoder().encode(keyToWrap.getRepresentation()
+//	.getBytes());
+//
+//data = doCryptoCommand("encrypt",
+//	SkyTrustAlgorithm.RSAES_RAW.getAlgorithmName(), data,
+//	wrapKey.getId(), wrapKey.getSubId());
+//
+//return new BASE64Decoder().decodeBuffer(data);
+//
+//}
+//
+//public long unwrapKey(CK_MECHANISM pMechanism, long hUnwrappingKey,
+//byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate,
+//long ulAttributeCount, CK_ULONG_JPTR phKey) {
+//
+//SKey unWrappingKey = (SKey) keyStorage.getObjectById(hUnwrappingKey);
+//
+//String data = new BASE64Encoder().encode(pWrappedKey);
+//
+//data = doCryptoCommand("decrypt",
+//	SkyTrustAlgorithm.RSAES_RAW.getAlgorithmName(), data,
+//	unWrappingKey.getId(), unWrappingKey.getSubId());
+//
+//SKey key = new SKey();
+//
+//return 0L;
+//}
+//	public void findObjects(FindObjectsHelper findObjectsHelper, CK_ULONG_JPTR phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) throws PKCS11Error {
 //		if (pulObjectCount.getCPtr() == 0L || phObject.getCPtr() == 0L) {
 //			throw new PKCS11Error(RETURN_TYPE.DEVICE_MEMORY);
 //		}
@@ -265,49 +266,58 @@ public class ServerSession implements IServerSession {
 //			pulObjectCount.assign(0L);
 //			return;
 //		}
+//		
+////		try{
+////			
+////		if (pulObjectCount.getCPtr() == 0L || phObject.getCPtr() == 0L) {
+////			throw new PKCS11Error(RETURN_TYPE.DEVICE_MEMORY);
+////		}
+////
+////		if (ulMaxObjectCount == 0L) {
+////			pulObjectCount.assign(0L);
+////			return;
+////		}
+////
+////		List<SKey> list = new ArrayList<SKey>();
+////		CK_ATTRIBUTE[] template = findObjectsHelper.pTemplate;
+////		for (CK_ATTRIBUTE tmp : template) {
+////
+////			if(tmp.getType()==ATTRIBUTE_TYPE.CLASS.swigValue()){
+////				
+////				short[] array = JAVApkcs11Interface.getByteArrayAsShort(tmp);
+////				
+////				if(OBJECT_CLASS.SECRET_KEY.swigValue() == array[array.length-1] ){
+////					list = discoverKeys("SECRET_KEY");
+////				}
+////				if(OBJECT_CLASS.PUBLIC_KEY.swigValue() == array[array.length-1] ){
+////					list = discoverKeys("PUBLIC_KEY");
+////				}
+////				if(OBJECT_CLASS.PRIVATE_KEY.swigValue() == array[array.length-1] ){
+////					list = discoverKeys("PRIVATE_KEY");
+////				}
+////				if(OBJECT_CLASS.CERTIFICATE.swigValue() == array[array.length-1] ){
+////					list = discoverKeys("certificate");
+////				}
+////			}else if(tmp.getType()==ATTRIBUTE_TYPE.KEY_TYPE.swigValue()){
+////			}else if(tmp.getType()==ATTRIBUTE_TYPE.TOKEN.swigValue()){
+////			}else if(tmp.getType()==ATTRIBUTE_TYPE.ID.swigValue()){
+////			}else if(tmp.getType()==ATTRIBUTE_TYPE.VALUE.swigValue()){
+////			}
+////		}
+////			if(list==null){
+////					pulObjectCount.assign(0L);
+////					return;
+////				}
+////			CK_ULONG_ARRAY ar = new CK_ULONG_ARRAY(phObject.getCPtr(), false);
+////			pulObjectCount.assign(list.size() > ulMaxObjectCount ? ulMaxObjectCount : list.size());
+////			for(long i=findObjectsHelper.actualCount; i<pulObjectCount.value(); i++){
+////				long handle = keyStorage.addNewObject(list.get((int) i));
+////				ar.setitem((int) i, handle);
+////			}
+////			findObjectsHelper.actualCount=pulObjectCount.value();
+////		}catch(Exception e){
+////			e.printStackTrace();
+////		}
+//			
 //
-//		List<SKey> list = new ArrayList<SKey>();
-//		CK_ATTRIBUTE[] template = findObjectsHelper.pTemplate;
-//		for (CK_ATTRIBUTE tmp : template) {
-//
-//			if(tmp.getType()==ATTRIBUTE_TYPE.CLASS.swigValue()){
-//				
-//				short[] array = JAVApkcs11Interface.getByteArrayAsShort(tmp);
-//				
-//				if(OBJECT_CLASS.SECRET_KEY.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("SECRET_KEY");
-//				}
-//				if(OBJECT_CLASS.PUBLIC_KEY.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("PUBLIC_KEY");
-//				}
-//				if(OBJECT_CLASS.PRIVATE_KEY.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("PRIVATE_KEY");
-//				}
-//				if(OBJECT_CLASS.CERTIFICATE.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("certificate");
-//				}
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.KEY_TYPE.swigValue()){
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.TOKEN.swigValue()){
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.ID.swigValue()){
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.VALUE.swigValue()){
-//			}
-//		}
-//			if(list==null){
-//					pulObjectCount.assign(0L);
-//					return;
-//				}
-//			CK_ULONG_ARRAY ar = new CK_ULONG_ARRAY(phObject.getCPtr(), false);
-//			pulObjectCount.assign(list.size() > ulMaxObjectCount ? ulMaxObjectCount : list.size());
-//			for(long i=findObjectsHelper.actualCount; i<pulObjectCount.value(); i++){
-//				long handle = keyStorage.addNewObject(list.get((int) i));
-//				ar.setitem((int) i, handle);
-//			}
-//			findObjectsHelper.actualCount=pulObjectCount.value();
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-			
-
-	}
-
-}
+//	}
