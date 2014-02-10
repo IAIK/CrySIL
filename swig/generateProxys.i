@@ -11,6 +11,9 @@ typedef struct {
 %include "cpointer.i"
 %include "carrays.i"
 
+%typemap(javabase, notderived="1") SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) "StructBase"
+%typemap(javabase, notderived="1") enum SWIGTYPE "EnumBase"
+
 /*alter default proxy classes for public access to cPtr*/
 %typemap(javabody) SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) %{
   private long swigCPtr;
