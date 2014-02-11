@@ -48,6 +48,12 @@ public class ObjectBuilder {
 		defaultKey_template.put(ATTRIBUTE_TYPE.TOKEN, new Attribute(ATTRIBUTE_TYPE.TOKEN,bool_value));
 		bool_value[0] = 1;
 		defaultKey_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
+		bool_value[0] = 0;
+		defaultKey_template.put(ATTRIBUTE_TYPE.DERIVE, new Attribute(ATTRIBUTE_TYPE.DERIVE,bool_value));
+
+		
+		defaultKey_template.put(ATTRIBUTE_TYPE.KEY_TYPE, new Attribute(ATTRIBUTE_TYPE.KEY_TYPE,bool_value));
+		
 	}
 	
 	private static Attribute[] toAttributeArray(CK_ATTRIBUTE[] template){
@@ -79,8 +85,8 @@ public class ObjectBuilder {
 		return null;
 	}
 
-	public static PKCS11Object createFromSkyTrust(SKey key){
-		try {
+	public static PKCS11Object createFromSkyTrust(SKey key) throws PKCS11Error{
+		skytrust_template.put(ATTRIBUTE_TYPE.ID, new Attribute(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
 		 switch(key.getRepresentation()){
 		 case "fullKey":
 			 break;
@@ -92,10 +98,6 @@ public class ObjectBuilder {
 		 case "keyIdentifier":
 			 break;
 		 }
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return null;
 	}
 }

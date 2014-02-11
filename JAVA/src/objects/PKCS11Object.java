@@ -1,9 +1,6 @@
 package objects;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import pkcs11.PKCS11Error;
 import proxys.ATTRIBUTE_TYPE;
@@ -17,7 +14,10 @@ public class PKCS11Object {
 			attributes.put(attr.getType(), attr);
 		}
 	}
-	public void setAttribute(Attribute val){
+	public PKCS11Object(HashMap<ATTRIBUTE_TYPE,Attribute> template){
+		attributes = template;
+	}
+	public void setAttribute(Attribute val) throws PKCS11Error{ //TODO ist die Unterscheidung zw set und add nötig oder ist es eh immer add
 		if(!attributes.containsKey(val.getType())){
 			throw new PKCS11Error(RETURN_TYPE.TEMPLATE_INCONSISTENT);
 		}
@@ -29,7 +29,7 @@ public class PKCS11Object {
 	public boolean hasAttribute(ATTRIBUTE_TYPE type){
 		return attributes.containsKey(type);
 	}
-	public Attribute getAttribute(ATTRIBUTE_TYPE type){
+	public Attribute getAttribute(ATTRIBUTE_TYPE type) throws PKCS11Error{
 		Attribute res = attributes.get(type);
 		if(res == null){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_TYPE_INVALID);

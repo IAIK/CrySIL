@@ -39,6 +39,9 @@ public class Attribute {
 	private CK_BYTE_ARRAY cdata;
 	private byte[] data;
 	
+	private boolean ro = false;
+	private boolean sensitive = false;
+	
 	
 	private static Map<ATTRIBUTE_TYPE,Class<?>> attribute_types = new HashMap<>();
 	static{
