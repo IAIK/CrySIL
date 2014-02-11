@@ -10,10 +10,13 @@ import proxys.ATTRIBUTE_TYPE;
 import proxys.RETURN_TYPE;
 
 public class PKCS11Object {
-	private Map<ATTRIBUTE_TYPE,Attribute> attributes = new HashMap<>();
+	private HashMap<ATTRIBUTE_TYPE,Attribute> attributes = new HashMap<>();
 
-
-	
+	public PKCS11Object(Attribute[] template){
+		for(Attribute attr: template){
+			attributes.put(attr.getType(), attr);
+		}
+	}
 	public void setAttribute(Attribute val){
 		if(!attributes.containsKey(val.getType())){
 			throw new PKCS11Error(RETURN_TYPE.TEMPLATE_INCONSISTENT);
