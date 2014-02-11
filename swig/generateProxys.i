@@ -11,8 +11,8 @@ typedef struct {
 %include "cpointer.i"
 %include "carrays.i"
 
-%typemap(javabase, notderived="1") SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) "StructBase"
-%typemap(javabase, notderived="1") enum SWIGTYPE "EnumBase"
+%typemap(javainterfaces, notderived="1") SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) "StructBase"
+%typemap(javainterfaces, notderived="1") enum SWIGTYPE "EnumBase"
 
 /*alter default proxy classes for public access to cPtr*/
 %typemap(javabody) SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) %{
@@ -38,6 +38,10 @@ typedef struct {
 %apply char[] { CK_UTF8CHAR[ANY],CK_CHAR[ANY] }
 %typemap(javaimports) SWIGTYPE %{
 	import pkcs11.Util;
+	import objects.StructBase;
+%}
+%typemap(javaimports) enum SWIGTYPE %{
+	import objects.EnumBase;
 %}
 %typemap(javain)  CK_UTF8CHAR[ANY],CK_CHAR[ANY] %{ /*JAVAIN*/ Util.fixStringLen($javainput,$1_dim0)
 %}

@@ -1,5 +1,5 @@
 package objects;
 
-public class StructBase {
-
+public interface StructBase {
+	public long getCPtr();
 }

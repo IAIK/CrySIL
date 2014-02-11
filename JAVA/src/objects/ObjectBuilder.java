@@ -35,6 +35,21 @@ public class ObjectBuilder {
 		bool_value[0] = 0;
 		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
 	}
+	static{		
+		byte[] enum_value = new byte[4];
+		byte[] bool_value = new byte[1];
+		ByteBuffer.wrap(enum_value).putLong(OBJECT_CLASS.PUBLIC_KEY.swigValue());
+		defaultKey_template.put(ATTRIBUTE_TYPE.CLASS, new Attribute(ATTRIBUTE_TYPE.CLASS,enum_value));
+		bool_value[0] = 1;
+		defaultKey_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new Attribute(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
+		bool_value[0] = 0;
+		defaultKey_template.put(ATTRIBUTE_TYPE.SENSITIVE, new Attribute(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
+		bool_value[0] = 0;
+		defaultKey_template.put(ATTRIBUTE_TYPE.TOKEN, new Attribute(ATTRIBUTE_TYPE.TOKEN,bool_value));
+		bool_value[0] = 1;
+		defaultKey_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
+	}
+	
 	private static Attribute[] toAttributeArray(CK_ATTRIBUTE[] template){
 		Attribute[] res = new Attribute[template.length];
 		for(int i=0;i<template.length;i++){
@@ -42,18 +57,14 @@ public class ObjectBuilder {
 		}
 		return res;
 	}
-	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template){
+	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
 		Attribute[] attributes = toAttributeArray(template);
 		
 		for(Attribute attr : attributes){
 			if(attr.getType().equals(ATTRIBUTE_TYPE.CLASS)){
 				OBJECT_CLASS obj_class = null;
-				try {
-					obj_class = attr.<OBJECT_CLASS>getAsSwigObject();
-				} catch (PKCS11Error | InstantiationException | IllegalAccessException e) {
+				obj_class = attr.getAsSwig(OBJECT_CLASS.class);
 
-				}
-				
 				if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
 					 //private key template
 				 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
@@ -69,17 +80,22 @@ public class ObjectBuilder {
 	}
 
 	public static PKCS11Object createFromSkyTrust(SKey key){
-
+		try {
 		 switch(key.getRepresentation()){
 		 case "fullKey":
 			 break;
 		 case "certificate":
+				skytrust_template.get(ATTRIBUTE_TYPE.CLASS).setSwig(OBJECT_CLASS.CERTIFICATE);
 			 break;
 		 case "handle":
 			 break;
 		 case "keyIdentifier":
 			 break;
 		 }
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

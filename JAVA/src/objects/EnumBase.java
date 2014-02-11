@@ -1,5 +1,5 @@
 package objects;
 
-public class EnumBase {
-
+public interface EnumBase {
+	public int swigValue();
 }

@@ -1,6 +1,8 @@
 package objects;
 
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,38 +131,96 @@ public class Attribute {
 		}
 		return data;
 	}
-	public <T> T getAsPKCS11Struct() throws PKCS11Error, InstantiationException, IllegalAccessException{
-		Class<T> req_type;
+	private <T extends StructBase> T getAsSwigStruct(Class<T> req_type) throws PKCS11Error{
 		if(!datatype.equals(req_type)){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		return (T) datatype.newInstance(cptr,false);
+		req_type = (Class<T>) datatype;
+		Constructor<T> constructor;
+		try {
+			constructor = req_type.getDeclaredConstructor( long.class, boolean.class );
+			return constructor.newInstance(cdata.getCPtr(),false);
+		} catch (NoSuchMethodException|IllegalArgumentException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+			return null;
+		}
 	}
-	public <T> T getAsSwigObject() throws PKCS11Error, InstantiationException, IllegalAccessException{
+	private <T extends EnumBase> T getAsSwigEnum(Class<T> req_type) throws PKCS11Error{
+		if(!datatype.equals(req_type)){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		try {
+			return (T) req_type.getMethod("swigToEnum", int.class).invoke(null, getAsLong());
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException
+				| SecurityException e) {
+			return null;
+		} 
+	}
+	public <T> T getAsSwig(Class<T> req_type) throws PKCS11Error{
+		if(!datatype.equals(req_type)){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
 		if(datatype.equals(CK_BYTE_ARRAY.class)){
-			return cdata;
-		}else if(datatype.equals(EnumBase.class)){
-			return datatype.newInstance(getAsLong());
-		}else if(datatype.equals(StructBase.class)){
-			return datatype.newInstance(cptr,false);
+			return (T) cdata;
+		}else if(EnumBase.class.isAssignableFrom(datatype)){
+			return (T) getAsSwigEnum((Class<? extends EnumBase>) req_type);
+		}else if(StructBase.class.isAssignableFrom(datatype)){
+			return (T) getAsSwigStruct((Class<? extends StructBase>) req_type);
 		}else{
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 //			throw new PKCS11Warning();
 		}
 	}
-	public Object getAsObject() throws PKCS11Error, InstantiationException, IllegalAccessException{
+	public Object getAsObject() throws PKCS11Error {
 		if(datatype.equals(CK_BYTE_ARRAY.class)){
 			return cdata;
-		}else if(datatype.equals(EnumBase.class)){
-			return datatype.newInstance(getAsLong());
-		}else if(datatype.equals(StructBase.class)){
-			return datatype.newInstance(cptr,false);
+		}else if(EnumBase.class.isAssignableFrom(datatype)){
+			try {
+				return datatype.getMethod("swigToEnum", int.class).invoke(null, getAsLong());
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}else if(StructBase.class.isAssignableFrom(datatype)){
+			Constructor<?> constructor;
+			try {
+				constructor = datatype.getDeclaredConstructor( long.class, boolean.class );
+				return constructor.newInstance(cdata.getCPtr(),false);
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else{
-			throw new PKCS11Warning();
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+//			throw new PKCS11Warning();
 		}
 	}
 	
-	public void set(boolean v) throws PKCS11Error{
+	public <T extends EnumBase> void setSwig(T v) throws PKCS11Error {
+		Class<T> req_type = null;
+		if(!datatype.equals(req_type)){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		if(EnumBase.class.isAssignableFrom(req_type)){
+			setLong((long) v.swigValue());
+		}
+		throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+	}
+	public <T extends StructBase> void setSwig(T v) throws PKCS11Error {
+		Class<T> req_type = null;
+		if(!datatype.equals(req_type)){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		if(StructBase.class.isAssignableFrom(req_type)){
+			cdata = new CK_BYTE_ARRAY(v.getCPtr(), false); //TODO was ist das richtige vorgehen? kopieren der c-daten? 
+		}
+		throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+	}
+	public void setBoolean(boolean v) throws PKCS11Error{
 		if(!datatype.equals(boolean.class)){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
@@ -169,14 +229,14 @@ public class Attribute {
 		else
 			data[1] = 0;
 	}
-	public void set(long v) throws PKCS11Error{
+	public void setLong(long v) throws PKCS11Error{
 		if(!datatype.equals(long.class)){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
 		ByteBuffer buf = ByteBuffer.wrap(data);
 		buf.putLong(v);
 	}
-	public void set(byte[] v) throws PKCS11Error{
+	public void setByteArray(byte[] v) throws PKCS11Error{
 		if(!datatype.equals(long.class)){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
