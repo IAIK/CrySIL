@@ -6,6 +6,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import objects.Attribute;
+import objects.MechanismObject;
+import objects.PKCS11Object;
+
+import proxys.CK_MECHANISM;
 import proxys.MECHANISM_TYPE;
 import proxys.RETURN_TYPE;
 
@@ -17,6 +22,7 @@ import proxys.RETURN_TYPE;
  * 
  */
 public class Slot{
+	
 	private ServerSession serversession;
 	private ArrayList<Long> mechanisms = new ArrayList<Long>();
 	private long slotID;
@@ -25,7 +31,7 @@ public class Slot{
 	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
-	
+	private ObjectStorage storage;
 	
 	public ServerSession getServersession() {
 		return serversession;
@@ -131,10 +137,42 @@ public class Slot{
 	}
 
 
+	
+	
+	public void deleteObject(long oid){
+		
+	}
+	public long createObject(Attribute[] template){
+		
+	}
+	public long[] findObject(Attribute[] template){
+		
+	}
+	
+	public void decrypt(){
+		
+	}
+	public void encrypt(){
+		
+	}
+	public SignHelper checkAndInitSign(long hKey,CK_MECHANISM mech){
+		Mechanism mechanism = new Mechanism(mech);
+		PKCS11Object key = getObject(hKey);
+		//TODO 	passt der key zum Mechanism?
+		//		ist das Object ein Key?
+		//		darf der key zum signen verwendet werden?
+		//		kann der Mechanism zum signen verwendet werden? (mechInfo)
+		
+		return new SignHelper(mechanism,key);
+	}
+	public byte[] sign(byte[] data,PKCS11Object key,Mechanism mechanism){
+		//TODO map PKCS11Object key ---> SkyTrust Key
+		//TODO map mechasim ---> SkyTrustAlgorithm
+		return serversession.sign(data, key, mechanism);
+	}
 
-	public ArrayList<Long> getMechanisms(){
-		
-		
+	
+	public ArrayList<Long> getMechanisms(){	
 		mechanisms.add(new Long(MECHANISM_TYPE.RSA_PKCS_KEY_PAIR_GEN.swigValue()));
 		mechanisms.add(new Long(MECHANISM_TYPE.DES_KEY_GEN.swigValue()));
 		mechanisms.add(new Long(MECHANISM_TYPE.DES3_KEY_GEN.swigValue()));

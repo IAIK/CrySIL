@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import objects.PKCS11Object;
+
 import com.sun.org.apache.bcel.internal.generic.RET;
 
 import proxys.ATTRIBUTE_TYPE;
@@ -433,10 +435,17 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_SetPIN(long hSession, String pOldPin, long ulOldLen, String pNewPin, long ulNewLen) {
-	  return RETURN_TYPE.OK.swigValue();
+	  return RETURN_TYPE.PIN_LOCKED.swigValue();
   }
 
   public static long C_Sign(long hSession, byte[] pData, long ulDataLen, CK_BYTE_ARRAY pSignature, CK_ULONG_JPTR pulSignatureLen) {
+	  Session session = getRM().getSessionByHandle(hSession);
+	  
+	  
+	  byte[] signed_data = session.sign(pData);
+	  session.signed_data(pData);
+	  
+	  
 	  try {
 		Session session = getRM().getSessionByHandle(hSession);
 		if(session.signHelper==null){
@@ -509,8 +518,14 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
-			ServerSession sSession =  session.getSlot().getServersession();
+			PKCS11Object key = session.getObject(hUnwrappingKey);
 			
+			byte[] unwrappedKey = session.decrypt(pMechanism,pWrappedKey);
+			long hKey = session.newObject(pTemplate);
+			phKey.assign(hKey); 
+			
+			
+			ServerSession sSession =  session.getSlot().getServersession();
 			long hKey = sSession.unwrapKey(pMechanism, hUnwrappingKey, pWrappedKey, ulWrappedKeyLen, pTemplate, ulAttributeCount, phKey);
 			phKey.assign(hKey);
 
