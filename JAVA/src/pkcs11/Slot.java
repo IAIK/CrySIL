@@ -4,13 +4,18 @@ import gui.Server;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import objects.Attribute;
+import objects.Mechanism;
+import objects.Mechanism.MechanismInfo;
 import objects.MechanismObject;
 import objects.PKCS11Object;
 
 import proxys.CK_MECHANISM;
+import proxys.CK_MECHANISM_INFO;
 import proxys.MECHANISM_TYPE;
 import proxys.RETURN_TYPE;
 
@@ -24,7 +29,8 @@ import proxys.RETURN_TYPE;
 public class Slot{
 	
 	private ServerSession serversession;
-	private ArrayList<Long> mechanisms = new ArrayList<Long>();
+	private HashMap<MECHANISM_TYPE,Mechanism.MechanismInfo> mechanisms = new HashMap<>();
+	
 	private long slotID;
 	private boolean roToken = false;
 	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
@@ -33,14 +39,12 @@ public class Slot{
 	
 	private ObjectStorage storage;
 	
-	public ServerSession getServersession() {
-		return serversession;
-	}
 	//private String pin;
 	
 	public Slot(long slotid, Server.ServerInfo server){
 		slotID = slotid;
 		serversession = new ServerSession(server);
+		loadMechanisms();
 		//generate PIN
 	}
 	protected Session.USER_TYPE getAllSessionUserType(){
@@ -53,6 +57,9 @@ public class Slot{
 			}
 		}
 		return false;
+	}
+	public ServerSession getServersession() {
+		return serversession;
 	}
 
 	//Handle = slotIndex*MAX_SESSIONS_PER_SLOT+sessionIndex
@@ -137,8 +144,7 @@ public class Slot{
 	}
 
 
-	
-	
+/*** object management ***/	
 	public void deleteObject(long oid){
 		
 	}
@@ -148,7 +154,7 @@ public class Slot{
 	public long[] findObject(Attribute[] template){
 		
 	}
-	
+/*** crypto functions ***/	
 	public void decrypt(){
 		
 	}
@@ -171,38 +177,23 @@ public class Slot{
 		return serversession.sign(data, key, mechanism);
 	}
 
-	
-	public ArrayList<Long> getMechanisms(){	
-		mechanisms.add(new Long(MECHANISM_TYPE.RSA_PKCS_KEY_PAIR_GEN.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES_KEY_GEN.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES3_KEY_GEN.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.RSA_PKCS.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.RSA_X_509.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.MD5_RSA_PKCS.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SHA1_RSA_PKCS.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES_ECB.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES_CBC.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES_CBC_PAD.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES3_ECB.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES3_CBC.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.DES3_CBC_PAD.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SHA_1.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SHA_1_HMAC.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SHA_1_HMAC_GENERAL.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.MD5.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.MD5_HMAC.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.MD5_HMAC_GENERAL.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_PRE_MASTER_KEY_GEN.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_MASTER_KEY_DERIVE.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_KEY_AND_MAC_DERIVE.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_MD5_MAC.swigValue()));
-		mechanisms.add(new Long(MECHANISM_TYPE.SSL3_SHA1_MAC.swigValue()));
-		
-		
-		
-		mechanisms.add(new Long(MECHANISM_TYPE.RSA_PKCS.swigValue()));
-
-		
+/*** Mechanism management ***/
+	public MECHANISM_TYPE[] getMechanisms(){
+		return mechanisms.keySet().toArray(new MECHANISM_TYPE[0]);
+	}
+	public void getMechanismInfo(MECHANISM_TYPE type,CK_MECHANISM_INFO info) throws PKCS11Error{
+		Mechanism.MechanismInfo local_info = mechanisms.get(type);
+		if(local_info == null){
+			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+		}
+		local_info.writeInto(info);
+	}
+	public void loadMechanisms(){	
+		mechanisms.put(MECHANISM_TYPE.RSA_PKCS,new MechanismInfo());
+		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS, new MechanismInfo());//PKCS #1 v1.5
+//		mechanisms.put(MECHANISM_TYPE.RSA_PKCS_OAEP,);
+//		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS_PSS,);
+//		mechanisms.put(MECHANISM_TYPE.SHA256_RSA_PKCS_PSS,);
 		
 		
 //		RSAES_RAW("RSAES-RAW"),
@@ -212,11 +203,7 @@ public class Slot{
 //	    RSASSA_PKCS1_V1_5_SHA_224("RSASSA-PKCS1-v1_5-SHA-224"),
 //	    RSASSA_PKCS1_V1_5_SHA_256("RSASSA-PKCS1-v1_5-SHA-256"),
 //	    RSASSA_PKCS1_V1_5_SHA_512("RSASSA-PKCS1-v1_5-SHA-512"),
-//
 //	    RSA_PSS("RSA-PSS");
-
-
-		return mechanisms;
 	}
 
 }

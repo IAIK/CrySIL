@@ -50,7 +50,6 @@ import sun.misc.BASE64Encoder;
 /*
  * Stellt verbindung zum Server dar ist für kommunikation zuständig
  * ist für authentifizierung über Authenticator Plugins zuständig
- * könnte caching übernehmen
  * */
 public class ServerSession implements IServerSession {
 
@@ -121,8 +120,8 @@ public class ServerSession implements IServerSession {
 		
 	}
 	@Override
-	public byte[] verify(byte[] pData, SKey key,SkyTrustAlgorithm mech) {
-		return null;
+	public boolean verify(byte[] data,byte[] signature, SKey key,SkyTrustAlgorithm mech) {
+		return false;
 	}
 	@Override
 	public void encrypt() {

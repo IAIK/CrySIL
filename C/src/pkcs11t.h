@@ -389,7 +389,10 @@ typedef CK_ULONG          CK_MECHANISM_TYPE;
 #define CKM_RSA_PKCS                   0x00000001
 #define CKM_RSA_9796                   0x00000002
 #define CKM_RSA_X_509                  0x00000003
-
+#define CKM_RSA_PKCS_PSS 			   0x0000000D
+#define CKM_SHA1_RSA_PKCS_PSS 		   0x0000000E
+#define CKM_RSA_PKCS_OAEP 			   0x00000009
+#define CKM_SHA256_RSA_PKCS_PSS 	   0x00000043
 /* CKM_MD2_RSA_PKCS, CKM_MD5_RSA_PKCS, and CKM_SHA1_RSA_PKCS are */
 /* new for v2.0.  They are mechanisms which hash and sign. */
 #define CKM_MD2_RSA_PKCS               0x00000004
