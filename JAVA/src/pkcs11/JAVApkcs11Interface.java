@@ -435,10 +435,17 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_SetPIN(long hSession, String pOldPin, long ulOldLen, String pNewPin, long ulNewLen) {
-	  return RETURN_TYPE.OK.swigValue();
+	  return RETURN_TYPE.PIN_LOCKED.swigValue();
   }
 
   public static long C_Sign(long hSession, byte[] pData, long ulDataLen, CK_BYTE_ARRAY pSignature, CK_ULONG_JPTR pulSignatureLen) {
+	  Session session = getRM().getSessionByHandle(hSession);
+	  
+	  
+	  byte[] signed_data = session.sign(pData);
+	  session.signed_data(pData);
+	  
+	  
 	  try {
 		Session session = getRM().getSessionByHandle(hSession);
 		if(session.signHelper==null){
