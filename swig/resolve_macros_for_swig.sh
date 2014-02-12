@@ -16,7 +16,9 @@ sed 's/CK_DECLARE_FUNCTION(\([^,)]*\), \([^,)]*\))/\1 \2/g' | \
 # *   returnType (* name)
 sed 's/CK_CALLBACK_FUNCTION(\([^,)]*\), \([^,)]*\))/\1 (* \2)/g' | \
 
-sed 's/NULL_PTR/0/g'
+sed 's/NULL_PTR/0/g' | \
+
+sed 's/CKF_ARRAY_ATTRIBUTE/0x40000000/g'
 
 ################################Make Funktion Deklerations#####################################################
 #

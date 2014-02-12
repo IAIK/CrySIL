@@ -16,7 +16,13 @@ createEnum $name $prefix
 
 name="ATTRIBUTE_TYPE"
 prefix="CKA"
-createEnum $name $prefix
+echo "enum ${name} {" > ${prefix}_enum.h
+cat pkcs11t_processed.h | \
+sed -n -e 's/#define[[:blank:]]*'${prefix}'_\([[:alnum:]_]*\)[[:blank:]]*\(0x[[:xdigit:]]*\|.*\)[[:blank:]]*/\1=\2,/p;
+          s/#define[[:blank:]]*'${prefix}'_\([[:alnum:]_]*\)[[:blank:]]*\([[:digit:]]*\)/\1=\2,/p' >> ${prefix}_enum.h
+echo "LAST };" >> ${prefix}_enum.h
+sed -i 's/^[[:blank:]]*#define[[:blank:]]*'${prefix}'_.*$//p' pkcs11t_processed.h
+sed -i 's/^[[:blank:]]*typedef[[:blank:]]*.*[[:blank:]]*'${name}'[[:blank:]]*.*$//p' pkcs11t_processed.h
 
 name="CERT_TYPE"
 prefix="CKC"

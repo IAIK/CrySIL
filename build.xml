@@ -57,7 +57,7 @@
 <!-- SWIG -->  
     <target name="SWIG-preprocess">
       <exec input="${c.src.dir}/pkcs11t.h" executable="${swig.preproc.file}" output="${swig.dir}/pkcs11t_processed.h" failonerror="true"/>
-            <exec dir="${swig.dir}" executable="./enums.sh" failonerror="true"/>
+            <exec dir="${swig.dir}" executable="./enums.sh" failonerror="true"/> 
     </target>
     <target name="SWIG">
       <mkdir dir="${swig.generated.dir}"/>
