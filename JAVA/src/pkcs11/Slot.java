@@ -160,7 +160,7 @@ public class Slot{
 	public void encrypt(){
 		
 	}
-	public SignHelper checkAndInitSign(long hKey,CK_MECHANISM mech){
+	public CryptoHelper checkAndInitSign(long hKey,CK_MECHANISM mech){
 		Mechanism mechanism = new Mechanism(mech);
 		PKCS11Object key = getObject(hKey);
 		//TODO 	passt der key zum Mechanism?
@@ -168,7 +168,7 @@ public class Slot{
 		//		darf der key zum signen verwendet werden?
 		//		kann der Mechanism zum signen verwendet werden? (mechInfo)
 		
-		return new SignHelper(mechanism,key);
+		return new CryptoHelper(mechanism,key);
 	}
 	public byte[] sign(byte[] data,PKCS11Object key,Mechanism mechanism){
 		//TODO map PKCS11Object key ---> SkyTrust Key
@@ -190,10 +190,12 @@ public class Slot{
 	public void loadMechanisms(){	
 		mechanisms.put(MECHANISM_TYPES.RSA_PKCS,new MechanismInfo().hw().sign_verify().wrap().unwrap());
 		mechanisms.put(MECHANISM_TYPES.SHA1_RSA_PKCS, new MechanismInfo().hw().sign_verify());//PKCS #1 v1.5
-//		mechanisms.put(MECHANISM_TYPE.RSA_PKCS_OAEP,);
-//		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS_PSS,);
-//		mechanisms.put(MECHANISM_TYPE.SHA256_RSA_PKCS_PSS,);
-		
+		mechanisms.put(MECHANISM_TYPES.RSA_PKCS_OAEP,new MechanismInfo().hw().encrypt_decrypt());
+		mechanisms.put(MECHANISM_TYPES.SHA1_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+		mechanisms.put(MECHANISM_TYPES.SHA256_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+		mechanisms.put(MECHANISM_TYPES.SHA512_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+		mechanisms.put(MECHANISM_TYPES.SHA224_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+
 		
 //		RSAES_RAW("RSAES-RAW"),
 //	    RSAES_PKCS1_V1_5("RSAES-PKCS1-v1_5"),

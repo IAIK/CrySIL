@@ -488,7 +488,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			throw new PKCS11Error(RETURN_TYPE.SESSION_HANDLE_INVALID);
 		}
 		if(session.signHelper==null){
-			session.signHelper = new SignHelper(hSession, pMechanism, hKey);
+			session.signHelper = new CryptoHelper(hSession, pMechanism, hKey);
 		}else{
 			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
 		}

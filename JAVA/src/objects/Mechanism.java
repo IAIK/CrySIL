@@ -10,6 +10,7 @@ import pkcs11.Util;
 import proxys.CK_BYTE_ARRAY;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
+import proxys.CK_RSA_PKCS_PSS_PARAMS;
 import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
@@ -63,8 +64,8 @@ public class Mechanism {
 		mechanism_types.put(MECHANISM_TYPES.RSA_PKCS, void.class);//PKCS #1 v1.5 RSA mechanism
 //		mechanism_types.put(MECHANISM_TYPE.RSA_PKCS_OAEP,class);
 		mechanism_types.put(MECHANISM_TYPES.SHA1_RSA_PKCS, void.class);//PKCS #1 v1.5
-//		mechanism_types.put(MECHANISM_TYPE.SHA1_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
-//		mechanism_types.put(MECHANISM_TYPE.SHA256_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
+		mechanism_types.put(MECHANISM_TYPES.SHA1_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
+		mechanism_types.put(MECHANISM_TYPES.SHA256_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
 	}
 	
 	

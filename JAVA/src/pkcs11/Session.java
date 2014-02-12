@@ -27,7 +27,10 @@ public class Session {
 	private long flags;
 	private long handle;
 	
-	private SignHelper signHelper;
+	private CryptoHelper signHelper;
+	private CryptoHelper verifyHelper;//TODO
+	private CryptoHelper decryptHelper;
+	private CryptoHelper encryptHelper;
 	private FindObjectsHelper findObjectsHelper;
 
 	public Session(Slot slot,long handle,ACCESS_TYPE atype){
@@ -59,14 +62,13 @@ public class Session {
 		}
 		signHelper = getToken().checkAndInitSign(hKey,pMechanism);
 	}
-	//byte[] pData, long ulDataLen, CK_BYTE_ARRAY pSignature, CK_ULONG_JPTR pulSignatureLen
 	public void sign(byte[] pData) throws PKCS11Error{
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		signHelper.addData(pData);
 	}
-	public byte[] getsignedData() throws PKCS11Error{
+	public byte[] getSignedData() throws PKCS11Error{
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
@@ -75,15 +77,27 @@ public class Session {
 		}
 		return signHelper.cData;
 	}
+	
+	public void decryptInit(CK_MECHANISM pMechanism, long hKey){
+		getToken().checkFor(mech,key,decrypt);
+		decryptHelper = new CryptoHelper(mechanism, key);
+	}
+	public void decrypt(byte[] encdata){
+		
+		decryptHelper.cData = getToken().decrypt(encdata);
+	}
+	public byte[] getDecryptedData(){
+		return decryptHelper.cData;
+	}
+	public void decryptFinal(){
+		decryptHelper = null;
+	}
+
+	
 	public void initFind(FindObjectsHelper f) throws PKCS11Error{
 		if(findObjectsHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
 		findObjectsHelper = f;
 	}
-	
-	public void verify(){
-		
-	}
-	
 }
