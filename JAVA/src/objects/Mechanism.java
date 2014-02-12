@@ -17,20 +17,44 @@ import proxys.pkcs11Constants;
 //public class Mechanism extends CK_MECHANISM{
 public class Mechanism {
 	public static class MechanismInfo{
-		private boolean sign_verify = false;
-		private boolean encr_decr = false;
-		private boolean wrap_unwrap = false;
-		private boolean sign_verify_recover = false;
-		private boolean gen_key = false;
-		private boolean derive = false;
+		private long flags = Util.initFlags;
+		private long minKeyLen = 0;
+		private long maxKeyLen = 0;
 		
+		public MechanismInfo(long minkeylen,long maxkeylen){
+			minKeyLen = minkeylen;
+			maxKeyLen = maxkeylen;	
+		}
 		public MechanismInfo(){
-			pkcs11Constants.CKF_HW;
-			pkcs11Constants.CKF_DECRYPT;
-			pkcs11Constants.CKF_ENCRYPT;
+			minKeyLen = Long.MIN_VALUE;
+			maxKeyLen = Long.MAX_VALUE;	
+		}
+		public MechanismInfo hw(){
+			flags = Util.setFlag(flags, pkcs11Constants.CKF_HW);
+			return this;
+		}
+		public MechanismInfo sign_verify(){
+			flags = Util.setFlag(flags, pkcs11Constants.CKF_SIGN);
+			flags = Util.setFlag(flags, pkcs11Constants.CKF_VERIFY);
+			return this;
+		}
+		public MechanismInfo encrypt_decrypt(){
+			flags = Util.setFlag(flags, pkcs11Constants.CKF_ENCRYPT);
+			flags = Util.setFlag(flags, pkcs11Constants.CKF_DECRYPT);
+			return this;
+		}
+		public MechanismInfo wrap(){
+			flags = Util.setFlag(flags, pkcs11Constants.CKF_WRAP);
+			return this;
+		}
+		public MechanismInfo unwrap(){
+			flags = Util.setFlag(flags, pkcs11Constants.CKF_UNWRAP);
+			return this;
 		}
 		public void writeInto(CK_MECHANISM_INFO info){
-			info.setFlags(flags);//TODO
+			info.setUlMaxKeySize(maxKeyLen);
+			info.setUlMinKeySize(minKeyLen);
+			info.setFlags(flags);
 		}
 	}
 	/*** type of Mechanism parameter for all Mechanisms in PKCS11 ***/

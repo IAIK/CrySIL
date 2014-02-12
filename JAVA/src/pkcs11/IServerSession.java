@@ -16,11 +16,12 @@ public interface IServerSession {
 
 	public byte[] sign(byte[] pData, SKey key,SkyTrustAlgorithm mech) throws IOException, PKCS11Error;
 
-	public byte[] verify(byte[] pData, SKey key,SkyTrustAlgorithm mech) ;
 
 	public void encrypt();
 	
 	public void decrypt();
 
 	public boolean isAutheticated();
+
+	boolean verify(byte[] data, byte[] signature, SKey key,SkyTrustAlgorithm mech);
 }

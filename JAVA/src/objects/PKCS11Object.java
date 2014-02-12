@@ -7,6 +7,7 @@ import proxys.ATTRIBUTE_TYPE;
 import proxys.RETURN_TYPE;
 
 public class PKCS11Object {
+	
 	private HashMap<ATTRIBUTE_TYPE,Attribute> attributes = new HashMap<>();
 
 	public PKCS11Object(Attribute[] template){

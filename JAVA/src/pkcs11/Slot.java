@@ -11,7 +11,6 @@ import java.util.Map;
 import objects.Attribute;
 import objects.Mechanism;
 import objects.Mechanism.MechanismInfo;
-import objects.MechanismObject;
 import objects.PKCS11Object;
 
 import proxys.CK_MECHANISM;
@@ -189,8 +188,8 @@ public class Slot{
 		local_info.writeInto(info);
 	}
 	public void loadMechanisms(){	
-		mechanisms.put(MECHANISM_TYPE.RSA_PKCS,new MechanismInfo());
-		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS, new MechanismInfo());//PKCS #1 v1.5
+		mechanisms.put(MECHANISM_TYPE.RSA_PKCS,new MechanismInfo().hw().sign_verify().wrap().unwrap());
+		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS, new MechanismInfo().hw().sign_verify());//PKCS #1 v1.5
 //		mechanisms.put(MECHANISM_TYPE.RSA_PKCS_OAEP,);
 //		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS_PSS,);
 //		mechanisms.put(MECHANISM_TYPE.SHA256_RSA_PKCS_PSS,);
