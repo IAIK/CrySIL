@@ -10,7 +10,7 @@ import pkcs11.Util;
 import proxys.CK_BYTE_ARRAY;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
-import proxys.MECHANISM_TYPE;
+import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
 
@@ -58,24 +58,24 @@ public class Mechanism {
 		}
 	}
 	/*** type of Mechanism parameter for all Mechanisms in PKCS11 ***/
-	private static Map<MECHANISM_TYPE,Class<?>> mechanism_types = new HashMap<>();
+	private static Map<MECHANISM_TYPES,Class<?>> mechanism_types = new HashMap<>();
 	static{
-		mechanism_types.put(MECHANISM_TYPE.RSA_PKCS, void.class);//PKCS #1 v1.5 RSA mechanism
+		mechanism_types.put(MECHANISM_TYPES.RSA_PKCS, void.class);//PKCS #1 v1.5 RSA mechanism
 //		mechanism_types.put(MECHANISM_TYPE.RSA_PKCS_OAEP,class);
-		mechanism_types.put(MECHANISM_TYPE.SHA1_RSA_PKCS, void.class);//PKCS #1 v1.5
+		mechanism_types.put(MECHANISM_TYPES.SHA1_RSA_PKCS, void.class);//PKCS #1 v1.5
 //		mechanism_types.put(MECHANISM_TYPE.SHA1_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
 //		mechanism_types.put(MECHANISM_TYPE.SHA256_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
 	}
 	
 	
-	private MECHANISM_TYPE type;
+	private MECHANISM_TYPES type;
 	private Class<?> datatype;
 	private long length;
 	private CK_BYTE_ARRAY cdata;
 	private byte[] data;
 	
 	public Mechanism(CK_MECHANISM mech) throws PKCS11Error{
-		this.type = MECHANISM_TYPE.swigToEnum((int) mech.getMechanism());
+		this.type = MECHANISM_TYPES.swigToEnum((int) mech.getMechanism());
 		this.length = mech.getUlParameterLen();
 		this.cdata = new CK_BYTE_ARRAY(mech.getPParameter().getCPtr(),false);
 		this.data = Util.getDataAsByteArray(cdata, (int) length);
@@ -84,7 +84,7 @@ public class Mechanism {
 			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 		}
 	}
-	public MECHANISM_TYPE getType(){
+	public MECHANISM_TYPES getType(){
 		return type;
 	}
 	public boolean hasParameters(){

@@ -15,7 +15,7 @@ import objects.PKCS11Object;
 
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
-import proxys.MECHANISM_TYPE;
+import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 
 
@@ -28,7 +28,7 @@ import proxys.RETURN_TYPE;
 public class Slot{
 	
 	private ServerSession serversession;
-	private HashMap<MECHANISM_TYPE,Mechanism.MechanismInfo> mechanisms = new HashMap<>();
+	private HashMap<MECHANISM_TYPES,Mechanism.MechanismInfo> mechanisms = new HashMap<>();
 	
 	private long slotID;
 	private boolean roToken = false;
@@ -177,10 +177,10 @@ public class Slot{
 	}
 
 /*** Mechanism management ***/
-	public MECHANISM_TYPE[] getMechanisms(){
-		return mechanisms.keySet().toArray(new MECHANISM_TYPE[0]);
+	public MECHANISM_TYPES[] getMechanisms(){
+		return mechanisms.keySet().toArray(new MECHANISM_TYPES[0]);
 	}
-	public void getMechanismInfo(MECHANISM_TYPE type,CK_MECHANISM_INFO info) throws PKCS11Error{
+	public void getMechanismInfo(MECHANISM_TYPES type,CK_MECHANISM_INFO info) throws PKCS11Error{
 		Mechanism.MechanismInfo local_info = mechanisms.get(type);
 		if(local_info == null){
 			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
@@ -188,8 +188,8 @@ public class Slot{
 		local_info.writeInto(info);
 	}
 	public void loadMechanisms(){	
-		mechanisms.put(MECHANISM_TYPE.RSA_PKCS,new MechanismInfo().hw().sign_verify().wrap().unwrap());
-		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS, new MechanismInfo().hw().sign_verify());//PKCS #1 v1.5
+		mechanisms.put(MECHANISM_TYPES.RSA_PKCS,new MechanismInfo().hw().sign_verify().wrap().unwrap());
+		mechanisms.put(MECHANISM_TYPES.SHA1_RSA_PKCS, new MechanismInfo().hw().sign_verify());//PKCS #1 v1.5
 //		mechanisms.put(MECHANISM_TYPE.RSA_PKCS_OAEP,);
 //		mechanisms.put(MECHANISM_TYPE.SHA1_RSA_PKCS_PSS,);
 //		mechanisms.put(MECHANISM_TYPE.SHA256_RSA_PKCS_PSS,);

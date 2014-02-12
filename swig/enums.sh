@@ -38,7 +38,7 @@ echo "LAST };" >> ${prefix}_enum.h
 sed -i 's/^[[:blank:]]*#define[[:blank:]]*'${prefix}'_.*$//p' pkcs11t_processed.h
 sed -i 's/^[[:blank:]]*typedef[[:blank:]]*.*[[:blank:]]*'${name}'[[:blank:]]*.*$//p' pkcs11t_processed.h
 
-name="MECHANISM_TYPE"
+name="MECHANISM_TYPES"
 prefix="CKM"
 createEnum $name $prefix
 
