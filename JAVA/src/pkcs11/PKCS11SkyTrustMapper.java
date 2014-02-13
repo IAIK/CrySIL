@@ -11,12 +11,16 @@ import objects.Attribute;
 import objects.Mechanism;
 import objects.PKCS11Object;
 import proxys.ATTRIBUTE_TYPE;
+import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;
+import proxys.RETURN_TYPE;
 
 public class PKCS11SkyTrustMapper {
 	
-	private static Map<ATTRIBUTE_TYPE,Attribute> skytrust_template = new HashMap<>();
-	static{		
+	private static HashMap<ATTRIBUTE_TYPE,Attribute> skytrust_template = new HashMap<>();
+	private static HashMap<MECHANISM_TYPES,SkyTrustAlgorithm> mechanism_map = new HashMap<>();
+
+	static{
 		byte[] bool_value = new byte[1];
 		bool_value[0] = 0;
 		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new Attribute(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
@@ -35,9 +39,12 @@ public class PKCS11SkyTrustMapper {
 		//TODO dummy
 		return null;
 	}
-	public static SkyTrustAlgorithm mapMechanism(Mechanism key){
-		//TODO dummy
-		return null;
+	public static SkyTrustAlgorithm mapMechanism(Mechanism mech) throws PKCS11Error{
+		SkyTrustAlgorithm algo = mechanism_map.get(mech.getType());
+		if(algo == null){
+			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+		}
+		return algo;
 	}
 	public static Attribute[] mapKey(SKey key){
 		//TODO dummy
