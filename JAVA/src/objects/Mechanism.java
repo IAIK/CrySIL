@@ -52,6 +52,27 @@ public class Mechanism {
 			flags = Util.setFlag(flags, pkcs11Constants.CKF_UNWRAP);
 			return this;
 		}
+		public boolean isHw(){
+			return Util.isFlagSet(flags, pkcs11Constants.CKF_HW);
+		}
+		public boolean isSign(){
+			return Util.isFlagSet(flags, pkcs11Constants.CKF_SIGN);
+		}
+		public boolean isVerify(){
+			return Util.isFlagSet(flags, pkcs11Constants.CKF_VERIFY);
+		}
+		public boolean isEncrypt(){
+			return Util.isFlagSet(flags, pkcs11Constants.CKF_ENCRYPT);
+		}
+		public boolean isDecrypt(){
+			return Util.isFlagSet(flags, pkcs11Constants.CKF_DECRYPT);
+		}
+		public boolean isWrap(){
+			return Util.isFlagSet(flags, pkcs11Constants.CKF_WRAP);
+		}
+		public boolean isUnwrap(){
+			return Util.isFlagSet(flags, pkcs11Constants.CKF_UNWRAP);
+		}
 		public void writeInto(CK_MECHANISM_INFO info){
 			info.setUlMaxKeySize(maxKeyLen);
 			info.setUlMinKeySize(minKeyLen);

@@ -13,9 +13,12 @@ import objects.Mechanism;
 import objects.Mechanism.MechanismInfo;
 import objects.PKCS11Object;
 
+import pkcs11.Slot.CryptoOperationParams;
+import proxys.ATTRIBUTE_TYPE;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
 import proxys.MECHANISM_TYPES;
+import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
 
 
@@ -154,26 +157,86 @@ public class Slot{
 		
 	}
 /*** crypto functions ***/	
-	public void decrypt(){
-		
+	public static class CryptoOperationParams{
+		public PKCS11Object key;
+		public Mechanism mechanism;
+		public CryptoOperationParams(Mechanism mech, PKCS11Object key){
+			this.key = key;
+			this.mechanism = mech;
+		}
 	}
-	public void encrypt(){
-		
-	}
-	public CryptoHelper checkAndInitSign(long hKey,CK_MECHANISM mech){
+	
+	public CryptoOperationParams checkAndInit(long hKey,CK_MECHANISM mech,String operation){
 		Mechanism mechanism = new Mechanism(mech);
 		PKCS11Object key = getObject(hKey);
-		//TODO 	passt der key zum Mechanism?
-		//		ist das Object ein Key?
-		//		darf der key zum signen verwendet werden?
-		//		kann der Mechanism zum signen verwendet werden? (mechInfo)
+		MechanismInfo mech_info = getMechanismInfo(mechanism.getType());
+		OBJECT_CLASS cl = key.getAttribute(ATTRIBUTE_TYPE.CLASS).getAsSwig(OBJECT_CLASS.class);
 		
-		return new CryptoHelper(mechanism,key);
+		switch(operation){
+		case "sign":
+			if(!OBJECT_CLASS.PRIVATE_KEY.equals(cl) && !OBJECT_CLASS.SECRET_KEY.equals(cl)){
+				throw new PKCS11Error(RETURN_TYPE.KEY_TYPE_INCONSISTENT);
+			}
+			if(!mech_info.isSign()){
+				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+			}
+			if(!key.getAttribute(ATTRIBUTE_TYPE.SIGN).getAsBoolean()){
+				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
+			}
+			break;
+		case "verify":
+			if(!OBJECT_CLASS.PUBLIC_KEY.equals(cl) && !OBJECT_CLASS.SECRET_KEY.equals(cl))
+				throw new PKCS11Error(RETURN_TYPE.KEY_TYPE_INCONSISTENT);
+			if(!mech_info.isVerify()){
+				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+			}
+			if(!key.getAttribute(ATTRIBUTE_TYPE.VERIFY).getAsBoolean()){
+				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
+			}
+			break;
+		case "decrypt":
+			if(!OBJECT_CLASS.PRIVATE_KEY.equals(cl) && !OBJECT_CLASS.SECRET_KEY.equals(cl))
+				throw new PKCS11Error(RETURN_TYPE.KEY_TYPE_INCONSISTENT);
+			if(!mech_info.isDecrypt()){
+				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+			}
+			if(!key.getAttribute(ATTRIBUTE_TYPE.DECRYPT).getAsBoolean()){
+				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
+			}
+			break;
+		case "encrypt":
+			if(!OBJECT_CLASS.PUBLIC_KEY.equals(cl) && !OBJECT_CLASS.SECRET_KEY.equals(cl))
+				throw new PKCS11Error(RETURN_TYPE.KEY_TYPE_INCONSISTENT);
+			if(!mech_info.isEncrypt()){
+				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+			}
+			if(!key.getAttribute(ATTRIBUTE_TYPE.ENCRYPT).getAsBoolean()){
+				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
+			}
+			break;
+			default:
+				throw new PKCS11Error(RETURN_TYPE.FUNCTION_NOT_SUPPORTED);
+		}
+		
+		return new CryptoOperationParams(mechanism,key);
 	}
-	public byte[] sign(byte[] data,PKCS11Object key,Mechanism mechanism){
+	
+	public byte[] sign(byte[] data,CryptoOperationParams p){
 		//TODO map PKCS11Object key ---> SkyTrust Key
 		//TODO map mechasim ---> SkyTrustAlgorithm
-		return serversession.sign(data, key, mechanism);
+		return serversession.sign(data, p.key, p.mechanism);
+	}
+	public byte[] decrypt(byte[] encdata,CryptoOperationParams p){
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public byte[] encrypt(byte[] data,CryptoOperationParams p){
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public boolean verify(byte[] signature, byte[] data,CryptoOperationParams params) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 /*** Mechanism management ***/
@@ -186,6 +249,13 @@ public class Slot{
 			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 		}
 		local_info.writeInto(info);
+	}
+	public Mechanism.MechanismInfo getMechanismInfo(MECHANISM_TYPES type) throws PKCS11Error{
+		Mechanism.MechanismInfo local_info = mechanisms.get(type);
+		if(local_info == null){
+			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+		}
+		return local_info;
 	}
 	public void loadMechanisms(){	
 		mechanisms.put(MECHANISM_TYPES.RSA_PKCS,new MechanismInfo().hw().sign_verify().wrap().unwrap());
@@ -206,6 +276,7 @@ public class Slot{
 //	    RSASSA_PKCS1_V1_5_SHA_512("RSASSA-PKCS1-v1_5-SHA-512"),
 //	    RSA_PSS("RSA-PSS");
 	}
+
 
 }
 
