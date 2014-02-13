@@ -150,6 +150,9 @@ public class Slot{
 	public void deleteObject(long oid){
 		
 	}
+	public PKCS11Object getObject(long oid){
+		
+	}
 	public long createObject(Attribute[] template){
 		
 	}
@@ -166,7 +169,7 @@ public class Slot{
 		}
 	}
 	
-	public CryptoOperationParams checkAndInit(long hKey,CK_MECHANISM mech,String operation){
+	public CryptoOperationParams checkAndInit(long hKey,CK_MECHANISM mech,String operation) throws PKCS11Error{
 		Mechanism mechanism = new Mechanism(mech);
 		PKCS11Object key = getObject(hKey);
 		MechanismInfo mech_info = getMechanismInfo(mechanism.getType());

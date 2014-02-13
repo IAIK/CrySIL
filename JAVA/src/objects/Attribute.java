@@ -100,6 +100,13 @@ public class Attribute {
 		this.data = val;
 		this.datatype = Attribute.attribute_types.get(type);
 	}
+	public <T extends EnumBase> Attribute(ATTRIBUTE_TYPE type, T val) {
+		this.type = type;
+		this.datatype = Attribute.attribute_types.get(type);
+		byte[] enum_value = new byte[4];
+		ByteBuffer.wrap(enum_value).putLong(val.swigValue());
+		this.data = enum_value;
+	}
 
 	public ATTRIBUTE_TYPE getType(){
 		return type;

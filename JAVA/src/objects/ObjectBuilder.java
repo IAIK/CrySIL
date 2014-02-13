@@ -15,26 +15,8 @@ import proxys.OBJECT_CLASS;
 
 public class ObjectBuilder {
 	
-	private static Map<ATTRIBUTE_TYPE,Attribute> skytrust_template = new HashMap<>();
 	private static Map<ATTRIBUTE_TYPE,Attribute> defaultKey_template = new HashMap<>();
-	static{		
-		byte[] enum_value = new byte[4];
-		byte[] bool_value = new byte[1];
-		ByteBuffer.wrap(enum_value).putLong(OBJECT_CLASS.PRIVATE_KEY.swigValue());
-		skytrust_template.put(ATTRIBUTE_TYPE.CLASS, new Attribute(ATTRIBUTE_TYPE.CLASS,enum_value));
-		bool_value[0] = 0;
-		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new Attribute(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.SENSITIVE, new Attribute(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE, new Attribute(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE, new Attribute(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.TOKEN, new Attribute(ATTRIBUTE_TYPE.TOKEN,bool_value));
-		bool_value[0] = 0;
-		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
-	}
+
 	static{		
 		byte[] enum_value = new byte[4];
 		byte[] bool_value = new byte[1];
@@ -85,19 +67,4 @@ public class ObjectBuilder {
 		return null;
 	}
 
-	public static PKCS11Object createFromSkyTrust(SKey key) throws PKCS11Error{
-		skytrust_template.put(ATTRIBUTE_TYPE.ID, new Attribute(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
-		 switch(key.getRepresentation()){
-		 case "fullKey":
-			 break;
-		 case "certificate":
-				skytrust_template.get(ATTRIBUTE_TYPE.CLASS).setSwig(OBJECT_CLASS.CERTIFICATE);
-			 break;
-		 case "handle":
-			 break;
-		 case "keyIdentifier":
-			 break;
-		 }
-		return null;
-	}
 }
