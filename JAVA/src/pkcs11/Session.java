@@ -2,7 +2,6 @@ package pkcs11;
 import java.util.ArrayList;
 
 import objects.Mechanism;
-import objects.MechanismObject;
 
 import proxys.CK_MECHANISM;
 import proxys.CK_NOTIFY_CALLBACK;
@@ -63,7 +62,7 @@ public class Session {
 		}
 		signHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"sign"));
 	}
-	public void sign(byte[] pData){
+	public void sign(byte[] pData) throws PKCS11Error{
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
@@ -102,7 +101,7 @@ public class Session {
 		}
 		verifyHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"verify"));
 	}
-	public void verifySetData(byte[] pData){
+	public void verifySetData(byte[] pData) throws PKCS11Error{
 		if(verifyHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
@@ -113,7 +112,7 @@ public class Session {
 			throw e;
 		}
 	}
-	public boolean verify(byte[] signature){
+	public boolean verify(byte[] signature) throws PKCS11Error{
 		if(verifyHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
@@ -132,13 +131,13 @@ public class Session {
 	}
 	
 	
-	public void decryptInit(CK_MECHANISM pMechanism, long hKey){
+	public void decryptInit(CK_MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(decryptHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
 		decryptHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"decrypt"));
 	}
-	public void decrypt(byte[] encdata){
+	public void decrypt(byte[] encdata) throws PKCS11Error{
 		if(decryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
@@ -150,26 +149,26 @@ public class Session {
 			throw e;
 		}
 	}
-	public byte[] decryptGetData(){
+	public byte[] decryptGetData() throws PKCS11Error{
 		if(decryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		return decryptHelper.getProcessedData();
 	}
-	public void decryptFinal(){
+	public void decryptFinal() throws PKCS11Error{
 		if(decryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		decryptHelper = null;
 	}
 
-	public void encryptInit(CK_MECHANISM pMechanism, long hKey){
+	public void encryptInit(CK_MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(encryptHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
 		decryptHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"decrypt"));
 	}
-	public void encrypt(byte[] data){
+	public void encrypt(byte[] data) throws PKCS11Error{
 		if(encryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
@@ -181,13 +180,13 @@ public class Session {
 			throw e;
 		}
 	}
-	public byte[] encryptGetData(){
+	public byte[] encryptGetData() throws PKCS11Error{
 		if(encryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		return encryptHelper.getProcessedData();
 	}
-	public void encryptFinal(){
+	public void encryptFinal() throws PKCS11Error{
 		if(encryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}

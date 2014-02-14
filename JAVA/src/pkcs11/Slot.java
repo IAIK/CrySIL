@@ -145,20 +145,6 @@ public class Slot{
 		return serversession.getInfo();
 	}
 
-
-/*** object management ***/	
-	public void deleteObject(long oid){
-		
-	}
-	public PKCS11Object getObject(long oid){
-		
-	}
-	public long createObject(Attribute[] template){
-		
-	}
-	public long[] findObject(Attribute[] template){
-		
-	}
 /*** crypto functions ***/	
 	public static class CryptoOperationParams{
 		public PKCS11Object key;
