@@ -28,6 +28,7 @@ import proxys.CK_ATTRIBUTE;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+
 public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
 		    System.load("/usr/lib/libpkcs11_java_wrap.so");
@@ -248,6 +249,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		long handle = session.getSlot().objectManager.createObject(pTemplate);
 		phObject.assign(handle);
 	} catch (PKCS11Error e) {
+		// TODO Auto-generated catch block
 		e.printStackTrace();
 		return e.getCode();
 	}
@@ -534,6 +536,13 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
+			PKCS11Object key = session.getObject(hUnwrappingKey);
+			
+			byte[] unwrappedKey = session.decrypt(pMechanism,pWrappedKey);
+			long hKey = session.newObject(pTemplate);
+			phKey.assign(hKey); 
+			
+			
 			ServerSession sSession =  session.getSlot().getServersession();
 			
 			long hKey = sSession.unwrapKey(pMechanism, hUnwrappingKey, pWrappedKey, ulWrappedKeyLen, pTemplate, ulAttributeCount, phKey);

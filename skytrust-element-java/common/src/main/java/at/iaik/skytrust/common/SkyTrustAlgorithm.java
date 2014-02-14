@@ -9,8 +9,10 @@ package at.iaik.skytrust.common;
  */
 public enum SkyTrustAlgorithm {
     RSAES_RAW("RSAES-RAW"),
+    
     RSAES_PKCS1_V1_5("RSAES-PKCS1-v1_5"),
     RSA_OAEP("RSA-OAEP"),
+    
     RSASSA_PKCS1_V1_5_SHA_1("RSASSA-PKCS1-v1_5-SHA-1"),
     RSASSA_PKCS1_V1_5_SHA_224("RSASSA-PKCS1-v1_5-SHA-224"),
     RSASSA_PKCS1_V1_5_SHA_256("RSASSA-PKCS1-v1_5-SHA-256"),

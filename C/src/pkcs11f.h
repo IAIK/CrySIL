@@ -1,22 +1,43 @@
-/* This function contains pretty much everything about all */
-/* the Cryptoki function prototypes. */
+/* pkcs11f.h include file for PKCS #11. */
+/* $Revision: 1.4 $ */
 
+/* License to copy and use this software is granted provided that it is
+ * identified as "RSA Security Inc. PKCS #11 Cryptographic Token Interface
+ * (Cryptoki)" in all material mentioning or referencing this software.
 
+ * License is also granted to make and use derivative works provided that
+ * such works are identified as "derived from the RSA Security Inc. PKCS #11
+ * Cryptographic Token Interface (Cryptoki)" in all material mentioning or 
+ * referencing the derived work.
+
+ * RSA Security Inc. makes no representations concerning either the 
+ * merchantability of this software or the suitability of this software for
+ * any particular purpose. It is provided "as is" without express or implied
+ * warranty of any kind.
+ */
+
+/* This header file contains pretty much everything about all the */
+/* Cryptoki function prototypes.  Because this information is */
+/* used for more than just declaring function prototypes, the */
+/* order of the functions appearing herein is important, and */
+/* should not be altered. */
 
 /* General-purpose */
 
 /* C_Initialize initializes the Cryptoki library. */
-CK_EXTERN _CK_RV CK_FUNC(C_Initialize)
+CK_PKCS11_FUNCTION_INFO(C_Initialize)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_VOID_PTR   pReserved  /* reserved.  Should be NULL_PTR */
+  CK_VOID_PTR   pInitArgs  /* if this is not NULL_PTR, it gets
+                            * cast to CK_C_INITIALIZE_ARGS_PTR
+                            * and dereferenced */
 );
 #endif
 
 
-/* C_Finalize indicates that an application is done with the Cryptoki
- * library. */
-CK_EXTERN _CK_RV CK_FUNC(C_Finalize)
+/* C_Finalize indicates that an application is done with the
+ * Cryptoki library. */
+CK_PKCS11_FUNCTION_INFO(C_Finalize)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_VOID_PTR   pReserved  /* reserved.  Should be NULL_PTR */
@@ -25,19 +46,20 @@ CK_EXTERN _CK_RV CK_FUNC(C_Finalize)
 
 
 /* C_GetInfo returns general information about Cryptoki. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetInfo)
+CK_PKCS11_FUNCTION_INFO(C_GetInfo)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_INFO_PTR   pInfo  /* location that receives the information */
+  CK_INFO_PTR   pInfo  /* location that receives information */
 );
 #endif
 
 
 /* C_GetFunctionList returns the function list. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetFunctionList)
+CK_PKCS11_FUNCTION_INFO(C_GetFunctionList)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_FUNCTION_LIST_PTR_PTR ppFunctionList  /* receives ptr to function list */
+  CK_FUNCTION_LIST_PTR_PTR ppFunctionList  /* receives pointer to
+                                            * function list */
 );
 #endif
 
@@ -46,18 +68,19 @@ CK_EXTERN _CK_RV CK_FUNC(C_GetFunctionList)
 /* Slot and token management */
 
 /* C_GetSlotList obtains a list of slots in the system. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetSlotList)
+CK_PKCS11_FUNCTION_INFO(C_GetSlotList)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_BBOOL       tokenPresent,  /* only slots with token present */
-  CK_SLOT_ID_PTR pSlotList,     /* receives the array of slot IDs */
-  CK_ULONG_PTR   pulCount       /* receives the number of slots */
+  CK_BBOOL       tokenPresent,  /* only slots with tokens? */
+  CK_SLOT_ID_PTR pSlotList,     /* receives array of slot IDs */
+  CK_ULONG_PTR   pulCount       /* receives number of slots */
 );
 #endif
 
 
-/* C_GetSlotInfo obtains information about a particular slot in the system. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetSlotInfo)
+/* C_GetSlotInfo obtains information about a particular slot in
+ * the system. */
+CK_PKCS11_FUNCTION_INFO(C_GetSlotInfo)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SLOT_ID       slotID,  /* the ID of the slot */
@@ -66,9 +89,9 @@ CK_EXTERN _CK_RV CK_FUNC(C_GetSlotInfo)
 #endif
 
 
-/* C_GetTokenInfo obtains information about a particular token in the
- * system. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetTokenInfo)
+/* C_GetTokenInfo obtains information about a particular token
+ * in the system. */
+CK_PKCS11_FUNCTION_INFO(C_GetTokenInfo)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SLOT_ID        slotID,  /* ID of the token's slot */
@@ -77,61 +100,62 @@ CK_EXTERN _CK_RV CK_FUNC(C_GetTokenInfo)
 #endif
 
 
-/* C_GetMechanismList obtains a list of mechanism types supported by
- * a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetMechanismList)
+/* C_GetMechanismList obtains a list of mechanism types
+ * supported by a token. */
+CK_PKCS11_FUNCTION_INFO(C_GetMechanismList)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SLOT_ID            slotID,          /* ID of the token's slot */
-  CK_MECHANISM_TYPE_PTR pMechanismList,  /* receives mech. types array */
-  CK_ULONG_PTR          pulCount         /* receives number of mechs. */
+  CK_SLOT_ID            slotID,          /* ID of token's slot */
+  CK_MECHANISM_TYPE_PTR pMechanismList,  /* gets mech. array */
+  CK_ULONG_PTR          pulCount         /* gets # of mechs. */
 );
 #endif
 
 
-/* C_GetMechanismInfo obtains information about a particular mechanism 
- * possibly supported by a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetMechanismInfo)
+/* C_GetMechanismInfo obtains information about a particular
+ * mechanism possibly supported by a token. */
+CK_PKCS11_FUNCTION_INFO(C_GetMechanismInfo)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SLOT_ID            slotID,  /* ID of the token's slot */
   CK_MECHANISM_TYPE     type,    /* type of mechanism */
-  CK_MECHANISM_INFO_PTR pInfo    /* receives mechanism information */
+  CK_MECHANISM_INFO_PTR pInfo    /* receives mechanism info */
 );
 #endif
 
 
 /* C_InitToken initializes a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_InitToken)
+CK_PKCS11_FUNCTION_INFO(C_InitToken)
 #ifdef CK_NEED_ARG_LIST
+/* pLabel changed from CK_CHAR_PTR to CK_UTF8CHAR_PTR for v2.10 */
 (
-  CK_SLOT_ID     slotID,    /* ID of the token's slot */
-  CK_CHAR_PTR    pPin,      /* the SO's initial PIN */
-  CK_ULONG       ulPinLen,  /* length in bytes of the PIN */
-  CK_CHAR_PTR    pLabel     /* 32-byte token label (blank padded) */
+  CK_SLOT_ID      slotID,    /* ID of the token's slot */
+  CK_UTF8CHAR_PTR pPin,      /* the SO's initial PIN */
+  CK_ULONG        ulPinLen,  /* length in bytes of the PIN */
+  CK_UTF8CHAR_PTR pLabel     /* 32-byte token label (blank padded) */
 );
 #endif
 
 
 /* C_InitPIN initializes the normal user's PIN. */
-CK_EXTERN _CK_RV CK_FUNC(C_InitPIN)
+CK_PKCS11_FUNCTION_INFO(C_InitPIN)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
-  CK_CHAR_PTR       pPin,      /* the normal user's PIN */
+  CK_UTF8CHAR_PTR   pPin,      /* the normal user's PIN */
   CK_ULONG          ulPinLen   /* length in bytes of the PIN */
 );
 #endif
 
 
-/* C_SetPIN modifies the PIN of user that is currently logged in. */
-CK_EXTERN _CK_RV CK_FUNC(C_SetPIN)
+/* C_SetPIN modifies the PIN of the user who is logged in. */
+CK_PKCS11_FUNCTION_INFO(C_SetPIN)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
-  CK_CHAR_PTR       pOldPin,   /* the old PIN */
+  CK_UTF8CHAR_PTR   pOldPin,   /* the old PIN */
   CK_ULONG          ulOldLen,  /* length of the old PIN */
-  CK_CHAR_PTR       pNewPin,   /* the new PIN */
+  CK_UTF8CHAR_PTR   pNewPin,   /* the new PIN */
   CK_ULONG          ulNewLen   /* length of the new PIN */
 );
 #endif
@@ -140,21 +164,23 @@ CK_EXTERN _CK_RV CK_FUNC(C_SetPIN)
 
 /* Session management */
 
-/* C_OpenSession opens a session between an application and a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_OpenSession)
+/* C_OpenSession opens a session between an application and a
+ * token. */
+CK_PKCS11_FUNCTION_INFO(C_OpenSession)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SLOT_ID            slotID,        /* the slot's ID */
-  CK_FLAGS              flags,         /* defined in CK_SESSION_INFO */
-  CK_VOID_PTR           pApplication,  /* pointer passed to callback */
-  CK_NOTIFY             Notify,        /* notification callback function */
-  CK_SESSION_HANDLE_PTR phSession      /* receives new session handle */
+  CK_FLAGS              flags,         /* from CK_SESSION_INFO */
+  CK_VOID_PTR           pApplication,  /* passed to callback */
+  CK_NOTIFY             Notify,        /* callback function */
+  CK_SESSION_HANDLE_PTR phSession      /* gets session handle */
 );
 #endif
 
 
-/* C_CloseSession closes a session between an application and a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_CloseSession)
+/* C_CloseSession closes a session between an application and a
+ * token. */
+CK_PKCS11_FUNCTION_INFO(C_CloseSession)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession  /* the session's handle */
@@ -163,7 +189,7 @@ CK_EXTERN _CK_RV CK_FUNC(C_CloseSession)
 
 
 /* C_CloseAllSessions closes all sessions with a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_CloseAllSessions)
+CK_PKCS11_FUNCTION_INFO(C_CloseAllSessions)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SLOT_ID     slotID  /* the token's slot */
@@ -172,55 +198,55 @@ CK_EXTERN _CK_RV CK_FUNC(C_CloseAllSessions)
 
 
 /* C_GetSessionInfo obtains information about the session. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetSessionInfo)
+CK_PKCS11_FUNCTION_INFO(C_GetSessionInfo)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE   hSession,  /* the session's handle */
-  CK_SESSION_INFO_PTR pInfo      /* receives session information */
+  CK_SESSION_INFO_PTR pInfo      /* receives session info */
 );
 #endif
 
 
 /* C_GetOperationState obtains the state of the cryptographic operation
  * in a session. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetOperationState)
+CK_PKCS11_FUNCTION_INFO(C_GetOperationState)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,             /* the session's handle */
-  CK_BYTE_PTR       pOperationState,      /* location receiving state */
-  CK_ULONG_PTR      pulOperationStateLen  /* location receiving state length */
+  CK_SESSION_HANDLE hSession,             /* session's handle */
+  CK_BYTE_PTR       pOperationState,      /* gets state */
+  CK_ULONG_PTR      pulOperationStateLen  /* gets state length */
 );
 #endif
 
 
-/* C_SetOperationState restores the state of the cryptographic operation
- * in a session. */
-CK_EXTERN _CK_RV CK_FUNC(C_SetOperationState)
+/* C_SetOperationState restores the state of the cryptographic
+ * operation in a session. */
+CK_PKCS11_FUNCTION_INFO(C_SetOperationState)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,            /* the session's handle */
-  CK_BYTE_PTR      pOperationState,      /* the location holding the state */
-  CK_ULONG         ulOperationStateLen,  /* location holding state length */
-  CK_OBJECT_HANDLE hEncryptionKey,       /* handle of en/decryption key */
-  CK_OBJECT_HANDLE hAuthenticationKey    /* handle of sign/verify key */
+  CK_SESSION_HANDLE hSession,            /* session's handle */
+  CK_BYTE_PTR      pOperationState,      /* holds state */
+  CK_ULONG         ulOperationStateLen,  /* holds state length */
+  CK_OBJECT_HANDLE hEncryptionKey,       /* en/decryption key */
+  CK_OBJECT_HANDLE hAuthenticationKey    /* sign/verify key */
 );
 #endif
 
 
 /* C_Login logs a user into a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_Login)
+CK_PKCS11_FUNCTION_INFO(C_Login)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
   CK_USER_TYPE      userType,  /* the user type */
-  CK_CHAR_PTR       pPin,      /* the user's PIN */
+  CK_UTF8CHAR_PTR   pPin,      /* the user's PIN */
   CK_ULONG          ulPinLen   /* the length of the PIN */
 );
 #endif
 
 
 /* C_Logout logs a user out from a token. */
-CK_EXTERN _CK_RV CK_FUNC(C_Logout)
+CK_PKCS11_FUNCTION_INFO(C_Logout)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession  /* the session's handle */
@@ -232,19 +258,20 @@ CK_EXTERN _CK_RV CK_FUNC(C_Logout)
 /* Object management */
 
 /* C_CreateObject creates a new object. */
-CK_EXTERN _CK_RV CK_FUNC(C_CreateObject)
+CK_PKCS11_FUNCTION_INFO(C_CreateObject)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,    /* the session's handle */
   CK_ATTRIBUTE_PTR  pTemplate,   /* the object's template */
   CK_ULONG          ulCount,     /* attributes in template */
-  CK_OBJECT_HANDLE_PTR phObject  /* receives new object's handle. */
+  CK_OBJECT_HANDLE_PTR phObject  /* gets new object's handle. */
 );
 #endif
 
 
-/* C_CopyObject copies an object, creating a new object for the copy. */
-CK_EXTERN _CK_RV CK_FUNC(C_CopyObject)
+/* C_CopyObject copies an object, creating a new object for the
+ * copy. */
+CK_PKCS11_FUNCTION_INFO(C_CopyObject)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE    hSession,    /* the session's handle */
@@ -257,7 +284,7 @@ CK_EXTERN _CK_RV CK_FUNC(C_CopyObject)
 
 
 /* C_DestroyObject destroys an object. */
-CK_EXTERN _CK_RV CK_FUNC(C_DestroyObject)
+CK_PKCS11_FUNCTION_INFO(C_DestroyObject)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
@@ -267,7 +294,7 @@ CK_EXTERN _CK_RV CK_FUNC(C_DestroyObject)
 
 
 /* C_GetObjectSize gets the size of an object in bytes. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetObjectSize)
+CK_PKCS11_FUNCTION_INFO(C_GetObjectSize)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
@@ -277,57 +304,61 @@ CK_EXTERN _CK_RV CK_FUNC(C_GetObjectSize)
 #endif
 
 
-/* C_GetAttributeValue obtains the value of one or more object attributes. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetAttributeValue)
+/* C_GetAttributeValue obtains the value of one or more object
+ * attributes. */
+CK_PKCS11_FUNCTION_INFO(C_GetAttributeValue)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,   /* the session's handle */
   CK_OBJECT_HANDLE  hObject,    /* the object's handle */
-  CK_ATTRIBUTE_PTR  pTemplate,  /* specifies attributes, gets values */
+  CK_ATTRIBUTE_PTR  pTemplate,  /* specifies attrs; gets vals */
   CK_ULONG          ulCount     /* attributes in template */
 );
 #endif
 
 
-/* C_SetAttributeValue modifies the value of one or more object attributes */
-CK_EXTERN _CK_RV CK_FUNC(C_SetAttributeValue)
+/* C_SetAttributeValue modifies the value of one or more object
+ * attributes */
+CK_PKCS11_FUNCTION_INFO(C_SetAttributeValue)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,   /* the session's handle */
   CK_OBJECT_HANDLE  hObject,    /* the object's handle */
-  CK_ATTRIBUTE_PTR  pTemplate,  /* specifies attributes and values */
+  CK_ATTRIBUTE_PTR  pTemplate,  /* specifies attrs and values */
   CK_ULONG          ulCount     /* attributes in template */
 );
 #endif
 
 
-/* C_FindObjectsInit initializes a search for token and session objects 
- * that match a template. */
-CK_EXTERN _CK_RV CK_FUNC(C_FindObjectsInit)
+/* C_FindObjectsInit initializes a search for token and session
+ * objects that match a template. */
+CK_PKCS11_FUNCTION_INFO(C_FindObjectsInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,   /* the session's handle */
   CK_ATTRIBUTE_PTR  pTemplate,  /* attribute values to match */
-  CK_ULONG          ulCount     /* attributes in search template */
+  CK_ULONG          ulCount     /* attrs in search template */
 );
 #endif
 
 
-/* C_FindObjects continues a search for token and session objects 
- * that match a template, obtaining additional object handles. */
-CK_EXTERN _CK_RV CK_FUNC(C_FindObjects)
+/* C_FindObjects continues a search for token and session
+ * objects that match a template, obtaining additional object
+ * handles. */
+CK_PKCS11_FUNCTION_INFO(C_FindObjects)
 #ifdef CK_NEED_ARG_LIST
 (
- CK_SESSION_HANDLE    hSession,          /* the session's handle */
- CK_OBJECT_HANDLE_PTR phObject,          /* receives object handle array */
- CK_ULONG             ulMaxObjectCount,  /* max handles to be returned */
- CK_ULONG_PTR         pulObjectCount     /* actual number returned */
+ CK_SESSION_HANDLE    hSession,          /* session's handle */
+ CK_OBJECT_HANDLE_PTR phObject,          /* gets obj. handles */
+ CK_ULONG             ulMaxObjectCount,  /* max handles to get */
+ CK_ULONG_PTR         pulObjectCount     /* actual # returned */
 );
 #endif
 
 
-/* C_FindObjectsFinal finishes a search for token and session objects. */
-CK_EXTERN _CK_RV CK_FUNC(C_FindObjectsFinal)
+/* C_FindObjectsFinal finishes a search for token and session
+ * objects. */
+CK_PKCS11_FUNCTION_INFO(C_FindObjectsFinal)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession  /* the session's handle */
@@ -339,7 +370,7 @@ CK_EXTERN _CK_RV CK_FUNC(C_FindObjectsFinal)
 /* Encryption and decryption */
 
 /* C_EncryptInit initializes an encryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_EncryptInit)
+CK_PKCS11_FUNCTION_INFO(C_EncryptInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,    /* the session's handle */
@@ -350,86 +381,90 @@ CK_EXTERN _CK_RV CK_FUNC(C_EncryptInit)
 
 
 /* C_Encrypt encrypts single-part data. */
-CK_EXTERN _CK_RV CK_FUNC(C_Encrypt)
+CK_PKCS11_FUNCTION_INFO(C_Encrypt)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,            /* the session's handle */
+  CK_SESSION_HANDLE hSession,            /* session's handle */
   CK_BYTE_PTR       pData,               /* the plaintext data */
-  CK_ULONG          ulDataLen,           /* bytes of plaintext data */
-  CK_BYTE_PTR       pEncryptedData,      /* receives encrypted data */
-  CK_ULONG_PTR      pulEncryptedDataLen  /* receives encrypted byte count */
+  CK_ULONG          ulDataLen,           /* bytes of plaintext */
+  CK_BYTE_PTR       pEncryptedData,      /* gets ciphertext */
+  CK_ULONG_PTR      pulEncryptedDataLen  /* gets c-text size */
 );
 #endif
 
 
-/* C_EncryptUpdate continues a multiple-part encryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_EncryptUpdate)
+/* C_EncryptUpdate continues a multiple-part encryption
+ * operation. */
+CK_PKCS11_FUNCTION_INFO(C_EncryptUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,           /* the session's handle */
+  CK_SESSION_HANDLE hSession,           /* session's handle */
   CK_BYTE_PTR       pPart,              /* the plaintext data */
-  CK_ULONG          ulPartLen,          /* bytes of plaintext data */
-  CK_BYTE_PTR       pEncryptedPart,     /* receives encrypted data */
-  CK_ULONG_PTR      pulEncryptedPartLen /* receives encrypted byte count */
+  CK_ULONG          ulPartLen,          /* plaintext data len */
+  CK_BYTE_PTR       pEncryptedPart,     /* gets ciphertext */
+  CK_ULONG_PTR      pulEncryptedPartLen /* gets c-text size */
 );
 #endif
 
 
-/* C_EncryptFinal finishes a multiple-part encryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_EncryptFinal)
+/* C_EncryptFinal finishes a multiple-part encryption
+ * operation. */
+CK_PKCS11_FUNCTION_INFO(C_EncryptFinal)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,                /* the session's handle */
-  CK_BYTE_PTR       pLastEncryptedPart,      /* receives encrypted last part */
-  CK_ULONG_PTR      pulLastEncryptedPartLen  /* receives byte count */
+  CK_SESSION_HANDLE hSession,                /* session handle */
+  CK_BYTE_PTR       pLastEncryptedPart,      /* last c-text */
+  CK_ULONG_PTR      pulLastEncryptedPartLen  /* gets last size */
 );
 #endif
 
 
 /* C_DecryptInit initializes a decryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DecryptInit)
+CK_PKCS11_FUNCTION_INFO(C_DecryptInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,    /* the session's handle */
   CK_MECHANISM_PTR  pMechanism,  /* the decryption mechanism */
-  CK_OBJECT_HANDLE  hKey         /* handle of the decryption key */
+  CK_OBJECT_HANDLE  hKey         /* handle of decryption key */
 );
 #endif
 
 
 /* C_Decrypt decrypts encrypted data in a single part. */
-CK_EXTERN _CK_RV CK_FUNC(C_Decrypt)
+CK_PKCS11_FUNCTION_INFO(C_Decrypt)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,           /* the session's handle */
-  CK_BYTE_PTR       pEncryptedData,     /* input encrypted data */
-  CK_ULONG          ulEncryptedDataLen, /* count of bytes of input */
-  CK_BYTE_PTR       pData,              /* receives decrypted output */
-  CK_ULONG_PTR      pulDataLen          /* receives decrypted byte count */
+  CK_SESSION_HANDLE hSession,           /* session's handle */
+  CK_BYTE_PTR       pEncryptedData,     /* ciphertext */
+  CK_ULONG          ulEncryptedDataLen, /* ciphertext length */
+  CK_BYTE_PTR       pData,              /* gets plaintext */
+  CK_ULONG_PTR      pulDataLen          /* gets p-text size */
 );
 #endif
 
 
-/* C_DecryptUpdate continues a multiple-part decryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DecryptUpdate)
+/* C_DecryptUpdate continues a multiple-part decryption
+ * operation. */
+CK_PKCS11_FUNCTION_INFO(C_DecryptUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,            /* the session's handle */
-  CK_BYTE_PTR       pEncryptedPart,      /* input encrypted data */
-  CK_ULONG          ulEncryptedPartLen,  /* count of bytes of input */
-  CK_BYTE_PTR       pPart,               /* receives decrypted output */
-  CK_ULONG_PTR      pulPartLen           /* receives decrypted byte count */
+  CK_SESSION_HANDLE hSession,            /* session's handle */
+  CK_BYTE_PTR       pEncryptedPart,      /* encrypted data */
+  CK_ULONG          ulEncryptedPartLen,  /* input length */
+  CK_BYTE_PTR       pPart,               /* gets plaintext */
+  CK_ULONG_PTR      pulPartLen           /* p-text size */
 );
 #endif
 
 
-/* C_DecryptFinal finishes a multiple-part decryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DecryptFinal)
+/* C_DecryptFinal finishes a multiple-part decryption
+ * operation. */
+CK_PKCS11_FUNCTION_INFO(C_DecryptFinal)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,       /* the session's handle */
-  CK_BYTE_PTR       pLastPart,      /* receives decrypted output */
-  CK_ULONG_PTR      pulLastPartLen  /* receives decrypted byte count */
+  CK_BYTE_PTR       pLastPart,      /* gets plaintext */
+  CK_ULONG_PTR      pulLastPartLen  /* p-text size */
 );
 #endif
 
@@ -438,7 +473,7 @@ CK_EXTERN _CK_RV CK_FUNC(C_DecryptFinal)
 /* Message digesting */
 
 /* C_DigestInit initializes a message-digesting operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DigestInit)
+CK_PKCS11_FUNCTION_INFO(C_DigestInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,   /* the session's handle */
@@ -448,20 +483,21 @@ CK_EXTERN _CK_RV CK_FUNC(C_DigestInit)
 
 
 /* C_Digest digests data in a single part. */
-CK_EXTERN _CK_RV CK_FUNC(C_Digest)
+CK_PKCS11_FUNCTION_INFO(C_Digest)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,     /* the session's handle */
   CK_BYTE_PTR       pData,        /* data to be digested */
-  CK_ULONG          ulDataLen,    /* bytes of data to be digested */
-  CK_BYTE_PTR       pDigest,      /* receives the message digest */
-  CK_ULONG_PTR      pulDigestLen  /* receives byte length of digest */
+  CK_ULONG          ulDataLen,    /* bytes of data to digest */
+  CK_BYTE_PTR       pDigest,      /* gets the message digest */
+  CK_ULONG_PTR      pulDigestLen  /* gets digest length */
 );
 #endif
 
 
-/* C_DigestUpdate continues a multiple-part message-digesting operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DigestUpdate)
+/* C_DigestUpdate continues a multiple-part message-digesting
+ * operation. */
+CK_PKCS11_FUNCTION_INFO(C_DigestUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
@@ -471,25 +507,26 @@ CK_EXTERN _CK_RV CK_FUNC(C_DigestUpdate)
 #endif
 
 
-/* C_DigestKey continues a multi-part message-digesting operation, by
- * digesting the value of a secret key as part of the data already digested.
- */
-CK_EXTERN _CK_RV CK_FUNC(C_DigestKey)
+/* C_DigestKey continues a multi-part message-digesting
+ * operation, by digesting the value of a secret key as part of
+ * the data already digested. */
+CK_PKCS11_FUNCTION_INFO(C_DigestKey)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
-  CK_OBJECT_HANDLE  hKey       /* handle of secret key to digest */
+  CK_OBJECT_HANDLE  hKey       /* secret key to digest */
 );
 #endif
 
 
-/* C_DigestFinal finishes a multiple-part message-digesting operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DigestFinal)
+/* C_DigestFinal finishes a multiple-part message-digesting
+ * operation. */
+CK_PKCS11_FUNCTION_INFO(C_DigestFinal)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,     /* the session's handle */
-  CK_BYTE_PTR       pDigest,      /* receives the message digest */
-  CK_ULONG_PTR      pulDigestLen  /* receives byte count of digest */
+  CK_BYTE_PTR       pDigest,      /* gets the message digest */
+  CK_ULONG_PTR      pulDigestLen  /* gets byte count of digest */
 );
 #endif
 
@@ -497,63 +534,63 @@ CK_EXTERN _CK_RV CK_FUNC(C_DigestFinal)
 
 /* Signing and MACing */
 
-/* C_SignInit initializes a signature (private key encryption) operation,
- * where the signature is (will be) an appendix to the data, 
- * and plaintext cannot be recovered from the signature */
-CK_EXTERN _CK_RV CK_FUNC(C_SignInit)
+/* C_SignInit initializes a signature (private key encryption)
+ * operation, where the signature is (will be) an appendix to
+ * the data, and plaintext cannot be recovered from the
+ *signature. */
+CK_PKCS11_FUNCTION_INFO(C_SignInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,    /* the session's handle */
   CK_MECHANISM_PTR  pMechanism,  /* the signature mechanism */
-  CK_OBJECT_HANDLE  hKey         /* handle of the signature key */
+  CK_OBJECT_HANDLE  hKey         /* handle of signature key */
 );
 #endif
 
 
-/* C_Sign signs (encrypts with private key) data in a single part,
- * where the signature is (will be) an appendix to the data, 
- * and plaintext cannot be recovered from the signature */
-CK_EXTERN _CK_RV CK_FUNC(C_Sign)
+/* C_Sign signs (encrypts with private key) data in a single
+ * part, where the signature is (will be) an appendix to the
+ * data, and plaintext cannot be recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_Sign)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,        /* the session's handle */
-  CK_BYTE_PTR       pData,           /* the data (digest) to be signed */
-  CK_ULONG          ulDataLen,       /* count of bytes to be signed */
-  CK_BYTE_PTR       pSignature,      /* receives the signature */
-  CK_ULONG_PTR      pulSignatureLen  /* receives byte count of signature */
+  CK_BYTE_PTR       pData,           /* the data to sign */
+  CK_ULONG          ulDataLen,       /* count of bytes to sign */
+  CK_BYTE_PTR       pSignature,      /* gets the signature */
+  CK_ULONG_PTR      pulSignatureLen  /* gets signature length */
 );
 #endif
 
 
 /* C_SignUpdate continues a multiple-part signature operation,
  * where the signature is (will be) an appendix to the data, 
- * and plaintext cannot be recovered from the signature */
-CK_EXTERN _CK_RV CK_FUNC(C_SignUpdate)
+ * and plaintext cannot be recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_SignUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
-  CK_BYTE_PTR       pPart,     /* the data (digest) to be signed */
-  CK_ULONG          ulPartLen  /* count of bytes to be signed */
+  CK_BYTE_PTR       pPart,     /* the data to sign */
+  CK_ULONG          ulPartLen  /* count of bytes to sign */
 );
 #endif
 
 
 /* C_SignFinal finishes a multiple-part signature operation, 
  * returning the signature. */
-CK_EXTERN _CK_RV CK_FUNC(C_SignFinal)
+CK_PKCS11_FUNCTION_INFO(C_SignFinal)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,        /* the session's handle */
-  CK_BYTE_PTR       pSignature,      /* receives the signature */
-  CK_ULONG_PTR      pulSignatureLen  /* receives byte count of signature */
+  CK_BYTE_PTR       pSignature,      /* gets the signature */
+  CK_ULONG_PTR      pulSignatureLen  /* gets signature length */
 );
 #endif
 
 
-/* C_SignRecoverInit initializes a signature operation,
- * where the (digest) data can be recovered from the signature. 
- * E.g. encryption with the user's private key */
-CK_EXTERN _CK_RV CK_FUNC(C_SignRecoverInit)
+/* C_SignRecoverInit initializes a signature operation, where
+ * the data can be recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_SignRecoverInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,   /* the session's handle */
@@ -563,17 +600,16 @@ CK_EXTERN _CK_RV CK_FUNC(C_SignRecoverInit)
 #endif
 
 
-/* C_SignRecover signs data in a single operation
- * where the (digest) data can be recovered from the signature. 
- * E.g. encryption with the user's private key */
-CK_EXTERN _CK_RV CK_FUNC(C_SignRecover)
+/* C_SignRecover signs data in a single operation, where the
+ * data can be recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_SignRecover)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,        /* the session's handle */
-  CK_BYTE_PTR       pData,           /* the data (digest) to be signed */
-  CK_ULONG          ulDataLen,       /* count of bytes to be signed */
-  CK_BYTE_PTR       pSignature,      /* receives the signature */
-  CK_ULONG_PTR      pulSignatureLen  /* receives byte count of signature */
+  CK_BYTE_PTR       pData,           /* the data to sign */
+  CK_ULONG          ulDataLen,       /* count of bytes to sign */
+  CK_BYTE_PTR       pSignature,      /* gets the signature */
+  CK_ULONG_PTR      pulSignatureLen  /* gets signature length */
 );
 #endif
 
@@ -581,83 +617,81 @@ CK_EXTERN _CK_RV CK_FUNC(C_SignRecover)
 
 /* Verifying signatures and MACs */
 
-/* C_VerifyInit initializes a verification operation, 
- * where the signature is an appendix to the data, 
- * and plaintext cannot be recovered from the signature (e.g. DSA) */
-CK_EXTERN _CK_RV CK_FUNC(C_VerifyInit)
+/* C_VerifyInit initializes a verification operation, where the
+ * signature is an appendix to the data, and plaintext cannot
+ *  cannot be recovered from the signature (e.g. DSA). */
+CK_PKCS11_FUNCTION_INFO(C_VerifyInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,    /* the session's handle */
   CK_MECHANISM_PTR  pMechanism,  /* the verification mechanism */
-  CK_OBJECT_HANDLE  hKey         /* handle of the verification key */ 
+  CK_OBJECT_HANDLE  hKey         /* verification key */ 
 );
 #endif
 
 
 /* C_Verify verifies a signature in a single-part operation, 
- * where the signature is an appendix to the data, 
- * and plaintext cannot be recovered from the signature */
-CK_EXTERN _CK_RV CK_FUNC(C_Verify)
+ * where the signature is an appendix to the data, and plaintext
+ * cannot be recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_Verify)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,       /* the session's handle */
-  CK_BYTE_PTR       pData,          /* plaintext data (digest) to compare */
-  CK_ULONG          ulDataLen,      /* length of data (digest) in bytes */
-  CK_BYTE_PTR       pSignature,     /* the signature to be verified */
-  CK_ULONG          ulSignatureLen  /* count of bytes of signature */
+  CK_BYTE_PTR       pData,          /* signed data */
+  CK_ULONG          ulDataLen,      /* length of signed data */
+  CK_BYTE_PTR       pSignature,     /* signature */
+  CK_ULONG          ulSignatureLen  /* signature length*/
 );
 #endif
 
 
-/* C_VerifyUpdate continues a multiple-part verification operation, 
- * where the signature is an appendix to the data, 
- * and plaintext cannot be recovered from the signature */
-CK_EXTERN _CK_RV CK_FUNC(C_VerifyUpdate)
+/* C_VerifyUpdate continues a multiple-part verification
+ * operation, where the signature is an appendix to the data, 
+ * and plaintext cannot be recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_VerifyUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
-  CK_BYTE_PTR       pPart,     /* plaintext data (digest) to compare */
-  CK_ULONG          ulPartLen  /* length of data (digest) in bytes */
+  CK_BYTE_PTR       pPart,     /* signed data */
+  CK_ULONG          ulPartLen  /* length of signed data */
 );
 #endif
 
 
-/* C_VerifyFinal finishes a multiple-part verification operation, 
- * checking the signature. */
-CK_EXTERN _CK_RV CK_FUNC(C_VerifyFinal)
+/* C_VerifyFinal finishes a multiple-part verification
+ * operation, checking the signature. */
+CK_PKCS11_FUNCTION_INFO(C_VerifyFinal)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,       /* the session's handle */
-  CK_BYTE_PTR       pSignature,     /* the signature to be verified */
-  CK_ULONG          ulSignatureLen  /* count of bytes of signature */
+  CK_BYTE_PTR       pSignature,     /* signature to verify */
+  CK_ULONG          ulSignatureLen  /* signature length */
 );
 #endif
 
 
-/* C_VerifyRecoverInit initializes a signature verification operation, 
- * where the data is recovered from the signature. 
- * E.g. Decryption with the user's public key */
-CK_EXTERN _CK_RV CK_FUNC(C_VerifyRecoverInit)
+/* C_VerifyRecoverInit initializes a signature verification
+ * operation, where the data is recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_VerifyRecoverInit)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,    /* the session's handle */
   CK_MECHANISM_PTR  pMechanism,  /* the verification mechanism */
-  CK_OBJECT_HANDLE  hKey         /* handle of the verification key */
+  CK_OBJECT_HANDLE  hKey         /* verification key */
 );
 #endif
 
 
-/* C_VerifyRecover verifies a signature in a single-part operation, 
- * where the data is recovered from the signature. 
- * E.g. Decryption with the user's public key */
-CK_EXTERN _CK_RV CK_FUNC(C_VerifyRecover)
+/* C_VerifyRecover verifies a signature in a single-part
+ * operation, where the data is recovered from the signature. */
+CK_PKCS11_FUNCTION_INFO(C_VerifyRecover)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,        /* the session's handle */
-  CK_BYTE_PTR       pSignature,      /* the signature to be verified */
-  CK_ULONG          ulSignatureLen,  /* count of bytes of signature */
-  CK_BYTE_PTR       pData,           /* receives decrypted data (digest) */
-  CK_ULONG_PTR      pulDataLen       /* receives byte count of data */
+  CK_BYTE_PTR       pSignature,      /* signature to verify */
+  CK_ULONG          ulSignatureLen,  /* signature length */
+  CK_BYTE_PTR       pData,           /* gets signed data */
+  CK_ULONG_PTR      pulDataLen       /* gets signed data len */
 );
 #endif
 
@@ -665,57 +699,58 @@ CK_EXTERN _CK_RV CK_FUNC(C_VerifyRecover)
 
 /* Dual-function cryptographic operations */
 
-/* C_DigestEncryptUpdate continues a multiple-part digesting and encryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DigestEncryptUpdate)
+/* C_DigestEncryptUpdate continues a multiple-part digesting
+ * and encryption operation. */
+CK_PKCS11_FUNCTION_INFO(C_DigestEncryptUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,            /* the session's handle */
+  CK_SESSION_HANDLE hSession,            /* session's handle */
   CK_BYTE_PTR       pPart,               /* the plaintext data */
-  CK_ULONG          ulPartLen,           /* bytes of plaintext data */
-  CK_BYTE_PTR       pEncryptedPart,      /* receives encrypted data */
-  CK_ULONG_PTR      pulEncryptedPartLen  /* receives encrypted byte count */
+  CK_ULONG          ulPartLen,           /* plaintext length */
+  CK_BYTE_PTR       pEncryptedPart,      /* gets ciphertext */
+  CK_ULONG_PTR      pulEncryptedPartLen  /* gets c-text length */
 );
 #endif
 
 
 /* C_DecryptDigestUpdate continues a multiple-part decryption and
  * digesting operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DecryptDigestUpdate)
+CK_PKCS11_FUNCTION_INFO(C_DecryptDigestUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,            /* the session's handle */
-  CK_BYTE_PTR       pEncryptedPart,      /* input encrypted data */
-  CK_ULONG          ulEncryptedPartLen,  /* count of bytes of input */
-  CK_BYTE_PTR       pPart,               /* receives decrypted output */
-  CK_ULONG_PTR      pulPartLen           /* receives decrypted byte count */
+  CK_SESSION_HANDLE hSession,            /* session's handle */
+  CK_BYTE_PTR       pEncryptedPart,      /* ciphertext */
+  CK_ULONG          ulEncryptedPartLen,  /* ciphertext length */
+  CK_BYTE_PTR       pPart,               /* gets plaintext */
+  CK_ULONG_PTR      pulPartLen           /* gets plaintext len */
 );
 #endif
 
 
 /* C_SignEncryptUpdate continues a multiple-part signing and
  * encryption operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_SignEncryptUpdate)
+CK_PKCS11_FUNCTION_INFO(C_SignEncryptUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,            /* the session's handle */
+  CK_SESSION_HANDLE hSession,            /* session's handle */
   CK_BYTE_PTR       pPart,               /* the plaintext data */
-  CK_ULONG          ulPartLen,           /* bytes of plaintext data */
-  CK_BYTE_PTR       pEncryptedPart,      /* receives encrypted data */
-  CK_ULONG_PTR      pulEncryptedPartLen  /* receives encrypted byte count */
+  CK_ULONG          ulPartLen,           /* plaintext length */
+  CK_BYTE_PTR       pEncryptedPart,      /* gets ciphertext */
+  CK_ULONG_PTR      pulEncryptedPartLen  /* gets c-text length */
 );
 #endif
 
 
 /* C_DecryptVerifyUpdate continues a multiple-part decryption and
  * verify operation. */
-CK_EXTERN _CK_RV CK_FUNC(C_DecryptVerifyUpdate)
+CK_PKCS11_FUNCTION_INFO(C_DecryptVerifyUpdate)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE hSession,            /* the session's handle */
-  CK_BYTE_PTR       pEncryptedPart,      /* input encrypted data */
-  CK_ULONG          ulEncryptedPartLen,  /* count of byes of input */
-  CK_BYTE_PTR       pPart,               /* receives decrypted output */
-  CK_ULONG_PTR      pulPartLen           /* receives decrypted byte count */
+  CK_SESSION_HANDLE hSession,            /* session's handle */
+  CK_BYTE_PTR       pEncryptedPart,      /* ciphertext */
+  CK_ULONG          ulEncryptedPartLen,  /* ciphertext length */
+  CK_BYTE_PTR       pPart,               /* gets plaintext */
+  CK_ULONG_PTR      pulPartLen           /* gets p-text length */
 );
 #endif
 
@@ -723,76 +758,91 @@ CK_EXTERN _CK_RV CK_FUNC(C_DecryptVerifyUpdate)
 
 /* Key management */
 
-/* C_GenerateKey generates a secret key, creating a new key object. */
-CK_EXTERN _CK_RV CK_FUNC(C_GenerateKey)
+/* C_GenerateKey generates a secret key, creating a new key
+ * object. */
+CK_PKCS11_FUNCTION_INFO(C_GenerateKey)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE    hSession,    /* the session's handle */
-  CK_MECHANISM_PTR     pMechanism,  /* the key generation mechanism */
-  CK_ATTRIBUTE_PTR     pTemplate,   /* template for the new key */
-  CK_ULONG             ulCount,     /* number of attributes in template */
-  CK_OBJECT_HANDLE_PTR phKey        /* receives handle of new key */
+  CK_MECHANISM_PTR     pMechanism,  /* key generation mech. */
+  CK_ATTRIBUTE_PTR     pTemplate,   /* template for new key */
+  CK_ULONG             ulCount,     /* # of attrs in template */
+  CK_OBJECT_HANDLE_PTR phKey        /* gets handle of new key */
 );
 #endif
 
 
 /* C_GenerateKeyPair generates a public-key/private-key pair, 
  * creating new key objects. */
-CK_EXTERN _CK_RV CK_FUNC(C_GenerateKeyPair)
+CK_PKCS11_FUNCTION_INFO(C_GenerateKeyPair)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE    hSession,                    /* the session's handle */
-  CK_MECHANISM_PTR     pMechanism,                  /* the key gen. mech. */
-  CK_ATTRIBUTE_PTR     pPublicKeyTemplate,          /* pub. attr. template */
-  CK_ULONG             ulPublicKeyAttributeCount,   /* # of pub. attrs. */
-  CK_ATTRIBUTE_PTR     pPrivateKeyTemplate,         /* priv. attr. template */
-  CK_ULONG             ulPrivateKeyAttributeCount,  /* # of priv. attrs. */
-  CK_OBJECT_HANDLE_PTR phPublicKey,                 /* gets pub. key handle */
-  CK_OBJECT_HANDLE_PTR phPrivateKey                 /* gets priv. key handle */
+  CK_SESSION_HANDLE    hSession,                    /* session
+                                                     * handle */
+  CK_MECHANISM_PTR     pMechanism,                  /* key-gen
+                                                     * mech. */
+  CK_ATTRIBUTE_PTR     pPublicKeyTemplate,          /* template
+                                                     * for pub.
+                                                     * key */
+  CK_ULONG             ulPublicKeyAttributeCount,   /* # pub.
+                                                     * attrs. */
+  CK_ATTRIBUTE_PTR     pPrivateKeyTemplate,         /* template
+                                                     * for priv.
+                                                     * key */
+  CK_ULONG             ulPrivateKeyAttributeCount,  /* # priv.
+                                                     * attrs. */
+  CK_OBJECT_HANDLE_PTR phPublicKey,                 /* gets pub.
+                                                     * key
+                                                     * handle */
+  CK_OBJECT_HANDLE_PTR phPrivateKey                 /* gets
+                                                     * priv. key
+                                                     * handle */
 );
 #endif
 
 
 /* C_WrapKey wraps (i.e., encrypts) a key. */
-CK_EXTERN _CK_RV CK_FUNC(C_WrapKey)
+CK_PKCS11_FUNCTION_INFO(C_WrapKey)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,        /* the session's handle */
   CK_MECHANISM_PTR  pMechanism,      /* the wrapping mechanism */
-  CK_OBJECT_HANDLE  hWrappingKey,    /* handle of the wrapping key */
-  CK_OBJECT_HANDLE  hKey,            /* handle of the key to be wrapped */
-  CK_BYTE_PTR       pWrappedKey,     /* receives the wrapped key */
-  CK_ULONG_PTR      pulWrappedKeyLen /* receives byte size of wrapped key */
+  CK_OBJECT_HANDLE  hWrappingKey,    /* wrapping key */
+  CK_OBJECT_HANDLE  hKey,            /* key to be wrapped */
+  CK_BYTE_PTR       pWrappedKey,     /* gets wrapped key */
+  CK_ULONG_PTR      pulWrappedKeyLen /* gets wrapped key size */
 );
 #endif
 
 
-/* C_UnwrapKey unwraps (decrypts) a wrapped key, creating a new key object. */
-CK_EXTERN _CK_RV CK_FUNC(C_UnwrapKey)
+/* C_UnwrapKey unwraps (decrypts) a wrapped key, creating a new
+ * key object. */
+CK_PKCS11_FUNCTION_INFO(C_UnwrapKey)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE    hSession,          /* the session's handle */
-  CK_MECHANISM_PTR     pMechanism,        /* the unwrapping mechanism */
-  CK_OBJECT_HANDLE     hUnwrappingKey,    /* handle of the unwrapping key */
+  CK_SESSION_HANDLE    hSession,          /* session's handle */
+  CK_MECHANISM_PTR     pMechanism,        /* unwrapping mech. */
+  CK_OBJECT_HANDLE     hUnwrappingKey,    /* unwrapping key */
   CK_BYTE_PTR          pWrappedKey,       /* the wrapped key */
-  CK_ULONG             ulWrappedKeyLen,   /* bytes length of wrapped key */
-  CK_ATTRIBUTE_PTR     pTemplate,         /* template for the new key */
-  CK_ULONG             ulAttributeCount,  /* # of attributes in template */
-  CK_OBJECT_HANDLE_PTR phKey              /* gets handle of recovered key */
+  CK_ULONG             ulWrappedKeyLen,   /* wrapped key len */
+  CK_ATTRIBUTE_PTR     pTemplate,         /* new key template */
+  CK_ULONG             ulAttributeCount,  /* template length */
+  CK_OBJECT_HANDLE_PTR phKey              /* gets new handle */
 );
 #endif
 
 
-/* C_DeriveKey derives a key from a base key, creating a new key object. */
-CK_EXTERN _CK_RV CK_FUNC(C_DeriveKey)
+/* C_DeriveKey derives a key from a base key, creating a new key
+ * object. */
+CK_PKCS11_FUNCTION_INFO(C_DeriveKey)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_SESSION_HANDLE    hSession,          /* the session's handle */
-  CK_MECHANISM_PTR     pMechanism,        /* the key derivation mechanism */
-  CK_OBJECT_HANDLE     hBaseKey,          /* handle of the base key */
-  CK_ATTRIBUTE_PTR     pTemplate,         /* template for the new key */
-  CK_ULONG             ulAttributeCount,  /* # of attributes in template */
-  CK_OBJECT_HANDLE_PTR phKey              /* gets handle of derived key */
+  CK_SESSION_HANDLE    hSession,          /* session's handle */
+  CK_MECHANISM_PTR     pMechanism,        /* key deriv. mech. */
+  CK_OBJECT_HANDLE     hBaseKey,          /* base key */
+  CK_ATTRIBUTE_PTR     pTemplate,         /* new key template */
+  CK_ULONG             ulAttributeCount,  /* template length */
+  CK_OBJECT_HANDLE_PTR phKey              /* gets new handle */
 );
 #endif
 
@@ -800,25 +850,25 @@ CK_EXTERN _CK_RV CK_FUNC(C_DeriveKey)
 
 /* Random number generation */
 
-/* C_SeedRandom mixes additional seed material into the token's random number 
- * generator. */
-CK_EXTERN _CK_RV CK_FUNC(C_SeedRandom)
+/* C_SeedRandom mixes additional seed material into the token's
+ * random number generator. */
+CK_PKCS11_FUNCTION_INFO(C_SeedRandom)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,  /* the session's handle */
   CK_BYTE_PTR       pSeed,     /* the seed material */
-  CK_ULONG          ulSeedLen  /* count of bytes of seed material */
+  CK_ULONG          ulSeedLen  /* length of seed material */
 );
 #endif
 
 
 /* C_GenerateRandom generates random data. */
-CK_EXTERN _CK_RV CK_FUNC(C_GenerateRandom)
+CK_PKCS11_FUNCTION_INFO(C_GenerateRandom)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession,    /* the session's handle */
   CK_BYTE_PTR       RandomData,  /* receives the random data */
-  CK_ULONG          ulRandomLen  /* number of bytes to be generated */
+  CK_ULONG          ulRandomLen  /* # of bytes to generate */
 );
 #endif
 
@@ -826,9 +876,10 @@ CK_EXTERN _CK_RV CK_FUNC(C_GenerateRandom)
 
 /* Parallel function management */
 
-/* C_GetFunctionStatus obtains an updated status of a function running 
- * in parallel with an application. */
-CK_EXTERN _CK_RV CK_FUNC(C_GetFunctionStatus)
+/* C_GetFunctionStatus is a legacy function; it obtains an
+ * updated status of a function running in parallel with an
+ * application. */
+CK_PKCS11_FUNCTION_INFO(C_GetFunctionStatus)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession  /* the session's handle */
@@ -836,19 +887,26 @@ CK_EXTERN _CK_RV CK_FUNC(C_GetFunctionStatus)
 #endif
 
 
-/* C_CancelFunction cancels a function running in parallel. */
-CK_EXTERN _CK_RV CK_FUNC(C_CancelFunction)
+/* C_CancelFunction is a legacy function; it cancels a function
+ * running in parallel. */
+CK_PKCS11_FUNCTION_INFO(C_CancelFunction)
 #ifdef CK_NEED_ARG_LIST
 (
   CK_SESSION_HANDLE hSession  /* the session's handle */
 );
-
 #endif
-CK_EXTERN _CK_RV CK_FUNC(C_WaitForSlotEvent)
+
+
+
+/* Functions added in for Cryptoki Version 2.01 or later */
+
+/* C_WaitForSlotEvent waits for a slot event (token insertion,
+ * removal, etc.) to occur. */
+CK_PKCS11_FUNCTION_INFO(C_WaitForSlotEvent)
 #ifdef CK_NEED_ARG_LIST
 (
-  CK_FLAGS flags,
-  CK_SLOT_ID_PTR pSlot,
-  CK_VOID_PTR pReserved
+  CK_FLAGS flags,        /* blocking/nonblocking flag */
+  CK_SLOT_ID_PTR pSlot,  /* location that receives the slot ID */
+  CK_VOID_PTR pRserved   /* reserved.  Should be NULL_PTR */
 );
 #endif

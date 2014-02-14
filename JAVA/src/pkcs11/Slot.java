@@ -4,10 +4,17 @@ import gui.Server;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import objects.ObjectManager;
+import objects.Attribute;
+import objects.Mechanism;
+import objects.Mechanism.MechanismInfo;
+import objects.PKCS11Object;
 
+import proxys.CK_MECHANISM;
+import proxys.CK_MECHANISM_INFO;
 import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 
@@ -20,14 +27,16 @@ import proxys.RETURN_TYPE;
  */
 public class Slot{
 	private ServerSession serversession;
-	private ArrayList<Long> mechanisms = new ArrayList<Long>();
+	private HashMap<MECHANISM_TYPES,Mechanism.MechanismInfo> mechanisms = new HashMap<>();
+	
 	private long slotID;
 	private boolean roToken = false;
 	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
 	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
-	public ObjectManager objectManager = new ObjectManager();
+	private ObjectStorage storage;
+	
 	
 	public ServerSession getServersession() {
 		return serversession;
@@ -37,6 +46,7 @@ public class Slot{
 	public Slot(long slotid, Server.ServerInfo server){
 		slotID = slotid;
 		serversession = new ServerSession(server);
+		loadMechanisms();
 		//generate PIN
 	}
 	protected Session.USER_TYPE getAllSessionUserType(){
@@ -84,9 +94,7 @@ public class Slot{
 	public void delSession(long sessionid) throws PKCS11Error{
 		Iterator<Session> it = sessionList.iterator();
 		for(Session s = null;it.hasNext();s = it.next()){
-			if(s==null)
-				return;
-			if(s.getID() == sessionid){
+			if(s!=null && s.getID() == sessionid){
 				it.remove();
 				return;
 			}
@@ -135,9 +143,68 @@ public class Slot{
 	}
 
 
+/*** object management ***/	
+	public void deleteObject(long oid){
+		
+	}
+	public long createObject(Attribute[] template){
+		
+	}
+	public long[] findObject(Attribute[] template){
+		
+	}
+/*** crypto functions ***/	
+	public void decrypt(){
+		
+	}
+	public void encrypt(){
+		
+	}
+	public CryptoHelper checkAndInitSign(long hKey,CK_MECHANISM mech){
+		Mechanism mechanism = new Mechanism(mech);
+		PKCS11Object key = getObject(hKey);
+		//TODO 	passt der key zum Mechanism?
+		//		ist das Object ein Key?
+		//		darf der key zum signen verwendet werden?
+		//		kann der Mechanism zum signen verwendet werden? (mechInfo)
+		
+		return new CryptoHelper(mechanism,key);
+	}
+	public byte[] sign(byte[] data,PKCS11Object key,Mechanism mechanism){
+		//TODO map PKCS11Object key ---> SkyTrust Key
+		//TODO map mechasim ---> SkyTrustAlgorithm
+		return serversession.sign(data, key, mechanism);
+	}
 
-	public ArrayList<Long> getMechanisms(){
-		return mechanisms;
+/*** Mechanism management ***/
+	public MECHANISM_TYPES[] getMechanisms(){
+		return mechanisms.keySet().toArray(new MECHANISM_TYPES[0]);
+	}
+	public void getMechanismInfo(MECHANISM_TYPES type,CK_MECHANISM_INFO info) throws PKCS11Error{
+		Mechanism.MechanismInfo local_info = mechanisms.get(type);
+		if(local_info == null){
+			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+		}
+		local_info.writeInto(info);
+	}
+	public void loadMechanisms(){	
+		mechanisms.put(MECHANISM_TYPES.RSA_PKCS,new MechanismInfo().hw().sign_verify().wrap().unwrap());
+		mechanisms.put(MECHANISM_TYPES.SHA1_RSA_PKCS, new MechanismInfo().hw().sign_verify());//PKCS #1 v1.5
+		mechanisms.put(MECHANISM_TYPES.RSA_PKCS_OAEP,new MechanismInfo().hw().encrypt_decrypt());
+		mechanisms.put(MECHANISM_TYPES.SHA1_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+		mechanisms.put(MECHANISM_TYPES.SHA256_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+		mechanisms.put(MECHANISM_TYPES.SHA512_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+		mechanisms.put(MECHANISM_TYPES.SHA224_RSA_PKCS_PSS,new MechanismInfo().hw().sign_verify());
+
+		
+//		RSAES_RAW("RSAES-RAW"),
+//	    RSAES_PKCS1_V1_5("RSAES-PKCS1-v1_5"),
+//	    RSA_OAEP("RSA-OAEP"),
+//	    RSASSA_PKCS1_V1_5_SHA_1("RSASSA-PKCS1-v1_5-SHA-1"),
+//	    RSASSA_PKCS1_V1_5_SHA_224("RSASSA-PKCS1-v1_5-SHA-224"),
+//	    RSASSA_PKCS1_V1_5_SHA_256("RSASSA-PKCS1-v1_5-SHA-256"),
+//	    RSASSA_PKCS1_V1_5_SHA_512("RSASSA-PKCS1-v1_5-SHA-512"),
+//	    RSA_PSS("RSA-PSS");
 	}
 
 }

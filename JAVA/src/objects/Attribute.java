@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pkcs11.PKCS11Error;
+import pkcs11.Util;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CERT_TYPE;
 import proxys.CK_ATTRIBUTE;
@@ -16,6 +17,7 @@ import proxys.KEY_TYP;
 import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
 
+//public class Attribute extends CK_ATTRIBUTE{
 public class Attribute {
 	public static byte[] getDataAsByteArray(CK_ATTRIBUTE attribute){
 		CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
@@ -25,13 +27,7 @@ public class Attribute {
 		}
 		return a;
 	}
-	public static byte[] getDataAsByteArray(CK_BYTE_ARRAY data, int len){
-		byte[] a = new byte[ len];
-		for(int i =0; i< len; i++){
-			a[i] = (byte) data.getitem(i);
-		}
-		return a;
-	}
+
 	
 	private ATTRIBUTE_TYPE type;
 	private Class<?> datatype;
@@ -96,7 +92,7 @@ public class Attribute {
 		this.datatype = Attribute.attribute_types.get(this.type);
 		this.cdata = new CK_BYTE_ARRAY(attr.getPValue().getCPtr(), false);
 		this.length = attr.getUlValueLen();
-		this.data = getDataAsByteArray(cdata,(int) length);
+		this.data = Util.getDataAsByteArray(cdata,(int) length);
 	}
 	
 	public Attribute(ATTRIBUTE_TYPE type, byte[] val) {
@@ -144,7 +140,6 @@ public class Attribute {
 		if(!datatype.equals(req_type)){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		req_type = (Class<T>) datatype;
 		Constructor<T> constructor;
 		try {
 			constructor = req_type.getDeclaredConstructor( long.class, boolean.class );
@@ -169,11 +164,11 @@ public class Attribute {
 		if(!datatype.equals(req_type)){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		if(datatype.equals(CK_BYTE_ARRAY.class)){
+		if(req_type.equals(CK_BYTE_ARRAY.class)){
 			return (T) cdata;
-		}else if(EnumBase.class.isAssignableFrom(datatype)){
+		}else if(EnumBase.class.isAssignableFrom(req_type)){
 			return (T) getAsSwigEnum((Class<? extends EnumBase>) req_type);
-		}else if(StructBase.class.isAssignableFrom(datatype)){
+		}else if(StructBase.class.isAssignableFrom(req_type)){
 			return (T) getAsSwigStruct((Class<? extends StructBase>) req_type);
 		}else{
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);

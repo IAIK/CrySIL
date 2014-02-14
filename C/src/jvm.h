@@ -56,7 +56,7 @@ sing* get_instance()
 	instance->options[1].optionString = "-Djava.library.path="SWIGLIBPATH;  /* set native library path */
 #ifdef DEBUG
 //	instance->options[3].optionString = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000";	pre JAVA 5
-	instance->options[2].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,address=8000";
+	instance->options[2].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:8000";
 #endif
 
 	instance->vm_args.version = JNI_VERSION_1_4;

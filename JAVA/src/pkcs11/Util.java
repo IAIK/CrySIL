@@ -1,5 +1,7 @@
 package pkcs11;
 
+import proxys.CK_BYTE_ARRAY;
+
 public class Util {
 	public static boolean isFlagSet(long bitfield, int flag){
 		return (bitfield & flag) != 0;
@@ -17,5 +19,12 @@ public class Util {
 		}else{
 			return str.substring(0,len);
 		}
+	}
+	public static byte[] getDataAsByteArray(CK_BYTE_ARRAY data, int len){
+		byte[] a = new byte[ len];
+		for(int i =0; i< len; i++){
+			a[i] = (byte) data.getitem(i);
+		}
+		return a;
 	}
 }

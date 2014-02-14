@@ -1,9 +1,12 @@
 package pkcs11;
 import java.util.ArrayList;
 
-import objects.ObjectManager;
+import objects.MechanismObject;
 
+import proxys.CK_MECHANISM;
 import proxys.CK_NOTIFY_CALLBACK;
+import proxys.CK_BYTE_ARRAY;
+import proxys.CK_ULONG_JPTR;
 //import proxys.CK_VOID_PTR;
 import proxys.RETURN_TYPE;
 import proxys.SESSION_STATE;
@@ -24,10 +27,11 @@ public class Session {
 	private long flags;
 	private long handle;
 	
-
-	
-	public SignHelper signHelper;
-	public FindObjectsHelper findObjectsHelper;
+	private CryptoHelper signHelper;
+	private CryptoHelper verifyHelper;//TODO
+	private CryptoHelper decryptHelper;
+	private CryptoHelper encryptHelper;
+	private FindObjectsHelper findObjectsHelper;
 
 	public Session(Slot slot,long handle,ACCESS_TYPE atype){
 	//	this.flags = flags;
