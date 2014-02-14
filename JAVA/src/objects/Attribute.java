@@ -129,9 +129,15 @@ public class Attribute {
 		return buf.getLong();
 	}
 	public byte[] getAsByteArray() throws PKCS11Error{
+		System.out.println("getting data as byte array, but dyata is: "+ datatype);
 		if(!datatype.equals(Byte.class)){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
+		return data;
+	}
+	
+	public byte[] getRawData(){
+		
 		return data;
 	}
 	private <T extends StructBase> T getAsSwigStruct(Class<T> req_type) throws PKCS11Error{

@@ -3,8 +3,11 @@ import gui.DataVaultSingleton;
 import gui.Server;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import objects.PKCS11Object;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
@@ -38,6 +41,7 @@ import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CERT_TYPE;
 import proxys.CK_ATTRIBUTE;
+import proxys.CK_BYTE_ARRAY;
 import proxys.CK_MECHANISM;
 import proxys.CK_ULONG_ARRAY;
 import proxys.CK_ULONG_JPTR;
@@ -254,60 +258,22 @@ public class ServerSession {
 			pulObjectCount.assign(0L);
 			return;
 		}
-		
-//		try{
-//			
-//		if (pulObjectCount.getCPtr() == 0L || phObject.getCPtr() == 0L) {
-//			throw new PKCS11Error(RETURN_TYPE.DEVICE_MEMORY);
-//		}
-//
-//		if (ulMaxObjectCount == 0L) {
-//			pulObjectCount.assign(0L);
-//			return;
-//		}
-//
-//		List<SKey> list = new ArrayList<SKey>();
-//		CK_ATTRIBUTE[] template = findObjectsHelper.pTemplate;
-//		for (CK_ATTRIBUTE tmp : template) {
-//
-//			if(tmp.getType()==ATTRIBUTE_TYPE.CLASS.swigValue()){
-//				
-//				short[] array = JAVApkcs11Interface.getByteArrayAsShort(tmp);
-//				
-//				if(OBJECT_CLASS.SECRET_KEY.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("SECRET_KEY");
-//				}
-//				if(OBJECT_CLASS.PUBLIC_KEY.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("PUBLIC_KEY");
-//				}
-//				if(OBJECT_CLASS.PRIVATE_KEY.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("PRIVATE_KEY");
-//				}
-//				if(OBJECT_CLASS.CERTIFICATE.swigValue() == array[array.length-1] ){
-//					list = discoverKeys("certificate");
-//				}
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.KEY_TYPE.swigValue()){
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.TOKEN.swigValue()){
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.ID.swigValue()){
-//			}else if(tmp.getType()==ATTRIBUTE_TYPE.VALUE.swigValue()){
-//			}
-//		}
-//			if(list==null){
-//					pulObjectCount.assign(0L);
-//					return;
-//				}
-//			CK_ULONG_ARRAY ar = new CK_ULONG_ARRAY(phObject.getCPtr(), false);
-//			pulObjectCount.assign(list.size() > ulMaxObjectCount ? ulMaxObjectCount : list.size());
-//			for(long i=findObjectsHelper.actualCount; i<pulObjectCount.value(); i++){
-//				long handle = keyStorage.addNewObject(list.get((int) i));
-//				ar.setitem((int) i, handle);
-//			}
-//			findObjectsHelper.actualCount=pulObjectCount.value();
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-			
 
+		CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(phObject.getCPtr(), false);
+		int count=0;
+		int i=0;
+		for(i =findObjectsHelper.index; i<findObjectsHelper.index+ulMaxObjectCount; i++){
+			if(i==findObjectsHelper.foundObjects.size()){
+				break;
+			}
+			long handle = findObjectsHelper.foundObjects.get(i).id;
+			//TODO: how to set that bytes correctly?
+			array.setitem(count, (short) handle);
+			count++;
+
+		}
+		findObjectsHelper.index=i;
+		pulObjectCount.assign(count);
 	}
 
 }

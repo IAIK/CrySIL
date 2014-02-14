@@ -41,6 +41,7 @@ public class ObjectManager {
 		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		objects.add(object);
 		ids.add(id);
+		System.err.println("created object with handle: "+id);
 		return id;
 	}
 

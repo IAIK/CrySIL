@@ -1,6 +1,8 @@
 package pkcs11;
 import java.util.ArrayList;
 
+import objects.ObjectManager;
+
 import proxys.CK_NOTIFY_CALLBACK;
 //import proxys.CK_VOID_PTR;
 import proxys.RETURN_TYPE;
@@ -21,6 +23,8 @@ public class Session {
 	private Slot slot;
 	private long flags;
 	private long handle;
+	
+	public ObjectManager objectManager = new ObjectManager();
 	
 	public SignHelper signHelper;
 	public FindObjectsHelper findObjectsHelper;
