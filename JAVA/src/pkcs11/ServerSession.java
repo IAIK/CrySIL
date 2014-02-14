@@ -205,12 +205,12 @@ public class ServerSession implements IServerSession {
 		return true;
 	}
 
-
-		if (ulMaxObjectCount == 0L) {
-			pulObjectCount.assign(0L);
-			return;
-		}
-		
+/*** merge schiefgegangen aber wurscht nur alter code  ***/
+//		if (ulMaxObjectCount == 0L) {
+//			pulObjectCount.assign(0L);
+//			return;
+//		}
+//		
 //		try{
 //			
 //		if (pulObjectCount.getCPtr() == 0L || phObject.getCPtr() == 0L) {
@@ -264,6 +264,6 @@ public class ServerSession implements IServerSession {
 //		}
 			
 
-	}
+//	}
 
 }

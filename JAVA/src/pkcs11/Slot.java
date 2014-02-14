@@ -11,6 +11,7 @@ import java.util.Map;
 import objects.Attribute;
 import objects.Mechanism;
 import objects.Mechanism.MechanismInfo;
+import objects.ObjectManager;
 import objects.PKCS11Object;
 
 import proxys.CK_MECHANISM;
@@ -35,7 +36,7 @@ public class Slot{
 	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
-	private ObjectStorage storage;
+	public ObjectManager objectManager = new ObjectManager();
 	
 	
 	public ServerSession getServersession() {
@@ -143,42 +144,32 @@ public class Slot{
 	}
 
 
-/*** object management ***/	
-	public void deleteObject(long oid){
-		
-	}
-	public long createObject(Attribute[] template){
-		
-	}
-	public long[] findObject(Attribute[] template){
-		
-	}
 /*** crypto functions ***/	
-	public void decrypt(){
-		
-	}
-	public void encrypt(){
-		
-	}
-	public CryptoHelper checkAndInitSign(long hKey,CK_MECHANISM mech){
-		Mechanism mechanism = new Mechanism(mech);
-		PKCS11Object key = getObject(hKey);
-		//TODO 	passt der key zum Mechanism?
-		//		ist das Object ein Key?
-		//		darf der key zum signen verwendet werden?
-		//		kann der Mechanism zum signen verwendet werden? (mechInfo)
-		
-		return new CryptoHelper(mechanism,key);
-	}
-	public byte[] sign(byte[] data,PKCS11Object key,Mechanism mechanism){
-		//TODO map PKCS11Object key ---> SkyTrust Key
-		//TODO map mechasim ---> SkyTrustAlgorithm
-		return serversession.sign(data, key, mechanism);
-	}
+//	public void decrypt(){
+//		
+//	}
+//	public void encrypt(){
+//		
+//	}
+//	public CryptoHelper checkAndInitSign(long hKey,CK_MECHANISM mech){
+//		Mechanism mechanism = new Mechanism(mech);
+//		PKCS11Object key = objectManager.getObject(hKey);
+//		//TODO 	passt der key zum Mechanism?
+//		//		ist das Object ein Key?
+//		//		darf der key zum signen verwendet werden?
+//		//		kann der Mechanism zum signen verwendet werden? (mechInfo)
+//		
+//		return new CryptoHelper(mechanism,key);
+//	}
+//	public byte[] sign(byte[] data,PKCS11Object key,Mechanism mechanism){
+//		//TODO map PKCS11Object key ---> SkyTrust Key
+//		//TODO map mechasim ---> SkyTrustAlgorithm
+//		return serversession.sign(data, key, mechanism);
+//	}
 
 /*** Mechanism management ***/
 	public MECHANISM_TYPES[] getMechanisms(){
-		return mechanisms.keySet().toArray(new MECHANISM_TYPES[0]);
+		return mechanisms.keySet().toArray(new MECHANISM_TYPES[0]);//parameter is just for typeinfo
 	}
 	public void getMechanismInfo(MECHANISM_TYPES type,CK_MECHANISM_INFO info) throws PKCS11Error{
 		Mechanism.MechanismInfo local_info = mechanisms.get(type);

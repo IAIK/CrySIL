@@ -21,6 +21,7 @@ import proxys.CK_TOKEN_INFO;
 import proxys.CK_ULONG_ARRAY;
 import proxys.CK_ULONG_JPTR;
 import proxys.CK_VERSION;
+import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.SESSION_STATE;
 import proxys.pkcs11Constants;
@@ -277,12 +278,12 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  System.err.println("\nthis is java calling Findobjects");
 	  try {
 		Session session = getRM().getSessionByHandle(hSession);
-		ServerSession sSession = session.getSlot().getServersession();
+
 		if(session.findObjectsHelper == null){
 			System.err.println("operation not initalized");
 			return RETURN_TYPE.OPERATION_NOT_INITIALIZED.swigValue();
 		}
-		sSession.findObjects(session.findObjectsHelper, phObject, ulMaxObjectCount, pulObjectCount);
+		session.getSlot().objectManager.findObjects(session.findObjectsHelper, phObject, ulMaxObjectCount, pulObjectCount);
 		
 	} catch (PKCS11Error e) {
 		// TODO Auto-generated catch block
@@ -396,31 +397,30 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 
   public static long C_GetMechanismList(long slotID, CK_ULONG_ARRAY pMechanismList, CK_ULONG_JPTR pulCount) {
 	  System.err.println("\nC_GetMechanismList...........................");
-		try {
-			Slot slot=getRM().getSlotByID(slotID);
-			
-			if(pMechanismList.getCPtr()==0L){
-				pulCount.assign(slot.getMechanisms().size());
-		  System.err.println("\nC_GetMechanismList.........ende0  ...........");
-				return RETURN_TYPE.OK.swigValue();
-			}
-			if(pulCount.value() < slot.getMechanisms().size()){
-				pulCount.assign(slot.getMechanisms().size());
-		  System.err.println("\nC_GetMechanismList.........buffer  ...........");
-				return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
-			}
-			
-			int range = slot.getMechanisms().size();
-			pulCount.assign(range);
-			for(int i=0; i<range; i++){
-				pMechanismList.setitem(i, slot.getMechanisms().get(i));
-			}
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e1){
-			e1.printStackTrace();
-		}
+	  try {
+		  Slot slot=getRM().getSlotByID(slotID);
+		  int mech_count = slot.getMechanisms().length;
+
+		  if(pMechanismList.getCPtr()==0L){
+			  pulCount.assign(mech_count);
+			  System.err.println("\nC_GetMechanismList.........ende0  ...........");
+			  return RETURN_TYPE.OK.swigValue();
+		  }
+
+		  if(pulCount.value() < mech_count){
+			  pulCount.assign(mech_count);
+			  System.err.println("\nC_GetMechanismList.........buffer  ...........");
+			  return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
+		  }
+
+		  pulCount.assign(mech_count);
+		  MECHANISM_TYPES[] mechanisms = slot.getMechanisms();
+		  for(int i=0; i<mech_count; i++){
+			  pMechanismList.setitem(i, mechanisms[i].swigValue());
+		  }
+	  } catch (PKCS11Error e) {
+		  return e.getCode();
+	  } 
 	  System.err.println("\nC_GetMechanismList.........ende  ...........");
 	  return RETURN_TYPE.OK.swigValue();
   }
@@ -464,57 +464,58 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_Sign(long hSession, byte[] pData, long ulDataLen, CK_BYTE_ARRAY pSignature, CK_ULONG_JPTR pulSignatureLen) {
-	  try {
-		Session session = getRM().getSessionByHandle(hSession);
-		if(session.signHelper==null){
-			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
-		}
-		if(session.signHelper.pData==null){
-			session.signHelper.pData=pData;
-			try {
-				session.getSlot().getServersession().sign(pData, session.signHelper.hkey);
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
-			}
-		}
-		
-		if(pSignature.getCPtr() == 0L){
-			pulSignatureLen.assign(session.signHelper.cData.length);
-			throw new PKCS11Error(RETURN_TYPE.OK);
-		}else if(pulSignatureLen.value() >= session.signHelper.cData.length){
-			for(int i=0; i<session.signHelper.cData.length; i++){
-				pSignature.setitem(i, session.signHelper.cData[i]);
-			}
-			session.signHelper = null;// signing finished, so let's flush the signhelper
-			throw new PKCS11Error(RETURN_TYPE.OK);
-		}else{
-			throw new PKCS11Error(RETURN_TYPE.BUFFER_TOO_SMALL);
-		}
-		
-	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		return e.getCode();
-	}
+//	  try {
+//		Session session = getRM().getSessionByHandle(hSession);
+//		if(session.signHelper==null){
+//			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
+//		}
+//		if(session.signHelper.pData==null){
+//			session.signHelper.pData=pData;
+//			try {
+//				session.getSlot().getServersession().sign(pData, session.signHelper.hkey);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//				throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+//			}
+//		}
+//		
+//		if(pSignature.getCPtr() == 0L){
+//			pulSignatureLen.assign(session.signHelper.cData.length);
+//			throw new PKCS11Error(RETURN_TYPE.OK);
+//		}else if(pulSignatureLen.value() >= session.signHelper.cData.length){
+//			for(int i=0; i<session.signHelper.cData.length; i++){
+//				pSignature.setitem(i, session.signHelper.cData[i]);
+//			}
+//			session.signHelper = null;// signing finished, so let's flush the signhelper
+//			throw new PKCS11Error(RETURN_TYPE.OK);
+//		}else{
+//			throw new PKCS11Error(RETURN_TYPE.BUFFER_TOO_SMALL);
+//		}
+//		
+//	} catch (PKCS11Error e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//		return e.getCode();
+//	}
+	  return RETURN_TYPE.OK.swigValue();
   }
 
   public static long C_SignInit(long hSession, CK_MECHANISM pMechanism, long hKey) {
-	  try {
-		Session session = getRM().getSessionByHandle(hSession);
-		if(session==null){
-			throw new PKCS11Error(RETURN_TYPE.SESSION_HANDLE_INVALID);
-		}
-		if(session.signHelper==null){
-			session.signHelper = new SignHelper(hSession, pMechanism, hKey);
-		}else{
-			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
-		}
-	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		return e.getCode();
-	}
+//	  try {
+//		Session session = getRM().getSessionByHandle(hSession);
+//		if(session==null){
+//			throw new PKCS11Error(RETURN_TYPE.SESSION_HANDLE_INVALID);
+//		}
+//		if(session.signHelper==null){
+//			session.signHelper = new SignHelper(hSession, pMechanism, hKey);
+//		}else{
+//			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
+//		}
+//	} catch (PKCS11Error e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//		return e.getCode();
+//	}
 	  
 	  return RETURN_TYPE.OK.swigValue();
   }
@@ -533,28 +534,28 @@ public class JAVApkcs11Interface implements pkcs11Constants {
  	 * 
  	 */
   public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey) {
-		Session session;
-		try {
-			session = getRM().getSessionByHandle(hSession);
-			PKCS11Object key = session.getObject(hUnwrappingKey);
-			
-			byte[] unwrappedKey = session.decrypt(pMechanism,pWrappedKey);
-			long hKey = session.newObject(pTemplate);
-			phKey.assign(hKey); 
-			
-			
-			ServerSession sSession =  session.getSlot().getServersession();
-			
-			long hKey = sSession.unwrapKey(pMechanism, hUnwrappingKey, pWrappedKey, ulWrappedKeyLen, pTemplate, ulAttributeCount, phKey);
-			phKey.assign(hKey);
-
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return e.getCode();
-		}
-	  
-	  
+//		Session session;
+//		try {
+//			session = getRM().getSessionByHandle(hSession);
+//			PKCS11Object key = session.getObject(hUnwrappingKey);
+//			
+//			byte[] unwrappedKey = session.decrypt(pMechanism,pWrappedKey);
+//			long hKey = session.newObject(pTemplate);
+//			phKey.assign(hKey); 
+//			
+//			
+//			ServerSession sSession =  session.getSlot().getServersession();
+//			
+//			long hKey = sSession.unwrapKey(pMechanism, hUnwrappingKey, pWrappedKey, ulWrappedKeyLen, pTemplate, ulAttributeCount, phKey);
+//			phKey.assign(hKey);
+//
+//		} catch (PKCS11Error e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return e.getCode();
+//		}
+//	  
+//	  
 	  
 	  
 	  return RETURN_TYPE.OK.swigValue();
@@ -572,29 +573,25 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	 * 
 	 */
   public static long C_WrapKey(long hSession, CK_MECHANISM pMechanism, long hWrappingKey, long hKey, CK_BYTE_ARRAY pWrappedKey, CK_ULONG_JPTR pulWrappedKeyLen) {
-	  try {
-		Session session = getRM().getSessionByHandle(hSession);
-		
-		
-		ServerSession sSession =  session.getSlot().getServersession();
-		try {
-			sSession.wrapKey(pMechanism, hWrappingKey, hKey);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
-		}
-		
-	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		return e.getCode();
-	}
-	  
-	  
-	  
-	  
+//	  try {
+//		Session session = getRM().getSessionByHandle(hSession);
+//		
+//		
+//		ServerSession sSession =  session.getSlot().getServersession();
+//		try {
+//			sSession.wrapKey(pMechanism, hWrappingKey, hKey);
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+//		}
+//		
+//	} catch (PKCS11Error e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//		return e.getCode();
+//	}
 	  return RETURN_TYPE.OK.swigValue();
   }
   

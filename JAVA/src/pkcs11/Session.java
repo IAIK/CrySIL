@@ -1,8 +1,6 @@
 package pkcs11;
 import java.util.ArrayList;
 
-import objects.MechanismObject;
-
 import proxys.CK_MECHANISM;
 import proxys.CK_NOTIFY_CALLBACK;
 import proxys.CK_BYTE_ARRAY;
@@ -28,10 +26,10 @@ public class Session {
 	private long handle;
 	
 	private CryptoHelper signHelper;
-	private CryptoHelper verifyHelper;//TODO
+	private CryptoHelper verifyHelper;
 	private CryptoHelper decryptHelper;
 	private CryptoHelper encryptHelper;
-	private FindObjectsHelper findObjectsHelper;
+	public FindObjectsHelper findObjectsHelper;
 
 	public Session(Slot slot,long handle,ACCESS_TYPE atype){
 	//	this.flags = flags;

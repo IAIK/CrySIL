@@ -6,7 +6,7 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 
 import pkcs11.PKCS11Error;
 import proxys.CK_ATTRIBUTE;
-
+//TODO PKCS11Error schmeißen 
 public class ObjectManager {
 
 	private ArrayList<PKCS11Object> objects = new ArrayList<>();
