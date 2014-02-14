@@ -17,7 +17,7 @@ public class FindObjectsHelper {
 	public FindObjectsHelper(CK_ATTRIBUTE[] pTemplate, long ulCount, Session session) throws PKCS11Error {
 		this.pTemplate = pTemplate;
 		this.ulCount = ulCount;
-		foundObjects = session.objectManager.findObjects(pTemplate);
+		foundObjects = session.getSlot().objectManager.findObjects(pTemplate);
 	}
 
 	

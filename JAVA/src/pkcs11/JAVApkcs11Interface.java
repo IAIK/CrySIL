@@ -6,12 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.sf.ehcache.search.attribute.AttributeType;
-
 import objects.Attribute;
 import objects.PKCS11Object;
-
-import com.sun.org.apache.bcel.internal.generic.RET;
 
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CK_BYTE_ARRAY;
@@ -31,7 +27,6 @@ import proxys.pkcs11Constants;
 import proxys.CK_ATTRIBUTE;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-import sun.security.action.GetBooleanAction;
 
 public class JAVApkcs11Interface implements pkcs11Constants {
 	  static {
@@ -249,16 +244,12 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
 	  
 	try {
-		Session session = getRM().getSessionByHandle(hSession);
-		ServerSession sSession = session.getSlot().getServersession();
-		
-		long handle = session.objectManager.createObject(pTemplate);
+		Session session = getRM().getSessionByHandle(hSession);		
+		long handle = session.getSlot().objectManager.createObject(pTemplate);
 		phObject.assign(handle);
-		
-
 	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
+		return e.getCode();
 	}
 
 	  return RETURN_TYPE.OK.swigValue();
@@ -344,7 +335,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  Session session = getRM().getSessionByHandle(hSession);
 	  ServerSession sSession = session.getSlot().getServersession();
 	  
-	  PKCS11Object obj = session.objectManager.getObject(hObject);
+	  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
 	  if(obj == null){
 		  return RETURN_TYPE.GENERAL_ERROR.swigValue();
 	  }

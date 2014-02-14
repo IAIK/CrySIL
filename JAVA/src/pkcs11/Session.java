@@ -24,7 +24,7 @@ public class Session {
 	private long flags;
 	private long handle;
 	
-	public ObjectManager objectManager = new ObjectManager();
+
 	
 	public SignHelper signHelper;
 	public FindObjectsHelper findObjectsHelper;
