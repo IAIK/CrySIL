@@ -1,8 +1,8 @@
-#include"pkcs11.h"
-#include"jvm.h"
-#include"unistd.h"
-#include<string.h>
-#include"stdio.h"
+#include "pkcs11.h"
+#include "jvm.h"
+#include "unistd.h"
+#include <string.h>
+#include "stdio.h"
 
 static CK_FUNCTION_LIST pkcs11_functions =  { {2, 20},
  &C_Initialize,

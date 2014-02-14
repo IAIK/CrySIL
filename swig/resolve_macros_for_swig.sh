@@ -18,7 +18,7 @@ sed 's/CK_CALLBACK_FUNCTION(\([^,)]*\), \([^,)]*\))/\1 (* \2)/g' | \
 
 sed 's/NULL_PTR/0/g' | \
 
-sed 's/\([[:digit:]]*\)UL/\1/g' | \
+
 
 sed 's/CKF_ARRAY_ATTRIBUTE/0x40000000/g'
 

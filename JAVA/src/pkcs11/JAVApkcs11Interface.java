@@ -283,12 +283,11 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			System.err.println("operation not initalized");
 			return RETURN_TYPE.OPERATION_NOT_INITIALIZED.swigValue();
 		}
-		session.getSlot().objectManager.findObjects(session.findObjectsHelper, phObject, ulMaxObjectCount, pulObjectCount);
-		
+		session.getSlot().objectManager.findObjects(session.findObjectsHelper.pTemplate);
+		//TODO noch nicht fertig
 	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
-			System.err.println("findobjects....error1");
+		System.err.println("findobjects....error1");
 		return e.getCode();
 	} catch (Exception e){
 		e.printStackTrace();
@@ -303,7 +302,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session = getRM().getSessionByHandle(hSession);
 		session.findObjectsHelper = null; 
 	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 		return e.getCode();
 	}

@@ -60,7 +60,7 @@ typedef struct {
 
 %pointer_class(unsigned long int,CK_ULONG_JPTR)
 
-%array_class(CK_ULONG,CK_ULONG_ARRAY)
+%array_class(unsigned long int,CK_ULONG_ARRAY)
 %array_class(CK_CHAR,CK_BYTE_ARRAY)
 
 %include "pkcs11t_processed.h"
