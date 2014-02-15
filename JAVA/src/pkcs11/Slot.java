@@ -11,6 +11,7 @@ import java.util.Map;
 import objects.Attribute;
 import objects.Mechanism;
 import objects.Mechanism.MechanismInfo;
+import objects.ObjectManager;
 import objects.PKCS11Object;
 
 import pkcs11.Slot.CryptoOperationParams;
@@ -39,7 +40,7 @@ public class Slot{
 	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 	
-	private ObjectStorage storage;
+	public ObjectManager objectManager = new ObjectManager();
 	
 	//private String pin;
 	
@@ -97,7 +98,7 @@ public class Slot{
 	public void delSession(long sessionid) throws PKCS11Error{
 		Iterator<Session> it = sessionList.iterator();
 		for(Session s = null;it.hasNext();s = it.next()){
-			if(s.getID() == sessionid){
+			if(s!=null && s.getID() == sessionid){
 				it.remove();
 				return;
 			}
@@ -265,7 +266,6 @@ public class Slot{
 //	    RSASSA_PKCS1_V1_5_SHA_512("RSASSA-PKCS1-v1_5-SHA-512"),
 //	    RSA_PSS("RSA-PSS");
 	}
-
 
 }
 

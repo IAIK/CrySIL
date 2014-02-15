@@ -31,7 +31,7 @@ public class Session {
 	private CryptoHelper verifyHelper;//TODO
 	private CryptoHelper decryptHelper;
 	private CryptoHelper encryptHelper;
-	private FindObjectsHelper findObjectsHelper;
+	public FindObjectsHelper findObjectsHelper;
 
 	public Session(Slot slot,long handle,ACCESS_TYPE atype){
 	//	this.flags = flags;

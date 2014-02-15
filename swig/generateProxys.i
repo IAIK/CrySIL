@@ -11,7 +11,7 @@ typedef struct {
 %include "cpointer.i"
 %include "carrays.i"
 
-%typemap(javainterfaces, notderived="1") SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) "StructBase"
+%typemap(javainterfaces, notderived="1") SWIGTYPE  "StructBase"
 %typemap(javainterfaces, notderived="1") enum SWIGTYPE "EnumBase"
 
 /*alter default proxy classes for public access to cPtr*/
@@ -60,7 +60,7 @@ typedef struct {
 
 %pointer_class(unsigned long int,CK_ULONG_JPTR)
 
-%array_class(CK_ULONG,CK_ULONG_ARRAY)
+%array_class(unsigned long int,CK_ULONG_ARRAY)
 %array_class(CK_CHAR,CK_BYTE_ARRAY)
 
 %include "pkcs11t_processed.h"

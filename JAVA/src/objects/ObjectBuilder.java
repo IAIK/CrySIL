@@ -15,10 +15,11 @@ import proxys.OBJECT_CLASS;
 
 public class ObjectBuilder {
 	
+
 	private static Map<ATTRIBUTE_TYPE,Attribute> defaultKey_template = new HashMap<>();
 
 	static{		
-		byte[] enum_value = new byte[4];
+		byte[] enum_value = new byte[8];
 		byte[] bool_value = new byte[1];
 		ByteBuffer.wrap(enum_value).putLong(OBJECT_CLASS.PUBLIC_KEY.swigValue());
 		defaultKey_template.put(ATTRIBUTE_TYPE.CLASS, new Attribute(ATTRIBUTE_TYPE.CLASS,enum_value));
@@ -47,11 +48,30 @@ public class ObjectBuilder {
 	}
 	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
 		Attribute[] attributes = toAttributeArray(template);
+		return new PKCS11Object(attributes);
 		
-		for(Attribute attr : attributes){
-			if(attr.getType().equals(ATTRIBUTE_TYPE.CLASS)){
-				OBJECT_CLASS obj_class = null;
-				obj_class = attr.getAsSwig(OBJECT_CLASS.class);
+		
+		//set default attribute values?
+		
+		
+//		for(Attribute attr : attributes){
+//			if(attr.getType().equals(ATTRIBUTE_TYPE.CLASS)){
+//				OBJECT_CLASS obj_class = null;
+//				obj_class = attr.getAsSwig(OBJECT_CLASS.class);
+//
+//				if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
+//					 //private key template
+//				 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
+//					 //bool
+//				 }else if(obj_class.equals(OBJECT_CLASS.CERTIFICATE)){
+//					 
+//				 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){
+//					 //byte array
+//				 }
+//			}
+//		}
+//		return null;
+	}
 
 				if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
 					 //private key template
