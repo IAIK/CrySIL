@@ -46,13 +46,11 @@ public class ObjectBuilder {
 		}
 		return res;
 	}
-	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
-		Attribute[] attributes = toAttributeArray(template);
-		return new PKCS11Object(attributes);
+	public static PKCS11Object createFromTemplate(Attribute[] template) throws PKCS11Error{
+		return new PKCS11Object(template);
 		
 		
 		//set default attribute values?
-		
 		
 //		for(Attribute attr : attributes){
 //			if(attr.getType().equals(ATTRIBUTE_TYPE.CLASS)){
@@ -72,19 +70,8 @@ public class ObjectBuilder {
 //		}
 //		return null;
 	}
-
-				if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
-					 //private key template
-				 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
-					 //bool
-				 }else if(obj_class.equals(OBJECT_CLASS.CERTIFICATE)){
-					 
-				 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){
-					 //byte array
-				 }
-			}
-		}
-		return null;
+	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
+		Attribute[] attributes = toAttributeArray(template);
+		return createFromTemplate(attributes);
 	}
-
 }

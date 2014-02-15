@@ -1,6 +1,7 @@
 package pkcs11;
 import java.util.ArrayList;
 
+import objects.Attribute;
 import objects.PKCS11Object;
 
 import proxys.CK_ATTRIBUTE;
@@ -8,20 +9,15 @@ import proxys.CK_ATTRIBUTE;
 
 public class FindObjectsHelper {
 	
-	public final CK_ATTRIBUTE[] pTemplate;
-	public final long ulCount;
+	public final Attribute[] pTemplate;
 	public long actualCount=0;
 	public ArrayList<PKCS11Object> foundObjects;
 	public int index;
 
-	public FindObjectsHelper(CK_ATTRIBUTE[] pTemplate, long ulCount, Session session) throws PKCS11Error {
+	public FindObjectsHelper(Attribute[] pTemplate){
 		this.pTemplate = pTemplate;
-		this.ulCount = ulCount;
-		foundObjects = session.getSlot().objectManager.findObjects(pTemplate);
 	}
-
-	
-	
-	
-
+	public void setFoundObj(ArrayList<PKCS11Object> objs){
+		foundObjects = objs;
+	}
 }

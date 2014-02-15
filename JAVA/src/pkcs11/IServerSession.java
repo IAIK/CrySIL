@@ -14,14 +14,13 @@ public interface IServerSession {
 
 	public List<SKey> getKeyList();
 
-	public byte[] sign(byte[] pData, SKey key,SkyTrustAlgorithm mech) throws IOException, PKCS11Error;
+	public byte[] sign(byte[] pData, SKey key,SkyTrustAlgorithm mech) throws PKCS11Error;
 
+	boolean verify(byte[] data, byte[] signature, SKey key,SkyTrustAlgorithm mech) throws PKCS11Error;
 
 	public void encrypt();
 	
 	public void decrypt();
 
 	public boolean isAutheticated();
-
-	boolean verify(byte[] data, byte[] signature, SKey key,SkyTrustAlgorithm mech);
 }

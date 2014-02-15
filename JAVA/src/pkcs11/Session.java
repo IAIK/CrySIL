@@ -1,6 +1,7 @@
 package pkcs11;
 import java.util.ArrayList;
 
+import objects.Attribute;
 import objects.Mechanism;
 
 import proxys.CK_MECHANISM;
@@ -28,7 +29,7 @@ public class Session {
 	private long handle;
 	
 	private CryptoHelper signHelper;
-	private CryptoHelper verifyHelper;//TODO
+	private CryptoHelper verifyHelper;
 	private CryptoHelper decryptHelper;
 	private CryptoHelper encryptHelper;
 	public FindObjectsHelper findObjectsHelper;
@@ -66,12 +67,7 @@ public class Session {
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
-		try{
-			signHelper.addData(pData);
-		}catch(PKCS11Error e){
-			signHelper = null; //Operation is canceld if any error happens
-			throw e;
-		}
+		signHelper.addData(pData);
 	}
 	public byte[] signGetData() throws PKCS11Error{
 		if(signHelper == null){
@@ -101,16 +97,11 @@ public class Session {
 		}
 		verifyHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"verify"));
 	}
-	public void verifySetData(byte[] pData) throws PKCS11Error{
+	public void verifyAddData(byte[] pData) throws PKCS11Error{
 		if(verifyHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
-		try{
-			verifyHelper.addData(pData);
-		}catch(PKCS11Error e){
-			verifyHelper = null; //Operation is canceld if any error happens
-			throw e;
-		}
+		verifyHelper.addData(pData);
 	}
 	public boolean verify(byte[] signature) throws PKCS11Error{
 		if(verifyHelper == null){
@@ -129,7 +120,6 @@ public class Session {
 		}
 		verifyHelper = null;
 	}
-	
 	
 	public void decryptInit(CK_MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(decryptHelper != null){
@@ -194,10 +184,10 @@ public class Session {
 	}
 	
 	
-	public void initFind(FindObjectsHelper f) throws PKCS11Error{
+	public void initFind(Attribute[] attr) throws PKCS11Error{
 		if(findObjectsHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		findObjectsHelper = f;
+		findObjectsHelper = new FindObjectsHelper(attr);
 	}
 }

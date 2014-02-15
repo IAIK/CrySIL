@@ -12,7 +12,7 @@ public class CryptoHelper {
 	private byte[] pData = new byte[0];
 	private byte[] cData = null;
 	
-	private int parts;
+	private int parts = 0;
 	
 	public CryptoHelper(CryptoOperationParams p){
 		this.params = p;
@@ -41,12 +41,14 @@ public class CryptoHelper {
 			i++;
 		}
 		pData = tmp;
+		parts++;
 	}
 	public void setData(byte[] data){
 		pData = data;
+		parts = 1;
 	}
 	public boolean isMultiPart(){
-		return ()
+		return (parts > 1);
 	}
 	public byte[] getData(){
 		return  pData;

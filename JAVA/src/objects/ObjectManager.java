@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 
 import pkcs11.PKCS11Error;
+import pkcs11.PKCS11SkyTrustMapper;
 import proxys.CK_ATTRIBUTE;
-//TODO PKCS11Error schmeißen 
+import proxys.RETURN_TYPE;
+
 public class ObjectManager {
 
 	private ArrayList<PKCS11Object> objects = new ArrayList<>();
@@ -24,18 +26,17 @@ public class ObjectManager {
 		return result;
 	}
 
-	synchronized public PKCS11Object getObject(long id) {
+	synchronized public PKCS11Object getObject(long id) throws PKCS11Error {
 		for (Long tmp : ids) {
 			if (tmp == id) {
 				int index = ids.indexOf(tmp);
 				return objects.get(index);
 			}
 		}
-		return null;
+		throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
 	}
 
-	synchronized public long createObject(CK_ATTRIBUTE[] template)
-			throws PKCS11Error {
+	synchronized public long createObject(CK_ATTRIBUTE[] template) throws PKCS11Error {
 		Long id = getNextId();
 		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		objects.add(object);
@@ -46,13 +47,13 @@ public class ObjectManager {
 
 	synchronized public long createObject(SKey key) throws PKCS11Error {
 		Long id = getNextId();
-		PKCS11Object object = ObjectBuilder.createFromSkyTrust(key);
+		PKCS11Object object = ObjectBuilder.createFromTemplate(PKCS11SkyTrustMapper.mapKey(key));
 		objects.add(object);
 		ids.add(id);
 		return id;
 	}
 
-	synchronized public void deleteObject(long id) {
+	synchronized public void deleteObject(long id) throws PKCS11Error {
 		for (Long tmp : ids) {
 			if (tmp == id) {
 				int index = ids.indexOf(tmp);
@@ -61,6 +62,7 @@ public class ObjectManager {
 				return;
 			}
 		}
+		throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
 	}
 
 	private Long getNextId() {

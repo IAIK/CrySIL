@@ -94,19 +94,13 @@ public class ServerSession implements IServerSession {
         return null;
     }
 	@Override
-	public byte[] sign(byte[] pData, SKey key, SkyTrustAlgorithm mech)
-			throws IOException, PKCS11Error {
+	public byte[] sign(byte[] pData, SKey key, SkyTrustAlgorithm mech) {
 		byte[] cData = null;
 		String b64Data = null;
 		
 		
-		if (key == null) {
-			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
-		}
-		
 		b64Data = new BASE64Encoder().encode(pData);
-		b64Data = doCryptoCommand("sign",
-				SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_1.getAlgorithmName(),
+		b64Data = doCryptoCommand("sign", mech.getAlgorithmName(),
 				b64Data, key.getId(), key.getSubId()); // FIXME: right
 		// algorithm?
 		cData = new BASE64Decoder().decodeBuffer(b64Data);

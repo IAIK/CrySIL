@@ -35,8 +35,9 @@ public class PKCS11SkyTrustMapper {
 		bool_value[0] = 0;
 		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
 	}
-	public static SKey mapKey(PKCS11Object key){
+	public static SKey mapKey(PKCS11Object key) throws PKCS11Error{
 		//TODO dummy
+		throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
 		return null;
 	}
 	public static SkyTrustAlgorithm mapMechanism(Mechanism mech) throws PKCS11Error{

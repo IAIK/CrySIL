@@ -2,6 +2,7 @@ package pkcs11;
 
 import gui.Server;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ import proxys.RETURN_TYPE;
  */
 public class Slot{
 	
-	private ServerSession serversession;
+	private IServerSession serversession;
 	private HashMap<MECHANISM_TYPES,Mechanism.MechanismInfo> mechanisms = new HashMap<>();
 	
 	private long slotID;
@@ -61,7 +62,7 @@ public class Slot{
 		}
 		return false;
 	}
-	public ServerSession getServersession() {
+	public IServerSession getServersession() {
 		return serversession;
 	}
 
@@ -158,7 +159,7 @@ public class Slot{
 	
 	public CryptoOperationParams checkAndInit(long hKey,CK_MECHANISM mech,String operation) throws PKCS11Error{
 		Mechanism mechanism = new Mechanism(mech);
-		PKCS11Object key = getObject(hKey);
+		PKCS11Object key = objectManager.getObject(hKey);
 		MechanismInfo mech_info = getMechanismInfo(mechanism.getType());
 		OBJECT_CLASS cl = key.getAttribute(ATTRIBUTE_TYPE.CLASS).getAsSwig(OBJECT_CLASS.class);
 		
@@ -210,21 +211,19 @@ public class Slot{
 		
 		return new CryptoOperationParams(mechanism,key);
 	}
-	
-	public byte[] sign(byte[] data,CryptoOperationParams p){
-		//TODO map PKCS11Object key ---> SkyTrust Key
-		//TODO map mechasim ---> SkyTrustAlgorithm
-		return serversession.sign(data, p.key, p.mechanism);
+/*** Crypto Functions ***/
+	public byte[] sign(byte[] data,CryptoOperationParams p) throws PKCS11Error{
+		return serversession.sign(data, PKCS11SkyTrustMapper.mapKey(p.key), PKCS11SkyTrustMapper.mapMechanism(p.mechanism));
 	}
-	public byte[] decrypt(byte[] encdata,CryptoOperationParams p){
+	public byte[] decrypt(byte[] encdata,CryptoOperationParams p) throws PKCS11Error{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public byte[] encrypt(byte[] data,CryptoOperationParams p){
+	public byte[] encrypt(byte[] data,CryptoOperationParams p) throws PKCS11Error{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public boolean verify(byte[] signature, byte[] data,CryptoOperationParams params) {
+	public boolean verify(byte[] signature, byte[] data,CryptoOperationParams params) throws PKCS11Error {
 		// TODO Auto-generated method stub
 		return false;
 	}
