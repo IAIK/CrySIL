@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import objects.Attribute;
 import objects.Mechanism;
 
+import proxys.CK_ATTRIBUTE;
 import proxys.CK_MECHANISM;
 import proxys.CK_NOTIFY_CALLBACK;
 import proxys.CK_BYTE_ARRAY;
@@ -42,6 +43,23 @@ public class Session {
 	}
 	public boolean isRW(){
 		return (atype==ACCESS_TYPE.RW)?true:false;
+	}
+	public SESSION_STATE getSessionState(){
+		if(isRW()){
+			if(getSlot().getUserType() == USER_TYPE.USER){
+				return SESSION_STATE.RW_USER_FUNCTIONS;
+			}else if(getSlot().getUserType() == USER_TYPE.SO){
+				return SESSION_STATE.RW_SO_FUNCTIONS;				
+			}else{
+				return SESSION_STATE.RW_PUBLIC_SESSION;				
+			}
+		}else{
+			if(getSlot().getUserType() == USER_TYPE.USER){
+				return SESSION_STATE.RO_USER_FUNCTIONS;
+			}else{
+				return SESSION_STATE.RO_PUBLIC_SESSION;
+			}
+		}
 	}
 	//handle = SlotID + SessionID
 	public long getHandle(){
@@ -187,10 +205,10 @@ public class Session {
 	}
 	
 	
-	public void initFind(Attribute[] attr) throws PKCS11Error{
+	public void initFind(CK_ATTRIBUTE[] attr) throws PKCS11Error{
 		if(findObjectsHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		findObjectsHelper = new FindObjectsHelper(attr);
+		findObjectsHelper = new FindObjectsHelper(Attribute.toAttributeArray(attr));
 	}
 }

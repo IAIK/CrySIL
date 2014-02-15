@@ -51,7 +51,7 @@ public class Slot{
 		loadMechanisms();
 		//generate PIN
 	}
-	protected Session.USER_TYPE getAllSessionUserType(){
+	public Session.USER_TYPE getUserType(){
 		return utype;
 	}
 	protected boolean isAnySessionRO(){
@@ -137,9 +137,7 @@ public class Slot{
 	public long getID(){
 		return slotID;
 	}
-	public void setID(long id){
-		slotID = id;
-	}
+
 	public ArrayList<Session> getSessionList(){
 		return sessionList; 
 	}

@@ -39,13 +39,7 @@ public class ObjectBuilder {
 		
 	}
 	
-	private static Attribute[] toAttributeArray(CK_ATTRIBUTE[] template){
-		Attribute[] res = new Attribute[template.length];
-		for(int i=0;i<template.length;i++){
-			res[i] = new Attribute(template[i]);
-		}
-		return res;
-	}
+
 	public static PKCS11Object createFromTemplate(Attribute[] template) throws PKCS11Error{
 		return new PKCS11Object(template);
 		
@@ -71,7 +65,7 @@ public class ObjectBuilder {
 //		return null;
 	}
 	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
-		Attribute[] attributes = toAttributeArray(template);
+		Attribute[] attributes = Attribute.toAttributeArray(template);
 		return createFromTemplate(attributes);
 	}
 }

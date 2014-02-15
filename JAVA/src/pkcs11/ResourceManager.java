@@ -66,7 +66,6 @@ public class ResourceManager {
 		this.appID = appID;
 		DataVaultSingleton.getInstance().registerClient(new DefaultClient(appID,this));
 		updateSlotList();
-
 	}
 	
 	public long newSession(long slotid,Session.ACCESS_TYPE atype) throws PKCS11Error{
@@ -84,11 +83,14 @@ public class ResourceManager {
 	public Session getSessionByHandle(long handle) throws PKCS11Error{
 		//sessionIndex = Handle%MAX_SESSIONS_PER_SLOT
 		//slotIndex = Handle/MAX_SESSIONS_PER_SLOT
-		long slot = handle / Slot.MAX_SESSIONS_PER_SLOT;
+		long slotid = handle / Slot.MAX_SESSIONS_PER_SLOT;
 		long session = handle % Slot.MAX_SESSIONS_PER_SLOT;
-		return getSlotByID(slot).getSessionByID(session);
+		return getSlotByID(slotid).getSessionByID(session);
 	}
-
+	public Slot getSlotBySessionHandle(long handle) throws PKCS11Error{
+		long slotid = handle / Slot.MAX_SESSIONS_PER_SLOT;
+		return getSlotByID(slotid);
+	}
 	public Slot getSlotByID(long slotid) throws PKCS11Error{
 		if(slotid > Integer.MAX_VALUE || slotid > MAX_SLOT){
 			throw new PKCS11Error(RETURN_TYPE.SLOT_ID_INVALID);

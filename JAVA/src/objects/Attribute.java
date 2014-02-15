@@ -19,7 +19,9 @@ import proxys.RETURN_TYPE;
 
 //public class Attribute extends CK_ATTRIBUTE{
 public class Attribute {
-	public static byte[] getDataAsByteArray(CK_ATTRIBUTE attribute){
+	
+	
+	private static byte[] getDataAsByteArray(CK_ATTRIBUTE attribute){
 		CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
 		byte[] a = new byte[ (int) attribute.getUlValueLen()];
 		for(int i =0; i< attribute.getUlValueLen(); i++){
@@ -87,6 +89,14 @@ public class Attribute {
 		attribute_types.put(ATTRIBUTE_TYPE.VENDOR_DEFINED,CK_BYTE_ARRAY.class);
 	}
 	
+	
+	public static Attribute[] toAttributeArray(CK_ATTRIBUTE[] template){
+		Attribute[] res = new Attribute[template.length];
+		for(int i=0;i<template.length;i++){
+			res[i] = new Attribute(template[i]);
+		}
+		return res;
+	}
 	public Attribute(CK_ATTRIBUTE attr){
 		this.type = ATTRIBUTE_TYPE.swigToEnum((int) attr.getType());
 		this.datatype = Attribute.attribute_types.get(this.type);

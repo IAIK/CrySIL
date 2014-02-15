@@ -26,6 +26,9 @@ typedef struct {
   public long getCPtr() {
     return swigCPtr;
   }
+  public boolean isNullPtr() {
+    return (swigCPtr == 0L);
+  }
   public static long getCPtr($javaclassname obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
