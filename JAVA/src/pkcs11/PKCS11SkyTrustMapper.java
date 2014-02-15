@@ -1,10 +1,7 @@
 package pkcs11;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import objects.Attribute;
@@ -35,9 +32,20 @@ public class PKCS11SkyTrustMapper {
 		bool_value[0] = 0;
 		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
 	}
+	static{	
+		mechanism_map.put(MECHANISM_TYPES.RSA_PKCS,SkyTrustAlgorithm.RSAES_PKCS1_V1_5);
+		mechanism_map.put(MECHANISM_TYPES.RSA_PKCS_PSS,SkyTrustAlgorithm.RSA_PSS);
+		mechanism_map.put(MECHANISM_TYPES.RSA_PKCS_OAEP,SkyTrustAlgorithm.RSA_OAEP);
+		mechanism_map.put(MECHANISM_TYPES.SHA1_RSA_PKCS,SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_1);
+		mechanism_map.put(MECHANISM_TYPES.SHA256_RSA_PKCS,SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_256);
+		mechanism_map.put(MECHANISM_TYPES.SHA512_RSA_PKCS,SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_512);
+		mechanism_map.put(MECHANISM_TYPES.SHA224_RSA_PKCS,SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_224);
+	}
 	public static SKey mapKey(PKCS11Object key) throws PKCS11Error{
 		//TODO dummy
-		throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
+		if(key == null /*|| key is not a keyObj || key is not a SkytrustKey*/){
+			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
+		}
 		return null;
 	}
 	public static SkyTrustAlgorithm mapMechanism(Mechanism mech) throws PKCS11Error{

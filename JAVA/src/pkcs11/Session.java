@@ -63,19 +63,22 @@ public class Session {
 		}
 		signHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"sign"));
 	}
-	public void sign(byte[] pData) throws PKCS11Error{
+	public void signAddData(byte[] pData) throws PKCS11Error{
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		signHelper.addData(pData);
 	}
-	public byte[] signGetData() throws PKCS11Error{
+	public byte[] sign() throws PKCS11Error{
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		try{
 			if(!signHelper.hasProcessedData()){
-				byte[] signed_data = getToken().sign(signHelper.getData(), signHelper.getParams());
+				byte[] signed_data = getToken().getServersession().sign(
+						signHelper.getData(), 
+						PKCS11SkyTrustMapper.mapKey(signHelper.getKey()), 
+						PKCS11SkyTrustMapper.mapMechanism(signHelper.getMechanism()));
 				signHelper.setProcessedData(signed_data);
 			}
 			return signHelper.getProcessedData();

@@ -12,15 +12,15 @@ public interface IServerSession {
 
 	public Server.ServerInfo getInfo();
 
-	public List<SKey> getKeyList();
+	public List<SKey> getKeyList() throws PKCS11Error;
 
 	public byte[] sign(byte[] pData, SKey key,SkyTrustAlgorithm mech) throws PKCS11Error;
 
-	boolean verify(byte[] data, byte[] signature, SKey key,SkyTrustAlgorithm mech) throws PKCS11Error;
+	public boolean verify(byte[] data, byte[] signature, SKey key,SkyTrustAlgorithm mech) throws PKCS11Error;
 
-	public void encrypt();
+	public byte[] encrypt(byte[] plaindata, SKey key,SkyTrustAlgorithm mech) throws PKCS11Error;
 	
-	public void decrypt();
+	public byte[] decrypt(byte[] encdata, SKey key,SkyTrustAlgorithm mech) throws PKCS11Error;
 
 	public boolean isAutheticated();
 }
