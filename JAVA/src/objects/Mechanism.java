@@ -17,8 +17,8 @@ import proxys.pkcs11Constants;
 
 //public class Mechanism extends CK_MECHANISM{
 public class Mechanism {
-	public static class MechanismInfo{
-		private long flags = Util.initFlags;
+	public static class MechanismInfo extends Util.Capabilities{
+
 		private long minKeyLen = 0;
 		private long maxKeyLen = 0;
 		
@@ -34,44 +34,8 @@ public class Mechanism {
 			flags = Util.setFlag(flags, pkcs11Constants.CKF_HW);
 			return this;
 		}
-		public MechanismInfo sign_verify(){
-			flags = Util.setFlag(flags, pkcs11Constants.CKF_SIGN);
-			flags = Util.setFlag(flags, pkcs11Constants.CKF_VERIFY);
-			return this;
-		}
-		public MechanismInfo encrypt_decrypt(){
-			flags = Util.setFlag(flags, pkcs11Constants.CKF_ENCRYPT);
-			flags = Util.setFlag(flags, pkcs11Constants.CKF_DECRYPT);
-			return this;
-		}
-		public MechanismInfo wrap(){
-			flags = Util.setFlag(flags, pkcs11Constants.CKF_WRAP);
-			return this;
-		}
-		public MechanismInfo unwrap(){
-			flags = Util.setFlag(flags, pkcs11Constants.CKF_UNWRAP);
-			return this;
-		}
 		public boolean isHw(){
 			return Util.isFlagSet(flags, pkcs11Constants.CKF_HW);
-		}
-		public boolean isSign(){
-			return Util.isFlagSet(flags, pkcs11Constants.CKF_SIGN);
-		}
-		public boolean isVerify(){
-			return Util.isFlagSet(flags, pkcs11Constants.CKF_VERIFY);
-		}
-		public boolean isEncrypt(){
-			return Util.isFlagSet(flags, pkcs11Constants.CKF_ENCRYPT);
-		}
-		public boolean isDecrypt(){
-			return Util.isFlagSet(flags, pkcs11Constants.CKF_DECRYPT);
-		}
-		public boolean isWrap(){
-			return Util.isFlagSet(flags, pkcs11Constants.CKF_WRAP);
-		}
-		public boolean isUnwrap(){
-			return Util.isFlagSet(flags, pkcs11Constants.CKF_UNWRAP);
 		}
 		public void writeInto(CK_MECHANISM_INFO info){
 			info.setUlMaxKeySize(maxKeyLen);
@@ -100,7 +64,7 @@ public class Mechanism {
 		this.type = MECHANISM_TYPES.swigToEnum((int) mech.getMechanism());
 		this.length = mech.getUlParameterLen();
 		this.cdata = new CK_BYTE_ARRAY(mech.getPParameter().getCPtr(),false);
-		this.data = Util.getDataAsByteArray(cdata, (int) length);
+		this.data = Util.getCDataAsByteArray(cdata, (int) length);
 		this.datatype = mechanism_types.get(type);
 		if(this.datatype == null){
 			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);

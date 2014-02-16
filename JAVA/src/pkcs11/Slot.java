@@ -144,6 +144,9 @@ public class Slot{
 	public Server.ServerInfo getServerInfo(){
 		return serversession.getInfo();
 	}
+	public Util.Capabilities getCapabilities(){
+		return new Util.Capabilities().decrypt().encrypt().sign().verify();
+	}
 
 /*** crypto functions ***/	
 	public static class CryptoOperationParams{
@@ -209,22 +212,23 @@ public class Slot{
 		
 		return new CryptoOperationParams(mechanism,key);
 	}
-/*** Crypto Functions ***/
-	public byte[] sign(byte[] data,CryptoOperationParams p) throws PKCS11Error{
-		return serversession.sign(data, PKCS11SkyTrustMapper.mapKey(p.key), PKCS11SkyTrustMapper.mapMechanism(p.mechanism));
-	}
-	public byte[] decrypt(byte[] encdata,CryptoOperationParams p) throws PKCS11Error{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public byte[] encrypt(byte[] data,CryptoOperationParams p) throws PKCS11Error{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public boolean verify(byte[] signature, byte[] data,CryptoOperationParams params) throws PKCS11Error {
-		// TODO Auto-generated method stub
-		return false;
-	}
+// 			Session calls IServerSession directly	
+///*** Crypto Functions ***/ 
+//	public byte[] sign(byte[] data,CryptoOperationParams p) throws PKCS11Error{
+//		return serversession.sign(data, PKCS11SkyTrustMapper.mapKey(p.key), PKCS11SkyTrustMapper.mapMechanism(p.mechanism));
+//	}
+//	public byte[] decrypt(byte[] encdata,CryptoOperationParams p) throws PKCS11Error{
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	public byte[] encrypt(byte[] data,CryptoOperationParams p) throws PKCS11Error{
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	public boolean verify(byte[] signature, byte[] data,CryptoOperationParams params) throws PKCS11Error {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
 
 /*** Mechanism management ***/
 	public MECHANISM_TYPES[] getMechanisms(){

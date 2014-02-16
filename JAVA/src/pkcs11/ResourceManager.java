@@ -155,7 +155,8 @@ public class ResourceManager {
 			info_list.remove(s.getServerInfo());
 		}
 		for(Server.ServerInfo info:info_list){
-			slotList.add(new Slot(newSlotID(),info));
+			if(info != null)
+				slotList.add(new Slot(newSlotID(),info));
 		}
 		for(int i =0; i< slotList.size(); i++){
 		System.out.println("new Slot id for new server......"+ slotList.get(i).getServerInfo().getName());

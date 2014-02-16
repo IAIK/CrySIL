@@ -19,16 +19,6 @@ import proxys.RETURN_TYPE;
 
 //public class Attribute extends CK_ATTRIBUTE{
 public class Attribute {
-	
-	
-	private static byte[] getDataAsByteArray(CK_ATTRIBUTE attribute){
-		CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
-		byte[] a = new byte[ (int) attribute.getUlValueLen()];
-		for(int i =0; i< attribute.getUlValueLen(); i++){
-			a[i] = (byte) array.getitem(i);
-		}
-		return a;
-	}
 
 	
 	private ATTRIBUTE_TYPE type;
@@ -89,7 +79,6 @@ public class Attribute {
 		attribute_types.put(ATTRIBUTE_TYPE.VENDOR_DEFINED,CK_BYTE_ARRAY.class);
 	}
 	
-	
 	public static Attribute[] toAttributeArray(CK_ATTRIBUTE[] template){
 		Attribute[] res = new Attribute[template.length];
 		for(int i=0;i<template.length;i++){
@@ -97,25 +86,28 @@ public class Attribute {
 		}
 		return res;
 	}
+	
 	public Attribute(CK_ATTRIBUTE attr){
 		this.type = ATTRIBUTE_TYPE.swigToEnum((int) attr.getType());
 		this.datatype = Attribute.attribute_types.get(this.type);
 		this.cdata = new CK_BYTE_ARRAY(attr.getPValue().getCPtr(), false);
 		this.length = attr.getUlValueLen();
-		this.data = Util.getDataAsByteArray(cdata,(int) length);
+		this.data = Util.getCDataAsByteArray(cdata,(int) length);
 	}
 	
 	public Attribute(ATTRIBUTE_TYPE type, byte[] val) {
 		this.type = type;
 		this.data = val;
 		this.datatype = Attribute.attribute_types.get(type);
+		this.cdata = new CK_BYTE_ARRAY(0,false);
 	}
 	public <T extends EnumBase> Attribute(ATTRIBUTE_TYPE type, T val) {
 		this.type = type;
 		this.datatype = Attribute.attribute_types.get(type);
-		byte[] enum_value = new byte[4];
+		byte[] enum_value = new byte[8];
 		ByteBuffer.wrap(enum_value).putLong(val.swigValue());
 		this.data = enum_value;
+		this.cdata = new CK_BYTE_ARRAY(0,false);
 	}
 
 	public ATTRIBUTE_TYPE getType(){
@@ -150,7 +142,6 @@ public class Attribute {
 	}
 	
 	public byte[] getRawData(){
-		
 		return data;
 	}
 	private <T extends StructBase> T getAsSwigStruct(Class<T> req_type) throws PKCS11Error{
@@ -249,6 +240,9 @@ public class Attribute {
 			data[0] = 1;
 		else
 			data[1] = 0;
+		if(!cdata.isNullPtr()){
+			Util.getByteArrayAsCData(data,cdata);
+		}
 	}
 	public void setLong(long v) throws PKCS11Error{
 		if(!datatype.equals(long.class)){
@@ -256,12 +250,15 @@ public class Attribute {
 		}
 		ByteBuffer buf = ByteBuffer.wrap(data);
 		buf.putLong(v);
-	}
-	public void setByteArray(byte[] v) throws PKCS11Error{
-		if(!datatype.equals(long.class)){
-			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		if(!cdata.isNullPtr()){
+			Util.getByteArrayAsCData(data,cdata);
 		}
+	}
+	public void setRawData(byte[] v) throws PKCS11Error{
 		data = v;
+		if(!cdata.isNullPtr()){
+			Util.getByteArrayAsCData(data,cdata);
+		}
 	}
 	@Override
 	public boolean equals(Object obj) {
