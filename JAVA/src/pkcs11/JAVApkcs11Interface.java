@@ -207,30 +207,16 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  Session session = getRM().getSessionByHandle(hSession);		  
 		  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
 		 
-		  for(Attribute attr : Attribute.toAttributeArray(pTemplate)){
-			  attr.setByteArray((obj.getAttribute(attr.getType()).getRawData()));
+
+		  for(CK_ATTRIBUTE attr : pTemplate){
+			  Attribute src = obj.getAttribute(ATTRIBUTE_TYPE.swigToEnum((int) attr.getType()));
+			  src.writeInto(attr);
 		  }
-		  
-		  
-		  for(int i=0; i< pTemplate.length; i++){
-			  if(pTemplate[i].getPValue() == null || pTemplate[i].getPValue().getCPtr() == 0L){
-				  Attribute att = obj.getAttribute(ATTRIBUTE_TYPE.swigToEnum((int) pTemplate[i].getType()));
-				  pTemplate[i].setUlValueLen(att.getRawData().length);
-			  }else{
-				  Attribute att = obj.getAttribute(ATTRIBUTE_TYPE.swigToEnum((int) pTemplate[i].getType()));
-				  CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(pTemplate[i].getPValue().getCPtr(), false);
-				  for(int j =0; j< att.getRawData().length; j++){
-					  array.setitem(j, att.getRawData()[j]);
-				  }
-			  }
-		  }
+		  return RETURN_TYPE.OK.swigValue();
 	  } catch (PKCS11Error e) {
-		  // TODO Auto-generated catch block
 		  e.printStackTrace();
+		  return e.getCode();
 	  }
-	  
-	  
-	  return RETURN_TYPE.OK.swigValue();
   }
   public static long C_SetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[]  pTemplate, long ulCount) {
 	  return RETURN_TYPE.OK.swigValue();

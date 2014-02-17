@@ -250,13 +250,12 @@ public class Slot{
 	}
 	public void loadMechanisms(){	
 		//Note: right place to ask server for server-depended mechanisms
-		mechanisms.put(MECHANISM_TYPES.RSA_PKCS,new MechanismInfo().hw().sign_verify().wrap().unwrap());
-		mechanisms.put(MECHANISM_TYPES.RSA_PKCS_OAEP,new MechanismInfo().hw().encrypt_decrypt());
-		
-		mechanisms.put(MECHANISM_TYPES.SHA1_RSA_PKCS,new MechanismInfo().hw().sign_verify());
-		mechanisms.put(MECHANISM_TYPES.SHA224_RSA_PKCS,new MechanismInfo().hw().sign_verify());
-		mechanisms.put(MECHANISM_TYPES.SHA256_RSA_PKCS,new MechanismInfo().hw().sign_verify());
-		mechanisms.put(MECHANISM_TYPES.SHA512_RSA_PKCS,new MechanismInfo().hw().sign_verify());
+		mechanisms.put(MECHANISM_TYPES.RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify().wrap().unwrap());
+		mechanisms.put(MECHANISM_TYPES.RSA_PKCS_OAEP,(MechanismInfo) new MechanismInfo().hw().encrypt().decrypt());
+		mechanisms.put(MECHANISM_TYPES.SHA1_RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify());
+		mechanisms.put(MECHANISM_TYPES.SHA224_RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify());
+		mechanisms.put(MECHANISM_TYPES.SHA256_RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify());
+		mechanisms.put(MECHANISM_TYPES.SHA512_RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify());
 
 		
 //		RSAES_RAW("RSAES-RAW"),
