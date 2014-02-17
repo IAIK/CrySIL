@@ -129,7 +129,9 @@ public class Session {
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		try{
-			return getToken().verify(signature,verifyHelper.getData(),verifyHelper.getParams());
+			return getToken().getServersession().verify(verifyHelper.getData(),signature,
+					PKCS11SkyTrustMapper.mapKey(verifyHelper.getKey()), 
+					PKCS11SkyTrustMapper.mapMechanism(verifyHelper.getMechanism()));
 		}catch(PKCS11Error e){
 			verifyHelper = null; //Operation is canceld if any error happens
 			throw e;
@@ -153,7 +155,10 @@ public class Session {
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		try{
-			byte[] plain_data = getToken().decrypt(encdata,decryptHelper.getParams());
+			byte[] plain_data = getToken().getServersession().decrypt(encdata,
+			PKCS11SkyTrustMapper.mapKey(decryptHelper.getKey()), 
+			PKCS11SkyTrustMapper.mapMechanism(decryptHelper.getMechanism()));
+			
 			decryptHelper.setProcessedData(plain_data);
 		}catch(PKCS11Error e){
 			decryptHelper = null;
@@ -184,7 +189,9 @@ public class Session {
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
 		try{
-			byte[] encdata = getToken().encrypt(data,encryptHelper.getParams());
+			byte[] encdata = getToken().getServersession().encrypt(data,
+					PKCS11SkyTrustMapper.mapKey(encryptHelper.getKey()), 
+					PKCS11SkyTrustMapper.mapMechanism(encryptHelper.getMechanism()));
 			encryptHelper.setProcessedData(encdata);
 		}catch(PKCS11Error e){
 			encryptHelper = null;
