@@ -141,9 +141,8 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  long flags = Util.initFlags;
 		  flags = Util.setFlag(flags,CKF_WRITE_PROTECTED);
 		  flags = Util.setFlag(flags,CKF_PROTECTED_AUTHENTICATION_PATH);
-		  flags = Util.setFlag(flags, CKF_SERIAL_SESSION);
+		  flags = Util.setFlag(flags,CKF_TOKEN_INITIALIZED);
 		  flags = Util.setFlag(flags, slot.getCapabilities().getAsFlags());
-		  flags = Util.setFlag(flags, 0x00000400);//TODO was is des?
 		  pInfo.setFlags(flags);
 
 		  pInfo.setUlRwSessionCount(Long.MAX_VALUE);
