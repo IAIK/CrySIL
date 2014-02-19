@@ -130,12 +130,12 @@ long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
 {
-        jmethodID C_CreateObjectJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_CreateObject", "(J[Lproxys/CK_ATTRIBUTE;JLproxys/CK_ULONG_JPTR;)J");
+        jmethodID C_CreateObjectJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_CreateObject", "(J[Lobjects/ATTRIBUTE;JLproxys/CK_ULONG_JPTR;)J");
         
         if(C_CreateObjectJava !=0)
         {
 jsize size = ulCount;
-jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
+jclass cls1 = (*(dings->env))->FindClass(dings->env, "objects/ATTRIBUTE"); //
 jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JJZ)V");
 jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
@@ -383,12 +383,12 @@ long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
 {
-        jmethodID C_FindObjectsInitJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_FindObjectsInit", "(J[Lproxys/CK_ATTRIBUTE;J)J");
+        jmethodID C_FindObjectsInitJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_FindObjectsInit", "(J[Lobjects/ATTRIBUTE;J)J");
         
         if(C_FindObjectsInitJava !=0)
         {
 jsize size = ulCount;
-jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
+jclass cls1 = (*(dings->env))->FindClass(dings->env, "objects/ATTRIBUTE"); //
 jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JJZ)V");
 jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
@@ -467,12 +467,12 @@ long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
 {
-        jmethodID C_GetAttributeValueJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetAttributeValue", "(JJ[Lproxys/CK_ATTRIBUTE;J)J");
+        jmethodID C_GetAttributeValueJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetAttributeValue", "(JJ[Lobjects/ATTRIBUTE;J)J");
         
         if(C_GetAttributeValueJava !=0)
         {
 jsize size = ulCount;
-jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
+jclass cls2 = (*(dings->env))->FindClass(dings->env, "objects/ATTRIBUTE"); //
 jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JJZ)V");
 jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
@@ -901,12 +901,12 @@ long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
 {
-        jmethodID C_SetAttributeValueJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SetAttributeValue", "(JJ[Lproxys/CK_ATTRIBUTE;J)J");
+        jmethodID C_SetAttributeValueJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SetAttributeValue", "(JJ[Lobjects/ATTRIBUTE;J)J");
         
         if(C_SetAttributeValueJava !=0)
         {
 jsize size = ulCount;
-jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
+jclass cls2 = (*(dings->env))->FindClass(dings->env, "objects/ATTRIBUTE"); //
 jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JJZ)V");
 jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
@@ -1056,7 +1056,7 @@ long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
 {
-        jmethodID C_UnwrapKeyJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_UnwrapKey", "(JLproxys/CK_MECHANISM;J[BJ[Lproxys/CK_ATTRIBUTE;JLproxys/CK_ULONG_JPTR;)J");
+        jmethodID C_UnwrapKeyJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_UnwrapKey", "(JLproxys/CK_MECHANISM;J[BJ[Lobjects/ATTRIBUTE;JLproxys/CK_ULONG_JPTR;)J");
         
         if(C_UnwrapKeyJava !=0)
         {
@@ -1075,7 +1075,7 @@ for (j = 0; j < ulWrappedKeyLen; j++) {
 fill[j] =pWrappedKey[j]; }
 (*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulWrappedKeyLen, fill);
 jsize size = ulAttributeCount;
-jclass cls5 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
+jclass cls5 = (*(dings->env))->FindClass(dings->env, "objects/ATTRIBUTE"); //
 jmethodID constructor5 = (*(dings->env))->GetMethodID(dings->env, cls5, "<init>", "(JJZ)V");
 jobject obj5=(*(dings->env))->NewObject(dings->env, cls5, constructor5, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
