@@ -12,7 +12,7 @@ public class PKCS11Object {
 
 	public PKCS11Object(ATTRIBUTE[] template){
 		for(ATTRIBUTE attr: template){
-			attributes.put(attr.getType(), attr);
+			attributes.put(attr.getTypeEnum(), attr);
 		}
 	}
 	public PKCS11Object(HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> template){
@@ -22,10 +22,10 @@ public class PKCS11Object {
 		if(!attributes.containsKey(val.getType())){
 			throw new PKCS11Error(RETURN_TYPE.TEMPLATE_INCONSISTENT);
 		}
-		attributes.put(val.getType(), val);
+		attributes.put(val.getTypeEnum(), val);
 	}
 	public void addAttribute(ATTRIBUTE val){
-		attributes.put(val.getType(),val);
+		attributes.put(val.getTypeEnum(),val);
 	}
 	public boolean hasAttribute(ATTRIBUTE_TYPE type){
 		return attributes.containsKey(type);

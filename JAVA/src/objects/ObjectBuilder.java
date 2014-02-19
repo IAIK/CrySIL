@@ -23,6 +23,7 @@ public class ObjectBuilder {
 		byte[] enum_value = new byte[8];
 		byte[] bool_value = new byte[1];
 		ByteBuffer.wrap(enum_value).putLong(OBJECT_CLASS.PUBLIC_KEY.swigValue());
+		try {
 		defaultKey_template.put(ATTRIBUTE_TYPE.CLASS, new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,enum_value));
 		bool_value[0] = 1;
 		defaultKey_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
@@ -36,6 +37,10 @@ public class ObjectBuilder {
 		defaultKey_template.put(ATTRIBUTE_TYPE.DERIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.DERIVE,bool_value));
 
 		defaultKey_template.put(ATTRIBUTE_TYPE.KEY_TYPE, new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,bool_value));
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 
@@ -62,9 +67,5 @@ public class ObjectBuilder {
 //			}
 //		}
 //		return null;
-	}
-	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
-		ATTRIBUTE[] attributes = ATTRIBUTE.toAttributeArray(template);
-		return createFromTemplate(attributes);
 	}
 }

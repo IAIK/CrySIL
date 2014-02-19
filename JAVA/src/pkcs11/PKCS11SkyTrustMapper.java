@@ -5,7 +5,6 @@ import java.util.HashMap;
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import objects.ATTRIBUTE;
-import objects.Attribute;
 import objects.Mechanism;
 import objects.PKCS11Object;
 import proxys.ATTRIBUTE_TYPE;
@@ -21,6 +20,7 @@ public class PKCS11SkyTrustMapper {
 	static{
 		byte[] bool_value = new byte[1];
 		bool_value[0] = 0;
+		try {
 		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
 		bool_value[0] = 1;
 		skytrust_template.put(ATTRIBUTE_TYPE.SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
@@ -32,6 +32,10 @@ public class PKCS11SkyTrustMapper {
 		skytrust_template.put(ATTRIBUTE_TYPE.TOKEN, new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,bool_value));
 		bool_value[0] = 0;
 		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	static{	
 		mechanism_map.put(MECHANISM_TYPES.RSA_PKCS,SkyTrustAlgorithm.RSAES_PKCS1_V1_5);

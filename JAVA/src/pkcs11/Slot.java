@@ -2,20 +2,14 @@ package pkcs11;
 
 import gui.Server;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-
-import objects.Attribute;
 import objects.Mechanism;
 import objects.Mechanism.MechanismInfo;
 import objects.ObjectManager;
 import objects.PKCS11Object;
 
-import pkcs11.Slot.CryptoOperationParams;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
@@ -162,7 +156,7 @@ public class Slot{
 		Mechanism mechanism = new Mechanism(mech);
 		PKCS11Object key = objectManager.getObject(hKey);
 		MechanismInfo mech_info = getMechanismInfo(mechanism.getType());
-		OBJECT_CLASS cl = key.getAttribute(ATTRIBUTE_TYPE.CLASS).getAsSwig(OBJECT_CLASS.class);
+		OBJECT_CLASS cl = key.getAttribute(ATTRIBUTE_TYPE.CLASS).copyToSwigEnum(OBJECT_CLASS.class);
 		
 		switch(operation){
 		case "sign":
@@ -172,7 +166,7 @@ public class Slot{
 			if(!mech_info.isSign()){
 				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 			}
-			if(!key.getAttribute(ATTRIBUTE_TYPE.SIGN).getAsBoolean()){
+			if(!key.getAttribute(ATTRIBUTE_TYPE.SIGN).copyToBoolean()){
 				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;
@@ -182,7 +176,7 @@ public class Slot{
 			if(!mech_info.isVerify()){
 				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 			}
-			if(!key.getAttribute(ATTRIBUTE_TYPE.VERIFY).getAsBoolean()){
+			if(!key.getAttribute(ATTRIBUTE_TYPE.VERIFY).copyToBoolean()){
 				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;
@@ -192,7 +186,7 @@ public class Slot{
 			if(!mech_info.isDecrypt()){
 				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 			}
-			if(!key.getAttribute(ATTRIBUTE_TYPE.DECRYPT).getAsBoolean()){
+			if(!key.getAttribute(ATTRIBUTE_TYPE.DECRYPT).copyToBoolean()){
 				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;
@@ -202,7 +196,7 @@ public class Slot{
 			if(!mech_info.isEncrypt()){
 				throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 			}
-			if(!key.getAttribute(ATTRIBUTE_TYPE.ENCRYPT).getAsBoolean()){
+			if(!key.getAttribute(ATTRIBUTE_TYPE.ENCRYPT).copyToBoolean()){
 				throw new PKCS11Error(RETURN_TYPE.KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;

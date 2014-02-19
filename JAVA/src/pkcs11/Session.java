@@ -212,10 +212,10 @@ public class Session {
 	}
 	
 	
-	public void initFind(CK_ATTRIBUTE[] attr) throws PKCS11Error{
+	public void initFind(ATTRIBUTE[] attr) throws PKCS11Error{
 		if(findObjectsHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		findObjectsHelper = new FindObjectsHelper(ATTRIBUTE.toAttributeArray(attr));
+		findObjectsHelper = new FindObjectsHelper(attr);
 	}
 }
