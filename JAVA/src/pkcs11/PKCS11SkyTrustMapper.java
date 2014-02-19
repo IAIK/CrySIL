@@ -55,7 +55,7 @@ public class PKCS11SkyTrustMapper {
 		}
 		return algo;
 	}
-	public static Attribute[] mapKey(SKey key){
+	public static Attribute[] mapKey(SKey key) throws PKCS11Error{
 		//TODO dummy
 		ArrayList<Attribute> template = new ArrayList<>(skytrust_template.values());
 		template.add(new Attribute(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));

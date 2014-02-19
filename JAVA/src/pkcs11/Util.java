@@ -20,24 +20,32 @@ public class Util {
 	public static String fixStringLen(String str,int len){
 		if(str.length() < len){
 			int d = len - str.length();
-			String padd = new String(new byte[d]);
+			String padd = new String(new char[d]);
 			return str+padd;
 		}else{
 			return str.substring(0,len);
 		}
 	}
-	public static byte[] getCDataAsByteArray(CK_BYTE_ARRAY data, int len){
-		byte[] a = new byte[ len];
+	public static byte[] getCDataAsByteArray(long dataCPtr, long len){
+		return getCDataAsByteArray(new CK_BYTE_ARRAY(dataCPtr,false),len);
+	}
+	public static byte[] getCDataAsByteArray(CK_BYTE_ARRAY data, long len){
+		byte[] a = new byte[ (int)len];
 		for(int i =0; i< len; i++){
 			a[i] = (byte) data.getitem(i);
 		}
 		return a;
 	}
-	public static int getByteArrayAsCData(byte[] data, CK_BYTE_ARRAY out_cdata){
+	public static int copyByteArrayToCData(byte[] data, CK_BYTE_ARRAY out_cdata){
 		for(int i=0;i<data.length;i++){
 			out_cdata.setitem(i, data[i]);			
 		}
 		return data.length;
+	}
+	public static void copy(CK_BYTE_ARRAY src_cdata, CK_BYTE_ARRAY dst_cdata, int len){
+		for(int i=0;i<len;i++){
+			dst_cdata.setitem(i, src_cdata.getitem(i));			
+		}
 	}
 	public static class Capabilities  {
 		protected long flags = Util.initFlags;;

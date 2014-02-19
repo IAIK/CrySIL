@@ -10,6 +10,7 @@ import proxys.ATTRIBUTE_TYPE;
 import proxys.CERT_TYPE;
 import proxys.CK_ATTRIBUTE;
 import proxys.CK_BYTE_ARRAY;
+import proxys.CK_KEY_WRAP_SET_OAEP_PARAMS;
 import proxys.KEY_TYP;
 import proxys.OBJECT_CLASS;
 
@@ -34,9 +35,7 @@ public class ObjectBuilder {
 		bool_value[0] = 0;
 		defaultKey_template.put(ATTRIBUTE_TYPE.DERIVE, new Attribute(ATTRIBUTE_TYPE.DERIVE,bool_value));
 
-		
 		defaultKey_template.put(ATTRIBUTE_TYPE.KEY_TYPE, new Attribute(ATTRIBUTE_TYPE.KEY_TYPE,bool_value));
-		
 	}
 	
 

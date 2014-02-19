@@ -17,14 +17,24 @@ typedef struct {
 /*alter default proxy classes for public access to cPtr*/
 %typemap(javabody) SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) %{
   private long swigCPtr;
+  private long size;
   protected boolean swigCMemOwn;
   
   public $javaclassname(long cPtr, boolean cMemoryOwn) {
     swigCPtr = cPtr;
+    size = -1;
+    swigCMemOwn = cMemoryOwn;
+  }
+  public $javaclassname(long cPtr,long s, boolean cMemoryOwn) {
+    swigCPtr = cPtr;
+    size = s;
     swigCMemOwn = cMemoryOwn;
   }
   public long getCPtr() {
     return swigCPtr;
+  }
+  public long getSize() {
+    return size;
   }
   public boolean isNullPtr() {
     return (swigCPtr == 0L);
@@ -85,7 +95,6 @@ CK_RV call(CK_SESSION_HANDLE para1,CK_NOTIFICATION para2,CK_VOID_PTR para3){
   return self->func(para1,para2,para3);
 }
 }
-
 
 CK_RV C_CloseAllSessions(CK_SLOT_ID slotID);
 

@@ -26,7 +26,7 @@ import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.SESSION_STATE;
 import proxys.pkcs11Constants;
-import proxys.CK_ATTRIBUTE;
+import objects.CK_ATTRIBUTE;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -201,7 +201,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  try {
 		  System.err.println("hObject: "+ ulCount);
 		  checkNullPtr(pTemplate);//cool
-		  if(pTemplate.length !=  ulCount){
+		  if(pTemplate.length != ulCount){
 			  throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 		  }
 		  Session session = getRM().getSessionByHandle(hSession);		  
@@ -219,7 +219,19 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  }
   }
   public static long C_SetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[]  pTemplate, long ulCount) {
-	  return RETURN_TYPE.OK.swigValue();
+
+	  try {
+		  checkNullPtr(pTemplate);
+		  Session session = getRM().getSessionByHandle(hSession);		  
+		  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
+		  for(CK_ATTRIBUTE attr : pTemplate){
+			  obj.setAttribute(attr.toJava());
+		  }
+		  return RETURN_TYPE.OK.swigValue();
+	  } catch (PKCS11Error e) {
+		  e.printStackTrace();
+		  return e.getCode();
+	  }
   }
 
 //  // only for inputs!!
@@ -240,7 +252,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		long handle = session.getToken().objectManager.createObject(pTemplate);
 		phObject.assign(handle);
 	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 		return e.getCode();
 	}
@@ -307,7 +318,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		session.initFind(pTemplate);
 		//madness
 	} catch (PKCS11Error e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 		return e.getCode();
 	}catch (Exception e){
