@@ -101,13 +101,17 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		setDataLength((int) len);
 	}
 	protected long getCDataPtr(){
-		return getPValue().getCPtr();
+		SWIGTYPE_p_void p = getPValue();
+		if(p == null){
+			return 0;
+		}
+		return p.getCPtr();
 	}
 	public boolean isCDataNULL(){
 		return (getCDataPtr() == 0);
 	}
 	protected CK_BYTE_ARRAY getCData(){
-		return new CK_BYTE_ARRAY(super.getPValue().getCPtr(), false);
+		return new CK_BYTE_ARRAY(getCDataPtr(), false);
 	}
 // end	
 	

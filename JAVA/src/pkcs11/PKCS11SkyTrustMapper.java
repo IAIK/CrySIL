@@ -8,6 +8,7 @@ import objects.ATTRIBUTE;
 import objects.Mechanism;
 import objects.PKCS11Object;
 import proxys.ATTRIBUTE_TYPE;
+import proxys.KEY_TYP;
 import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
@@ -19,8 +20,8 @@ public class PKCS11SkyTrustMapper {
 
 	static{
 		byte[] bool_value = new byte[1];
-		bool_value[0] = 0;
 		try {
+		bool_value[0] = 0;
 		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
 		bool_value[0] = 1;
 		skytrust_template.put(ATTRIBUTE_TYPE.SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
@@ -67,6 +68,8 @@ public class PKCS11SkyTrustMapper {
 		
 		 switch(key.getRepresentation()){
 		 case "fullKey":
+			 template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
+			 template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,true));
 			 break;
 		 case "certificate":
 			template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));

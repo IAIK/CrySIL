@@ -245,17 +245,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  return e.getCode();
 	  }
   }
-
-//  // only for inputs!!
-//  public static short[] getByteArrayAsShort(CK_ATTRIBUTE attribute){
-//	CK_BYTE_ARRAY array = new CK_BYTE_ARRAY(attribute.getPValue().getCPtr(), false); //TODO: geht das? 
-//	short[] a = new short[ (int) attribute.getUlValueLen()];
-//	for(int i =0; i< attribute.getUlValueLen(); i++){
-//		a[i] =  array.getitem(i);
-//	}
-//	return a;
-//  }
-//  
   
   public static long C_CreateObject(long hSession, ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
 	  
