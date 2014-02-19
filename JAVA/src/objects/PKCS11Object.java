@@ -39,9 +39,9 @@ public class PKCS11Object {
 	}
 	
 	
-	public boolean query(Attribute[] attributes){
-		for(Attribute tmp : attributes){
-			if(tmp.equals(this.attributes.get(tmp.getType()))){
+	public boolean query(ATTRIBUTE[] attributes){
+		for(ATTRIBUTE tmp : attributes){
+			if(tmp.query(this.attributes.get(tmp.getType()))){
 				
 			}else{
 				return false;
