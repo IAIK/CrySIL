@@ -17,29 +17,29 @@ import proxys.OBJECT_CLASS;
 public class ObjectBuilder {
 	
 
-	private static Map<ATTRIBUTE_TYPE,Attribute> defaultKey_template = new HashMap<>();
+	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> defaultKey_template = new HashMap<>();
 
 	static{		
 		byte[] enum_value = new byte[8];
 		byte[] bool_value = new byte[1];
 		ByteBuffer.wrap(enum_value).putLong(OBJECT_CLASS.PUBLIC_KEY.swigValue());
-		defaultKey_template.put(ATTRIBUTE_TYPE.CLASS, new Attribute(ATTRIBUTE_TYPE.CLASS,enum_value));
+		defaultKey_template.put(ATTRIBUTE_TYPE.CLASS, new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,enum_value));
 		bool_value[0] = 1;
-		defaultKey_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new Attribute(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
+		defaultKey_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
 		bool_value[0] = 0;
-		defaultKey_template.put(ATTRIBUTE_TYPE.SENSITIVE, new Attribute(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
+		defaultKey_template.put(ATTRIBUTE_TYPE.SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
 		bool_value[0] = 0;
-		defaultKey_template.put(ATTRIBUTE_TYPE.TOKEN, new Attribute(ATTRIBUTE_TYPE.TOKEN,bool_value));
+		defaultKey_template.put(ATTRIBUTE_TYPE.TOKEN, new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,bool_value));
 		bool_value[0] = 1;
-		defaultKey_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
+		defaultKey_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
 		bool_value[0] = 0;
-		defaultKey_template.put(ATTRIBUTE_TYPE.DERIVE, new Attribute(ATTRIBUTE_TYPE.DERIVE,bool_value));
+		defaultKey_template.put(ATTRIBUTE_TYPE.DERIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.DERIVE,bool_value));
 
-		defaultKey_template.put(ATTRIBUTE_TYPE.KEY_TYPE, new Attribute(ATTRIBUTE_TYPE.KEY_TYPE,bool_value));
+		defaultKey_template.put(ATTRIBUTE_TYPE.KEY_TYPE, new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,bool_value));
 	}
 	
 
-	public static PKCS11Object createFromTemplate(Attribute[] template) throws PKCS11Error{
+	public static PKCS11Object createFromTemplate(ATTRIBUTE[] template) throws PKCS11Error{
 		return new PKCS11Object(template);
 		
 		
@@ -64,7 +64,7 @@ public class ObjectBuilder {
 //		return null;
 	}
 	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
-		Attribute[] attributes = Attribute.toAttributeArray(template);
+		ATTRIBUTE[] attributes = ATTRIBUTE.toAttributeArray(template);
 		return createFromTemplate(attributes);
 	}
 }

@@ -11,13 +11,13 @@ import pkcs11.PKCS11Error;
 import pkcs11.Util;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.CERT_TYPE;
-import objects.CK_ATTRIBUTE;
+import objects.ATTRIBUTE;
 import proxys.CK_BYTE_ARRAY;
 import proxys.KEY_TYP;
 import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
 
-public class Attribute {
+public class ATTRIBUTE {
 
 	private ATTRIBUTE_TYPE type;
 	private Class<?> datatype;
@@ -29,17 +29,17 @@ public class Attribute {
 	
 
 	
-//	public static Attribute[] toAttributeArray(CK_ATTRIBUTE[] template){
-//		Attribute[] res = new Attribute[template.length];
+//	public static ATTRIBUTE[] toAttributeArray(CK_ATTRIBUTE[] template){
+//		ATTRIBUTE[] res = new ATTRIBUTE[template.length];
 //		for(int i=0;i<template.length;i++){
-//			res[i] = new Attribute(template[i]);
+//			res[i] = new ATTRIBUTE(template[i]);
 //		}
 //		return res;
 //	}
 //	
-//	public Attribute(CK_ATTRIBUTE attr){
+//	public ATTRIBUTE(CK_ATTRIBUTE attr){
 //		this.type = ATTRIBUTE_TYPE.swigToEnum((int) attr.getType());
-//		this.datatype = Attribute.attribute_types.get(this.type);
+//		this.datatype = ATTRIBUTE.attribute_types.get(this.type);
 //		CK_BYTE_ARRAY cdata = new CK_BYTE_ARRAY(attr.getPValue().getCPtr(), false);
 //		long length = attr.getLength();
 //		this.data = Util.getCDataAsByteArray(cdata,(int) length);
@@ -47,9 +47,9 @@ public class Attribute {
 	
 
 	
-	public <T extends EnumBase> Attribute(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
+	public <T extends EnumBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
 		this.type = type;
-		this.datatype = Attribute.attribute_types.get(type);
+		this.datatype = ATTRIBUTE.attribute_types.get(type);
 		if(!datatype.equals(val.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
@@ -57,9 +57,9 @@ public class Attribute {
 		ByteBuffer.wrap(enum_value).putLong(val.swigValue());
 		this.data = enum_value;
 	}
-	public <T extends StructBase> Attribute(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
+	public <T extends StructBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
 		this.type = type;
-		this.datatype = Attribute.attribute_types.get(type);
+		this.datatype = ATTRIBUTE.attribute_types.get(type);
 		if(!datatype.equals(val.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
@@ -75,7 +75,7 @@ public class Attribute {
 	public long getCData(CK_BYTE_ARRAY out_cdata){
 		return Util.copyByteArrayToCData(data, out_cdata);
 	}
-	public void writeInto(CK_ATTRIBUTE out_cdata) throws PKCS11Error{
+	public void writeInto(ATTRIBUTE out_cdata) throws PKCS11Error{
 		if(out_cdata.isNullPtr() || out_cdata.getLength() < data.length || out_cdata.getPValue().isNullPtr()){
 			throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 		}
@@ -219,10 +219,10 @@ public class Attribute {
 		if (obj==null) {
 			return false;
 		}
-		if (!(obj instanceof Attribute)) {
+		if (!(obj instanceof ATTRIBUTE)) {
 			return false; // different class
 		}
-		Attribute other = (Attribute) obj;
+		ATTRIBUTE other = (ATTRIBUTE) obj;
 		return (this.type.equals(other.type) && this.data.equals(other.data) && this.datatype.equals(other.datatype));
 	}
 	@Override

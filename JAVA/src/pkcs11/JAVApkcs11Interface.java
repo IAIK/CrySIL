@@ -26,7 +26,7 @@ import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.SESSION_STATE;
 import proxys.pkcs11Constants;
-import objects.CK_ATTRIBUTE;
+import objects.ATTRIBUTE;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -197,7 +197,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  }
   }
 
-  public static long C_GetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[] pTemplate, long ulCount) {
+  public static long C_GetAttributeValue(long hSession, long hObject, ATTRIBUTE[] pTemplate, long ulCount) {
 	  try {
 		  System.err.println("hObject: "+ ulCount);
 		  checkNullPtr(pTemplate);//cool
@@ -208,8 +208,8 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
 		 
 
-		  for(CK_ATTRIBUTE attr : pTemplate){
-			  Attribute src = obj.getAttribute(ATTRIBUTE_TYPE.swigToEnum((int) attr.getType()));
+		  for(ATTRIBUTE attr : pTemplate){
+			  ATTRIBUTE src = obj.getAttribute(ATTRIBUTE_TYPE.swigToEnum((int) attr.getType()));
 			  src.writeInto(attr);
 		  }
 		  return RETURN_TYPE.OK.swigValue();
@@ -218,13 +218,13 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  return e.getCode();
 	  }
   }
-  public static long C_SetAttributeValue(long hSession, long hObject, CK_ATTRIBUTE[]  pTemplate, long ulCount) {
+  public static long C_SetAttributeValue(long hSession, long hObject, ATTRIBUTE[]  pTemplate, long ulCount) {
 
 	  try {
 		  checkNullPtr(pTemplate);
 		  Session session = getRM().getSessionByHandle(hSession);		  
 		  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
-		  for(CK_ATTRIBUTE attr : pTemplate){
+		  for(ATTRIBUTE attr : pTemplate){
 			  obj.setAttribute(attr.toJava());
 		  }
 		  return RETURN_TYPE.OK.swigValue();
@@ -245,7 +245,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 //  }
 //  
   
-  public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
+  public static long C_CreateObject(long hSession, ATTRIBUTE[] pTemplate, long ulCount, CK_ULONG_JPTR phObject) {
 	  
 	try {
 		Session session = getRM().getSessionByHandle(hSession);		
@@ -310,7 +310,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 	  
 
-  public static long C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount) {
+  public static long C_FindObjectsInit(long hSession, ATTRIBUTE[] pTemplate, long ulCount) {
 	  System.err.println("\nthis is java calling FindobjectsInit");
 	  try {
 		Session session = getRM().getSessionByHandle(hSession);
@@ -472,7 +472,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
  	 * @param	phKey				pointer to the key
  	 * 
  	 */
-  public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey) {
+  public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey) {
 //		Session session;
 //		try {
 //			session = getRM().getSessionByHandle(hSession);

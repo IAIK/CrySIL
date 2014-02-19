@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import objects.ATTRIBUTE;
 import objects.Attribute;
 import objects.Mechanism;
 import objects.PKCS11Object;
@@ -14,23 +15,23 @@ import proxys.RETURN_TYPE;
 
 public class PKCS11SkyTrustMapper {
 	
-	private static HashMap<ATTRIBUTE_TYPE,Attribute> skytrust_template = new HashMap<>();
+	private static HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> skytrust_template = new HashMap<>();
 	private static HashMap<MECHANISM_TYPES,SkyTrustAlgorithm> mechanism_map = new HashMap<>();
 
 	static{
 		byte[] bool_value = new byte[1];
 		bool_value[0] = 0;
-		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new Attribute(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
+		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
 		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.SENSITIVE, new Attribute(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
+		skytrust_template.put(ATTRIBUTE_TYPE.SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
 		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE, new Attribute(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,bool_value));
+		skytrust_template.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,bool_value));
 		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE, new Attribute(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,bool_value));
+		skytrust_template.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,bool_value));
 		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.TOKEN, new Attribute(ATTRIBUTE_TYPE.TOKEN,bool_value));
+		skytrust_template.put(ATTRIBUTE_TYPE.TOKEN, new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,bool_value));
 		bool_value[0] = 0;
-		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new Attribute(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
+		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
 	}
 	static{	
 		mechanism_map.put(MECHANISM_TYPES.RSA_PKCS,SkyTrustAlgorithm.RSAES_PKCS1_V1_5);
@@ -55,16 +56,16 @@ public class PKCS11SkyTrustMapper {
 		}
 		return algo;
 	}
-	public static Attribute[] mapKey(SKey key) throws PKCS11Error{
+	public static ATTRIBUTE[] mapKey(SKey key) throws PKCS11Error{
 		//TODO dummy
-		ArrayList<Attribute> template = new ArrayList<>(skytrust_template.values());
-		template.add(new Attribute(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
+		ArrayList<ATTRIBUTE> template = new ArrayList<>(skytrust_template.values());
+		template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
 		
 		 switch(key.getRepresentation()){
 		 case "fullKey":
 			 break;
 		 case "certificate":
-			template.add(new Attribute(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
+			template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
 			 break;
 		 case "handle":
 			 break;
