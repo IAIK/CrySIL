@@ -1,8 +1,8 @@
-#include "pkcs11.h"
-#include "jvm.h"
-#include "unistd.h"
-#include <string.h>
-#include "stdio.h"
+#include"pkcs11.h"
+#include"jvm.h"
+#include"unistd.h"
+#include<string.h>
+#include"stdio.h"
 
 static CK_FUNCTION_LIST pkcs11_functions =  { {2, 20},
  &C_Initialize,
@@ -72,12 +72,12 @@ static CK_FUNCTION_LIST pkcs11_functions =  { {2, 20},
  &C_GenerateRandom,
  &C_GetFunctionStatus,
  &C_CancelFunction,
- /*&C_WaitForSlotEvent*/ }; 
+ &C_WaitForSlotEvent }; 
 
 CK_RV C_GetFunctionList(CK_FUNCTION_LIST_PTR_PTR ppFunctionList){ *ppFunctionList=&pkcs11_functions; return CKR_OK; }
 
 CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
-{ printf("xxxC: called: C_CloseAllSessions    "); 
+{ printf("\nC: called: C_CloseAllSessions    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -92,12 +92,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_CloseAllSessions" );
+
+
 return retVal;
 }
 
 
 CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
-{ printf("xxxC: called: C_CloseSession    "); 
+{ printf("\nC: called: C_CloseSession    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -112,12 +116,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_CloseSession" );
+
+
 return retVal;
 }
 
 
 CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject)
-{ printf("xxxC: called: C_CreateObject    "); 
+{ printf("\nC: called: C_CreateObject    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -129,7 +137,7 @@ if(dings->cls !=0)
 jsize size = ulCount;
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
 jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate, JNI_FALSE);
+jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
 
 
@@ -152,16 +160,15 @@ int i;
  for(i=0; i<ulCount;i++)
 {
 jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate+i, JNI_FALSE);
+obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate+i,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
  (*(dings->env))->SetObjectArrayElement(dings->env, array,i, obj1);
 }
 jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
-                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, phObject, JNI_FALSE);
+                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, phObject, sizeof(CK_OBJECT_HANDLE_PTR), JNI_FALSE);
 								   if(obj3==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_CreateObjectJava, hSession, array, ulCount, obj3);
@@ -169,12 +176,16 @@ jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_CreateObject" );
+
+
 return retVal;
 }
 
 
 CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("xxxC: called: C_DecryptInit    "); 
+{ printf("\nC: called: C_DecryptInit    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -185,11 +196,10 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, sizeof(CK_MECHANISM_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_DecryptInitJava, hSession, obj1, hKey);
@@ -197,12 +207,16 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
  
 }}
 
+
+ printf("End of C_DecryptInit" );
+
+
 return retVal;
 }
 
 
 CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
-{ printf("xxxC: called: C_DecryptUpdate    "); 
+{ printf("\nC: called: C_DecryptUpdate    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -220,19 +234,17 @@ fill[j] =pEncryptedPart[j]; }
 (*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulEncryptedPartLen, fill);
 jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
-                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, pPart, JNI_FALSE);
+                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, pPart, sizeof(CK_BYTE_PTR), JNI_FALSE);
 								   if(obj3==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor4 = (*(dings->env))->GetMethodID(dings->env, cls4, "<init>", "(JZ)V");
-                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, pulPartLen, JNI_FALSE);
+                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, pulPartLen, sizeof(CK_ULONG_PTR), JNI_FALSE);
 								   if(obj4==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_DecryptUpdateJava, hSession, result, ulEncryptedPartLen, obj3, obj4);
@@ -240,12 +252,16 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_DecryptUpdate" );
+
+
 return retVal;
 }
 
 
 CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
-{ printf("xxxC: called: C_DestroyObject    "); 
+{ printf("\nC: called: C_DestroyObject    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -260,12 +276,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_DestroyObject" );
+
+
 return retVal;
 }
 
 
 CK_RV C_Finalize(CK_VOID_PTR pReserved)
-{ printf("xxxC: called: C_Finalize    "); 
+{ printf("\nC: called: C_Finalize    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -276,24 +296,27 @@ if(dings->cls !=0)
         {
 jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor0 = (*(dings->env))->GetMethodID(dings->env, cls0, "<init>", "(JZ)V");
-                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pReserved, JNI_FALSE);
+                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pReserved, sizeof(CK_VOID_PTR), JNI_FALSE);
 								   if(obj0==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_FinalizeJava, obj0);
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+
+
+ printf("End of C_Finalize" );
+
 destroyVM();
 return retVal;
 }
 
 
 CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, CK_ULONG ulMaxObjectCount, CK_ULONG_PTR pulObjectCount)
-{ printf("xxxC: called: C_FindObjects    "); 
+{ printf("\nC: called: C_FindObjects    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -304,19 +327,17 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, phObject, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, phObject, sizeof(CK_OBJECT_HANDLE_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
-                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, pulObjectCount, JNI_FALSE);
+                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, pulObjectCount, sizeof(CK_ULONG_PTR), JNI_FALSE);
 								   if(obj3==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_FindObjectsJava, hSession, obj1, ulMaxObjectCount, obj3);
@@ -324,12 +345,16 @@ jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_FindObjects" );
+
+
 return retVal;
 }
 
 
 CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
-{ printf("xxxC: called: C_FindObjectsFinal    "); 
+{ printf("\nC: called: C_FindObjectsFinal    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -344,12 +369,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_FindObjectsFinal" );
+
+
 return retVal;
 }
 
 
 CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{ printf("xxxC: called: C_FindObjectsInit    "); 
+{ printf("\nC: called: C_FindObjectsInit    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -361,7 +390,7 @@ if(dings->cls !=0)
 jsize size = ulCount;
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
 jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate, JNI_FALSE);
+jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
 
 
@@ -384,7 +413,7 @@ int i;
  for(i=0; i<ulCount;i++)
 {
 jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate+i, JNI_FALSE);
+obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate+i,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
  (*(dings->env))->SetObjectArrayElement(dings->env, array,i, obj1);
 }
 
@@ -393,12 +422,16 @@ obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pTemplate+i, JNI
  
 }}
 
+
+ printf("End of C_FindObjectsInit" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_ULONG ulRandomLen)
-{ printf("xxxC: called: C_GenerateRandom    "); 
+{ printf("\nC: called: C_GenerateRandom    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -409,11 +442,10 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, RandomData, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, RandomData, sizeof(CK_BYTE_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GenerateRandomJava, hSession, obj1, ulRandomLen);
@@ -421,12 +453,16 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
  
 }}
 
+
+ printf("End of C_GenerateRandom" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{ printf("xxxC: called: C_GetAttributeValue    "); 
+{ printf("\nC: called: C_GetAttributeValue    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -438,7 +474,7 @@ if(dings->cls !=0)
 jsize size = ulCount;
 jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
 jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate, JNI_FALSE);
+jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
 
 
@@ -461,7 +497,7 @@ int i;
  for(i=0; i<ulCount;i++)
 {
 jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i, JNI_FALSE);
+obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
  (*(dings->env))->SetObjectArrayElement(dings->env, array,i, obj2);
 }
 
@@ -470,12 +506,16 @@ obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i, JNI
  
 }}
 
+
+ printf("End of C_GetAttributeValue" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetInfo(CK_INFO_PTR pInfo)
-{ printf("xxxC: called: C_GetInfo    "); 
+{ printf("\nC: called: C_GetInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -486,11 +526,10 @@ if(dings->cls !=0)
         {
 jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_INFO"); //
          jmethodID constructor0 = (*(dings->env))->GetMethodID(dings->env, cls0, "<init>", "(JZ)V");
-                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pInfo, JNI_FALSE);
+                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pInfo, sizeof(CK_INFO_PTR), JNI_FALSE);
 								   if(obj0==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetInfoJava, obj0);
@@ -498,12 +537,16 @@ jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_INFO"); //
  
 }}
 
+
+ printf("End of C_GetInfo" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM_INFO_PTR pInfo)
-{ printf("xxxC: called: C_GetMechanismInfo    "); 
+{ printf("\nC: called: C_GetMechanismInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -514,11 +557,10 @@ if(dings->cls !=0)
         {
 jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM_INFO"); //
          jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pInfo, JNI_FALSE);
+                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pInfo, sizeof(CK_MECHANISM_INFO_PTR), JNI_FALSE);
 								   if(obj2==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetMechanismInfoJava, slotID, type, obj2);
@@ -526,12 +568,16 @@ jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM_INFO")
  
 }}
 
+
+ printf("End of C_GetMechanismInfo" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList, CK_ULONG_PTR pulCount)
-{ printf("xxxC: called: C_GetMechanismList    "); 
+{ printf("\nC: called: C_GetMechanismList    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -542,19 +588,17 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_ARRAY"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanismList, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanismList, sizeof(CK_MECHANISM_TYPE_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pulCount, JNI_FALSE);
+                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pulCount, sizeof(CK_ULONG_PTR), JNI_FALSE);
 								   if(obj2==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetMechanismListJava, slotID, obj1, obj2);
@@ -562,12 +606,16 @@ jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_GetMechanismList" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
-{ printf("xxxC: called: C_GetSessionInfo    "); 
+{ printf("\nC: called: C_GetSessionInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -578,11 +626,10 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_SESSION_INFO"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pInfo, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pInfo, sizeof(CK_SESSION_INFO_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetSessionInfoJava, hSession, obj1);
@@ -590,12 +637,16 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_SESSION_INFO"); 
  
 }}
 
+
+ printf("End of C_GetSessionInfo" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
-{ printf("xxxC: called: C_GetSlotInfo    "); 
+{ printf("\nC: called: C_GetSlotInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -606,11 +657,10 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_SLOT_INFO"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pInfo, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pInfo, sizeof(CK_SLOT_INFO_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetSlotInfoJava, slotID, obj1);
@@ -618,12 +668,16 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_SLOT_INFO"); //
  
 }}
 
+
+ printf("End of C_GetSlotInfo" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
-{ printf("xxxC: called: C_GetSlotList    "); 
+{ printf("\nC: called: C_GetSlotList    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -634,19 +688,17 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_ARRAY"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pSlotList, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pSlotList, sizeof(CK_SLOT_ID_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pulCount, JNI_FALSE);
+                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pulCount, sizeof(CK_ULONG_PTR), JNI_FALSE);
 								   if(obj2==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetSlotListJava, tokenPresent, obj1, obj2);
@@ -654,12 +706,16 @@ jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_GetSlotList" );
+
+
 return retVal;
 }
 
 
 CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
-{ printf("xxxC: called: C_GetTokenInfo    "); 
+{ printf("\nC: called: C_GetTokenInfo    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -670,11 +726,10 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_TOKEN_INFO"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pInfo, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pInfo, sizeof(CK_TOKEN_INFO_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_GetTokenInfoJava, slotID, obj1);
@@ -682,12 +737,16 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_TOKEN_INFO"); //
  
 }}
 
+
+ printf("End of C_GetTokenInfo" );
+
+
 return retVal;
 }
 
 
 CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
-{ printf("xxxC: called: C_Initialize    "); 
+{ printf("\nC: called: C_Initialize    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -698,11 +757,10 @@ if(dings->cls !=0)
         {
 jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor0 = (*(dings->env))->GetMethodID(dings->env, cls0, "<init>", "(JZ)V");
-                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pInitArgs, JNI_FALSE);
+                                jobject obj0=(*(dings->env))->NewObject(dings->env, cls0, constructor0, pInitArgs, sizeof(CK_VOID_PTR), JNI_FALSE);
 								   if(obj0==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_InitializeJava, obj0);
@@ -710,12 +768,16 @@ jclass cls0 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
  
 }}
 
+
+ printf("End of C_Initialize" );
+
+
 return retVal;
 }
 
 
 CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
-{ printf("xxxC: called: C_Login    "); 
+{ printf("\nC: called: C_Login    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -731,12 +793,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_Login" );
+
+
 return retVal;
 }
 
 
 CK_RV C_Logout(CK_SESSION_HANDLE hSession)
-{ printf("xxxC: called: C_Logout    "); 
+{ printf("\nC: called: C_Logout    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -751,12 +817,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_Logout" );
+
+
 return retVal;
 }
 
 
 CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
-{ printf("xxxC: called: C_OpenSession    "); 
+{ printf("\nC: called: C_OpenSession    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -767,27 +837,24 @@ if(dings->cls !=0)
         {
 jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pApplication, JNI_FALSE);
+                                jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pApplication, sizeof(CK_VOID_PTR), JNI_FALSE);
 								   if(obj2==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_NOTIFY_CALLBACK"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
-                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, Notify, JNI_FALSE);
+                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, Notify, sizeof(CK_NOTIFY), JNI_FALSE);
 								   if(obj3==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor4 = (*(dings->env))->GetMethodID(dings->env, cls4, "<init>", "(JZ)V");
-                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, phSession, JNI_FALSE);
+                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, phSession, sizeof(CK_SESSION_HANDLE_PTR), JNI_FALSE);
 								   if(obj4==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_OpenSessionJava, slotID, flags, obj2, obj3, obj4);
@@ -795,12 +862,16 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_OpenSession" );
+
+
 return retVal;
 }
 
 
 CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSeedLen)
-{ printf("xxxC: called: C_SeedRandom    "); 
+{ printf("\nC: called: C_SeedRandom    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -816,12 +887,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_SeedRandom" );
+
+
 return retVal;
 }
 
 
 CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{ printf("xxxC: called: C_SetAttributeValue    "); 
+{ printf("\nC: called: C_SetAttributeValue    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -833,7 +908,7 @@ if(dings->cls !=0)
 jsize size = ulCount;
 jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
 jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate, JNI_FALSE);
+jobject obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
 
 
@@ -856,7 +931,7 @@ int i;
  for(i=0; i<ulCount;i++)
 {
 jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
-obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i, JNI_FALSE);
+obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
  (*(dings->env))->SetObjectArrayElement(dings->env, array,i, obj2);
 }
 
@@ -865,12 +940,16 @@ obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pTemplate+i, JNI
  
 }}
 
+
+ printf("End of C_SetAttributeValue" );
+
+
 return retVal;
 }
 
 
 CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLen, CK_CHAR_PTR pNewPin, CK_ULONG ulNewLen)
-{ printf("xxxC: called: C_SetPIN    "); 
+{ printf("\nC: called: C_SetPIN    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -887,12 +966,16 @@ if(dings->cls !=0)
  
 }}
 
+
+ printf("End of C_SetPIN" );
+
+
 return retVal;
 }
 
 
 CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{ printf("xxxC: called: C_Namesn    "); 
+{ printf("\nC: called: C_Namesn    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -910,19 +993,17 @@ fill[j] =pData[j]; }
 (*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulDataLen, fill);
 jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
-                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, pSignature, JNI_FALSE);
+                                jobject obj3=(*(dings->env))->NewObject(dings->env, cls3, constructor3, pSignature, sizeof(CK_BYTE_PTR), JNI_FALSE);
 								   if(obj3==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor4 = (*(dings->env))->GetMethodID(dings->env, cls4, "<init>", "(JZ)V");
-                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, pulSignatureLen, JNI_FALSE);
+                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, pulSignatureLen, sizeof(CK_ULONG_PTR), JNI_FALSE);
 								   if(obj4==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_NamesnJava, hSession, result, ulDataLen, obj3, obj4);
@@ -930,12 +1011,16 @@ jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_Namesn" );
+
+
 return retVal;
 }
 
 
 CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("xxxC: called: C_NamesnInit    "); 
+{ printf("\nC: called: C_NamesnInit    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -946,11 +1031,10 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, sizeof(CK_MECHANISM_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_NamesnInitJava, hSession, obj1, hKey);
@@ -958,12 +1042,16 @@ jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
  
 }}
 
+
+ printf("End of C_NamesnInit" );
+
+
 return retVal;
 }
 
 
 CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hUnwrappingKey, CK_BYTE_PTR pWrappedKey, CK_ULONG ulWrappedKeyLen, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
-{ printf("xxxC: called: C_UnwrapKey    "); 
+{ printf("\nC: called: C_UnwrapKey    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -974,11 +1062,10 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, sizeof(CK_MECHANISM_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jintArray result;
 result = (*(dings->env))->NewIntArray(dings->env, ulWrappedKeyLen);
@@ -990,7 +1077,7 @@ fill[j] =pWrappedKey[j]; }
 jsize size = ulAttributeCount;
 jclass cls5 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ATTRIBUTE"); //
 jmethodID constructor5 = (*(dings->env))->GetMethodID(dings->env, cls5, "<init>", "(JZ)V");
-jobject obj5=(*(dings->env))->NewObject(dings->env, cls5, constructor5, pTemplate, JNI_FALSE);
+jobject obj5=(*(dings->env))->NewObject(dings->env, cls5, constructor5, pTemplate,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
 
 
 
@@ -1013,16 +1100,15 @@ int i;
  for(i=0; i<ulAttributeCount;i++)
 {
 jmethodID constructor5 = (*(dings->env))->GetMethodID(dings->env, cls5, "<init>", "(JZ)V");
-obj5=(*(dings->env))->NewObject(dings->env, cls5, constructor5, pTemplate+i, JNI_FALSE);
+obj5=(*(dings->env))->NewObject(dings->env, cls5, constructor5, pTemplate+i,sizeof(CK_ATTRIBUTE_PTR), JNI_FALSE);
  (*(dings->env))->SetObjectArrayElement(dings->env, array,i, obj5);
 }
 jclass cls7 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor7 = (*(dings->env))->GetMethodID(dings->env, cls7, "<init>", "(JZ)V");
-                                jobject obj7=(*(dings->env))->NewObject(dings->env, cls7, constructor7, phKey, JNI_FALSE);
+                                jobject obj7=(*(dings->env))->NewObject(dings->env, cls7, constructor7, phKey, sizeof(CK_OBJECT_HANDLE_PTR), JNI_FALSE);
 								   if(obj7==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_UnwrapKeyJava, hSession, obj1, hUnwrappingKey, result, ulWrappedKeyLen, array, ulAttributeCount, obj7);
@@ -1030,12 +1116,16 @@ jclass cls7 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
  
 }}
 
+
+ printf("End of C_UnwrapKey" );
+
+
 return retVal;
 }
 
 
 CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hWrappingKey, CK_OBJECT_HANDLE hKey, CK_BYTE_PTR pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen)
-{ printf("xxxC: called: C_WrapKey    "); 
+{ printf("\nC: called: C_WrapKey    "); 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
@@ -1046,33 +1136,34 @@ if(dings->cls !=0)
         {
 jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_MECHANISM"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
-                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, JNI_FALSE);
+                                jobject obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pMechanism, sizeof(CK_MECHANISM_PTR), JNI_FALSE);
 								   if(obj1==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls4 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor4 = (*(dings->env))->GetMethodID(dings->env, cls4, "<init>", "(JZ)V");
-                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, pWrappedKey, JNI_FALSE);
+                                jobject obj4=(*(dings->env))->NewObject(dings->env, cls4, constructor4, pWrappedKey, sizeof(CK_BYTE_PTR), JNI_FALSE);
 								   if(obj4==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 jclass cls5 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
          jmethodID constructor5 = (*(dings->env))->GetMethodID(dings->env, cls5, "<init>", "(JZ)V");
-                                jobject obj5=(*(dings->env))->NewObject(dings->env, cls5, constructor5, pulWrappedKeyLen, JNI_FALSE);
+                                jobject obj5=(*(dings->env))->NewObject(dings->env, cls5, constructor5, pulWrappedKeyLen, sizeof(CK_ULONG_PTR), JNI_FALSE);
 								   if(obj5==NULL){
-                                        printf("xxxCK_GetInfo object is null... shit happens");
+                                        printf("CK_GetInfo object is null... shit happens");
                                 }else{
-                                        printf("xxxCK_GetInfo object is not null.... going on and calling java function");
 				   }
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_WrapKeyJava, hSession, obj1, hWrappingKey, hKey, obj4, obj5);
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+
+
+ printf("End of C_WrapKey" );
+
 
 return retVal;
 }
@@ -1082,75 +1173,75 @@ return retVal;
 
 #define CK_DEFINE_FUNCTION(returnType, name) returnType name
 CK_DEFINE_FUNCTION(CK_RV, C_InitPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GetOperationState)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pOperationState, CK_ULONG_PTR pulOperationStateLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastEncryptedPart, CK_ULONG_PTR pulLastEncryptedPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG_PTR pulLastPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pDigest, CK_ULONG_PTR pulDigestLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestKey)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDigest, CK_ULONG_PTR pulDigestLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestEncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptDigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignEncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptVerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_ATTRIBUTE_PTR pPublicKeyTemplate, CK_ULONG ulPublicKeyAttributeCount, CK_ATTRIBUTE_PTR pPrivateKeyTemplate, CK_ULONG ulPrivateKeyAttributeCount, CK_OBJECT_HANDLE_PTR phPublicKey, CK_OBJECT_HANDLE_PTR phPrivateKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hBaseKey, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SetOperationState)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pOperationState, CK_ULONG ulOperationStateLen, CK_OBJECT_HANDLE hEncryptionKey, CK_OBJECT_HANDLE hAuthenticationKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phNewObject)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GetObjectSize)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ULONG_PTR pulSize)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GetFunctionStatus)(CK_SESSION_HANDLE hSession)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_CancelFunction)(CK_SESSION_HANDLE hSession)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_InitToken)(CK_SLOT_ID slotID, CK_CHAR_PTR pPin, CK_ULONG ulPinLen, CK_CHAR_PTR pLabel)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pEncryptedData, CK_ULONG_PTR pulEncryptedDataLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
-{ printf("xxxnot implemented shit called"); return CKR_OK;}
-CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved){ printf("xxxnot implemented shit called"); return 0x00000008;}
+{ printf("not implemented shit called"); return CKR_OK;}
+CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved){ printf("not implemented shit called"); return 0x00000008;}
