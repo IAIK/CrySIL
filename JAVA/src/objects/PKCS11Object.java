@@ -38,4 +38,17 @@ public class PKCS11Object {
 		return res;
 	}
 	
+	
+	public boolean query(Attribute[] attributes){
+		for(Attribute tmp : attributes){
+			if(tmp.equals(this.attributes.get(tmp.getType()))){
+				
+			}else{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
 }

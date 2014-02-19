@@ -14,12 +14,12 @@ public class ObjectManager {
 	private ArrayList<PKCS11Object> objects = new ArrayList<>();
 	private ArrayList<Long> ids = new ArrayList<>();
 
-	synchronized public ArrayList<PKCS11Object> findObjects(ATTRIBUTE[] template) throws PKCS11Error {
+	synchronized public ArrayList<PKCS11Object> findObjects(Attribute[] template) throws PKCS11Error {
 		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		ArrayList<PKCS11Object> result = new ArrayList<>();
 
 		for (PKCS11Object tmp : objects) {
-			if (tmp.equals(object)) {
+			if (tmp.query(template)) {
 				result.add(tmp);
 			}
 		}
