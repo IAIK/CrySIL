@@ -1,7 +1,7 @@
 package pkcs11;
 import java.util.ArrayList;
 
-import objects.Attribute;
+import objects.ATTRIBUTE;
 import objects.Mechanism;
 
 import proxys.CK_ATTRIBUTE;
@@ -212,10 +212,10 @@ public class Session {
 	}
 	
 	
-	public void initFind(CK_ATTRIBUTE[] attr) throws PKCS11Error{
+	public void initFind(ATTRIBUTE[] attr) throws PKCS11Error{
 		if(findObjectsHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		findObjectsHelper = new FindObjectsHelper(Attribute.toAttributeArray(attr));
+		findObjectsHelper = new FindObjectsHelper(attr);
 	}
 }

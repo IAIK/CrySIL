@@ -8,30 +8,30 @@ import proxys.RETURN_TYPE;
 
 public class PKCS11Object {
 	
-	private HashMap<ATTRIBUTE_TYPE,Attribute> attributes = new HashMap<>();
+	private HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> attributes = new HashMap<>();
 
-	public PKCS11Object(Attribute[] template){
-		for(Attribute attr: template){
-			attributes.put(attr.getType(), attr);
+	public PKCS11Object(ATTRIBUTE[] template){
+		for(ATTRIBUTE attr: template){
+			attributes.put(attr.getTypeEnum(), attr);
 		}
 	}
-	public PKCS11Object(HashMap<ATTRIBUTE_TYPE,Attribute> template){
+	public PKCS11Object(HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> template){
 		attributes = template;
 	}
-	public void setAttribute(Attribute val) throws PKCS11Error{ //TODO ist die Unterscheidung zw set und add nötig oder ist es eh immer add
+	public void setAttribute(ATTRIBUTE val) throws PKCS11Error{ //TODO ist die Unterscheidung zw set und add nötig oder ist es eh immer add
 		if(!attributes.containsKey(val.getType())){
 			throw new PKCS11Error(RETURN_TYPE.TEMPLATE_INCONSISTENT);
 		}
-		attributes.put(val.getType(), val);
+		attributes.put(val.getTypeEnum(), val);
 	}
-	public void addAttribute(Attribute val){
-		attributes.put(val.getType(),val);
+	public void addAttribute(ATTRIBUTE val){
+		attributes.put(val.getTypeEnum(),val);
 	}
 	public boolean hasAttribute(ATTRIBUTE_TYPE type){
 		return attributes.containsKey(type);
 	}
-	public Attribute getAttribute(ATTRIBUTE_TYPE type) throws PKCS11Error{
-		Attribute res = attributes.get(type);
+	public ATTRIBUTE getAttribute(ATTRIBUTE_TYPE type) throws PKCS11Error{
+		ATTRIBUTE res = attributes.get(type);
 		if(res == null){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_TYPE_INVALID);
 		}

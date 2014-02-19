@@ -15,7 +15,9 @@ public class ObjectManager {
 	private ArrayList<Long> ids = new ArrayList<>();
 
 	synchronized public ArrayList<PKCS11Object> findObjects(Attribute[] template) throws PKCS11Error {
+		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		ArrayList<PKCS11Object> result = new ArrayList<>();
+
 		for (PKCS11Object tmp : objects) {
 			if (tmp.query(template)) {
 				result.add(tmp);
@@ -34,7 +36,7 @@ public class ObjectManager {
 		throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
 	}
 
-	synchronized public long createObject(CK_ATTRIBUTE[] template) throws PKCS11Error {
+	synchronized public long createObject(ATTRIBUTE[] template) throws PKCS11Error {
 		Long id = getNextId();
 		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		objects.add(object);

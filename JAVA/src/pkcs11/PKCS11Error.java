@@ -10,4 +10,7 @@ public class PKCS11Error extends Exception {
 	public long getCode(){
 		return error.swigValue();
 	}
+	public RETURN_TYPE getType(){
+		return error;
+	}
 }
