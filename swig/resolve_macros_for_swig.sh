@@ -19,7 +19,7 @@ sed 's/CK_CALLBACK_FUNCTION(\([^,)]*\), \([^,)]*\))/\1 (* \2)/g' | \
 sed 's/NULL_PTR/0/g' | \
 
 # * add size parameter to each struct
-sed -e '/typedef struct [[:alnum:]_]* {/ a\ %extend{ size_t size; }' -e '/^} \([[:alnum:]_]*\);/ { 
+sed -e '/typedef struct [[:alnum:]_]* {/ a\ %extend{ %immutable size; \n size_t size; }' -e '/^} \([[:alnum:]_]*\);/ { 
 																																											N
 					s/} \([[:alnum:]_]*\);/} \1;\n %{ \n size_t \1_size_get(){ \n    return sizeof(\1); \n } \n void \1_size_set(\1* obj,size_t s){ return; } \n %}   /
 																			} '  | \

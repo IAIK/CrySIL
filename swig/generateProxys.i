@@ -17,7 +17,6 @@ typedef struct {
 /*alter default proxy classes for public access to cPtr*/
 %typemap(javabody) SWIGTYPE, SWIGTYPE *, SWIGTYPE [], SWIGTYPE (CLASS::*) %{
   private long swigCPtr;
-  private long size;
   protected boolean swigCMemOwn;
   
   public $javaclassname(long cPtr, boolean cMemoryOwn) {
@@ -68,7 +67,16 @@ typedef struct {
 
 %array_class(unsigned long int,CK_ULONG_ARRAY)
 %array_class(CK_CHAR,CK_BYTE_ARRAY)
-
+%extend CK_BYTE_ARRAY {
+	size_t size;
+}
+ %{ 
+ size_t CK_BYTE_ARRAY_size_get(){ 
+    return sizeof(void*); 
+ } 
+ void CK_BYTE_ARRAY_size_set(CK_BYTE_ARRAY* obj,size_t s){ return; } 
+ %} 
+ 
 %include "pkcs11t_processed.h"
 %include "CKA_enum.h"
 %include "CKC_enum.h"

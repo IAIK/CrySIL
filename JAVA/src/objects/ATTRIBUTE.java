@@ -115,8 +115,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	}
 // end	
 	
-	public ATTRIBUTE(long cPtr,long s, boolean cMemoryOwn) throws PKCS11Error{
-		super(cPtr,s,cMemoryOwn);
+	public ATTRIBUTE(long cPtr, boolean cMemoryOwn) throws PKCS11Error{
+		super(cPtr,cMemoryOwn);
 		this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
 		this.datatype = datatypeof(this.type);
 	}
@@ -154,7 +154,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	
 	public ATTRIBUTE clone(){
 		try {
-			return new ATTRIBUTE(0,0,false);
+			return new ATTRIBUTE(0,false);
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

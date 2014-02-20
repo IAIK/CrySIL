@@ -5,7 +5,7 @@ import java.util.HashMap;
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import objects.ATTRIBUTE;
-import objects.Mechanism;
+import objects.MECHANISM;
 import objects.PKCS11Object;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.KEY_TYP;
@@ -54,7 +54,7 @@ public class PKCS11SkyTrustMapper {
 		}
 		return null;
 	}
-	public static SkyTrustAlgorithm mapMechanism(Mechanism mech) throws PKCS11Error{
+	public static SkyTrustAlgorithm mapMechanism(MECHANISM mech) throws PKCS11Error{
 		SkyTrustAlgorithm algo = mechanism_map.get(mech.getType());
 		if(algo == null){
 			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);

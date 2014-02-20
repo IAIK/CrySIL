@@ -5,8 +5,8 @@ import gui.Server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import objects.Mechanism;
-import objects.Mechanism.MechanismInfo;
+import objects.MECHANISM;
+import objects.MECHANISM.MechanismInfo;
 import objects.ObjectManager;
 import objects.PKCS11Object;
 
@@ -27,7 +27,7 @@ import proxys.RETURN_TYPE;
 public class Slot{
 	
 	private IServerSession serversession;
-	private HashMap<MECHANISM_TYPES,Mechanism.MechanismInfo> mechanisms = new HashMap<>();
+	private HashMap<MECHANISM_TYPES,MECHANISM.MechanismInfo> mechanisms = new HashMap<>();
 	
 	private long slotID;
 	private boolean roToken = false;
@@ -145,15 +145,15 @@ public class Slot{
 /*** crypto functions ***/	
 	public static class CryptoOperationParams{
 		public PKCS11Object key;
-		public Mechanism mechanism;
-		public CryptoOperationParams(Mechanism mech, PKCS11Object key){
+		public MECHANISM mechanism;
+		public CryptoOperationParams(MECHANISM mech, PKCS11Object key){
 			this.key = key;
 			this.mechanism = mech;
 		}
 	}
 	
 	public CryptoOperationParams checkAndInit(long hKey,CK_MECHANISM mech,String operation) throws PKCS11Error{
-		Mechanism mechanism = new Mechanism(mech);
+		MECHANISM mechanism = new MECHANISM(mech);
 		PKCS11Object key = objectManager.getObject(hKey);
 		MechanismInfo mech_info = getMechanismInfo(mechanism.getType());
 		OBJECT_CLASS cl = key.getAttribute(ATTRIBUTE_TYPE.CLASS).copyToSwigEnum(OBJECT_CLASS.class);
@@ -229,14 +229,14 @@ public class Slot{
 		return mechanisms.keySet().toArray(new MECHANISM_TYPES[0]);
 	}
 	public void getMechanismInfo(MECHANISM_TYPES type,CK_MECHANISM_INFO info) throws PKCS11Error{
-		Mechanism.MechanismInfo local_info = mechanisms.get(type);
+		MECHANISM.MechanismInfo local_info = mechanisms.get(type);
 		if(local_info == null){
 			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 		}
 		local_info.writeInto(info);
 	}
-	public Mechanism.MechanismInfo getMechanismInfo(MECHANISM_TYPES type) throws PKCS11Error{
-		Mechanism.MechanismInfo local_info = mechanisms.get(type);
+	public MECHANISM.MechanismInfo getMechanismInfo(MECHANISM_TYPES type) throws PKCS11Error{
+		MECHANISM.MechanismInfo local_info = mechanisms.get(type);
 		if(local_info == null){
 			throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
 		}

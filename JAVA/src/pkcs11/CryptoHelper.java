@@ -1,5 +1,5 @@
 package pkcs11;
-import objects.Mechanism;
+import objects.MECHANISM;
 import objects.PKCS11Object;
 import pkcs11.Slot.CryptoOperationParams;
 
@@ -17,13 +17,13 @@ public class CryptoHelper {
 	public CryptoHelper(CryptoOperationParams p){
 		this.params = p;
 	}
-	public CryptoHelper(Mechanism pMechanism, PKCS11Object Key){
+	public CryptoHelper(MECHANISM pMechanism, PKCS11Object Key){
 		this.params = new CryptoOperationParams(pMechanism, Key);
 	}
 	public PKCS11Object getKey(){
 		return params.key;
 	}
-	public Mechanism getMechanism(){
+	public MECHANISM getMechanism(){
 		return params.mechanism;
 	}
 	public CryptoOperationParams getParams(){

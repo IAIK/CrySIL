@@ -2,7 +2,7 @@ package pkcs11;
 import java.util.ArrayList;
 
 import objects.ATTRIBUTE;
-import objects.Mechanism;
+import objects.MECHANISM;
 
 import proxys.CK_ATTRIBUTE;
 import proxys.CK_MECHANISM;

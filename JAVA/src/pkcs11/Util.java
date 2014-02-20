@@ -1,6 +1,6 @@
 package pkcs11;
 
-import objects.Mechanism.MechanismInfo;
+import objects.MECHANISM.MechanismInfo;
 import proxys.CK_BYTE_ARRAY;
 import proxys.pkcs11Constants;
 
