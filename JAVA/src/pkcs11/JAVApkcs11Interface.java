@@ -5,6 +5,7 @@ import gui.Server.ServerInfo;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import objects.MECHANISM;
 import objects.PKCS11Object;
 import objects.StructBase;
 
@@ -260,7 +261,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_DecryptInit(long hSession, CK_MECHANISM pMechanism, long hKey) {
+  public static long C_DecryptInit(long hSession, MECHANISM pMechanism, long hKey) {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
@@ -421,7 +422,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_SignInit(long hSession, CK_MECHANISM pMechanism, long hKey) {
+  public static long C_SignInit(long hSession, MECHANISM pMechanism, long hKey) {
 	  try {
 		  checkNullPtr(pMechanism);
 		  Session session = getRM().getSessionByHandle(hSession);
@@ -473,7 +474,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
  	 * @param	phKey				pointer to the key
  	 * 
  	 */
-  public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey) {
+  public static long C_UnwrapKey(long hSession, MECHANISM pMechanism, long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen, ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_JPTR phKey) {
 //		Session session;
 //		try {
 //			session = getRM().getSessionByHandle(hSession);
@@ -512,7 +513,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	 * @param	pulWrappedKeyLen	pointer to the length of the wrapped key
 	 * 
 	 */
-  public static long C_WrapKey(long hSession, CK_MECHANISM pMechanism, long hWrappingKey, long hKey, CK_BYTE_ARRAY pWrappedKey, CK_ULONG_JPTR pulWrappedKeyLen) {
+  public static long C_WrapKey(long hSession, MECHANISM pMechanism, long hWrappingKey, long hKey, CK_BYTE_ARRAY pWrappedKey, CK_ULONG_JPTR pulWrappedKeyLen) {
 //	  try {
 //		Session session = getRM().getSessionByHandle(hSession);
 //		

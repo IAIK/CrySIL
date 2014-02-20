@@ -11,7 +11,6 @@ import objects.ObjectManager;
 import objects.PKCS11Object;
 
 import proxys.ATTRIBUTE_TYPE;
-import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
 import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;
@@ -152,8 +151,7 @@ public class Slot{
 		}
 	}
 	
-	public CryptoOperationParams checkAndInit(long hKey,CK_MECHANISM mech,String operation) throws PKCS11Error{
-		MECHANISM mechanism = new MECHANISM(mech);
+	public CryptoOperationParams checkAndInit(long hKey,MECHANISM mechanism,String operation) throws PKCS11Error{
 		PKCS11Object key = objectManager.getObject(hKey);
 		MechanismInfo mech_info = getMechanismInfo(mechanism.getType());
 		OBJECT_CLASS cl = key.getAttribute(ATTRIBUTE_TYPE.CLASS).copyToSwigEnum(OBJECT_CLASS.class);

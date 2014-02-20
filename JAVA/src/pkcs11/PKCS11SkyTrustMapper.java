@@ -19,20 +19,13 @@ public class PKCS11SkyTrustMapper {
 	private static HashMap<MECHANISM_TYPES,SkyTrustAlgorithm> mechanism_map = new HashMap<>();
 
 	static{
-		byte[] bool_value = new byte[1];
 		try {
-		bool_value[0] = 0;
-		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,bool_value));
-		bool_value[0] = 1;
-		skytrust_template.put(ATTRIBUTE_TYPE.TOKEN, new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,bool_value));
-		bool_value[0] = 0;
-		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,bool_value));
+		skytrust_template.put(ATTRIBUTE_TYPE.EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,false));
+		skytrust_template.put(ATTRIBUTE_TYPE.SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
+		skytrust_template.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,true));
+		skytrust_template.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE, new ATTRIBUTE(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,true));
+		skytrust_template.put(ATTRIBUTE_TYPE.TOKEN, new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
+		skytrust_template.put(ATTRIBUTE_TYPE.MODIFIABLE, new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,6 +63,8 @@ public class PKCS11SkyTrustMapper {
 		 case "fullKey":
 			 template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
 			 template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,true));
+			 template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
+			 template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PRIVATE_KEY));
 			 break;
 		 case "certificate":
 			template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));

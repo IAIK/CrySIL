@@ -70,7 +70,24 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		attribute_types.put(ATTRIBUTE_TYPE.MODIFIABLE,Boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.VENDOR_DEFINED,CK_BYTE_ARRAY.class);
 	}
-	
+	public static ATTRIBUTE find(ATTRIBUTE[] template, ATTRIBUTE_TYPE type){
+		for(ATTRIBUTE attr : template){
+			if(attr.getTypeEnum().equals(ATTRIBUTE_TYPE.CLASS)){
+				return attr;
+			}
+		}
+		return null;
+	}
+	public static ATTRIBUTE[] clone(ATTRIBUTE[] template){
+		ATTRIBUTE[] clone = new ATTRIBUTE[template.length];
+		for(int i=0;i<template.length;i++){
+			clone[i] = template[i].clone();
+		}
+		return clone;
+	}
+	public static ATTRIBUTE clone(ATTRIBUTE attr){
+		return attr.clone();
+	}
 // local Helpers	
 	protected Class<?> datatypeof(ATTRIBUTE_TYPE type) throws PKCS11Error{
 		Class<?> datatype = attribute_types.get(type);
@@ -128,7 +145,13 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		setNewCData(val.length);//alloc cmem
 		Util.copyByteArrayToCData(val, cdata);//copy to cmem
 	}
-	
+	public ATTRIBUTE(ATTRIBUTE_TYPE type, boolean val) throws PKCS11Error {
+		super();
+		this.type = type;
+		this.datatype = datatypeof(type);
+		setNewCData(1);//alloc cmem
+		copyFromBoolean(val);
+	}
 	public <T extends EnumBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
 		super();
 		this.type = type;
@@ -141,9 +164,10 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		ByteBuffer.wrap(enum_value).putLong(val.swigValue());
 		Util.copyByteArrayToCData(enum_value, cdata);
 	}
-	public <T extends StructBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
+	public <T extends StructSizeBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
 		super();
 		this.type = type;
+		setType(type.swigValue());
 		this.datatype = datatypeof(type);
 		if(val == null || !datatype.equals(val.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
@@ -152,14 +176,21 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		Util.copy(new CK_BYTE_ARRAY(val.getCPtr(),false),cdata,(int)val.getSize());
 	}
 	
+	public ATTRIBUTE(ATTRIBUTE_TYPE type) throws PKCS11Error {
+		super();
+		this.type = type;
+		setType(type.swigValue());
+		this.datatype = datatypeof(type);
+	}
 	public ATTRIBUTE clone(){
 		try {
-			return new ATTRIBUTE(0,false);
+			ATTRIBUTE clone = new ATTRIBUTE(type);
+			clone.setNewCData(getDataLength());
+			Util.copy(cdata, clone.cdata, getDataLength());
+			return clone;
 		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 	public ATTRIBUTE_TYPE getTypeEnum(){
 		return type;
@@ -179,7 +210,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		if(!datatype.equals(long.class) || isCDataNULL() || getDataLength() < 8){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		byte[] data = Util.getCDataAsByteArray(getCData(), 8);
+		byte[] data = Util.copyCDataToByteArray(getCData(), 8);
 		ByteBuffer buf = ByteBuffer.wrap(data);
 		return buf.getLong();
 	}
@@ -188,7 +219,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		if(!datatype.equals(Byte.class) || isCDataNULL()){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		return Util.getCDataAsByteArray(getCData(), getDataLength());
+		return Util.copyCDataToByteArray(getCData(), getDataLength());
 	}
 	
 	
@@ -199,8 +230,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		Constructor<T> constructor;
 		try {
-			constructor = req_type.getDeclaredConstructor( long.class,long.class, boolean.class );
-			return constructor.newInstance(getCDataPtr(),getDataLength(),false);
+			constructor = req_type.getDeclaredConstructor( long.class, boolean.class );
+			return constructor.newInstance(getCDataPtr(),false);
 		} catch (NoSuchMethodException|IllegalArgumentException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
@@ -214,6 +245,20 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+	}
+	public <T extends StructSizeBase> T copyToSwigStruct(Class<T> req_type) throws PKCS11Error{
+		if(!datatype.equals(req_type) || isCDataNULL()){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		Constructor<T> constructor;
+		try {
+			constructor = req_type.getDeclaredConstructor();
+			T copy_dst =  constructor.newInstance();
+			Util.copy(cdata, new CK_BYTE_ARRAY(copy_dst.getCPtr(), false), (int) copy_dst.getSize());
+			return copy_dst;
+		} catch (NoSuchMethodException|IllegalArgumentException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
 	}
@@ -255,7 +300,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		copyFromLong((long) v.swigValue());
 	}
 	
-	public <T extends StructBase> void setSwig(T v) throws PKCS11Error {
+	public <T extends StructSizeBase> void setSwig(T v) throws PKCS11Error {
 		if(v == null || !datatype.equals(v.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
@@ -264,7 +309,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		setCData(v.getCPtr(), v.getSize());
 	}
-	public <T extends StructBase> void copyFromSwig(T v) throws PKCS11Error {
+	public <T extends StructSizeBase> void copyFromSwig(T v) throws PKCS11Error {
 		if(v == null || !datatype.equals(v.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}

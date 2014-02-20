@@ -1,7 +1,10 @@
 package pkcs11;
 
+import objects.ATTRIBUTE;
 import objects.MECHANISM.MechanismInfo;
+import proxys.ATTRIBUTE_TYPE;
 import proxys.CK_BYTE_ARRAY;
+import proxys.OBJECT_CLASS;
 import proxys.pkcs11Constants;
 
 public class Util {
@@ -26,10 +29,10 @@ public class Util {
 			return str.substring(0,len);
 		}
 	}
-	public static byte[] getCDataAsByteArray(long dataCPtr, long len){
-		return getCDataAsByteArray(new CK_BYTE_ARRAY(dataCPtr,false),len);
+	public static byte[] copyCDataToByteArray(long dataCPtr, long len){
+		return copyCDataToByteArray(new CK_BYTE_ARRAY(dataCPtr,false),len);
 	}
-	public static byte[] getCDataAsByteArray(CK_BYTE_ARRAY data, long len){
+	public static byte[] copyCDataToByteArray(CK_BYTE_ARRAY data, long len){
 		byte[] a = new byte[ (int)len];
 		for(int i =0; i< len; i++){
 			a[i] = (byte) data.getitem(i);
@@ -47,6 +50,7 @@ public class Util {
 			dst_cdata.setitem(i, src_cdata.getitem(i));			
 		}
 	}
+
 	public static class Capabilities  {
 		protected long flags = Util.initFlags;;
 		public Capabilities sign(){

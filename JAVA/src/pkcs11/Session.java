@@ -5,7 +5,6 @@ import objects.ATTRIBUTE;
 import objects.MECHANISM;
 
 import proxys.CK_ATTRIBUTE;
-import proxys.CK_MECHANISM;
 import proxys.CK_NOTIFY_CALLBACK;
 import proxys.CK_BYTE_ARRAY;
 import proxys.CK_ULONG_JPTR;
@@ -75,7 +74,7 @@ public class Session {
 	public Slot getToken(){
 		return slot;
 	}
-	public void signInit(CK_MECHANISM pMechanism, long hKey) throws PKCS11Error{
+	public void signInit(MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(signHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
@@ -112,7 +111,7 @@ public class Session {
 		signHelper = null;
 	}
 	
-	public void verifyInit(CK_MECHANISM pMechanism, long hKey) throws PKCS11Error{
+	public void verifyInit(MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(verifyHelper!= null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
@@ -144,7 +143,7 @@ public class Session {
 		verifyHelper = null;
 	}
 	
-	public void decryptInit(CK_MECHANISM pMechanism, long hKey) throws PKCS11Error{
+	public void decryptInit(MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(decryptHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
@@ -178,7 +177,7 @@ public class Session {
 		decryptHelper = null;
 	}
 
-	public void encryptInit(CK_MECHANISM pMechanism, long hKey) throws PKCS11Error{
+	public void encryptInit(MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(encryptHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
