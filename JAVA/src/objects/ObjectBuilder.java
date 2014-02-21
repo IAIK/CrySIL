@@ -66,7 +66,7 @@ public class ObjectBuilder {
 		}
 		OBJECT_CLASS obj_class = attr_class.copyToSwigEnum(OBJECT_CLASS.class);
 
-		HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> default_attr = null;
+		HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> default_attr = new HashMap<>();
 		if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
 			 //private key template
 			default_attr = new HashMap<>(copyToMap(defaultTemplate_secretKey));
@@ -76,6 +76,10 @@ public class ObjectBuilder {
 			 
 		 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){
 			 
+		 }else if(obj_class.equals(OBJECT_CLASS.DATA)){
+			 
+		 }else{
+			 throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		 }
 		
 		default_attr.putAll(copyToMap(template));
