@@ -1,5 +1,7 @@
 package pkcs11;
 
+import java.util.Arrays;
+
 import objects.ATTRIBUTE;
 import objects.MECHANISM.MechanismInfo;
 import proxys.ATTRIBUTE_TYPE;
@@ -23,7 +25,9 @@ public class Util {
 	public static String fixStringLen(String str,int len){
 		if(str.length() < len){
 			int d = len - str.length();
-			String padd = new String(new char[d]);
+			char[] arr = new char[d];
+			Arrays.fill(arr, ' ');
+			String padd = new String(arr);
 			return str+padd;
 		}else{
 			return str.substring(0,len);
