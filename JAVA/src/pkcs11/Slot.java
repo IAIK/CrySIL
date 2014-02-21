@@ -63,17 +63,18 @@ public class Slot{
 	//sessionIndex = Handle%MAX_SESSIONS_PER_SLOT
 	//slotIndex = Handle/MAX_SESSIONS_PER_SLOT
 	protected long getNewSessionID() throws PKCS11Error{
+		if(sessionList.size()==0){
+			return 1;
+		}
 		long id=1;
 		for(Session s:sessionList){
 			if(s.getID() != id){
-				if(id < MAX_SESSIONS_PER_SLOT){
-					return id;
-				}
+				return id;
 			}
 			id++;
 		}
-		if(sessionList.size()==0){
-			return 1;
+		if(id < MAX_SESSIONS_PER_SLOT){
+			return id;
 		}
 		throw new PKCS11Error(RETURN_TYPE.SESSION_COUNT);
 	}

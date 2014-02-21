@@ -49,9 +49,9 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		attribute_types.put(ATTRIBUTE_TYPE.DERIVE,boolean.class);
 		//		  attribute_types.put(ATTRIBUTE_TYPE.START_DATE
 		//		  attribute_types.put(ATTRIBUTE_TYPE.END_DATE
-		//		  attribute_types.put(ATTRIBUTE_TYPE.MODULUS
+		attribute_types.put(ATTRIBUTE_TYPE.MODULUS,CK_BYTE_ARRAY.class);
 		//		  attribute_types.put(ATTRIBUTE_TYPE.MODULUS_BITS
-		//		  attribute_types.put(ATTRIBUTE_TYPE.PUBLIC_EXPONENT
+		attribute_types.put(ATTRIBUTE_TYPE.PUBLIC_EXPONENT,CK_BYTE_ARRAY.class);
 		//		  attribute_types.put(ATTRIBUTE_TYPE.PRIVATE_EXPONENT
 		//		  attribute_types.put(ATTRIBUTE_TYPE.PRIME_1
 		//		  attribute_types.put(ATTRIBUTE_TYPE.PRIME_2
