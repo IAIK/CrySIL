@@ -47,7 +47,6 @@ public class ObjectBuilder {
 		}
 	};
 	
-
 	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ATTRIBUTE[] template){
 		Map<ATTRIBUTE_TYPE,ATTRIBUTE> res = new HashMap<>();
 		for(ATTRIBUTE attr : template){
@@ -57,18 +56,16 @@ public class ObjectBuilder {
 	}
 
 	public static PKCS11Object createFromTemplate(ATTRIBUTE[] template) throws PKCS11Error{
-		
-		
 		ATTRIBUTE attr_class = ATTRIBUTE.find(template, ATTRIBUTE_TYPE.CLASS);
 		if(attr_class == null){
 			throw new PKCS11Error(RETURN_TYPE.TEMPLATE_INCOMPLETE);
 		}
 		OBJECT_CLASS obj_class = attr_class.copyToSwigEnum(OBJECT_CLASS.class);
 
-		HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> object_attr = null;
+		HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> default_attr = null;
 		if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
 			 //private key template
-			object_attr = new HashMap<>(copyToMap(defaultTemplate_secretKey));
+			default_attr = new HashMap<>(copyToMap(defaultTemplate_secretKey));
 		 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
 			 
 		 }else if(obj_class.equals(OBJECT_CLASS.CERTIFICATE)){
@@ -76,7 +73,8 @@ public class ObjectBuilder {
 		 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){
 			 
 		 }
-		object_attr.putAll(copyToMap(template));
-		return new PKCS11Object(object_attr);
+		
+		default_attr.putAll(copyToMap(template));
+		return new PKCS11Object(default_attr);
 	}
 }

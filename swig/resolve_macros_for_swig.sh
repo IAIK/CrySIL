@@ -18,6 +18,8 @@ sed 's/CK_CALLBACK_FUNCTION(\([^,)]*\), \([^,)]*\))/\1 (* \2)/g' | \
 
 sed 's/NULL_PTR/0/g' | \
 
+sed 's/(~0UL)/(~0)/g' | \
+
 # * add size parameter to each struct
 sed -e '/^} \([[:alnum:]_]*\);/ { 
 																N

@@ -32,11 +32,13 @@ public class PKCS11Object {
 		return res;
 	}
 	
-	
 	public boolean query(ATTRIBUTE[] attributes){
+		if(attributes == null){
+			return true;
+		}
 		for(ATTRIBUTE tmp : attributes){
-			if(tmp.query(this.attributes.get(tmp.getType()))){
-				
+			if(tmp == null || tmp.query(this.attributes.get(tmp.getType()))){
+				continue;
 			}else{
 				return false;
 			}

@@ -47,7 +47,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	
   private static void checkNullPtr(StructBase ...structs) throws PKCS11Error{
 	  for(StructBase s:structs){
-		  if(s == null || s.isNullPtr()){
+		  if(s == null /*|| s.isNullPtr()*/){
 			  throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 		  }
 	  }
@@ -108,7 +108,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  for(Slot s:slotlist){
 			  System.err.println("\n slotlist return slot: "+s.getServerInfo().getName());
 		  }
-		  if(pSlotList.isNullPtr()){
+		  if(pSlotList == null){
 			  pulCount.assign(slotlist.size());
 			  return RETURN_TYPE.OK.swigValue();
 		  }else if(pulCount.value() < slotlist.size()){
@@ -281,12 +281,13 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  System.err.println("\nthis is java calling Findobjects");
 	  try {
 		Session session = getRM().getSessionByHandle(hSession);
-
+		
 		if(session.findObjectsHelper == null){
 			System.err.println("operation not initalized");
 			return RETURN_TYPE.OPERATION_NOT_INITIALIZED.swigValue();
 		}
 		session.getSlot().objectManager.findObjects(session.findObjectsHelper.pTemplate);
+		
 		//TODO noch nicht fertig
 	} catch (PKCS11Error e) {
 		e.printStackTrace();
@@ -440,7 +441,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session = getRM().getSessionByHandle(hSession);
 		session.signAddData(pData);
 
-		if(pSignature.isNullPtr()){
+		if(pSignature == null){
 			pulSignatureLen.assign(session.sign().length);
 			return RETURN_TYPE.OK.swigValue();
 		}else if(pulSignatureLen.value() < session.sign().length){

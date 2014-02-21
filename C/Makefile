@@ -28,6 +28,8 @@ ifeq ($(DEBUG),true)
 CFLAGS += -g -DDEBUG
 endif
 
+.PHONY: all clean test testclean runtest
+
 pkcs11: $(SRCDIR)/$(SOURCES) pkcs11wrapper
 				$(CC) $(CFLAGS) $(SHAREDFLAGS) $(SRCDIR)/$(SOURCES) -o $(BINDIR)/lib$(NAME).so $(LDFLAGS)
 				ln -s -f $(realpath $(BINDIR)/lib$(NAME).so) $(LIBRARY_DIRS)/lib$(NAME).so
@@ -36,7 +38,7 @@ pkcs11wrapper: $(SRCDIR)/$(WRAPSOURCES)
 				ln -s -f $(realpath $(BINDIR)/lib$(WRAPNAME).so) $(LIBRARY_DIRS)/lib$(WRAPNAME).so
 all: pkcs11
 
-clean: 
+clean: testclean
 	rm -f $(BINDIR)/lib$(NAME).so
 	rm -f $(BINDIR)/lib$(WRAPNAME).so
 

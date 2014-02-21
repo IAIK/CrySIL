@@ -83,8 +83,10 @@ public class MECHANISM extends CK_MECHANISM{
 	}
 	public MECHANISM(long cPtr, boolean cMemoryOwn) throws PKCS11Error{
 		super(cPtr,cMemoryOwn);
+		if(cPtr == 0)
+			return;
 		this.type = MECHANISM_TYPES.swigToEnum((int) super.getMechanism());		
-		this.cdata = new CK_BYTE_ARRAY(cPtr,false);
+		this.cdata = new CK_BYTE_ARRAY(super.getPParameter().getCPtr(),false);
 		this.datatype = datatypeof(type);
 	}
 	public <T extends StructSizeBase> MECHANISM(MECHANISM_TYPES type, T val) throws PKCS11Error {

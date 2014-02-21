@@ -134,6 +134,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	
 	public ATTRIBUTE(long cPtr, boolean cMemoryOwn) throws PKCS11Error{
 		super(cPtr,cMemoryOwn);
+		if(cPtr == 0)
+			return;
 		this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
 		this.datatype = datatypeof(this.type);
 	}
@@ -304,18 +306,14 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		if(v == null || !datatype.equals(v.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		if(v.isNullPtr()){
-			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
-		}
+
 		setCData(v.getCPtr(), v.getSize());
 	}
 	public <T extends StructSizeBase> void copyFromSwig(T v) throws PKCS11Error {
 		if(v == null || !datatype.equals(v.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		if(v.isNullPtr()){
-			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
-		}
+
 		Util.copy(new CK_BYTE_ARRAY(v.getCPtr(), false), cdata, (int) v.getSize());
 	}
 	
