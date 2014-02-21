@@ -26,8 +26,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	static Map<ATTRIBUTE_TYPE,Class<?>> attribute_types = new HashMap<>();
 	static{
 		attribute_types.put(ATTRIBUTE_TYPE.CLASS, OBJECT_CLASS.class);
-		attribute_types.put(ATTRIBUTE_TYPE.TOKEN,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.PRIVATE,Boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.TOKEN,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.PRIVATE,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.LABEL,String.class);
 		attribute_types.put(ATTRIBUTE_TYPE.APPLICATION,String.class);
 		attribute_types.put(ATTRIBUTE_TYPE.VALUE,CK_BYTE_ARRAY.class);//BER encoding
@@ -37,16 +37,16 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		attribute_types.put(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.class);
 		attribute_types.put(ATTRIBUTE_TYPE.SUBJECT,CK_BYTE_ARRAY.class);//WTLS encoding
 		attribute_types.put(ATTRIBUTE_TYPE.ID,CK_BYTE_ARRAY.class);
-		attribute_types.put(ATTRIBUTE_TYPE.SENSITIVE,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.ENCRYPT,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.DECRYPT,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.WRAP,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.UNWRAP,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.SIGN,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.SIGN_RECOVER,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.VERIFY,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.VERIFY_RECOVER,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.DERIVE,Boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.SENSITIVE,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.ENCRYPT,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.DECRYPT,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.WRAP,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.UNWRAP,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.SIGN,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.SIGN_RECOVER,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.VERIFY,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.VERIFY_RECOVER,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.DERIVE,boolean.class);
 		//		  attribute_types.put(ATTRIBUTE_TYPE.START_DATE
 		//		  attribute_types.put(ATTRIBUTE_TYPE.END_DATE
 		//		  attribute_types.put(ATTRIBUTE_TYPE.MODULUS
@@ -63,11 +63,11 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		//		  attribute_types.put(ATTRIBUTE_TYPE.BASE
 		//		  attribute_types.put(ATTRIBUTE_TYPE.VALUE_BITS
 		//		  attribute_types.put(ATTRIBUTE_TYPE.VALUE_LEN
-		attribute_types.put(ATTRIBUTE_TYPE.EXTRACTABLE,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.LOCAL,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,Boolean.class);
-		attribute_types.put(ATTRIBUTE_TYPE.MODIFIABLE,Boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.EXTRACTABLE,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.LOCAL,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.MODIFIABLE,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.VENDOR_DEFINED,CK_BYTE_ARRAY.class);
 	}
 	public static ATTRIBUTE find(ATTRIBUTE[] template, ATTRIBUTE_TYPE type){
@@ -114,6 +114,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		setDataLength((int) len);
 	}
 	protected void setCData(long CPtr,long len){
+		cdata = new CK_BYTE_ARRAY(CPtr,false);
 		setPValue(CPtr);
 		setDataLength((int) len);
 	}
@@ -128,14 +129,16 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		return (getCDataPtr() == 0);
 	}
 	protected CK_BYTE_ARRAY getCData(){
-		return new CK_BYTE_ARRAY(getCDataPtr(), false);
+		return cdata;
 	}
 // end	
 	
 	public ATTRIBUTE(long cPtr, boolean cMemoryOwn) throws PKCS11Error{
 		super(cPtr,cMemoryOwn);
 		if(cPtr == 0)
-			return;
+			throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
+
+		cdata = new CK_BYTE_ARRAY(getCDataPtr(),false);
 		this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
 		this.datatype = datatypeof(this.type);
 	}
@@ -143,6 +146,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	public ATTRIBUTE(ATTRIBUTE_TYPE type, byte[] val) throws PKCS11Error {
 		super();
 		this.type = type;
+		setType(type.swigValue());
 		this.datatype = datatypeof(type);
 		setNewCData(val.length);//alloc cmem
 		Util.copyByteArrayToCData(val, cdata);//copy to cmem
@@ -150,6 +154,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	public ATTRIBUTE(ATTRIBUTE_TYPE type, boolean val) throws PKCS11Error {
 		super();
 		this.type = type;
+		setType(type.swigValue());
 		this.datatype = datatypeof(type);
 		setNewCData(1);//alloc cmem
 		copyFromBoolean(val);
@@ -157,6 +162,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	public <T extends EnumBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
 		super();
 		this.type = type;
+		setType(type.swigValue());
 		this.datatype = datatypeof(type);
 		if(val == null || !datatype.equals(val.getClass())){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
@@ -183,6 +189,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		this.type = type;
 		setType(type.swigValue());
 		this.datatype = datatypeof(type);
+		setCData(0, 0);
 	}
 	public ATTRIBUTE clone(){
 		try {
@@ -207,6 +214,14 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}else{
 			return false;
 		}
+	}
+	protected long copyRawToLong() throws PKCS11Error{
+		if(isCDataNULL() || getDataLength() < 8){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		byte[] data = Util.copyCDataToByteArray(getCData(), 8);
+		ByteBuffer buf = ByteBuffer.wrap(data);
+		return buf.getLong();
 	}
 	public long copyToLong() throws PKCS11Error{
 		if(!datatype.equals(long.class) || isCDataNULL() || getDataLength() < 8){
@@ -243,7 +258,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
 		try {
-			return (T) req_type.getMethod("swigToEnum", int.class).invoke(null, copyToLong());
+			
+			return (T) req_type.getMethod("swigToEnum", int.class).invoke(null, (int) copyRawToLong());
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {

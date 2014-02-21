@@ -31,7 +31,6 @@ public class PKCS11Object {
 		}
 		return res;
 	}
-	
 	public boolean query(ATTRIBUTE[] attributes){
 		if(attributes == null){
 			return true;
@@ -44,7 +43,5 @@ public class PKCS11Object {
 			}
 		}
 		return true;
-	}
-	
-	
+	}	
 }

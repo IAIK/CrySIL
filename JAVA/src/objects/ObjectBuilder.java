@@ -25,10 +25,12 @@ public class ObjectBuilder {
 	private static ATTRIBUTE[] defaultKey_template;
 	static{
 		try {
-		defaultKey_template[1] = new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true);
-		defaultKey_template[2] = new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,true);
-		defaultKey_template[3] = new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,false);
-		defaultKey_template[4] = new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY);
+			defaultKey_template = new ATTRIBUTE[]{
+					new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true),
+					new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,true),
+					new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,false),
+					new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY)
+			};
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,9 +40,11 @@ public class ObjectBuilder {
 	private static ATTRIBUTE[] defaultTemplate_secretKey;
 	static {
 		try {
-		defaultTemplate_secretKey[1] = new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.SECRET_KEY);
-		defaultTemplate_secretKey[2] = new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false);
-		defaultTemplate_secretKey[3] = new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true);
+		defaultTemplate_secretKey = new ATTRIBUTE[]{
+				new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.SECRET_KEY),
+				new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false),
+				new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true)
+			};
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
