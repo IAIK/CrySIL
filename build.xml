@@ -23,7 +23,7 @@
 		<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
     <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
 
-    <property name="debug" value="true"/>
+    <property name="debug" value="false"/>
     <property name="debuglevel" value="source,lines,vars"/>
      
      

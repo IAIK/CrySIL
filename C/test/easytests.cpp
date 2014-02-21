@@ -218,3 +218,64 @@ TEST(FooTest, createobj){
 			ASSERT_EQ(ret,CKR_OK);
 }
 
+
+TEST(FooTest, createfindobj){
+	std::string id = "testing";
+	CK_RV ret;
+
+	CK_SLOT_ID_PTR ids = NULL;
+	CK_ULONG size = 0;
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+	ids = new CK_SLOT_ID[size];
+	ret = C_GetSlotList(TRUE,ids,&size);
+		ASSERT_EQ(ret,CKR_OK);
+
+	CK_SESSION_HANDLE sess;
+	ret = C_OpenSession(ids[0],CKF_SERIAL_SESSION|CKF_RW_SESSION,(void*)(id.c_str()),NULL,&sess);
+		ASSERT_EQ(ret,CKR_OK);
+
+	CK_OBJECT_CLASS	keyClass = CKO_PUBLIC_KEY;
+	CK_KEY_TYPE keyType = CKK_RSA;
+	CK_BYTE modulus[] = {"modulo"};
+	CK_BYTE exponent[] = {"exponent"};
+	CK_BBOOL trueval = CK_TRUE;
+
+	CK_ATTRIBUTE keyTemplate[] = {
+		{CKA_CLASS, &keyClass, sizeof(keyClass)},
+		{CKA_KEY_TYPE, &keyType, sizeof(keyType)},
+		{CKA_WRAP, &trueval, sizeof(trueval)},
+		{CKA_MODULUS, modulus, sizeof(modulus)},
+		{CKA_PUBLIC_EXPONENT, exponent, sizeof(exponent)}
+		};
+	CK_OBJECT_HANDLE cobjs = 0;
+	CK_OBJECT_HANDLE fobjs = 0;
+	ret = C_CreateObject(sess, keyTemplate, 5, &cobjs);
+		ASSERT_EQ(ret,CKR_OK);
+		ASSERT_NE(cobjs,0);
+
+	ret = C_FindObjectsInit(sess,NULL,0);
+		ASSERT_EQ(ret,CKR_OK);
+	size = 0;
+	ret = C_FindObjects(sess, &fobjs, 1,&size);
+	ASSERT_EQ(ret,CKR_OK);
+	ASSERT_EQ(fobjs,fobjs);
+
+	ret = C_FindObjectsFinal(sess);
+	ASSERT_EQ(ret,CKR_OK);
+	cout << "2nd Find RUN: " << size <<endl;
+
+
+	ret = C_FindObjectsInit(sess,keyTemplate,5);
+		ASSERT_EQ(ret,CKR_OK);
+	fobjs = 0;
+	cobjs = 0;
+	size = 0;
+	ret = C_FindObjects(sess, &fobjs, 1,&size);
+	ASSERT_EQ(ret,CKR_OK);
+	ASSERT_EQ(fobjs,fobjs);
+	ret = C_FindObjectsFinal(sess);
+	ASSERT_EQ(ret,CKR_OK);
+}
+
+
