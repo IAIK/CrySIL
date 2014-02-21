@@ -135,9 +135,10 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  Slot slot = getRM().getSlotByID(slotID);
 
 		  ServerInfo s = slot.getServerInfo();
-		  pInfo.setLabel(s.getName());//32 char
-		  pInfo.setManufacturerID("IAIK");
-		  pInfo.setModel("");//32
+		  pInfo.setLabel(Util.fixStringLen(s.getName(),32));//32 char
+		  pInfo.setManufacturerID(Util.fixStringLen("IAIK", 32));
+		  pInfo.setModel(Util.fixStringLen("", 32));//32
+		  pInfo.setSerialNumber(Util.fixStringLen("0.1", 32));
 
 		  long flags = Util.initFlags;
 		  flags = Util.setFlag(flags,CKF_WRITE_PROTECTED);
@@ -343,6 +344,8 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 
 		  pInfo.getLibraryVersion().setMajor((short) 1);
 		  pInfo.getLibraryVersion().setMinor((short) 0);
+		  
+		  pInfo.setLibraryDescription(Util.fixStringLen("skytrust pkcs11 library", 32));
 
 		  return RETURN_TYPE.OK.swigValue();
 	  } catch (PKCS11Error e) {
@@ -374,7 +377,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  long buffersize = pulCount.value();
 		  pulCount.assign(mech_count);
 		  
-		  if(pMechanismList.getCPtr()==0L){
+		  if(pMechanismList==null){
 			  System.err.println("\nC_GetMechanismList.........ende0  ...........");
 			  return RETURN_TYPE.OK.swigValue();
 		  }
