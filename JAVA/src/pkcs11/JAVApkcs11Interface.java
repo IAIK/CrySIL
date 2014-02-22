@@ -278,6 +278,20 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
+  public static long C_FindObjectsInit(long hSession, ATTRIBUTE[] pTemplate, long ulCount) {
+	  System.err.println("\nthis is java calling FindobjectsInit");
+	  try {
+		  Session session = getRM().getSessionByHandle(hSession);
+		  session.initFind(pTemplate);
+	  } catch (PKCS11Error e) {
+		  e.printStackTrace();
+		  return e.getCode();
+	  }catch (Exception e){
+		  e.printStackTrace();
+	  }
+	  return RETURN_TYPE.OK.swigValue();
+  }
+
   public static long C_FindObjects(long hSession, CK_ULONG_JPTR phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) {
 	  System.err.println("\nthis is java calling Findobjects");
 	  try {
@@ -289,7 +303,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		}
 		session.getSlot().objectManager.findObjects(session.findObjectsHelper.pTemplate);
 		
-		//TODO noch nicht fertig
 	} catch (PKCS11Error e) {
 		e.printStackTrace();
 		System.err.println("findobjects....error1");
@@ -314,21 +327,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 	  
 
-  public static long C_FindObjectsInit(long hSession, ATTRIBUTE[] pTemplate, long ulCount) {
-	  System.err.println("\nthis is java calling FindobjectsInit");
-	  try {
-		Session session = getRM().getSessionByHandle(hSession);
-		IServerSession sSession = session.getSlot().getServersession();
-		session.initFind(pTemplate);
-		//madness
-	} catch (PKCS11Error e) {
-		e.printStackTrace();
-		return e.getCode();
-	}catch (Exception e){
-		e.printStackTrace();
-	}
-	  return RETURN_TYPE.OK.swigValue();
-  }
 
   public static long C_GenerateRandom(long hSession, CK_BYTE_ARRAY RandomData, long ulRandomLen) {
 	  return RETURN_TYPE.OK.swigValue();

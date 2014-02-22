@@ -215,6 +215,8 @@ public class Session {
 		if(findObjectsHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
+		getSlot().objectManager.findObjects(attr);
+		
 		findObjectsHelper = new FindObjectsHelper(attr);
 	}
 }

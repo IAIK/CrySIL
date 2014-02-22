@@ -259,7 +259,8 @@ TEST(FooTest, createfindobj){
 	size = 0;
 	ret = C_FindObjects(sess, &fobjs, 1,&size);
 	ASSERT_EQ(ret,CKR_OK);
-	ASSERT_EQ(fobjs,fobjs);
+	ASSERT_EQ(cobjs,fobjs);
+	ASSERT_EQ(size,1);
 
 	ret = C_FindObjectsFinal(sess);
 	ASSERT_EQ(ret,CKR_OK);
@@ -269,11 +270,12 @@ TEST(FooTest, createfindobj){
 	ret = C_FindObjectsInit(sess,keyTemplate,5);
 		ASSERT_EQ(ret,CKR_OK);
 	fobjs = 0;
-	cobjs = 0;
 	size = 0;
 	ret = C_FindObjects(sess, &fobjs, 1,&size);
 	ASSERT_EQ(ret,CKR_OK);
-	ASSERT_EQ(fobjs,fobjs);
+	ASSERT_EQ(cobjs,fobjs);
+	ASSERT_EQ(size,1);
+
 	ret = C_FindObjectsFinal(sess);
 	ASSERT_EQ(ret,CKR_OK);
 }
