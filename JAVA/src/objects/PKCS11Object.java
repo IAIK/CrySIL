@@ -1,6 +1,7 @@
 package objects;
 
 import java.util.HashMap;
+
 import objects.ATTRIBUTE;
 import pkcs11.PKCS11Error;
 import proxys.ATTRIBUTE_TYPE;
@@ -35,8 +36,9 @@ public class PKCS11Object {
 		if(attributes == null){
 			return true;
 		}
-		for(ATTRIBUTE tmp : attributes){
-			if(tmp == null || tmp.query(this.attributes.get(tmp.getType()))){
+		for(ATTRIBUTE query_attr : attributes){
+			ATTRIBUTE attr  = this.attributes.get(query_attr.getTypeEnum());
+			if(attr != null && attr.query(query_attr)){
 				continue;
 			}else{
 				return false;

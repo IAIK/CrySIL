@@ -351,24 +351,26 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		buf.putLong(v);
 		Util.copyByteArrayToCData(tmp, getCData());
 	}
-	public boolean query(ATTRIBUTE other){		
-		if(!this.type.equals(other.type) || !this.datatype.equals(other.datatype)){
+	public boolean query(ATTRIBUTE query_attr){		
+		if(query_attr == null){
+			return true;
+		}
+		if(!this.type.equals(query_attr.type) || !this.datatype.equals(query_attr.datatype)){
 			return false;
 		}
-		if(other.isCDataNULL()){
+		if(query_attr.isCDataNULL()){
 			return true; //if query attr has no data it is irrelevant
 		}
-		
 		//proof data
 		if(this.isCDataNULL()){
 			return false; 
 		}
-		if(this.getDataLength() < other.getDataLength()){
+		if(this.getDataLength() < query_attr.getDataLength()){
 			return false; //query cannot specify more information than searched attr has
 		}
-		CK_BYTE_ARRAY other_cdata = other.getCData();
+		CK_BYTE_ARRAY other_cdata = query_attr.getCData();
 		boolean data_eq = true;
-		for(int i=0;i<other.getDataLength();i++){
+		for(int i=0;i<query_attr.getDataLength();i++){
 			if(other_cdata.getitem(i) != this.cdata.getitem(i)){
 				data_eq = false;
 				break;
