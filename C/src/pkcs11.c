@@ -321,12 +321,12 @@ long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->cls !=0)
 {
-        jmethodID C_FindObjectsJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_FindObjects", "(JLproxys/CK_ULONG_JPTR;JLproxys/CK_ULONG_JPTR;)J");
+        jmethodID C_FindObjectsJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_FindObjects", "(JLproxys/CK_ULONG_ARRAY;JLproxys/CK_ULONG_JPTR;)J");
         
         if(C_FindObjectsJava !=0)
         {
 jobject obj1;
- if(phObject != NULL) { jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
+ if(phObject != NULL) { jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_ARRAY"); //
          jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
                                 obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, phObject, JNI_FALSE);
 
