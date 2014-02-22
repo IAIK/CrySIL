@@ -45,14 +45,13 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		return RETURN_TYPE.OK.swigValue();
 	}
 	
-  private static void checkNullPtr(StructBase ...structs) throws PKCS11Error{
-	  for(StructBase s:structs){
+  private static void checkNullPtr(Object ...structs) throws PKCS11Error{
+	  for(Object s:structs){
 		  if(s == null /*|| s.isNullPtr()*/){
 			  throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 		  }
 	  }
   }
-	
 	
   public static long C_OpenSession(long slotID, long flags, CK_BYTE_ARRAY pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_JPTR phSession) {
 	  System.err.println("C_OpenSession ............start.............");
@@ -263,15 +262,50 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 
   public static long C_DecryptInit(long hSession, MECHANISM pMechanism, long hKey) {
-	  return RETURN_TYPE.OK.swigValue();
+	  try {
+		  checkNullPtr(pMechanism);
+		  Session session = getRM().getSessionByHandle(hSession);	
+		  session.decryptInit(pMechanism, hKey);
+		  return RETURN_TYPE.OK.swigValue();
+	  } catch (PKCS11Error e) {
+		  e.printStackTrace();
+		  return e.getCode();
+	  }
   }
 
   public static long C_DecryptUpdate(long hSession, byte[] pEncryptedPart, long ulEncryptedPartLen, CK_BYTE_ARRAY pPart, CK_ULONG_JPTR pulPartLen) {
-	  return RETURN_TYPE.OK.swigValue();
+	  try {
+		  checkNullPtr(pulPartLen,pEncryptedPart);
+		  Session session = getRM().getSessionByHandle(hSession);
+		  session.decrypt(pEncryptedPart);
+
+		  byte[] decryptedPart = session.decryptGetData();
+		  if(pPart == null){
+			  pulPartLen.assign(decryptedPart.length);
+			  return RETURN_TYPE.OK.swigValue();
+		  }else if(pulPartLen.value() < decryptedPart.length){
+			  pulPartLen.assign(decryptedPart.length);
+			  return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
+		  }else{
+			  Util.copyByteArrayToCData(decryptedPart, pPart);
+			  System.err.println("\n slotlist..ende..............................................");
+			  return RETURN_TYPE.OK.swigValue();
+		  }
+	  } catch (PKCS11Error e) {
+		  e.printStackTrace();
+		  return e.getCode();
+	  }
   }
 
   public static long C_DestroyObject(long hSession, long hObject) {
-	  return RETURN_TYPE.OK.swigValue();
+	  try {
+		  Session session = getRM().getSessionByHandle(hSession);
+		  session.getToken().objectManager.deleteObject(hObject);
+		  return RETURN_TYPE.OK.swigValue();
+	  } catch (PKCS11Error e) {
+		  e.printStackTrace();
+		  return e.getCode();
+	  }
   }
 
   public static long C_Finalize(CK_BYTE_ARRAY pReserved) {
