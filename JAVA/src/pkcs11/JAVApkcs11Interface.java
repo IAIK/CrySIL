@@ -278,18 +278,37 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  return RETURN_TYPE.OK.swigValue();
   }
 
-  public static long C_FindObjects(long hSession, CK_ULONG_JPTR phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) {
+  public static long C_FindObjectsInit(long hSession, ATTRIBUTE[] pTemplate, long ulCount) {
+	  System.err.println("\nthis is java calling FindobjectsInit");
+	  try {
+		  Session session = getRM().getSessionByHandle(hSession);
+		  session.find(pTemplate);
+		  
+	  } catch (PKCS11Error e) {
+		  e.printStackTrace();
+		  return e.getCode();
+	  }catch (Exception e){
+		  e.printStackTrace();
+	  }
+	  return RETURN_TYPE.OK.swigValue();
+  }
+
+  public static long C_FindObjects(long hSession, CK_ULONG_ARRAY phObject, long ulMaxObjectCount, CK_ULONG_JPTR pulObjectCount) {
 	  System.err.println("\nthis is java calling Findobjects");
 	  try {
+		checkNullPtr(phObject,pulObjectCount);
 		Session session = getRM().getSessionByHandle(hSession);
 		
-		if(session.findObjectsHelper == null){
-			System.err.println("operation not initalized");
-			return RETURN_TYPE.OPERATION_NOT_INITIALIZED.swigValue();
-		}
-		session.getSlot().objectManager.findObjects(session.findObjectsHelper.pTemplate);
+		ArrayList<Long> handles = session.findGetData();
 		
-		//TODO noch nicht fertig
+		Iterator<Long> it = handles.iterator();
+		int size=0;
+		for(;size<ulMaxObjectCount && it.hasNext();size++){
+			phObject.setitem(size, it.next());
+			it.remove();
+		}
+		pulObjectCount.assign(size);
+		
 	} catch (PKCS11Error e) {
 		e.printStackTrace();
 		System.err.println("findobjects....error1");
@@ -305,7 +324,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  System.err.println("\nthis is java calling FindobjectsFinal");
 	  try {
 		Session session = getRM().getSessionByHandle(hSession);
-		session.findObjectsHelper = null; 
+		session.findFinal();
 	} catch (PKCS11Error e) {
 		e.printStackTrace();
 		return e.getCode();
@@ -314,21 +333,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   }
 	  
 
-  public static long C_FindObjectsInit(long hSession, ATTRIBUTE[] pTemplate, long ulCount) {
-	  System.err.println("\nthis is java calling FindobjectsInit");
-	  try {
-		Session session = getRM().getSessionByHandle(hSession);
-		IServerSession sSession = session.getSlot().getServersession();
-		session.initFind(pTemplate);
-		//madness
-	} catch (PKCS11Error e) {
-		e.printStackTrace();
-		return e.getCode();
-	}catch (Exception e){
-		e.printStackTrace();
-	}
-	  return RETURN_TYPE.OK.swigValue();
-  }
 
   public static long C_GenerateRandom(long hSession, CK_BYTE_ARRAY RandomData, long ulRandomLen) {
 	  return RETURN_TYPE.OK.swigValue();

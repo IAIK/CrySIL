@@ -210,11 +210,23 @@ public class Session {
 		encryptHelper = null;
 	}
 	
-	
-	public void initFind(ATTRIBUTE[] attr) throws PKCS11Error{
+	public void find(ATTRIBUTE[] attr) throws PKCS11Error{
 		if(findObjectsHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		findObjectsHelper = new FindObjectsHelper(attr);
+		ArrayList<Long> found_objs = getSlot().objectManager.findObjects(attr);
+		findObjectsHelper = new FindObjectsHelper(found_objs);
+	}
+	public ArrayList<Long> findGetData() throws PKCS11Error{
+		if(findObjectsHelper == null){
+			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
+		}
+		return findObjectsHelper.foundObjects;
+	}
+	public void findFinal() throws PKCS11Error{
+		if(findObjectsHelper == null){
+			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
+		}
+		findObjectsHelper = null;
 	}
 }
