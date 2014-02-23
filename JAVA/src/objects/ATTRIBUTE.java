@@ -3,6 +3,7 @@ package objects;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -169,7 +170,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		setNewCData(8);
 		byte[] enum_value = new byte[8];
-		ByteBuffer.wrap(enum_value).putLong(val.swigValue());
+		ByteBuffer.wrap(enum_value).order(ByteOrder.LITTLE_ENDIAN).putLong(val.swigValue());
 		Util.copyByteArrayToCData(enum_value, cdata);
 	}
 	public <T extends StructSizeBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
@@ -228,7 +229,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		byte[] data = Util.copyCDataToByteArray(getCData(), 8);
 		ByteBuffer buf = ByteBuffer.wrap(data);
-		return buf.getLong();
+		long ret = buf.order(ByteOrder.LITTLE_ENDIAN).getLong();
+		return ret;
 	}
 	public long copyToLong() throws PKCS11Error{
 		if(!datatype.equals(long.class) || isCDataNULL() || getDataLength() < 8){
@@ -236,7 +238,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		byte[] data = Util.copyCDataToByteArray(getCData(), 8);
 		ByteBuffer buf = ByteBuffer.wrap(data);
-		return buf.getLong();
+		return buf.order(ByteOrder.LITTLE_ENDIAN).getLong();
 	}
 	public byte[] copyToByteArray() throws PKCS11Error{
 		System.out.println("getting data as byte array, but dyata is: "+ datatype);
@@ -265,8 +267,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
 		try {
-			
-			return (T) req_type.getMethod("swigToEnum", int.class).invoke(null, (int) copyRawToLong());
+			long id = copyRawToLong();
+			return (T) req_type.getMethod("swigToEnum", int.class).invoke(null, (int) id);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {

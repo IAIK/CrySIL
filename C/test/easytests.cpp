@@ -333,7 +333,7 @@ TEST_F(FooTest, createobjDefaultvals){
 	CK_ATTRIBUTE keyTemplate[] = {
 			{CKA_CLASS, &keyClass, sizeof(keyClass)},
 			{CKA_KEY_TYPE, &keyType, sizeof(keyType)},
-			{CKA_WRAP, &trueval, sizeof(trueval)},
+			{CKA_MODIFIABLE, &trueval, sizeof(trueval)},
 			{CKA_MODULUS, modulus, sizeof(modulus)},
 			{CKA_PUBLIC_EXPONENT, exponent, sizeof(exponent)}
 	};
@@ -349,7 +349,9 @@ TEST_F(FooTest, createobjDefaultvals){
 
 	ret = C_GetAttributeValue(hSession, hKey, gettemplate,2);
 	ASSERT_EQ(sensitive,CK_FALSE);
-	ASSERT_EQ(modifieable,CK_FALSE);
+	ASSERT_EQ(modifieable,CK_TRUE);
+	ASSERT_EQ(gettemplate[0].ulValueLen,1);
+	ASSERT_EQ(gettemplate[1].ulValueLen,1);
 }
 
 TEST_F(FooTest, createfindobj){
