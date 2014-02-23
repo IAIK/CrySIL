@@ -78,15 +78,15 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		return null;
 	}
-	public static ATTRIBUTE[] clone(ATTRIBUTE[] template){
+	public static ATTRIBUTE[] clone(ATTRIBUTE[] template) throws PKCS11Error{
 		ATTRIBUTE[] clone = new ATTRIBUTE[template.length];
 		for(int i=0;i<template.length;i++){
-			clone[i] = template[i].clone();
+			clone[i] = template[i].createClone();
 		}
 		return clone;
 	}
-	public static ATTRIBUTE clone(ATTRIBUTE attr){
-		return attr.clone();
+	public static ATTRIBUTE clone(ATTRIBUTE attr) throws PKCS11Error{
+		return attr.createClone();
 	}
 // local Helpers	
 	protected Class<?> datatypeof(ATTRIBUTE_TYPE type) throws PKCS11Error{
@@ -191,15 +191,22 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		this.datatype = datatypeof(type);
 		setCData(0, 0);
 	}
-	public ATTRIBUTE clone(){
-		try {
+	
+	public ATTRIBUTE createClone() throws PKCS11Error{
 			ATTRIBUTE clone = new ATTRIBUTE(type);
 			clone.setNewCData(getDataLength());
 			Util.copy(cdata, clone.cdata, getDataLength());
 			return clone;
-		} catch (PKCS11Error e) {
-			return null;
+	}
+	public void copyDataTo(ATTRIBUTE clone) throws PKCS11Error{
+		if(!datatype.equals(clone.datatype) || isCDataNULL()){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
+		if(clone.isCDataNULL() || clone.getDataLength() < getDataLength()){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		clone.setDataLength(getDataLength());
+		Util.copy(cdata, clone.cdata, getDataLength());
 	}
 	public ATTRIBUTE_TYPE getTypeEnum(){
 		return type;

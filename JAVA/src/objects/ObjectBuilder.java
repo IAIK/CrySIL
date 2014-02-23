@@ -51,10 +51,10 @@ public class ObjectBuilder {
 		}
 	};
 	
-	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ATTRIBUTE[] template){
+	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ATTRIBUTE[] template) throws PKCS11Error{
 		Map<ATTRIBUTE_TYPE,ATTRIBUTE> res = new HashMap<>();
 		for(ATTRIBUTE attr : template){
-			res.put(attr.getTypeEnum(), attr.clone());
+			res.put(attr.getTypeEnum(), attr.createClone());
 		}
 		return res;
 	}

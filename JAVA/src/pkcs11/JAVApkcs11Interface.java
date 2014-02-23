@@ -114,6 +114,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			  pulCount.assign(slotlist.size());
 			  return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
 		  }else{
+			  pulCount.assign(slotlist.size());
 			  Iterator<Slot> it = slotlist.iterator();
 			  for(int i=0;it.hasNext();i++){
 				  pSlotList.setitem(i, it.next().getID());
@@ -202,26 +203,27 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
 
 		  RETURN_TYPE res = RETURN_TYPE.OK;
+		  ATTRIBUTE src;
 		  for(ATTRIBUTE attr : pTemplate){
-			  ATTRIBUTE src;
 			  try{
-				  src = obj.getAttribute(ATTRIBUTE_TYPE.swigToEnum((int) attr.getType()));
+			  	  src = obj.getAttribute(attr.getTypeEnum());
 			  }catch(PKCS11Error e){
 				  if(e.getType() == RETURN_TYPE.ATTRIBUTE_TYPE_INVALID){
-					  attr.setUlValueLen(-1);
+					  attr.setDataLength(-1);
 					  res =  RETURN_TYPE.ATTRIBUTE_TYPE_INVALID;
 					  continue;
 				  }else{
 					  throw e;
 				  }
 			  }
+			  //TODO Attribute die ein array als Daten haben richtig behandeln
 			  if(attr.isCDataNULL()){
-				  attr.setUlValueLen(src.getUlValueLen());
-			  }else if(attr.getDataLength() >= src.getDataLength()){
-				  //TODO copy Data from src to attr
-			  }else{
-				  attr.setUlValueLen(-1);
+				  attr.setDataLength(src.getDataLength());
+			  }else if(attr.getDataLength() < src.getDataLength()){
+				  attr.setDataLength(-1);
 				  res = RETURN_TYPE.BUFFER_TOO_SMALL;
+			  }else{
+				  src.copyDataTo(attr);
 			  }
 		  }
 		  return res.swigValue();
@@ -238,7 +240,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
 		  
 		  for(ATTRIBUTE attr : pTemplate){
-			  obj.setAttribute(attr.clone());
+			  obj.setAttribute(attr.createClone());
 		  }
 		  return RETURN_TYPE.OK.swigValue();
 	  } catch (PKCS11Error e) {
@@ -287,6 +289,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			  pulPartLen.assign(decryptedPart.length);
 			  return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
 		  }else{
+			  pulPartLen.assign(decryptedPart.length);
 			  Util.copyByteArrayToCData(decryptedPart, pPart);
 			  System.err.println("\n slotlist..ende..............................................");
 			  return RETURN_TYPE.OK.swigValue();
@@ -408,28 +411,27 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   public static long C_GetMechanismList(long slotID, CK_ULONG_ARRAY pMechanismList, CK_ULONG_JPTR pulCount) {
 	  System.err.println("\nC_GetMechanismList...........................");
 	  try {
+		  checkNullPtr(pulCount);
 		  Slot slot=getRM().getSlotByID(slotID);
 		  int mech_count = slot.getMechanisms().length;
-
-		  
-		  long buffersize = pulCount.value();
-		  pulCount.assign(mech_count);
 		  
 		  if(pMechanismList==null){
 			  System.err.println("\nC_GetMechanismList.........ende0  ...........");
+			  pulCount.assign(mech_count);
+			  return RETURN_TYPE.OK.swigValue();
+		  }else if(pulCount.value() < mech_count){
+			  System.err.println("\nC_GetMechanismList.........buffer  ...........");
+			  pulCount.assign(mech_count);
+			  return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
+		  }else{
+			  pulCount.assign(mech_count);
+			  MECHANISM_TYPES[] mechanisms = slot.getMechanisms();
+			  for(int i=0; i<mech_count; i++){
+				  pMechanismList.setitem(i, mechanisms[i].swigValue());
+			  }
+			  System.err.println("\nC_GetMechanismList.........ende  ...........");
 			  return RETURN_TYPE.OK.swigValue();
 		  }
-		  if(buffersize < mech_count){
-			  System.err.println("\nC_GetMechanismList.........buffer  ...........");
-			  return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
-		  }
-
-		  MECHANISM_TYPES[] mechanisms = slot.getMechanisms();
-		  for(int i=0; i<mech_count; i++){
-			  pMechanismList.setitem(i, mechanisms[i].swigValue());
-		  }
-		  System.err.println("\nC_GetMechanismList.........ende  ...........");
-		  return RETURN_TYPE.OK.swigValue();
 	  } catch (PKCS11Error e) {
 		  return e.getCode();
 	  } 
