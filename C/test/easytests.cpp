@@ -307,6 +307,50 @@ TEST_F(FooTest, createobj){
 			ASSERT_EQ(ret,CKR_OK);
 }
 
+TEST_F(FooTest, createobjDefaultvals){
+	std::string name = "testing";
+	CK_RV ret;
+
+	CK_SLOT_ID_PTR ids = NULL;
+	CK_ULONG size = 0;
+	ret = C_GetSlotList(TRUE,ids,&size);
+	ASSERT_EQ(ret,CKR_OK);
+	ids = new CK_SLOT_ID[size];
+	ret = C_GetSlotList(TRUE,ids,&size);
+	ASSERT_EQ(ret,CKR_OK);
+
+	CK_SESSION_HANDLE hSession;
+	ret = C_OpenSession(ids[0],CKF_SERIAL_SESSION|CKF_RW_SESSION,(void*)(name.c_str()),NULL,&hSession);
+	ASSERT_EQ(ret,CKR_OK);
+
+	CK_OBJECT_HANDLE hKey;
+	CK_OBJECT_CLASS	keyClass = CKO_PUBLIC_KEY;
+	CK_KEY_TYPE keyType = CKK_RSA;
+	CK_BYTE modulus[] = {"modulus"};
+	CK_BYTE exponent[] = {"exponent"};
+	CK_BBOOL trueval = CK_TRUE;
+
+	CK_ATTRIBUTE keyTemplate[] = {
+			{CKA_CLASS, &keyClass, sizeof(keyClass)},
+			{CKA_KEY_TYPE, &keyType, sizeof(keyType)},
+			{CKA_WRAP, &trueval, sizeof(trueval)},
+			{CKA_MODULUS, modulus, sizeof(modulus)},
+			{CKA_PUBLIC_EXPONENT, exponent, sizeof(exponent)}
+	};
+	/* Create an RSA public key object */
+	ret = C_CreateObject(hSession, keyTemplate, 5, &hKey);
+	ASSERT_EQ(ret,CKR_OK);
+
+	CK_BBOOL sensitive,modifieable;
+	CK_ATTRIBUTE gettemplate[] = {
+			{CKA_MODIFIABLE, &modifieable, 1},
+			{CKA_SENSITIVE, &sensitive, 1}
+	};
+
+	ret = C_GetAttributeValue(hSession, hKey, gettemplate,2);
+	ASSERT_EQ(sensitive,CK_FALSE);
+	ASSERT_EQ(modifieable,CK_FALSE);
+}
 
 TEST_F(FooTest, createfindobj){
 	std::string id = "testing";
