@@ -5,8 +5,6 @@ import gui.Server;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -98,7 +96,7 @@ public class ServerSession implements IServerSession {
 	}
 	private SResponse handleAuth(SResponse skyTrustResponse) throws PKCS11Error{
 		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
-        SAuthType authType = authResponse.getAuthType();
+        SAuthType authType = authResponse.getAuthTypes().get(0);
         //ask User for Credentials
         if(credentials == null){
         	credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);
