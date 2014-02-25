@@ -22,5 +22,5 @@ public interface IToken {
 
 	public abstract Server.ServerInfo getInfo();
 
-	public abstract List<SKey> getObjects();
+	public abstract List<PKCS11Object> getObjects();
 }

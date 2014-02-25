@@ -3,6 +3,7 @@ package pkcs11;
 import gui.Server;
 import gui.Server.ServerInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
@@ -51,9 +52,15 @@ public class Token implements IToken {
 	}
 	
 	@Override
-	public List<SKey> getObjects(){
+	public List<PKCS11Object> getObjects(){
 		try {
-			return server.getKeyList();
+			List<SKey> list = server.getKeyList();
+			ArrayList<PKCS11Object> objlist = new ArrayList<PKCS11Object>();
+			for(SKey key : list){
+				objlist.add(PKCS11SkyTrustMapper.mapToCert(key));
+				objlist.add(PKCS11SkyTrustMapper.mapToPrivate(key));
+			}
+			return objlist;
 		} catch (PKCS11Error e) {
 			return null;
 		}
