@@ -92,8 +92,8 @@ public class Slot{
 	}
 	public void delSession(long sessionid) throws PKCS11Error{
 		Iterator<Session> it = sessionList.iterator();
-		for(Session s = null;it.hasNext();s = it.next()){
-			if(s!=null && s.getID() == sessionid){
+		while(it.hasNext()){
+			if(it.next().getID() == sessionid){
 				it.remove();
 				return;
 			}

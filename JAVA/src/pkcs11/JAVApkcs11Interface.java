@@ -23,6 +23,7 @@ import proxys.CK_ULONG_JPTR;
 import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
+import sun.swing.SwingUtilities2.Section;
 import objects.ATTRIBUTE;
 
 
@@ -167,7 +168,19 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 
   }
   public static long C_Login(long hSession, long userType, String pPin, long ulPinLen) {
-	  return RETURN_TYPE.OK.swigValue();
+	  if(userType == pkcs11Constants.CKU_SO){
+		  return RETURN_TYPE.USER_TYPE_INVALID.swigValue();
+	  }
+	  if(userType == pkcs11Constants.CKU_CONTEXT_SPECIFIC){
+		  return RETURN_TYPE.USER_TYPE_INVALID.swigValue();
+	  }
+	  try {
+		  getRM().getSlotBySessionHandle(hSession).login(Session.USER_TYPE.USER);
+		  return RETURN_TYPE.OK.swigValue();
+	  } catch (PKCS11Error e) {
+		  e.printStackTrace();
+		  return e.getCode();
+	  }
   }
 
   public static long C_Logout(long hSession) {

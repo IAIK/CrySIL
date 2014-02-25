@@ -42,9 +42,11 @@ public class ObjectManager {
 		return id;
 	}
 
-	synchronized public long createObject(SKey key) throws PKCS11Error {
+	synchronized public long addObject(PKCS11Object object) throws PKCS11Error {
+		if(object == null){
+			throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
+		}
 		Long id = getNextId();
-		PKCS11Object object = ObjectBuilder.createFromTemplate(PKCS11SkyTrustMapper.mapKey(key));
 		objects.add(object);
 		ids.add(id);
 		return id;

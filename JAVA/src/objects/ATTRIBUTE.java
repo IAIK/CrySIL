@@ -212,7 +212,6 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	public ATTRIBUTE_TYPE getTypeEnum(){
 		return type;
 	}
-
 	public boolean copyToBoolean() throws PKCS11Error{
 		if(!datatype.equals(boolean.class) || isCDataNULL() || getDataLength() < 1){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);

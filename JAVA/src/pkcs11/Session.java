@@ -48,9 +48,9 @@ public class Session {
 			if(getSlot().getUserType() == USER_TYPE.USER){
 				return SESSION_STATE.RW_USER_FUNCTIONS;
 			}else if(getSlot().getUserType() == USER_TYPE.SO){
-				return SESSION_STATE.RW_SO_FUNCTIONS;				
+				return SESSION_STATE.RW_SO_FUNCTIONS;
 			}else{
-				return SESSION_STATE.RW_PUBLIC_SESSION;				
+				return SESSION_STATE.RW_PUBLIC_SESSION;
 			}
 		}else{
 			if(getSlot().getUserType() == USER_TYPE.USER){

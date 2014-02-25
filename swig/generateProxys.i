@@ -80,7 +80,6 @@ typedef struct {
 %include "CKR_enum.h"
 %include "CKO_enum.h"
 
-
 %typemap(javainterfaces, notderived="1") SWIGTYPE  "StructBase"
 %pointer_class(unsigned long int,CK_ULONG_JPTR)
 %array_class(unsigned long int,CK_ULONG_ARRAY)

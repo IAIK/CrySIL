@@ -8,6 +8,7 @@ import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import objects.ATTRIBUTE;
 import objects.MECHANISM;
+import objects.ObjectBuilder;
 import objects.PKCS11Object;
 import proxys.ATTRIBUTE_TYPE;
 import proxys.KEY_TYP;
@@ -28,13 +29,6 @@ public class PKCS11SkyTrustMapper {
 		mechanism_map.put(MECHANISM_TYPES.SHA512_RSA_PKCS,SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_512);
 		mechanism_map.put(MECHANISM_TYPES.SHA224_RSA_PKCS,SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_224);
 	}
-	public static SKey mapKey(PKCS11Object key) throws PKCS11Error{
-		//TODO dummy
-		if(key == null /*|| key is not a keyObj || key is not a SkytrustKey*/){
-			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
-		}
-		return null;
-	}
 	
 	public static SkyTrustAlgorithm mapMechanism(MECHANISM mech) throws PKCS11Error{
 		SkyTrustAlgorithm algo = mechanism_map.get(mech.getType());
@@ -43,34 +37,59 @@ public class PKCS11SkyTrustMapper {
 		}
 		return algo;
 	}
-	public static ATTRIBUTE[] mapKey(SKey key) throws PKCS11Error{
-		//TODO dummy
+	public static SKey mapKey(PKCS11Object key) throws PKCS11Error{
+		if(key == null ){
+			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
+		}
+	    //key is not a keyObj 
+		OBJECT_CLASS objtype = key.getAttribute(ATTRIBUTE_TYPE.CLASS).copyToSwigEnum(OBJECT_CLASS.class);
+		if(objtype != OBJECT_CLASS.CERTIFICATE && objtype != OBJECT_CLASS.PRIVATE_KEY){
+			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
+		}
+		//key is not a SkytrustKey
+		Object skykey = key.getTag();
+		if(skykey == null || !(skykey instanceof SKey)) {
+			throw new PKCS11Error(RETURN_TYPE.KEY_HANDLE_INVALID);
+		}
+		return (SKey) skykey;
+	}
+
+	public static PKCS11Object mapToCert(SKey key) throws PKCS11Error{
+		if(key == null){
+			return null;
+		}
 		ArrayList<ATTRIBUTE> skytrust_template = new ArrayList<>();
-		
-		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,false));
-		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
-		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,true));
-		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,true));
 		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
 		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
-		
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
 		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
+
+		if(!key.getRepresentation().equals("certificate")){
+			return null;
+		}
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
+		//			 skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY));
+		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false));
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true));
+		PKCS11Object obj = ObjectBuilder.createFromTemplate(skytrust_template.toArray(new ATTRIBUTE[0]));
+		obj.setTag(key);
+		return obj;
+	}
+	public static PKCS11Object mapToPrivate(SKey key) throws PKCS11Error{
+		ArrayList<ATTRIBUTE> skytrust_template = new ArrayList<>();
+
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PRIVATE_KEY));
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
+		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
+		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,true));
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
+		skytrust_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,true));
+		skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,false));
 		
-		 switch(key.getRepresentation()){
-		 case "fullKey":
-			 skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
-			 skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,true));
-			 skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
-			 skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PRIVATE_KEY));
-			 break;
-		 case "certificate":
-			 skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
-			 break;
-		 case "handle":
-			 break;
-		 case "keyIdentifier":
-			 break;
-		 }
-		return skytrust_template.toArray(new ATTRIBUTE[0]);
+		PKCS11Object obj = ObjectBuilder.createFromTemplate(skytrust_template.toArray(new ATTRIBUTE[0]));
+		obj.setTag(key);
+		return obj;
 	}
 }

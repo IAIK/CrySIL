@@ -1,7 +1,6 @@
 package objects;
 
 import java.util.HashMap;
-
 import objects.ATTRIBUTE;
 import pkcs11.PKCS11Error;
 import proxys.ATTRIBUTE_TYPE;
@@ -11,6 +10,15 @@ public class PKCS11Object {
 	
 	private HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> attributes = new HashMap<>();
 
+	private Object tag;
+	
+	public void setTag(Object tag){
+		this.tag = tag;
+	}
+	public Object getTag(){
+		return tag;
+	}
+	
 	public PKCS11Object(ATTRIBUTE[] template){
 		for(ATTRIBUTE attr: template){
 			attributes.put(attr.getTypeEnum(), attr);
