@@ -36,7 +36,12 @@ typedef struct {
   }
 %}
 
-
+%typemap(javacode) enum SWIGTYPE %{
+	@Override
+	public int hashCode(){
+		return swigValue;
+	}
+%}
 /* Parse the header file to generate wrappers */
 
 %apply char[] { CK_CHAR_PTR }

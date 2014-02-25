@@ -36,7 +36,6 @@ public class ObjectBuilder {
 			e.printStackTrace();
 		}
 	};
-
 	private static ATTRIBUTE[] defaultTemplate_secretKey;
 	static {
 		try {
@@ -50,11 +49,25 @@ public class ObjectBuilder {
 			e.printStackTrace();
 		}
 	};
+	private static ATTRIBUTE[] defaultTemplate_publicKey;
+	static {
+		try {
+			defaultTemplate_publicKey = new ATTRIBUTE[]{
+				new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY),
+				new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false),
+				new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false),
+				new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY)
+			};
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	};
 	
-	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ATTRIBUTE[] template){
+	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ATTRIBUTE[] template) throws PKCS11Error{
 		Map<ATTRIBUTE_TYPE,ATTRIBUTE> res = new HashMap<>();
 		for(ATTRIBUTE attr : template){
-			res.put(attr.getTypeEnum(), attr.clone());
+			res.put(attr.getTypeEnum(), attr.createClone());
 		}
 		return res;
 	}
@@ -71,7 +84,7 @@ public class ObjectBuilder {
 			 //private key template
 			default_attr = new HashMap<>(copyToMap(defaultTemplate_secretKey));
 		 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
-			 
+			default_attr = new HashMap<>(copyToMap(defaultTemplate_publicKey));
 		 }else if(obj_class.equals(OBJECT_CLASS.CERTIFICATE)){
 			 
 		 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){

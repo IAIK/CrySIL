@@ -50,7 +50,6 @@ public class ResourceManager {
 
 	public static ResourceManager getInstance(String appID){
 		if(_instance==null){
-			
 			try {
 				_instance=new ResourceManager(appID);
 				_instance.updateSlotList();

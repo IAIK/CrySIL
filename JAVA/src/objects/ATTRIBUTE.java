@@ -3,6 +3,7 @@ package objects;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,15 +79,15 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		return null;
 	}
-	public static ATTRIBUTE[] clone(ATTRIBUTE[] template){
+	public static ATTRIBUTE[] clone(ATTRIBUTE[] template) throws PKCS11Error{
 		ATTRIBUTE[] clone = new ATTRIBUTE[template.length];
 		for(int i=0;i<template.length;i++){
-			clone[i] = template[i].clone();
+			clone[i] = template[i].createClone();
 		}
 		return clone;
 	}
-	public static ATTRIBUTE clone(ATTRIBUTE attr){
-		return attr.clone();
+	public static ATTRIBUTE clone(ATTRIBUTE attr) throws PKCS11Error{
+		return attr.createClone();
 	}
 // local Helpers	
 	protected Class<?> datatypeof(ATTRIBUTE_TYPE type) throws PKCS11Error{
@@ -169,7 +170,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		setNewCData(8);
 		byte[] enum_value = new byte[8];
-		ByteBuffer.wrap(enum_value).putLong(val.swigValue());
+		ByteBuffer.wrap(enum_value).order(ByteOrder.LITTLE_ENDIAN).putLong(val.swigValue());
 		Util.copyByteArrayToCData(enum_value, cdata);
 	}
 	public <T extends StructSizeBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
@@ -191,15 +192,22 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		this.datatype = datatypeof(type);
 		setCData(0, 0);
 	}
-	public ATTRIBUTE clone(){
-		try {
+	
+	public ATTRIBUTE createClone() throws PKCS11Error{
 			ATTRIBUTE clone = new ATTRIBUTE(type);
 			clone.setNewCData(getDataLength());
 			Util.copy(cdata, clone.cdata, getDataLength());
 			return clone;
-		} catch (PKCS11Error e) {
-			return null;
+	}
+	public void copyDataTo(ATTRIBUTE clone) throws PKCS11Error{
+		if(!datatype.equals(clone.datatype) || isCDataNULL()){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
+		if(clone.isCDataNULL() || clone.getDataLength() < getDataLength()){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		clone.setDataLength(getDataLength());
+		Util.copy(cdata, clone.cdata, getDataLength());
 	}
 	public ATTRIBUTE_TYPE getTypeEnum(){
 		return type;
@@ -221,7 +229,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		byte[] data = Util.copyCDataToByteArray(getCData(), 8);
 		ByteBuffer buf = ByteBuffer.wrap(data);
-		return buf.getLong();
+		long ret = buf.order(ByteOrder.LITTLE_ENDIAN).getLong();
+		return ret;
 	}
 	public long copyToLong() throws PKCS11Error{
 		if(!datatype.equals(long.class) || isCDataNULL() || getDataLength() < 8){
@@ -229,7 +238,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		byte[] data = Util.copyCDataToByteArray(getCData(), 8);
 		ByteBuffer buf = ByteBuffer.wrap(data);
-		return buf.getLong();
+		return buf.order(ByteOrder.LITTLE_ENDIAN).getLong();
 	}
 	public byte[] copyToByteArray() throws PKCS11Error{
 		System.out.println("getting data as byte array, but dyata is: "+ datatype);
@@ -258,8 +267,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
 		try {
-			
-			return (T) req_type.getMethod("swigToEnum", int.class).invoke(null, (int) copyRawToLong());
+			long id = copyRawToLong();
+			return (T) req_type.getMethod("swigToEnum", int.class).invoke(null, (int) id);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {
@@ -351,24 +360,26 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		buf.putLong(v);
 		Util.copyByteArrayToCData(tmp, getCData());
 	}
-	public boolean query(ATTRIBUTE other){		
-		if(!this.type.equals(other.type) || !this.datatype.equals(other.datatype)){
+	public boolean query(ATTRIBUTE query_attr){		
+		if(query_attr == null){
+			return true;
+		}
+		if(!this.type.equals(query_attr.type) || !this.datatype.equals(query_attr.datatype)){
 			return false;
 		}
-		if(other.isCDataNULL()){
+		if(query_attr.isCDataNULL()){
 			return true; //if query attr has no data it is irrelevant
 		}
-		
 		//proof data
 		if(this.isCDataNULL()){
 			return false; 
 		}
-		if(this.getDataLength() < other.getDataLength()){
+		if(this.getDataLength() < query_attr.getDataLength()){
 			return false; //query cannot specify more information than searched attr has
 		}
-		CK_BYTE_ARRAY other_cdata = other.getCData();
+		CK_BYTE_ARRAY other_cdata = query_attr.getCData();
 		boolean data_eq = true;
-		for(int i=0;i<other.getDataLength();i++){
+		for(int i=0;i<query_attr.getDataLength();i++){
 			if(other_cdata.getitem(i) != this.cdata.getitem(i)){
 				data_eq = false;
 				break;
