@@ -30,9 +30,7 @@
      <path id="skytrust.classpath">
 	<pathelement location="skytrust-element-java/common/target/classes/"/>
         <pathelement location="skytrust-element-java/core/target/classes/"/>
-        <pathelement location="/usr/share/java/spring3-web.jar"/>
-        <pathelement location="/usr/share/java/spring3-core.jar"/>
-        <pathelement location="/usr/share/java/jackson-core.jar"/>
+        <pathelement location="${c.lib.dir}/dependencies.jar"/>
     </path>
 	
     <target name="init" depends="clean,SWIG-preprocess,SWIG"/>
@@ -97,14 +95,12 @@
     <target name="jar" depends="JAVA-compile">
      <jar destfile="${c.lib.dir}/${ant.project.name}.jar">
 				<fileset dir="${java.classes.dir}"/>
-				<fileset dir="skytrust-element-java/common/target/classes/"/>
-	<zipgroupfileset file="/usr/share/java/spring3-web.jar"/>
-	<zipgroupfileset file="/usr/share/java/spring3-core.jar"/>
-	<zipgroupfileset file="/usr/share/java/jackson-core.jar"/>
-        <fileset dir="skytrust-element-java/core/target/classes/"/>
-        <zipfileset includes="**/*.class" src="/usr/share/java/spring3-web.jar"/>
-        <zipfileset includes="**/*.class" src="/usr/share/java/spring3-core.jar"/>
-        <zipfileset includes="**/*.class" src="/usr/share/java/jackson-core.jar"/>        
+			<!--	<fileset dir="skytrust-element-java/common/target/classes/"/>
+				<fileset dir="skytrust-element-java/core/target/classes/"/> -->
+				<zipfileset includes="**/*.class" src="lib/dependencies.jar"/>
+			<manifest>
+			    <attribute name="Class-Path" value="/usr/share/java/"/> 
+			</manifest>
      </jar>
     </target>
 
