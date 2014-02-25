@@ -1,0 +1,3 @@
+[submodule "skytrust-element-java"]
+	path = skytrust-element-java
+	url = https://github.com/IAIK/skytrust-element-java.git
