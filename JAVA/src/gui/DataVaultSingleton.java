@@ -10,7 +10,7 @@ import java.util.Properties;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthType;
-import at.iaik.skytrust.element.skytrustprotocol.payload.auth.userpassword.SUserPasswordAuthInfo;
+import at.iaik.skytrust.element.skytrustprotocol.payload.auth.credentials.SUserPasswordAuthInfo;
 
 public class DataVaultSingleton {
 
@@ -31,7 +31,7 @@ public class DataVaultSingleton {
 	private DataVaultSingleton() {
 		servers = new ArrayList<Server>();
 		clients = new ArrayList<Client>();
-		Server ser = new Server("http://test.com");
+		Server ser = new Server("http://skytrust-dev.iaik.tugraz.at/skytrust-server/rest/json");
 		servers.add(ser);
 	}
 

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<beans>
-   <bean id="actor-jce" class="at.iaik.skytrust.element.actors.iaikjce.IaikJceActor">
-      <constructor-arg type="java.lang.String"><value>https://skytrust.iaik.tugraz.at/RestKeyStorage/api/</value></constructor-arg>
-   </bean>
-   <bean id="receiver-http" class="at.iaik.skytrust.element.receiver.http.HTTPReceiver" />
-</beans>
