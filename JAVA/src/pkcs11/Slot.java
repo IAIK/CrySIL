@@ -25,7 +25,7 @@ import proxys.RETURN_TYPE;
  */
 public class Slot{
 	
-	private IServerSession serversession;
+	private IToken token;
 	private HashMap<MECHANISM_TYPES,MECHANISM.MechanismInfo> mechanisms = new HashMap<>();
 	
 	private long slotID;
@@ -40,7 +40,7 @@ public class Slot{
 	
 	public Slot(long slotid, Server.ServerInfo server){
 		slotID = slotid;
-		serversession = new ServerSession(server);
+		token = new Token(server);
 		loadMechanisms();
 		//generate PIN
 	}
@@ -55,8 +55,8 @@ public class Slot{
 		}
 		return false;
 	}
-	public IServerSession getServersession() {
-		return serversession;
+	public IToken getToken() {
+		return token;
 	}
 
 	//Handle = slotIndex*MAX_SESSIONS_PER_SLOT+sessionIndex
@@ -135,8 +135,8 @@ public class Slot{
 	public ArrayList<Session> getSessionList(){
 		return sessionList; 
 	}
-	public Server.ServerInfo getServerInfo(){
-		return serversession.getInfo();
+	public Server.ServerInfo getTokenInfo(){
+		return token.getInfo();
 	}
 	public Util.Capabilities getCapabilities(){
 		return new Util.Capabilities().decrypt().encrypt().sign().verify();

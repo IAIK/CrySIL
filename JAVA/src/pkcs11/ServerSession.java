@@ -21,6 +21,7 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthType;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthRequest;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthResponse;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyCertificate;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyIdentifier;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.keydiscovery.SPayloadDiscoverKeysRequest;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.keydiscovery.SPayloadDiscoverKeysResponse;
@@ -56,7 +57,7 @@ public class ServerSession implements IServerSession {
 	}
 	@Override
 	public List<SKey> getKeyList() throws PKCS11Error{
-		return discoverKeys("handle");
+		return discoverKeys("certificate");
 	}
 	@Override
 	public byte[] sign(byte[] pData, SKey key, SkyTrustAlgorithm mech) throws PKCS11Error {
@@ -66,7 +67,14 @@ public class ServerSession implements IServerSession {
 	}
 	@Override
 	public boolean verify(byte[] data,byte[] signature, SKey key,SkyTrustAlgorithm mech) {
-
+		//TODO 
+		// implement local verify
+		if(!key.getRepresentation().equals("certificate")){
+			return false;
+		}
+		SKeyCertificate cert = (SKeyCertificate) key;
+		String enc_cert = cert.getEncodedCertificate();
+		
 		return false;
 	}
 

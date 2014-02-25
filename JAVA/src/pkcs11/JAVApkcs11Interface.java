@@ -93,7 +93,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  pInfo.setFlags(flags);
 
 	  pInfo.setManufacturerID("IAIK Skytrust                                                                                       "); //32
-	  pInfo.setSlotDescription(slot.getServerInfo().getName()+"                                                                                       "); //32
+	  pInfo.setSlotDescription(slot.getTokenInfo().getName()+"                                                                                       "); //32
 
 	  System.err.println("\n slotinfo..ende..............................................");
 	  return RETURN_TYPE.OK.swigValue();
@@ -106,7 +106,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  ArrayList<Slot> slotlist = null;
 		  slotlist = getRM().getSlotList();
 		  for(Slot s:slotlist){
-			  System.err.println("\n slotlist return slot: "+s.getServerInfo().getName());
+			  System.err.println("\n slotlist return slot: "+s.getTokenInfo().getName());
 		  }
 		  if(pSlotList == null){
 			  pulCount.assign(slotlist.size());
@@ -135,7 +135,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  try {
 		  Slot slot = getRM().getSlotByID(slotID);
 
-		  ServerInfo s = slot.getServerInfo();
+		  ServerInfo s = slot.getTokenInfo();
 		  pInfo.setLabel(Util.fixStringLen(s.getName(),32));//32 char
 		  pInfo.setManufacturerID(Util.fixStringLen("IAIK", 32));
 		  pInfo.setModel(Util.fixStringLen("", 32));//32
@@ -266,7 +266,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  
 	try {
 		Session session = getRM().getSessionByHandle(hSession);		
-		long handle = session.getToken().objectManager.createObject(pTemplate);
+		long handle = session.getSlot().objectManager.createObject(pTemplate);
 		phObject.assign(handle);
 	} catch (PKCS11Error e) {
 		e.printStackTrace();
@@ -316,7 +316,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
   public static long C_DestroyObject(long hSession, long hObject) {
 	  try {
 		  Session session = getRM().getSessionByHandle(hSession);
-		  session.getToken().objectManager.deleteObject(hObject);
+		  session.getSlot().objectManager.deleteObject(hObject);
 		  return RETURN_TYPE.OK.swigValue();
 	  } catch (PKCS11Error e) {
 		  e.printStackTrace();

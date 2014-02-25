@@ -71,14 +71,12 @@ public class Session {
 	public Slot getSlot(){
 		return slot;
 	}
-	public Slot getToken(){
-		return slot;
-	}
+
 	public void signInit(MECHANISM pMechanism, long hKey) throws PKCS11Error{
 		if(signHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		signHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"sign"));
+		signHelper = new CryptoHelper(getSlot().checkAndInit(hKey,pMechanism,"sign"));
 	}
 	public void signAddData(byte[] pData) throws PKCS11Error{
 		if(signHelper == null){
@@ -90,19 +88,17 @@ public class Session {
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
-		try{
-			if(!signHelper.hasProcessedData()){
-				byte[] signed_data = getToken().getServersession().sign(
-						signHelper.getData(), 
-						PKCS11SkyTrustMapper.mapKey(signHelper.getKey()), 
-						PKCS11SkyTrustMapper.mapMechanism(signHelper.getMechanism()));
-				signHelper.setProcessedData(signed_data);
+		if(!signHelper.hasProcessedData()){
+			byte[] signed_data = getSlot().getToken().sign(
+					signHelper.getData(), 
+					signHelper.getKey(), 
+					signHelper.getMechanism());
+			if(signed_data == null){
+				throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
 			}
-			return signHelper.getProcessedData();
-		}catch(PKCS11Error e){
-			signHelper = null;
-			throw e;
+			signHelper.setProcessedData(signed_data);
 		}
+		return signHelper.getProcessedData();
 	}
 	public void signFinal() throws PKCS11Error{
 		if(signHelper == null){
@@ -115,7 +111,7 @@ public class Session {
 		if(verifyHelper!= null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		verifyHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"verify"));
+		verifyHelper = new CryptoHelper(getSlot().checkAndInit(hKey,pMechanism,"verify"));
 	}
 	public void verifyAddData(byte[] pData) throws PKCS11Error{
 		if(verifyHelper == null){
@@ -127,14 +123,13 @@ public class Session {
 		if(verifyHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
-		try{
-			return getToken().getServersession().verify(verifyHelper.getData(),signature,
-					PKCS11SkyTrustMapper.mapKey(verifyHelper.getKey()), 
-					PKCS11SkyTrustMapper.mapMechanism(verifyHelper.getMechanism()));
-		}catch(PKCS11Error e){
-			verifyHelper = null; //Operation is canceld if any error happens
-			throw e;
+		Boolean result =  getSlot().getToken().verify(verifyHelper.getData(),signature,
+				verifyHelper.getKey(), 
+				verifyHelper.getMechanism());
+		if(result == null){
+			throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
 		}
+		return result;
 	}
 	public void verifyFinal() throws PKCS11Error{
 		if(verifyHelper == null){
@@ -147,22 +142,20 @@ public class Session {
 		if(decryptHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		decryptHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"decrypt"));
+		decryptHelper = new CryptoHelper(getSlot().checkAndInit(hKey,pMechanism,"decrypt"));
 	}
 	public void decrypt(byte[] encdata) throws PKCS11Error{
 		if(decryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
-		try{
-			byte[] plain_data = getToken().getServersession().decrypt(encdata,
-			PKCS11SkyTrustMapper.mapKey(decryptHelper.getKey()), 
-			PKCS11SkyTrustMapper.mapMechanism(decryptHelper.getMechanism()));
-			
-			decryptHelper.setProcessedData(plain_data);
-		}catch(PKCS11Error e){
+		byte[] plain_data = getSlot().getToken().decrypt(encdata,
+				decryptHelper.getKey(), 
+				decryptHelper.getMechanism());
+		if(plain_data == null){
 			decryptHelper = null;
-			throw e;
+			throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
 		}
+		decryptHelper.setProcessedData(plain_data);
 	}
 	public byte[] decryptGetData() throws PKCS11Error{
 		if(decryptHelper == null){
@@ -181,21 +174,20 @@ public class Session {
 		if(encryptHelper != null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_ACTIVE);
 		}
-		decryptHelper = new CryptoHelper(getToken().checkAndInit(hKey,pMechanism,"decrypt"));
+		decryptHelper = new CryptoHelper(getSlot().checkAndInit(hKey,pMechanism,"decrypt"));
 	}
 	public void encrypt(byte[] data) throws PKCS11Error{
 		if(encryptHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
 		}
-		try{
-			byte[] encdata = getToken().getServersession().encrypt(data,
-					PKCS11SkyTrustMapper.mapKey(encryptHelper.getKey()), 
-					PKCS11SkyTrustMapper.mapMechanism(encryptHelper.getMechanism()));
-			encryptHelper.setProcessedData(encdata);
-		}catch(PKCS11Error e){
+		byte[] encdata = getSlot().getToken().encrypt(data,
+				encryptHelper.getKey(), 
+				encryptHelper.getMechanism());
+		if(encdata == null){
 			encryptHelper = null;
-			throw e;
+			throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
 		}
+		encryptHelper.setProcessedData(encdata);
 	}
 	public byte[] encryptGetData() throws PKCS11Error{
 		if(encryptHelper == null){

@@ -151,14 +151,14 @@ public class ResourceManager {
 			while(info_list.remove(MAX_SLOT));
 		}
 		for(Slot s:slotList){
-			info_list.remove(s.getServerInfo());
+			info_list.remove(s.getTokenInfo());
 		}
 		for(Server.ServerInfo info:info_list){
 			if(info != null)
 				slotList.add(new Slot(newSlotID(),info));
 		}
 		for(int i =0; i< slotList.size(); i++){
-		System.out.println("new Slot id for new server......"+ slotList.get(i).getServerInfo().getName());
+		System.out.println("new Slot id for new server......"+ slotList.get(i).getTokenInfo().getName());
 		}
 	}
 }
