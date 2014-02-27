@@ -1,3 +1,4 @@
+ set breakpoint pending on
  break C_Initialize
  break C_Finalize
  break C_GetInfo

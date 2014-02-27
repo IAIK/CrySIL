@@ -3,7 +3,7 @@ WRAPSOURCES = pkcs11_java_wrap.c
 SOURCES = pkcs11.c
 LIBRARIES := jvm
 
-CFLAGS = -Wall
+CFLAGS = -Wall -g
 SRCDIR = src
 SHAREDFLAGS = -shared -fPIC
 BINDIR = build
@@ -25,7 +25,7 @@ CFLAGS += -DSYKTRUSTJAR=\"$(JAR)\"
 CFLAGS += -DSWIGLIBPATH=\"$(LIBRARY_DIRS)\"
 
 ifeq ($(DEBUG),true)
-CFLAGS += -g -DDEBUG
+CFLAGS += -DDEBUG
 endif
 
 .PHONY: all clean test testclean runtest
