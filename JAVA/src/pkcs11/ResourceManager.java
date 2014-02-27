@@ -158,7 +158,7 @@ public class ResourceManager {
 				slotList.add(new Slot(newSlotID(),info));
 		}
 		for(int i =0; i< slotList.size(); i++){
-		System.out.println("new Slot id for new server......"+ slotList.get(i).getTokenInfo().getName());
+			System.err.println("new Slot: "+ slotList.get(i).getTokenInfo().getName());
 		}
 	}
 }

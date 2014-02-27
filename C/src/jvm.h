@@ -42,7 +42,6 @@ sing* get_instance()
     //char my_cwd[1024];
     //getcwd(my_cwd, 1024);
     //printf("\nPath: %s\n", my_cwd);
-    printf("in get_instance()\n");
     if (instance == NULL)
     {
 	printf("\ncreating new singleton... starting up vm\n");
@@ -99,7 +98,6 @@ sing* get_instance()
 
     }
 
-    printf("returning instance....\n");
     return instance;
 }
 

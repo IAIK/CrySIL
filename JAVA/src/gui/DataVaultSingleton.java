@@ -32,6 +32,10 @@ public class DataVaultSingleton {
 		servers = new ArrayList<Server>();
 		clients = new ArrayList<Client>();
 		Server ser = new Server("http://skytrust-dev.iaik.tugraz.at/skytrust-server/rest/json");
+		SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
+		cre.setUserName("testuser");
+		cre.setPassWord("");
+		ser.setCredentials(cre);
 		servers.add(ser);
 	}
 
@@ -50,7 +54,10 @@ public class DataVaultSingleton {
 				if (s.isAutheticated()) {
 					// GUI.askUserIf App:ID isAllowed to connect to server_info
 					SAuthInfo cre = s.getCredentials();
-					if (cre.getType().equals(authType.getType())) {
+					String info_type = cre.getType();
+					info_type = info_type.replace("Info", "Type");
+					String req_type = authType.getType();
+					if (info_type.compareTo(req_type) == 0){
 						return cre;
 					}
 				} else {

@@ -1,9 +1,12 @@
 package objects;
 
+import java.nio.charset.StandardCharsets;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,12 +51,13 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		attribute_types.put(ATTRIBUTE_TYPE.VERIFY,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.VERIFY_RECOVER,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.DERIVE,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.KEY_GEN_MECHANISM,CK_BYTE_ARRAY.class);
 		//		  attribute_types.put(ATTRIBUTE_TYPE.START_DATE
 		//		  attribute_types.put(ATTRIBUTE_TYPE.END_DATE
 		attribute_types.put(ATTRIBUTE_TYPE.MODULUS,CK_BYTE_ARRAY.class);
-		//		  attribute_types.put(ATTRIBUTE_TYPE.MODULUS_BITS
+		attribute_types.put(ATTRIBUTE_TYPE.MODULUS_BITS,long.class);
 		attribute_types.put(ATTRIBUTE_TYPE.PUBLIC_EXPONENT,CK_BYTE_ARRAY.class);
-		//		  attribute_types.put(ATTRIBUTE_TYPE.PRIVATE_EXPONENT
+		attribute_types.put(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,CK_BYTE_ARRAY.class);
 		//		  attribute_types.put(ATTRIBUTE_TYPE.PRIME_1
 		//		  attribute_types.put(ATTRIBUTE_TYPE.PRIME_2
 		//		  attribute_types.put(ATTRIBUTE_TYPE.EXPONENT_1
@@ -68,10 +72,11 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		attribute_types.put(ATTRIBUTE_TYPE.LOCAL,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.NEVER_EXTRACTABLE,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.ALWAYS_SENSITIVE,boolean.class);
+		attribute_types.put(ATTRIBUTE_TYPE.ALWAYS_AUTHENTICATE,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.MODIFIABLE,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.VENDOR_DEFINED,CK_BYTE_ARRAY.class);
 	}
-	public static ATTRIBUTE find(ATTRIBUTE[] template, ATTRIBUTE_TYPE type){
+	public static ATTRIBUTE find(ArrayList<ATTRIBUTE> template, ATTRIBUTE_TYPE type){
 		for(ATTRIBUTE attr : template){
 			if(attr.getTypeEnum().equals(ATTRIBUTE_TYPE.CLASS)){
 				return attr;
@@ -93,7 +98,10 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	protected Class<?> datatypeof(ATTRIBUTE_TYPE type) throws PKCS11Error{
 		Class<?> datatype = attribute_types.get(type);
 		if(datatype == null){
-			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_TYPE_INVALID);
+			if(type.swigValue() >= ATTRIBUTE_TYPE.VENDOR_DEFINED.swigValue())
+				return void.class;
+			else
+				throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_TYPE_INVALID);
 		}
 		return datatype;
 	}
@@ -140,6 +148,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 
 		cdata = new CK_BYTE_ARRAY(getCDataPtr(),false);
+		System.err.println("Create AttrType: "+getType());
 		this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
 		this.datatype = datatypeof(this.type);
 	}
@@ -160,6 +169,23 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		setNewCData(1);//alloc cmem
 		copyFromBoolean(val);
 	}
+	public ATTRIBUTE(ATTRIBUTE_TYPE type, long val) throws PKCS11Error {
+		super();
+		this.type = type;
+		setType(type.swigValue());
+		this.datatype = datatypeof(type);
+		setNewCData(8);//alloc cmem
+		copyFromLong(val);
+	}
+	public ATTRIBUTE(ATTRIBUTE_TYPE type, String val) throws PKCS11Error {
+		super();
+		this.type = type;
+		setType(type.swigValue());
+		this.datatype = datatypeof(type);
+		setNewCData(val.length());//alloc cmem
+		copyFromString(val);
+	}
+
 	public <T extends EnumBase> ATTRIBUTE(ATTRIBUTE_TYPE type, T val) throws PKCS11Error {
 		super();
 		this.type = type;
@@ -240,7 +266,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		return buf.order(ByteOrder.LITTLE_ENDIAN).getLong();
 	}
 	public byte[] copyToByteArray() throws PKCS11Error{
-		System.out.println("getting data as byte array, but dyata is: "+ datatype);
+		System.err.println("getting data as byte array, but dyata is: "+ datatype);
 		if(!datatype.equals(Byte.class) || isCDataNULL()){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
@@ -357,6 +383,14 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		byte[] tmp = new byte[8];
 		ByteBuffer buf = ByteBuffer.wrap(tmp);
 		buf.putLong(v);
+		Util.copyByteArrayToCData(tmp, getCData());
+	}
+	public void copyFromString(String val) throws PKCS11Error {
+		if(!datatype.equals(String.class) || isCDataNULL()){
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+		}
+		byte[] tmp;
+		tmp = val.getBytes(StandardCharsets.UTF_8);
 		Util.copyByteArrayToCData(tmp, getCData());
 	}
 	public boolean query(ATTRIBUTE query_attr){		

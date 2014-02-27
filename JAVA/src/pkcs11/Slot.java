@@ -5,6 +5,8 @@ import gui.Server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+
 import objects.MECHANISM;
 import objects.MECHANISM.MechanismInfo;
 import objects.ObjectManager;
@@ -38,10 +40,17 @@ public class Slot{
 	
 	//private String pin;
 	
-	public Slot(long slotid, Server.ServerInfo server){
+	public Slot(long slotid, Server.ServerInfo server) throws PKCS11Error{
 		slotID = slotid;
 		token = new Token(server);
 		loadMechanisms();
+		List<PKCS11Object> objs = token.getObjects();
+		if(objs == null){
+			return;
+		}
+		for(PKCS11Object o:objs){
+			objectManager.addObject(o);
+		}
 		//generate PIN
 	}
 	public Session.USER_TYPE getUserType(){

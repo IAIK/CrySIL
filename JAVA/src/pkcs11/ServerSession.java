@@ -40,7 +40,7 @@ public class ServerSession implements IServerSession {
 
 	private String sessionID;
 	private Server.ServerInfo server;
-	protected RestTemplate restTemplate;
+	protected RestTemplate restTemplate = new RestTemplate();
 
 	private SAuthInfo credentials = null;
 	private boolean rememberCredentialsForSession = true;

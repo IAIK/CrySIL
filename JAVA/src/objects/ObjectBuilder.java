@@ -1,20 +1,11 @@
 package objects;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import pkcs11.PKCS11Error;
-import pkcs11.Util;
 import proxys.ATTRIBUTE_TYPE;
-import proxys.CERT_TYPE;
-import proxys.CK_ATTRIBUTE;
-import proxys.CK_BYTE_ARRAY;
-import proxys.CK_KEY_WRAP_SET_OAEP_PARAMS;
 import proxys.KEY_TYP;
 import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
@@ -22,49 +13,46 @@ import proxys.RETURN_TYPE;
 public class ObjectBuilder {
 	
 
-	private static ATTRIBUTE[] defaultKey_template;
+	private static ArrayList<ATTRIBUTE> defaultKey_template;
+	private static ArrayList<ATTRIBUTE> defaultTemplate_secretKey;
+	private static ArrayList<ATTRIBUTE> defaultTemplate_publicKey;
 	static{
 		try {
-			defaultKey_template = new ATTRIBUTE[]{
-					new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true),
-					new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,true),
-					new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,false),
-					new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY)
-			};
+			defaultKey_template = new ArrayList<>();
+			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true));
+			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,true));
+			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,false));
+			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	};
-	private static ATTRIBUTE[] defaultTemplate_secretKey;
 	static {
 		try {
-		defaultTemplate_secretKey = new ATTRIBUTE[]{
-				new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.SECRET_KEY),
-				new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false),
-				new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true)
-			};
+			defaultTemplate_secretKey = new ArrayList<>();
+			defaultTemplate_secretKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.SECRET_KEY));
+			defaultTemplate_secretKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
+			defaultTemplate_secretKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	};
-	private static ATTRIBUTE[] defaultTemplate_publicKey;
 	static {
 		try {
-			defaultTemplate_publicKey = new ATTRIBUTE[]{
-				new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY),
-				new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false),
-				new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false),
-				new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY)
-			};
+			defaultTemplate_publicKey = new ArrayList<>();
+			defaultTemplate_publicKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY));
+			defaultTemplate_publicKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
+			defaultTemplate_publicKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false));
+			
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	};
 	
-	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ATTRIBUTE[] template) throws PKCS11Error{
+	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ArrayList<ATTRIBUTE> template) throws PKCS11Error{
 		Map<ATTRIBUTE_TYPE,ATTRIBUTE> res = new HashMap<>();
 		for(ATTRIBUTE attr : template){
 			res.put(attr.getTypeEnum(), attr.createClone());
@@ -72,21 +60,21 @@ public class ObjectBuilder {
 		return res;
 	}
 
-	public static PKCS11Object createFromTemplate(ATTRIBUTE[] template) throws PKCS11Error{
+	public static PKCS11Object createFromTemplate(ArrayList<ATTRIBUTE> template) throws PKCS11Error{
 		ATTRIBUTE attr_class = ATTRIBUTE.find(template, ATTRIBUTE_TYPE.CLASS);
 		if(attr_class == null){
 			throw new PKCS11Error(RETURN_TYPE.TEMPLATE_INCOMPLETE);
 		}
 		OBJECT_CLASS obj_class = attr_class.copyToSwigEnum(OBJECT_CLASS.class);
 
-		HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> default_attr = new HashMap<>();
+		HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> default_attr = new HashMap<>(copyToMap(defaultKey_template));
 		if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
 			 //private key template
-			default_attr = new HashMap<>(copyToMap(defaultTemplate_secretKey));
+			default_attr.putAll(copyToMap(defaultTemplate_secretKey));
 		 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
-			default_attr = new HashMap<>(copyToMap(defaultTemplate_publicKey));
+			default_attr.putAll(copyToMap(defaultTemplate_publicKey));
 		 }else if(obj_class.equals(OBJECT_CLASS.CERTIFICATE)){
-			 
+			 default_attr.putAll(copyToMap(defaultTemplate_publicKey));
 		 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){
 			 
 		 }else if(obj_class.equals(OBJECT_CLASS.DATA)){

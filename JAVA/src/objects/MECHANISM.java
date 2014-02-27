@@ -11,6 +11,7 @@ import proxys.ATTRIBUTE_TYPE;
 import proxys.CK_BYTE_ARRAY;
 import proxys.CK_MECHANISM;
 import proxys.CK_MECHANISM_INFO;
+import proxys.CK_RSA_PKCS_OAEP_PARAMS;
 import proxys.CK_RSA_PKCS_PSS_PARAMS;
 import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
@@ -48,7 +49,7 @@ public class MECHANISM extends CK_MECHANISM{
 	private static Map<MECHANISM_TYPES,Class<?>> mechanism_types = new HashMap<>();
 	static{
 		mechanism_types.put(MECHANISM_TYPES.RSA_PKCS, void.class);//PKCS #1 v1.5 RSA mechanism
-//		mechanism_types.put(MECHANISM_TYPE.RSA_PKCS_OAEP,class);
+		mechanism_types.put(MECHANISM_TYPES.RSA_PKCS_OAEP,CK_RSA_PKCS_OAEP_PARAMS.class);
 		mechanism_types.put(MECHANISM_TYPES.SHA1_RSA_PKCS, void.class);//PKCS #1 v1.5
 		mechanism_types.put(MECHANISM_TYPES.SHA1_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
 		mechanism_types.put(MECHANISM_TYPES.SHA256_RSA_PKCS_PSS,CK_RSA_PKCS_PSS_PARAMS.class);
@@ -85,8 +86,13 @@ public class MECHANISM extends CK_MECHANISM{
 		super(cPtr,cMemoryOwn);
 		if(cPtr == 0)
 			return;
-		this.type = MECHANISM_TYPES.swigToEnum((int) super.getMechanism());		
-		this.cdata = new CK_BYTE_ARRAY(super.getPParameter().getCPtr(),false);
+		this.type = MECHANISM_TYPES.swigToEnum((int) super.getMechanism());	
+		long cptr = 0;
+		SWIGTYPE_p_void p =super.getPParameter();
+		if(p != null){
+			cptr = p.getCPtr();
+		}
+		this.cdata = new CK_BYTE_ARRAY(cptr,false);
 		this.datatype = datatypeof(type);
 	}
 	public <T extends StructSizeBase> MECHANISM(MECHANISM_TYPES type, T val) throws PKCS11Error {
