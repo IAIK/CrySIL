@@ -109,7 +109,9 @@ sing* get_instance()
 void destroyVM(){
 	printf("destroyVM called....\n");
 	sing* dings = get_instance();
-	dings->DestroyMutex(dings->ppMutex);
+	if(dings->DestroyMutex != NULL){
+		dings->DestroyMutex(dings->ppMutex);
+	}
 	(*(dings->jvm))->DestroyJavaVM(dings->jvm);
 	free(instance);
 	instance = NULL;
