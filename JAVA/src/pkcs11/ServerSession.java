@@ -181,11 +181,12 @@ public class ServerSession implements IServerSession {
 		SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
 		if (payloadResponse instanceof SPayloadAuthResponse) {
 			skyTrustResponse = handleAuth(skyTrustResponse);
+			payloadResponse = skyTrustResponse.getPayload();
 		}
 
 		if (payloadResponse instanceof SPayloadWithLoadResponse) {
 			SPayloadWithLoadResponse payLoadWithLoadResponse = (SPayloadWithLoadResponse) payloadResponse;
-			String resp_b64Data = ((SPayloadWithLoadResponse) payloadResponse).getLoad();
+			String resp_b64Data = payLoadWithLoadResponse.getLoad();
 			
 			try {
 				return new BASE64Decoder().decodeBuffer(resp_b64Data);

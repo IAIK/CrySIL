@@ -28,7 +28,7 @@ public class Session {
 	private long flags;
 	private long handle;
 	
-	private CryptoHelper signHelper;
+	public CryptoHelper signHelper;
 	private CryptoHelper verifyHelper;
 	private CryptoHelper decryptHelper;
 	private CryptoHelper encryptHelper;
@@ -84,6 +84,14 @@ public class Session {
 		}
 		signHelper.addData(pData);
 	}
+	public void signSetData(byte[] pData) throws PKCS11Error{
+		if(signHelper == null){
+			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);
+		}
+		if(!signHelper.hasProcessedData()){
+			signHelper.setData(pData);
+		}
+	}	
 	public byte[] sign() throws PKCS11Error{
 		if(signHelper == null){
 			throw new PKCS11Error(RETURN_TYPE.OPERATION_NOT_INITIALIZED);

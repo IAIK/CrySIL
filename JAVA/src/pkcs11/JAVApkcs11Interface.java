@@ -19,6 +19,7 @@ import proxys.CK_ULONG_JPTR;
 import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
+import sun.misc.BASE64Encoder;
 import objects.ATTRIBUTE;
 
 
@@ -242,7 +243,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  }
   }
   public static long C_SetAttributeValue(long hSession, long hObject, ATTRIBUTE[]  pTemplate, long ulCount) {
-
 	  try {
 		  checkNullPtr(pTemplate);
 		  System.err.print("\nC_SetAttributeValue....Object: "+ hObject+"....");
@@ -511,8 +511,23 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  Session session;
 	  try {
 		  session = getRM().getSessionByHandle(hSession);
-		  session.signFinal();
-		  return RETURN_TYPE.OK.swigValue();
+		  if(pSignature == null){
+			  pulSignatureLen.assign(session.sign().length);
+			  return RETURN_TYPE.OK.swigValue();
+		  }else if(pulSignatureLen.value() < session.sign().length){
+			  pulSignatureLen.assign(session.sign().length);
+			  return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
+		  }else{
+			  byte[] signed = session.sign();
+			  pulSignatureLen.assign(signed.length);
+			  for(int i=0; i<signed.length; i++){
+				  pSignature.setitem(i, signed[i]);
+			  }
+			  String load = new BASE64Encoder().encode(signed);
+			  System.err.println(load);
+			  session.signFinal();
+			  return RETURN_TYPE.OK.swigValue();
+		  }
 	  } catch (PKCS11Error e) {
 		  e.printStackTrace();
 		  return e.getCode();
@@ -523,7 +538,8 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  System.err.print("\nC_Sign....");
 		checkNullPtr(pulSignatureLen);
 		Session session = getRM().getSessionByHandle(hSession);
-		session.signAddData(pData);
+		
+		session.signSetData(pData);
 
 		if(pSignature == null){
 			pulSignatureLen.assign(session.sign().length);
@@ -533,9 +549,12 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			return RETURN_TYPE.BUFFER_TOO_SMALL.swigValue();
 		}else{
 			byte[] signed = session.sign();
+			pulSignatureLen.assign(signed.length);
 			for(int i=0; i<signed.length; i++){
 				pSignature.setitem(i, signed[i]);
 			}
+			  String load = new BASE64Encoder().encode(signed);
+			  System.err.println(load);
 			session.signFinal();
 			return RETURN_TYPE.OK.swigValue();
 		}
