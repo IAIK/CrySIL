@@ -36,7 +36,7 @@ public class ObjectManager {
 
 	synchronized public long createObject(ArrayList<ATTRIBUTE> template) throws PKCS11Error {
 		Long id = getNextId();
-		PKCS11Object object = ObjectBuilder.createFromTemplate(new ArrayList<>(Arrays.asList(template)));
+		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		objects.add(object);
 		ids.add(id);
 		System.err.println("created object with handle: "+id);
