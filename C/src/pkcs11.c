@@ -80,6 +80,9 @@ CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
 { /*printf("\nC: called: C_CloseAllSessions    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_CloseAllSessionsJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_CloseAllSessions", "(J)J");
@@ -91,6 +94,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -100,6 +106,9 @@ CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
 { /*printf("\nC: called: C_CloseSession    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_CloseSessionJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_CloseSession", "(J)J");
@@ -111,6 +120,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -120,6 +132,9 @@ CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_
 { /*printf("\nC: called: C_CreateObject    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_CreateObjectJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_CreateObject", "(J[Lobjects/ATTRIBUTE;JLproxys/CK_ULONG_JPTR;)J");
@@ -185,6 +200,9 @@ if (pTemplate+i == NULL){
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -194,6 +212,9 @@ CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_
 { /*printf("\nC: called: C_DecryptInit    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_DecryptInitJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_DecryptInit", "(JLobjects/MECHANISM;J)J");
@@ -214,6 +235,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -223,21 +247,24 @@ CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK
 { /*printf("\nC: called: C_DecryptUpdate    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_DecryptUpdateJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_DecryptUpdate", "(J[BJLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
         
         if(C_DecryptUpdateJava !=0)
         {
-jintArray result;
-result = (*(dings->env))->NewIntArray(dings->env, ulEncryptedPartLen);
+jbyteArray result;
+result = (*(dings->env))->NewByteArray(dings->env, ulEncryptedPartLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
 int j;
-jint fill[ulEncryptedPartLen];
+jbyte fill[ulEncryptedPartLen];
 for (j = 0; j < ulEncryptedPartLen; j++) {
 fill[j] =pEncryptedPart[j]; }
-(*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulEncryptedPartLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulEncryptedPartLen, fill);
 jobject obj3;
  if(pPart != NULL) { jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
@@ -261,6 +288,9 @@ jobject obj3;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -270,6 +300,9 @@ CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
 { /*printf("\nC: called: C_DestroyObject    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_DestroyObjectJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_DestroyObject", "(JJ)J");
@@ -281,6 +314,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -290,6 +326,9 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
 { /*printf("\nC: called: C_Finalize    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_FinalizeJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_Finalize", "(Lproxys/CK_BYTE_ARRAY;)J");
@@ -310,6 +349,9 @@ jobject obj0;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 destroyVM();
 return retVal;
 }
@@ -319,6 +361,9 @@ CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, C
 { /*printf("\nC: called: C_FindObjects    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_FindObjectsJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_FindObjects", "(JLproxys/CK_ULONG_ARRAY;JLproxys/CK_ULONG_JPTR;)J");
@@ -348,6 +393,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -357,6 +405,9 @@ CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
 { /*printf("\nC: called: C_FindObjectsFinal    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_FindObjectsFinalJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_FindObjectsFinal", "(J)J");
@@ -368,6 +419,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -377,6 +431,9 @@ CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, 
 { /*printf("\nC: called: C_FindObjectsInit    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_FindObjectsInitJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_FindObjectsInit", "(J[Lobjects/ATTRIBUTE;J)J");
@@ -433,6 +490,9 @@ if (pTemplate+i == NULL){
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -442,6 +502,9 @@ CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_UL
 { /*printf("\nC: called: C_GenerateRandom    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GenerateRandomJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GenerateRandom", "(JLproxys/CK_BYTE_ARRAY;J)J");
@@ -462,6 +525,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -471,6 +537,9 @@ CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
 { /*printf("\nC: called: C_GetAttributeValue    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetAttributeValueJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetAttributeValue", "(JJ[Lobjects/ATTRIBUTE;J)J");
@@ -527,6 +596,9 @@ if (pTemplate+i == NULL){
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -536,6 +608,9 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo)
 { /*printf("\nC: called: C_GetInfo    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetInfo", "(Lproxys/CK_INFO;)J");
@@ -556,6 +631,9 @@ jobject obj0;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -565,6 +643,9 @@ CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM
 { /*printf("\nC: called: C_GetMechanismInfo    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetMechanismInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetMechanismInfo", "(JJLproxys/CK_MECHANISM_INFO;)J");
@@ -585,6 +666,9 @@ jobject obj2;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -594,6 +678,9 @@ CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList
 { /*printf("\nC: called: C_GetMechanismList    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetMechanismListJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetMechanismList", "(JLproxys/CK_ULONG_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
@@ -623,6 +710,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -632,6 +722,9 @@ CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
 { /*printf("\nC: called: C_GetSessionInfo    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetSessionInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetSessionInfo", "(JLproxys/CK_SESSION_INFO;)J");
@@ -652,6 +745,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -661,6 +757,9 @@ CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
 { /*printf("\nC: called: C_GetSlotInfo    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetSlotInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetSlotInfo", "(JLproxys/CK_SLOT_INFO;)J");
@@ -681,6 +780,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -690,6 +792,9 @@ CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PT
 { /*printf("\nC: called: C_GetSlotList    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetSlotListJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetSlotList", "(SLproxys/CK_ULONG_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
@@ -719,6 +824,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -728,6 +836,9 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
 { /*printf("\nC: called: C_GetTokenInfo    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_GetTokenInfoJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_GetTokenInfo", "(JLproxys/CK_TOKEN_INFO;)J");
@@ -748,6 +859,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -755,8 +869,28 @@ return retVal;
 
 CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
 { /*printf("\nC: called: C_Initialize    ");*/ 
+CK_C_INITIALIZE_ARGS* args = pInitArgs; 
+sing* blargl = get_instance(); 
+if(pInitArgs!=NULL){
+blargl->CreateMutex = args->CreateMutex; 
+blargl->DestroyMutex = args->DestroyMutex; 
+blargl->LockMutex = args->LockMutex; 
+blargl->UnlockMutex = args->UnlockMutex;
+blargl->CreateMutex(blargl->ppMutex); 
+} else { 
+blargl->CreateMutex = NULL; 
+blargl->DestroyMutex = NULL; 
+blargl->LockMutex = NULL; 
+blargl->UnlockMutex = NULL;
+}
+
+
+
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_InitializeJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_Initialize", "(Lproxys/CK_BYTE_ARRAY;)J");
@@ -777,6 +911,9 @@ jobject obj0;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -786,6 +923,9 @@ CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPi
 { /*printf("\nC: called: C_Login    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_LoginJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_Login", "(JJLjava/lang/String;J)J");
@@ -798,6 +938,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -807,6 +950,9 @@ CK_RV C_Logout(CK_SESSION_HANDLE hSession)
 { /*printf("\nC: called: C_Logout    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_LogoutJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_Logout", "(J)J");
@@ -818,6 +964,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -827,6 +976,9 @@ CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication,
 { /*printf("\nC: called: C_OpenSession    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_OpenSessionJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_OpenSession", "(JJLproxys/CK_BYTE_ARRAY;Lproxys/CK_NOTIFY_CALLBACK;Lproxys/CK_ULONG_JPTR;)J");
@@ -865,6 +1017,9 @@ jobject obj2;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -874,6 +1029,9 @@ CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSee
 { /*printf("\nC: called: C_SeedRandom    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_SeedRandomJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SeedRandom", "(JLjava/lang/String;J)J");
@@ -886,6 +1044,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -895,6 +1056,9 @@ CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
 { /*printf("\nC: called: C_SetAttributeValue    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_SetAttributeValueJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SetAttributeValue", "(JJ[Lobjects/ATTRIBUTE;J)J");
@@ -951,6 +1115,9 @@ if (pTemplate+i == NULL){
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -960,6 +1127,9 @@ CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLe
 { /*printf("\nC: called: C_SetPIN    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_SetPINJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SetPIN", "(JLjava/lang/String;JLjava/lang/String;J)J");
@@ -973,6 +1143,9 @@ if(dings->cls !=0)
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -982,21 +1155,24 @@ CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, 
 { /*printf("\nC: called: C_Sign    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_SignJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_Sign", "(J[BJLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
         
         if(C_SignJava !=0)
         {
-jintArray result;
-result = (*(dings->env))->NewIntArray(dings->env, ulDataLen);
+jbyteArray result;
+result = (*(dings->env))->NewByteArray(dings->env, ulDataLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
 int j;
-jint fill[ulDataLen];
+jbyte fill[ulDataLen];
 for (j = 0; j < ulDataLen; j++) {
 fill[j] =pData[j]; }
-(*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulDataLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulDataLen, fill);
 jobject obj3;
  if(pSignature != NULL) { jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
@@ -1020,6 +1196,9 @@ jobject obj3;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -1029,6 +1208,9 @@ CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJ
 { /*printf("\nC: called: C_SignInit    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_SignInitJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SignInit", "(JLobjects/MECHANISM;J)J");
@@ -1049,6 +1231,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -1058,6 +1243,9 @@ CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OB
 { /*printf("\nC: called: C_UnwrapKey    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_UnwrapKeyJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_UnwrapKey", "(JLobjects/MECHANISM;J[BJ[Lobjects/ATTRIBUTE;JLproxys/CK_ULONG_JPTR;)J");
@@ -1073,15 +1261,15 @@ jobject obj1;
 								   if(obj1==NULL){
                                 }else{
 				   }
-} else{ obj1=NULL; }jintArray result;
-result = (*(dings->env))->NewIntArray(dings->env, ulWrappedKeyLen);
+} else{ obj1=NULL; }jbyteArray result;
+result = (*(dings->env))->NewByteArray(dings->env, ulWrappedKeyLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
 int j;
-jint fill[ulWrappedKeyLen];
+jbyte fill[ulWrappedKeyLen];
 for (j = 0; j < ulWrappedKeyLen; j++) {
 fill[j] =pWrappedKey[j]; }
-(*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulWrappedKeyLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulWrappedKeyLen, fill);
 jobjectArray array;
  if(pTemplate != NULL) { 
 jsize size = ulAttributeCount;
@@ -1141,6 +1329,9 @@ if (pTemplate+i == NULL){
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -1150,6 +1341,9 @@ CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJE
 { /*printf("\nC: called: C_WrapKey    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_WrapKeyJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_WrapKey", "(JLobjects/MECHANISM;JJLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
@@ -1188,6 +1382,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -1197,26 +1394,32 @@ CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPar
 { /*printf("\nC: called: C_SignUpdate    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_SignUpdateJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SignUpdate", "(J[BJ)J");
         
         if(C_SignUpdateJava !=0)
         {
-jintArray result;
-result = (*(dings->env))->NewIntArray(dings->env, ulPartLen);
+jbyteArray result;
+result = (*(dings->env))->NewByteArray(dings->env, ulPartLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
 int j;
-jint fill[ulPartLen];
+jbyte fill[ulPartLen];
 for (j = 0; j < ulPartLen; j++) {
 fill[j] =pPart[j]; }
-(*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulPartLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulPartLen, fill);
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SignUpdateJava, hSession, result, ulPartLen);
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }
@@ -1226,6 +1429,9 @@ CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_P
 { /*printf("\nC: called: C_SignFinal    ");*/ 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
+if(dings->LockMutex != NULL){
+dings->LockMutex(dings->ppMutex);
+}
 if(dings->cls !=0)
 {
         jmethodID C_SignFinalJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SignFinal", "(JLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
@@ -1255,6 +1461,9 @@ jobject obj1;
  (*(dings->env))->ExceptionDescribe(dings->env);
  
 }}
+if(dings->UnlockMutex != NULL){
+dings->UnlockMutex(dings->ppMutex);
+}
 
 return retVal;
 }

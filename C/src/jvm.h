@@ -33,6 +33,11 @@ typedef struct jvm_singleton
 	jmethodID mid;
 	jint square;
 	jboolean not;
+	CK_CREATEMUTEX CreateMutex;
+	CK_DESTROYMUTEX DestroyMutex;
+	CK_LOCKMUTEX LockMutex;
+	CK_UNLOCKMUTEX UnlockMutex;
+	CK_VOID_PTR ppMutex;
 }sing;
 
 static struct jvm_singleton* instance = NULL;
@@ -104,6 +109,7 @@ sing* get_instance()
 void destroyVM(){
 	printf("destroyVM called....\n");
 	sing* dings = get_instance();
+	dings->DestroyMutex(dings->ppMutex);
 	(*(dings->jvm))->DestroyJavaVM(dings->jvm);
 	free(instance);
 	instance = NULL;
