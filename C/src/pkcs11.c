@@ -81,7 +81,7 @@ CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -107,7 +107,7 @@ CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -133,7 +133,7 @@ CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -213,7 +213,7 @@ CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -248,7 +248,7 @@ CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -260,11 +260,7 @@ jbyteArray result;
 result = (*(dings->env))->NewByteArray(dings->env, ulEncryptedPartLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
-int j;
-jbyte fill[ulEncryptedPartLen];
-for (j = 0; j < ulEncryptedPartLen; j++) {
-fill[j] =pEncryptedPart[j]; }
-(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulEncryptedPartLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulEncryptedPartLen,(jbyte*)pEncryptedPart);
 jobject obj3;
  if(pPart != NULL) { jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
@@ -301,7 +297,7 @@ CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -327,7 +323,7 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -362,7 +358,7 @@ CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, C
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -406,7 +402,7 @@ CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -432,7 +428,7 @@ CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -503,7 +499,7 @@ CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_UL
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -538,7 +534,7 @@ CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -609,7 +605,7 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -644,7 +640,7 @@ CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -679,7 +675,7 @@ CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -723,7 +719,7 @@ CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -758,7 +754,7 @@ CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -793,7 +789,7 @@ CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PT
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -837,7 +833,7 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -876,7 +872,7 @@ blargl->CreateMutex = args->CreateMutex;
 blargl->DestroyMutex = args->DestroyMutex; 
 blargl->LockMutex = args->LockMutex; 
 blargl->UnlockMutex = args->UnlockMutex;
-blargl->CreateMutex(blargl->ppMutex); 
+blargl->CreateMutex(&(blargl->ppMutex)); 
 } else { 
 blargl->CreateMutex = NULL; 
 blargl->DestroyMutex = NULL; 
@@ -889,7 +885,7 @@ blargl->UnlockMutex = NULL;
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -924,7 +920,7 @@ CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPi
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -951,7 +947,7 @@ CK_RV C_Logout(CK_SESSION_HANDLE hSession)
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -977,7 +973,7 @@ CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication,
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1030,7 +1026,7 @@ CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSee
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1057,7 +1053,7 @@ CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1128,7 +1124,7 @@ CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLe
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1156,7 +1152,7 @@ CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, 
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1168,11 +1164,7 @@ jbyteArray result;
 result = (*(dings->env))->NewByteArray(dings->env, ulDataLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
-int j;
-jbyte fill[ulDataLen];
-for (j = 0; j < ulDataLen; j++) {
-fill[j] =pData[j]; }
-(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulDataLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulDataLen,(jbyte*)pData);
 jobject obj3;
  if(pSignature != NULL) { jclass cls3 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
          jmethodID constructor3 = (*(dings->env))->GetMethodID(dings->env, cls3, "<init>", "(JZ)V");
@@ -1209,7 +1201,7 @@ CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJ
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1244,7 +1236,7 @@ CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OB
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1265,11 +1257,7 @@ jobject obj1;
 result = (*(dings->env))->NewByteArray(dings->env, ulWrappedKeyLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
-int j;
-jbyte fill[ulWrappedKeyLen];
-for (j = 0; j < ulWrappedKeyLen; j++) {
-fill[j] =pWrappedKey[j]; }
-(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulWrappedKeyLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulWrappedKeyLen,(jbyte*)pWrappedKey);
 jobjectArray array;
  if(pTemplate != NULL) { 
 jsize size = ulAttributeCount;
@@ -1342,7 +1330,7 @@ CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJE
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1395,7 +1383,7 @@ CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPar
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
@@ -1407,11 +1395,7 @@ jbyteArray result;
 result = (*(dings->env))->NewByteArray(dings->env, ulPartLen);
 
  (*(dings->env))->ExceptionDescribe(dings->env);
-int j;
-jbyte fill[ulPartLen];
-for (j = 0; j < ulPartLen; j++) {
-fill[j] =pPart[j]; }
-(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulPartLen, fill);
+(*(dings->env))->SetByteArrayRegion(dings->env, result, 0, ulPartLen,(jbyte*)pPart);
 
  retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SignUpdateJava, hSession, result, ulPartLen);
  (*(dings->env))->ExceptionDescribe(dings->env);
@@ -1430,7 +1414,7 @@ CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_P
 long retVal=CKR_GENERAL_ERROR;
 sing* dings = get_instance();
 if(dings->LockMutex != NULL){
-dings->LockMutex(dings->ppMutex);
+dings->LockMutex((dings->ppMutex));
 }
 if(dings->cls !=0)
 {
