@@ -1,6 +1,7 @@
 package objects;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 
@@ -35,7 +36,7 @@ public class ObjectManager {
 
 	synchronized public long createObject(ATTRIBUTE[] template) throws PKCS11Error {
 		Long id = getNextId();
-		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
+		PKCS11Object object = ObjectBuilder.createFromTemplate(new ArrayList<>(Arrays.asList(template)));
 		objects.add(object);
 		ids.add(id);
 		System.err.println("created object with handle: "+id);
