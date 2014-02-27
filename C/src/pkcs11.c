@@ -1193,6 +1193,73 @@ return retVal;
 }
 
 
+CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
+{ /*printf("\nC: called: C_SignUpdate    ");*/ 
+long retVal=CKR_GENERAL_ERROR;
+sing* dings = get_instance();
+if(dings->cls !=0)
+{
+        jmethodID C_SignUpdateJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SignUpdate", "(J[BJ)J");
+        
+        if(C_SignUpdateJava !=0)
+        {
+jintArray result;
+result = (*(dings->env))->NewIntArray(dings->env, ulPartLen);
+
+ (*(dings->env))->ExceptionDescribe(dings->env);
+int j;
+jint fill[ulPartLen];
+for (j = 0; j < ulPartLen; j++) {
+fill[j] =pPart[j]; }
+(*(dings->env))->SetIntArrayRegion(dings->env, result, 0, ulPartLen, fill);
+
+ retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SignUpdateJava, hSession, result, ulPartLen);
+ (*(dings->env))->ExceptionDescribe(dings->env);
+ 
+}}
+
+return retVal;
+}
+
+
+CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
+{ /*printf("\nC: called: C_SignFinal    ");*/ 
+long retVal=CKR_GENERAL_ERROR;
+sing* dings = get_instance();
+if(dings->cls !=0)
+{
+        jmethodID C_SignFinalJava = (*(dings->env))->GetStaticMethodID(dings->env, dings->cls,"C_SignFinal", "(JLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
+        
+        if(C_SignFinalJava !=0)
+        {
+jobject obj1;
+ if(pSignature != NULL) { jclass cls1 = (*(dings->env))->FindClass(dings->env, "proxys/CK_BYTE_ARRAY"); //
+         jmethodID constructor1 = (*(dings->env))->GetMethodID(dings->env, cls1, "<init>", "(JZ)V");
+                                obj1=(*(dings->env))->NewObject(dings->env, cls1, constructor1, pSignature, JNI_FALSE);
+
+ (*(dings->env))->ExceptionDescribe(dings->env);
+								   if(obj1==NULL){
+                                }else{
+				   }
+} else{ obj1=NULL; }jobject obj2;
+ if(pulSignatureLen != NULL) { jclass cls2 = (*(dings->env))->FindClass(dings->env, "proxys/CK_ULONG_JPTR"); //
+         jmethodID constructor2 = (*(dings->env))->GetMethodID(dings->env, cls2, "<init>", "(JZ)V");
+                                obj2=(*(dings->env))->NewObject(dings->env, cls2, constructor2, pulSignatureLen, JNI_FALSE);
+
+ (*(dings->env))->ExceptionDescribe(dings->env);
+								   if(obj2==NULL){
+                                }else{
+				   }
+} else{ obj2=NULL; }
+ retVal = (*(dings->env))->CallStaticLongMethod(dings->env, dings->cls, C_SignFinalJava, hSession, obj1, obj2);
+ (*(dings->env))->ExceptionDescribe(dings->env);
+ 
+}}
+
+return retVal;
+}
+
+
 
 
 #define CK_DEFINE_FUNCTION(returnType, name) returnType name
@@ -1216,10 +1283,6 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestKey)(CK_SESSION_HANDLE hSession, CK_OBJECT_HAN
 { printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDigest, CK_ULONG_PTR pulDigestLen)
 { printf("not implemented shit called"); return CKR_OK;}
-CK_DEFINE_FUNCTION(CK_RV, C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{ printf("C_SignUpdate not implemented shit called"); return CKR_OK;}
-CK_DEFINE_FUNCTION(CK_RV, C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{ printf("C_SignFinal not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 { printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
@@ -1263,9 +1326,9 @@ CK_DEFINE_FUNCTION(CK_RV, C_CancelFunction)(CK_SESSION_HANDLE hSession)
 CK_DEFINE_FUNCTION(CK_RV, C_InitToken)(CK_SLOT_ID slotID, CK_CHAR_PTR pPin, CK_ULONG ulPinLen, CK_CHAR_PTR pLabel)
 { printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("C_EncryptInit not implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pEncryptedData, CK_ULONG_PTR pulEncryptedDataLen)
-{ printf("C_Encrypt not implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
-{ printf("C_Decrypt not implemented shit called"); return CKR_OK;}
+{ printf("not implemented shit called"); return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved){ printf("not implemented shit called"); return 0x00000008;}
