@@ -39,7 +39,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		attribute_types.put(ATTRIBUTE_TYPE.ISSUER,CK_BYTE_ARRAY.class);//WTLS encoding
 		attribute_types.put(ATTRIBUTE_TYPE.SERIAL_NUMBER,CK_BYTE_ARRAY.class);//DER encoding
 		attribute_types.put(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.class);
-		attribute_types.put(ATTRIBUTE_TYPE.SUBJECT,CK_BYTE_ARRAY.class);//WTLS encoding
+		attribute_types.put(ATTRIBUTE_TYPE.SUBJECT,String.class);//WTLS encoding
 		attribute_types.put(ATTRIBUTE_TYPE.ID,CK_BYTE_ARRAY.class);
 		attribute_types.put(ATTRIBUTE_TYPE.SENSITIVE,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.ENCRYPT,boolean.class);
