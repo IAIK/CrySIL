@@ -266,7 +266,11 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 	  System.err.print("\nC_CreateObject....");
 	try {
 		Session session = getRM().getSessionByHandle(hSession);		
-		long handle = session.getSlot().objectManager.createObject(pTemplate);
+		ArrayList<ATTRIBUTE> template = new ArrayList<>(pTemplate.length);
+		for(ATTRIBUTE a:pTemplate){
+			template.add(a);
+		}
+		long handle = session.getSlot().objectManager.createObject(template);
 		phObject.assign(handle);
 		System.err.print("Object: "+ handle+"....");
 	} catch (PKCS11Error e) {

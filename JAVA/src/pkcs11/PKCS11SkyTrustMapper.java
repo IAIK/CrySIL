@@ -11,7 +11,6 @@ import objects.MECHANISM;
 import objects.ObjectBuilder;
 import objects.PKCS11Object;
 import proxys.ATTRIBUTE_TYPE;
-import proxys.CERT_TYPE;
 import proxys.KEY_TYP;
 import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;

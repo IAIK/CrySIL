@@ -34,7 +34,7 @@ public class ObjectManager {
 		throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
 	}
 
-	synchronized public long createObject(ATTRIBUTE[] template) throws PKCS11Error {
+	synchronized public long createObject(ArrayList<ATTRIBUTE> template) throws PKCS11Error {
 		Long id = getNextId();
 		PKCS11Object object = ObjectBuilder.createFromTemplate(new ArrayList<>(Arrays.asList(template)));
 		objects.add(object);
