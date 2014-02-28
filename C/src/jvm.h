@@ -102,7 +102,7 @@ sing* get_instance()
 
 
     }
-
+    (*(instance->jvm))->AttachCurrentThread(instance->jvm,(void**)&(instance->env),NULL);
     return instance;
 }
 
