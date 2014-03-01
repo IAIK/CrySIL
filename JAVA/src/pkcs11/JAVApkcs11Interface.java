@@ -201,20 +201,22 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 
   public static long C_GetAttributeValue(long hSession, long hObject, ATTRIBUTE[] pTemplate, long ulCount) {
 	  try {
+		  RETURN_TYPE res = RETURN_TYPE.OK;
 		  checkNullPtr(pTemplate);//cool
 		  System.err.print("\nC_GetAttributeValue....Object: "+ hObject+"....");
 		  for(ATTRIBUTE a:pTemplate){
 			  System.err.print(a.getTypeEnum()+",");
 		  }
+
 		  if(pTemplate.length != ulCount){
 			  throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 		  }
 		  Session session = getRM().getSessionByHandle(hSession);		  
 		  PKCS11Object obj = session.getSlot().objectManager.getObject(hObject);
 
-		  RETURN_TYPE res = RETURN_TYPE.OK;
 		  ATTRIBUTE src;
 		  for(ATTRIBUTE attr : pTemplate){
+//			  attr.setDataLength(-1); //in caso di nebbia ;)
 			  try{
 			  	  src = obj.getAttribute(attr.getTypeEnum());
 			  }catch(PKCS11Error e){
@@ -227,9 +229,11 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 				  }
 			  }
 			  //TODO Attribute die ein array als Daten haben richtig behandeln
+			  int l1 = attr.getDataLength();
+			  int l2 = src.getDataLength();
 			  if(attr.isCDataNULL()){
 				  attr.setDataLength(src.getDataLength());
-			  }else if(attr.getDataLength() < src.getDataLength()){
+			  }else if( attr.getDataLength() < src.getDataLength()){
 				  attr.setDataLength(-1);
 				  res = RETURN_TYPE.BUFFER_TOO_SMALL;
 			  }else{
@@ -372,6 +376,7 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		e.printStackTrace();
 			System.err.println("findobjects.... erro2");
 	}
+	  System.out.println("found objects.................."+pulObjectCount.value());
 	 return RETURN_TYPE.OK.swigValue();
   }
 

@@ -11,6 +11,7 @@ import objects.MECHANISM;
 import objects.ObjectBuilder;
 import objects.PKCS11Object;
 import proxys.ATTRIBUTE_TYPE;
+import proxys.CERT_TYPE;
 import proxys.KEY_TYP;
 import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;
@@ -80,8 +81,19 @@ public class PKCS11SkyTrustMapper {
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.LABEL,"skytrust"));
 		//cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
-		//cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_TYPE,CERT_TYPE.X_509));
-		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY));
+//		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_TYPE,CERT_TYPE.X_509));
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
+		
+		
+		
+		
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_TYPE,CERT_TYPE.X_509));
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,"ISSUER".getBytes()));
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,"serialNumber".getBytes()));
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,"SUBJECT".getBytes()));
+		
+		
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,false));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true));
 		cert_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false));

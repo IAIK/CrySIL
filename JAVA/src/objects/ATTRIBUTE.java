@@ -152,21 +152,15 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			return;
 		}
 		cdata = new CK_BYTE_ARRAY(getCDataPtr(),false);
+		System.err.println("Create AttrType: "+getType());
 		try{
-			this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
-			this.datatype = attribute_types.get(type);
-			if(this.datatype == null){
-				System.err.println("datatype of ATTR unknown.. map in ATTRIBUTE.java not complete? ");
-				this.datatype = void.class;
-			}
-		}catch(IllegalArgumentException e){
-			if((int) getType() >= ATTRIBUTE_TYPE.VENDOR_DEFINED.swigValue()){
-				this.type = new ATTRIBUTE_TYPE("unknownAttr_ "+getType(),(int) getType());
-				this.datatype = void.class;
-			}else{
-				this.type = null;
-				this.datatype = null;
-			}
+		this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
+		this.datatype = datatypeof(this.type);
+		}catch (PKCS11Error e){
+		this.type = null;
+		this.datatype = null;
+		e.printStackTrace();
+		System.out.println("Object successfully Created, don't worry!");
 		}
 	}
 
@@ -246,7 +240,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		if(!datatype.equals(clone.datatype) || isCDataNULL()){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		if(clone.isCDataNULL() || clone.getDataLength() < getDataLength()){
+		if(clone.isCDataNULL() ){ //|| clone.getDataLength() < getDataLength()){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
 		clone.setDataLength(getDataLength());

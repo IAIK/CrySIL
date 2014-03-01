@@ -16,6 +16,7 @@ public class ObjectBuilder {
 	private static ArrayList<ATTRIBUTE> defaultKey_template;
 	private static ArrayList<ATTRIBUTE> defaultTemplate_secretKey;
 	private static ArrayList<ATTRIBUTE> defaultTemplate_publicKey;
+	private static ArrayList<ATTRIBUTE> defaultTemplate_certificate;
 	static{
 		try {
 			defaultKey_template = new ArrayList<>();
@@ -51,6 +52,18 @@ public class ObjectBuilder {
 			e.printStackTrace();
 		}
 	};
+	static {
+		try {
+			defaultTemplate_certificate = new ArrayList<>();
+			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
+			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
+			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
+			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	};
 	
 	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ArrayList<ATTRIBUTE> template) throws PKCS11Error{
 		Map<ATTRIBUTE_TYPE,ATTRIBUTE> res = new HashMap<>();
@@ -74,7 +87,8 @@ public class ObjectBuilder {
 		 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
 			default_attr.putAll(copyToMap(defaultTemplate_publicKey));
 		 }else if(obj_class.equals(OBJECT_CLASS.CERTIFICATE)){
-			 default_attr.putAll(copyToMap(defaultTemplate_publicKey));
+//			 default_attr.putAll(copyToMap(defaultTemplate_publicKey));
+			 default_attr.putAll(copyToMap(defaultTemplate_certificate));
 		 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){
 			 
 		 }else if(obj_class.equals(OBJECT_CLASS.DATA)){
