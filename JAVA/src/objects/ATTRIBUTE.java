@@ -142,18 +142,32 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 	}
 // end	
 	
-	public ATTRIBUTE(long cPtr, boolean cMemoryOwn) throws PKCS11Error{
+	public ATTRIBUTE(long cPtr, boolean cMemoryOwn){
 		super(cPtr,cMemoryOwn);
-		if(cPtr == 0)
-			throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
-
+		if(cPtr == 0){
+			System.err.println("create Nullptr attr");
+			cdata = null;
+			this.type = null;
+			this.datatype = null;
+			return;
+		}
 		cdata = new CK_BYTE_ARRAY(getCDataPtr(),false);
 		try{
 			this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
+			this.datatype = attribute_types.get(type);
+			if(this.datatype == null){
+				System.err.println("datatype of ATTR unknown.. map in ATTRIBUTE.java not complete? ");
+				this.datatype = void.class;
+			}
 		}catch(IllegalArgumentException e){
-			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_TYPE_INVALID);
+			if((int) getType() >= ATTRIBUTE_TYPE.VENDOR_DEFINED.swigValue()){
+				this.type = new ATTRIBUTE_TYPE("unknownAttr_ "+getType(),(int) getType());
+				this.datatype = void.class;
+			}else{
+				this.type = null;
+				this.datatype = null;
+			}
 		}
-		this.datatype = datatypeof(this.type);
 	}
 
 	public ATTRIBUTE(ATTRIBUTE_TYPE type, byte[] val) throws PKCS11Error {
