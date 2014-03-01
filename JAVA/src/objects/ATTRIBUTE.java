@@ -148,8 +148,11 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 
 		cdata = new CK_BYTE_ARRAY(getCDataPtr(),false);
-		System.err.println("Create AttrType: "+getType());
-		this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
+		try{
+			this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
+		}catch(IllegalArgumentException e){
+			this.type = new ATTRIBUTE_TYPE("vendorDef",(int) getType());
+		}
 		this.datatype = datatypeof(this.type);
 	}
 
