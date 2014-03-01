@@ -151,7 +151,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		try{
 			this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
 		}catch(IllegalArgumentException e){
-			this.type = new ATTRIBUTE_TYPE("vendorDef",(int) getType());
+			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_TYPE_INVALID);
 		}
 		this.datatype = datatypeof(this.type);
 	}
