@@ -2,8 +2,16 @@ package pkcs11;
 import gui.DataVaultSingleton;
 import gui.Server;
 
+import iaik.utils.Base64Exception;
+import iaik.utils.Util;
+import iaik.x509.X509Certificate;
+
 import java.io.IOException;
+import java.security.Signature;
+import java.security.cert.CertificateException;
 import java.util.List;
+
+import javax.crypto.Cipher;
 
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -71,8 +79,22 @@ public class ServerSession implements IServerSession {
 			return false;
 		}
 		SKeyCertificate cert = (SKeyCertificate) key;
-		String enc_cert = cert.getEncodedCertificate();
-		
+		String certb64 = cert.getEncodedCertificate();
+		try {
+			byte[] enc_cert = Util.fromBase64String(certb64);
+			X509Certificate iaikcert = new X509Certificate(enc_cert);
+
+			//http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Signature
+            //TODO set algo and params
+			Signature rsaSignatureEngine = Signature.getInstance(rsa, "IAIK");
+            rsaSignatureEngine.initVerify(iaikcert.getPublicKey());
+            rsaSignatureEngine.update(data);
+            return rsaSignatureEngine.verify(signature);
+
+		} catch (Base64Exception | CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return false;
 	}
 
