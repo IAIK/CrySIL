@@ -78,23 +78,23 @@ public class ServerSession implements IServerSession {
 		if(!key.getRepresentation().equals("certificate")){
 			return false;
 		}
-		SKeyCertificate cert = (SKeyCertificate) key;
-		String certb64 = cert.getEncodedCertificate();
-		try {
-			byte[] enc_cert = Util.fromBase64String(certb64);
-			X509Certificate iaikcert = new X509Certificate(enc_cert);
-
-			//http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Signature
-            //TODO set algo and params
-			Signature rsaSignatureEngine = Signature.getInstance(rsa, "IAIK");
-            rsaSignatureEngine.initVerify(iaikcert.getPublicKey());
-            rsaSignatureEngine.update(data);
-            return rsaSignatureEngine.verify(signature);
-
-		} catch (Base64Exception | CertificateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		SKeyCertificate cert = (SKeyCertificate) key;
+//		String certb64 = cert.getEncodedCertificate();
+//		try {
+//			byte[] enc_cert = Util.fromBase64String(certb64);
+//			X509Certificate iaikcert = new X509Certificate(enc_cert);
+//
+//			//http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Signature
+//            //TODO set algo and params
+//			Signature rsaSignatureEngine = Signature.getInstance(rsa, "IAIK");
+//            rsaSignatureEngine.initVerify(iaikcert.getPublicKey());
+//            rsaSignatureEngine.update(data);
+//            return rsaSignatureEngine.verify(signature);
+//
+//		} catch (Base64Exception | CertificateException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		return false;
 	}
 

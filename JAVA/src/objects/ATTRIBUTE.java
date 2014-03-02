@@ -141,7 +141,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		return cdata;
 	}
 // end	
-	
+
 	public ATTRIBUTE(long cPtr, boolean cMemoryOwn){
 		super(cPtr,cMemoryOwn);
 		if(cPtr == 0){
@@ -154,13 +154,20 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		cdata = new CK_BYTE_ARRAY(getCDataPtr(),false);
 		System.err.println("Create AttrType: "+getType());
 		try{
-		this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
-		this.datatype = datatypeof(this.type);
-		}catch (PKCS11Error e){
-		this.type = null;
-		this.datatype = null;
-		e.printStackTrace();
-		System.out.println("Object successfully Created, don't worry!");
+			this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
+			this.datatype = attribute_types.get(type);
+			if(this.datatype == null){
+				System.err.println("datatype of ATTR unknown.. map in ATTRIBUTE.java not complete? ");
+				this.datatype = void.class;
+			}
+		}catch(IllegalArgumentException e){
+			if((int) getType() >= ATTRIBUTE_TYPE.VENDOR_DEFINED.swigValue()){
+				this.type = new ATTRIBUTE_TYPE("unknownAttr_ "+getType(),(int) getType());
+				this.datatype = void.class;
+			}else{
+				this.type = null;
+				this.datatype = null;
+			}
 		}
 	}
 
@@ -240,7 +247,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		if(!datatype.equals(clone.datatype) || isCDataNULL()){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
-		if(clone.isCDataNULL() ){ //|| clone.getDataLength() < getDataLength()){
+		if(clone.isCDataNULL() || clone.getDataLength() < getDataLength()){
 			throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
 		}
 		clone.setDataLength(getDataLength());
@@ -423,6 +430,8 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		CK_BYTE_ARRAY other_cdata = query_attr.getCData();
 		boolean data_eq = true;
+		byte[] query_data = Util.copyCDataToByteArray(query_attr.getCData(), query_attr.getDataLength()); 
+		byte[] this_data = Util.copyCDataToByteArray(getCData(), getDataLength()); 
 		for(int i=0;i<query_attr.getDataLength();i++){
 			if(other_cdata.getitem(i) != this.cdata.getitem(i)){
 				data_eq = false;

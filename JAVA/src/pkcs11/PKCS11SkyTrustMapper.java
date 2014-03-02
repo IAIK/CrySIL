@@ -113,13 +113,13 @@ public class PKCS11SkyTrustMapper {
 		
 			X509Certificate iaikcert = new X509Certificate(cert);
 			
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,iaikcert.getIssuerDN().getName()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,iaikcert.getIssuerDN().getName().getBytes()));
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,iaikcert.getSerialNumber().toByteArray()));
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,iaikcert.getSubjectDN().getName()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,iaikcert.getSubjectDN().getName().getBytes()));
 		} catch (CertificateException | Base64Exception e ) {
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,"ISSUER"));
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,"SERIAL_NUMBER"));
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,"SUBJECT"));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,"ISSUER".getBytes()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,"SERIAL_NUMBER".getBytes()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,"SUBJECT".getBytes()));
 			e.printStackTrace();
 		}
 		
