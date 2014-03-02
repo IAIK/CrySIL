@@ -1,5 +1,6 @@
 package pkcs11;
 
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +17,9 @@ import proxys.KEY_TYP;
 import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
+import iaik.x509.X509Certificate;
+import iaik.utils.Base64Exception;
+import iaik.utils.Util;
 
 public class PKCS11SkyTrustMapper {
 	
@@ -80,18 +84,12 @@ public class PKCS11SkyTrustMapper {
 		ArrayList<ATTRIBUTE> cert_template = new ArrayList<>(skytrust_template);
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.LABEL,"skytrust"));
-		//cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
-//		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_TYPE,CERT_TYPE.X_509));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
-		
-		
-		
-		
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_TYPE,CERT_TYPE.X_509));
-		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,"ISSUER".getBytes()));
-		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,"serialNumber".getBytes()));
-		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,"SUBJECT".getBytes()));
 		
+		
+		
+		//		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY));		
 		
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,false));
@@ -107,8 +105,25 @@ public class PKCS11SkyTrustMapper {
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PUBLIC_EXPONENT,data));
 		
 		
-		byte[] cert = ((SKeyCertificate) key).getEncodedCertificate().getBytes();
-		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.VALUE,cert));
+		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
+		
+		try {
+			byte[] cert = Util.fromBase64String(certb64);
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.VALUE,cert));
+		
+			X509Certificate iaikcert = new X509Certificate(cert);
+			
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,iaikcert.getIssuerDN().getName()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,iaikcert.getSerialNumber().toByteArray()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,iaikcert.getSubjectDN().getName()));
+		} catch (CertificateException | Base64Exception e ) {
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,"ISSUER"));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,"SERIAL_NUMBER"));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,"SUBJECT"));
+			e.printStackTrace();
+		}
+		
+		
 		
 		PKCS11Object obj = ObjectBuilder.createFromTemplate(cert_template);
 		obj.setTag(key);
