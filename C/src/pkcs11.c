@@ -1497,71 +1497,72 @@ return retVal;
 
 #define CK_DEFINE_FUNCTION(returnType, name) returnType name
 CK_DEFINE_FUNCTION(CK_RV, C_InitPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_InitPIN\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_EncryptUpdate\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GetOperationState)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pOperationState, CK_ULONG_PTR pulOperationStateLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_GetOperationState\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastEncryptedPart, CK_ULONG_PTR pulLastEncryptedPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_EncryptFinal\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG_PTR pulLastPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DecryptFinal\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DigestInit\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pDigest, CK_ULONG_PTR pulDigestLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_Digest\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DigestUpdate\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestKey)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DigestKey\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDigest, CK_ULONG_PTR pulDigestLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DigestFinal\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_SignRecoverInit\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_SignRecover\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_VerifyInit\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_Verify\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_VerifyUpdate\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_VerifyFinal\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_VerifyRecoverInit\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_VerifyRecover\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DigestEncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DigestEncryptUpdate\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptDigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DecryptDigestUpdate\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SignEncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_SignEncryptUpdate\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptVerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DecryptVerifyUpdate\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_GenerateKey\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_ATTRIBUTE_PTR pPublicKeyTemplate, CK_ULONG ulPublicKeyAttributeCount, CK_ATTRIBUTE_PTR pPrivateKeyTemplate, CK_ULONG ulPrivateKeyAttributeCount, CK_OBJECT_HANDLE_PTR phPublicKey, CK_OBJECT_HANDLE_PTR phPrivateKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_GenerateKeyPair\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hBaseKey, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_DeriveKey\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_SetOperationState)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pOperationState, CK_ULONG ulOperationStateLen, CK_OBJECT_HANDLE hEncryptionKey, CK_OBJECT_HANDLE hAuthenticationKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_SetOperationState\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phNewObject)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_CopyObject\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GetObjectSize)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ULONG_PTR pulSize)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_GetObjectSize\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_GetFunctionStatus)(CK_SESSION_HANDLE hSession)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_GetFunctionStatus\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_CancelFunction)(CK_SESSION_HANDLE hSession)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_CancelFunction\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_InitToken)(CK_SLOT_ID slotID, CK_CHAR_PTR pPin, CK_ULONG ulPinLen, CK_CHAR_PTR pLabel)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_InitToken\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_EncryptInit\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pEncryptedData, CK_ULONG_PTR pulEncryptedDataLen)
-{ printf("not implemented shit called"); return CKR_OK;}
+{printf("not implemented function called: C_Encrypt\n");return CKR_OK;}
 CK_DEFINE_FUNCTION(CK_RV, C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
-{ printf("not implemented shit called"); return CKR_OK;}
-CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved){ printf("not implemented shit called"); return 0x00000008;}
+{printf("not implemented function called: C_Decrypt\n");return CKR_OK;}
+CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved){printf("not implemented function called: C_WaitForSlotEvent\n");return 0x00000008;
+}
