@@ -168,6 +168,9 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 				this.type = null;
 				this.datatype = null;
 			}
+		} catch (PKCS11Error e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

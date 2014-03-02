@@ -4,6 +4,9 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.security.auth.x500.X500Principal;
+
+
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyCertificate;
@@ -113,9 +116,19 @@ public class PKCS11SkyTrustMapper {
 		
 			X509Certificate iaikcert = new X509Certificate(cert);
 			
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,iaikcert.getIssuerDN().getName().getBytes()));
+			
+			X500Principal pal = new X500Principal(iaikcert.getIssuerDN().getName());
+			
+			String subname = iaikcert.getSubjectDN().getName();
+			subname = subname.replaceAll("SN=Teufl,", "");
+			subname = subname.replaceAll("SN=Teufl Enc,", "");
+			
+			X500Principal pal1 = new X500Principal(subname);
+			
+			
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,pal.getEncoded()));
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,iaikcert.getSerialNumber().toByteArray()));
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,iaikcert.getSubjectDN().getName().getBytes()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,pal1.getEncoded()));
 		} catch (CertificateException | Base64Exception e ) {
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,"ISSUER".getBytes()));
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,"SERIAL_NUMBER".getBytes()));
