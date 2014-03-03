@@ -2,16 +2,22 @@ package pkcs11;
 import gui.DataVaultSingleton;
 import gui.Server;
 
+import iaik.asn1.structures.AlgorithmID;
+import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
 import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 import iaik.x509.X509Certificate;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.List;
 
-import javax.crypto.Cipher;
 
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -38,8 +44,6 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPaylo
 
 import proxys.RETURN_TYPE;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 /*
  * Stellt verbindung zum Server dar ist für kommunikation zuständig
  * ist für authentifizierung über Authenticator Plugins zuständig
@@ -71,30 +75,76 @@ public class ServerSession implements IServerSession {
 				pData, key.getId(), key.getSubId());
 		return pData;
 	}
+	
+	public String mapSkytrustToJCE(SkyTrustAlgorithm m){
+	    switch(m){
+	    case RSAES_RAW:
+	    	return "";
+	    case RSAES_PKCS1_V1_5:
+	    	return "";
+	    case RSA_OAEP:
+	    	return "";
+	    case RSASSA_PKCS1_V1_5_SHA_1:
+	    	return "SHA1withRSA";
+	    case RSASSA_PKCS1_V1_5_SHA_224:
+	    	return "SHA224withRSA";
+	    case RSASSA_PKCS1_V1_5_SHA_256:
+	    	return "SHA256withRSA";
+	    case RSASSA_PKCS1_V1_5_SHA_512:
+	    	return "SHA512withRSA";
+	    case RSA_PSS:
+	    	return "";
+	    }
+	    return "";
+	}
+	public AlgorithmParameterSpec mapSkytrustToJCEPara(SkyTrustAlgorithm m){
+	    switch(m){
+	    case RSAES_RAW:
+	    	return null;
+	    case RSAES_PKCS1_V1_5:
+	    case RSA_OAEP:
+	    	return null;
+	    case RSASSA_PKCS1_V1_5_SHA_1:
+	    	return new RSASSAPkcs1v15ParameterSpec(AlgorithmID.sha1);
+	    case RSASSA_PKCS1_V1_5_SHA_224:
+	    	return new RSASSAPkcs1v15ParameterSpec(AlgorithmID.sha224);
+	    case RSASSA_PKCS1_V1_5_SHA_256:
+	    	return new RSASSAPkcs1v15ParameterSpec(AlgorithmID.sha256);
+	    case RSASSA_PKCS1_V1_5_SHA_512:
+	    	return new RSASSAPkcs1v15ParameterSpec(AlgorithmID.sha512);
+	    case RSA_PSS:
+	    	return null; //new RSAPssParameterSpec();
+	    }
+		return null;
+	}
 	@Override
 	public boolean verify(byte[] data,byte[] signature, SKey key,SkyTrustAlgorithm mech) {
-		//TODO 
-		// implement local verify
 		if(!key.getRepresentation().equals("certificate")){
 			return false;
 		}
-//		SKeyCertificate cert = (SKeyCertificate) key;
-//		String certb64 = cert.getEncodedCertificate();
-//		try {
-//			byte[] enc_cert = Util.fromBase64String(certb64);
-//			X509Certificate iaikcert = new X509Certificate(enc_cert);
-//
-//			//http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Signature
-//            //TODO set algo and params
-//			Signature rsaSignatureEngine = Signature.getInstance(rsa, "IAIK");
-//            rsaSignatureEngine.initVerify(iaikcert.getPublicKey());
-//            rsaSignatureEngine.update(data);
-//            return rsaSignatureEngine.verify(signature);
-//
-//		} catch (Base64Exception | CertificateException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		SKeyCertificate cert = (SKeyCertificate) key;
+		String certb64 = cert.getEncodedCertificate();
+		try {
+			byte[] enc_cert = Util.fromBase64String(certb64);
+			X509Certificate iaikcert = new X509Certificate(enc_cert);
+			PublicKey pubkey = iaikcert.getPublicKey();
+			//http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Signature
+            //TODO set algo and params			
+			Signature rsaSignatureEngine = Signature.getInstance(mapSkytrustToJCE(mech));
+            rsaSignatureEngine.initVerify(pubkey);
+            rsaSignatureEngine.update(data);
+            return rsaSignatureEngine.verify(signature);
+
+		} catch (Base64Exception | CertificateException e) {
+			System.err.println("error in certificate decoding");
+			e.printStackTrace();
+		}catch(NoSuchAlgorithmException | InvalidKeyException e){
+			System.err.println("error no such algo or key doesn't fit (mapping error?)");
+			e.printStackTrace();
+		}catch(SignatureException e){
+			System.err.println("error in performing verify locally");
+			e.printStackTrace();
+		}
 		return false;
 	}
 
@@ -180,7 +230,7 @@ public class ServerSession implements IServerSession {
 	private byte[] doCryptoCommand(String command, String algorithm,
 			byte[] data, String keyId, String keySubId) throws PKCS11Error {
 		
-		String load = new BASE64Encoder().encode(data);
+		String load = Util.toBase64String(data);
 		
 		SRequest request = createBasicRequest();
 		SPayloadCryptoOperationRequest payload = new SPayloadCryptoOperationRequest();
@@ -211,7 +261,7 @@ public class ServerSession implements IServerSession {
 			String resp_b64Data = payLoadWithLoadResponse.getLoad();
 			
 			try {
-				return new BASE64Decoder().decodeBuffer(resp_b64Data);
+				return Util.fromBase64String(resp_b64Data);
 			} catch (IOException e) {
 				throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
 			}

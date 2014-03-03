@@ -214,23 +214,6 @@ public class Slot{
 		
 		return new CryptoOperationParams(mechanism,key);
 	}
-// 			Session calls IServerSession directly	
-///*** Crypto Functions ***/ 
-//	public byte[] sign(byte[] data,CryptoOperationParams p) throws PKCS11Error{
-//		return serversession.sign(data, PKCS11SkyTrustMapper.mapKey(p.key), PKCS11SkyTrustMapper.mapMechanism(p.mechanism));
-//	}
-//	public byte[] decrypt(byte[] encdata,CryptoOperationParams p) throws PKCS11Error{
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//	public byte[] encrypt(byte[] data,CryptoOperationParams p) throws PKCS11Error{
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//	public boolean verify(byte[] signature, byte[] data,CryptoOperationParams params) throws PKCS11Error {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
 
 /*** Mechanism management ***/
 	public MECHANISM_TYPES[] getMechanisms(){
@@ -258,18 +241,7 @@ public class Slot{
 		mechanisms.put(MECHANISM_TYPES.SHA224_RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify());
 		mechanisms.put(MECHANISM_TYPES.SHA256_RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify());
 		mechanisms.put(MECHANISM_TYPES.SHA512_RSA_PKCS,(MechanismInfo) new MechanismInfo().hw().sign().verify());
-
-		
-//		RSAES_RAW("RSAES-RAW"),
-//	    RSAES_PKCS1_V1_5("RSAES-PKCS1-v1_5"),
-//	    RSA_OAEP("RSA-OAEP"),
-//	    RSASSA_PKCS1_V1_5_SHA_1("RSASSA-PKCS1-v1_5-SHA-1"),
-//	    RSASSA_PKCS1_V1_5_SHA_224("RSASSA-PKCS1-v1_5-SHA-224"),
-//	    RSASSA_PKCS1_V1_5_SHA_256("RSASSA-PKCS1-v1_5-SHA-256"),
-//	    RSASSA_PKCS1_V1_5_SHA_512("RSASSA-PKCS1-v1_5-SHA-512"),
-//	    RSA_PSS("RSA-PSS");
 	}
-
 }
 
 
