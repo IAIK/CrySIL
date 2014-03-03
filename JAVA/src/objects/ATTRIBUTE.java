@@ -152,26 +152,22 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			return;
 		}
 		cdata = new CK_BYTE_ARRAY(getCDataPtr(),false);
-		System.err.println("Create AttrType: "+getType());
 		try{
 			this.type = ATTRIBUTE_TYPE.swigToEnum((int) getType());
 			this.datatype = attribute_types.get(type);
 			if(this.datatype == null){
-				System.err.println("datatype of ATTR unknown.. map in ATTRIBUTE.java not complete? ");
+				System.err.println("datatype of ATTR ("+(int) getType()+")unknown.. map in ATTRIBUTE.java not complete? ");
 				this.datatype = void.class;
 			}
 		}catch(IllegalArgumentException e){
 			if((int) getType() >= ATTRIBUTE_TYPE.VENDOR_DEFINED.swigValue()){
-				this.type = new ATTRIBUTE_TYPE("unknownAttr_ "+getType(),(int) getType());
+				this.type = new ATTRIBUTE_TYPE("unknownVendorAttr_ "+getType(),(int) getType());
 				this.datatype = void.class;
 			}else{
 				this.type = null;
 				this.datatype = null;
 			}
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	public ATTRIBUTE(ATTRIBUTE_TYPE type, byte[] val) throws PKCS11Error {
@@ -403,7 +399,7 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		}
 		byte[] tmp = new byte[8];
 		ByteBuffer buf = ByteBuffer.wrap(tmp);
-		buf.putLong(v);
+		buf.order(ByteOrder.LITTLE_ENDIAN).putLong(v);
 		Util.copyByteArrayToCData(tmp, getCData());
 	}
 	public void copyFromString(String val) throws PKCS11Error {

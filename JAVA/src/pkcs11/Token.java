@@ -59,6 +59,7 @@ public class Token implements IToken {
 			for(SKey key : list){
 				objlist.add(PKCS11SkyTrustMapper.mapToCert(key));
 				objlist.add(PKCS11SkyTrustMapper.mapToPrivate(key));
+				objlist.add(PKCS11SkyTrustMapper.mapToPub(key));
 			}
 			return objlist;
 		} catch (PKCS11Error e) {

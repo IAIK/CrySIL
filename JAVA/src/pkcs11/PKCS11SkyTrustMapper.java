@@ -1,5 +1,8 @@
 package pkcs11;
 
+import java.math.BigInteger;
+import java.security.Principal;
+import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +23,9 @@ import proxys.KEY_TYP;
 import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
+import sun.security.rsa.RSAPublicKeyImpl;
 import iaik.x509.X509Certificate;
+import iaik.security.rsa.RSAPublicKey;
 import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 
@@ -36,7 +41,6 @@ public class PKCS11SkyTrustMapper {
 			skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
 			skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.LOCAL,false));
 			skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.DERIVE,false));
-			skytrust_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,"sky"));
 		} catch (PKCS11Error e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,12 +93,7 @@ public class PKCS11SkyTrustMapper {
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.LABEL,"skytrust"));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_TYPE,CERT_TYPE.X_509));
-		
-		
-		
-		//		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY));		
-		
-		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
+
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,false));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true));
 		cert_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false));
@@ -106,7 +105,7 @@ public class PKCS11SkyTrustMapper {
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS,data));		
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS_BITS,10));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PUBLIC_EXPONENT,data));
-		
+
 		
 		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
 		
@@ -139,6 +138,64 @@ public class PKCS11SkyTrustMapper {
 		
 		
 		PKCS11Object obj = ObjectBuilder.createFromTemplate(cert_template);
+		obj.setTag(key);
+		return obj;
+	}
+	public static PKCS11Object mapToPub(SKey key) throws PKCS11Error{
+		if(key == null){
+			return null;
+		}
+		
+		if(!key.getRepresentation().equals("certificate")){
+			return null;
+		}
+		ArrayList<ATTRIBUTE> pub_template = new ArrayList<>(skytrust_template);
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ID,key.getId().getBytes()));
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.LABEL,"skytrust"));
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY));		
+		
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,false));
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true));
+		pub_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false));
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.VERIFY,true));
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ENCRYPT,true));
+		pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.WRAP,false));
+				
+		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
+		
+		try {
+			byte[] cert = Util.fromBase64String(certb64);		
+			X509Certificate iaikcert = new X509Certificate(cert);
+			
+			PublicKey k = iaikcert.getPublicKey();
+			pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.VALUE,k.getEncoded()));
+			System.err.println("Key format: "+k.getFormat());
+			String debg = k.getFormat();
+			if(k instanceof RSAPublicKeyImpl){
+				RSAPublicKeyImpl rsakey = (RSAPublicKeyImpl)k;
+				BigInteger exp = rsakey.getPublicExponent();
+				BigInteger mod = rsakey.getModulus();
+				if(mod == null || exp == null){
+					return null;
+				}
+				pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS,mod.toByteArray()));
+				int modbits = mod.bitLength();
+				pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS_BITS,mod.bitLength()));
+				pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PUBLIC_EXPONENT,exp.toByteArray()));
+			}else{
+				System.err.println("RSA Pub Key expected");
+				return null;
+			}
+			
+			X500Principal subject = iaikcert.getSubjectX500Principal();
+			pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,subject.getEncoded()));
+			
+		} catch (CertificateException | Base64Exception e ) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		PKCS11Object obj = ObjectBuilder.createFromTemplate(pub_template);
 		obj.setTag(key);
 		return obj;
 	}
