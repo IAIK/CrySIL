@@ -1,6 +1,7 @@
 package pkcs11;
 
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.Principal;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
@@ -23,7 +24,6 @@ import proxys.KEY_TYP;
 import proxys.MECHANISM_TYPES;
 import proxys.OBJECT_CLASS;
 import proxys.RETURN_TYPE;
-import sun.security.rsa.RSAPublicKeyImpl;
 import iaik.x509.X509Certificate;
 import iaik.security.rsa.RSAPublicKey;
 import iaik.utils.Base64Exception;
@@ -114,20 +114,12 @@ public class PKCS11SkyTrustMapper {
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.VALUE,cert));
 		
 			X509Certificate iaikcert = new X509Certificate(cert);
-			
-			
-			X500Principal pal = new X500Principal(iaikcert.getIssuerDN().getName());
-			
-			String subname = iaikcert.getSubjectDN().getName();
-			subname = subname.replaceAll("SN=Teufl,", "");
-			subname = subname.replaceAll("SN=Teufl Enc,", "");
-			
-			X500Principal pal1 = new X500Principal(subname);
-			
-			
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,pal.getEncoded()));
+			X500Principal subject = iaikcert.getSubjectX500Principal();
+			X500Principal issuer = iaikcert.getIssuerX500Principal();			
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,issuer.getEncoded()));
+			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,subject.getEncoded()));
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,iaikcert.getSerialNumber().toByteArray()));
-			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,pal1.getEncoded()));
+		
 		} catch (CertificateException | Base64Exception e ) {
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.ISSUER,"ISSUER".getBytes()));
 			cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SERIAL_NUMBER,"SERIAL_NUMBER".getBytes()));
@@ -166,31 +158,24 @@ public class PKCS11SkyTrustMapper {
 		try {
 			byte[] cert = Util.fromBase64String(certb64);		
 			X509Certificate iaikcert = new X509Certificate(cert);
-			
+
 			PublicKey k = iaikcert.getPublicKey();
+			RSAPublicKey rsakey = new RSAPublicKey(k.getEncoded());  //TODO geht das ned irgendwie schöner?
 			pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.VALUE,k.getEncoded()));
-			System.err.println("Key format: "+k.getFormat());
-			String debg = k.getFormat();
-			if(k instanceof RSAPublicKeyImpl){
-				RSAPublicKeyImpl rsakey = (RSAPublicKeyImpl)k;
-				BigInteger exp = rsakey.getPublicExponent();
-				BigInteger mod = rsakey.getModulus();
-				if(mod == null || exp == null){
-					return null;
-				}
-				pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS,mod.toByteArray()));
-				int modbits = mod.bitLength();
-				pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS_BITS,mod.bitLength()));
-				pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PUBLIC_EXPONENT,exp.toByteArray()));
-			}else{
-				System.err.println("RSA Pub Key expected");
+
+			BigInteger exp = rsakey.getPublicExponent();
+			BigInteger mod = rsakey.getModulus();
+			if(mod == null || exp == null){
 				return null;
 			}
-			
+			pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS,mod.toByteArray()));
+			pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS_BITS,mod.bitLength()));
+			pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PUBLIC_EXPONENT,exp.toByteArray()));
+
 			X500Principal subject = iaikcert.getSubjectX500Principal();
 			pub_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SUBJECT,subject.getEncoded()));
 			
-		} catch (CertificateException | Base64Exception e ) {
+		} catch (CertificateException | Base64Exception | InvalidKeyException e ) {
 			e.printStackTrace();
 			return null;
 		}

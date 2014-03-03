@@ -56,10 +56,14 @@ public class Token implements IToken {
 		try {
 			List<SKey> list = server.getKeyList();
 			ArrayList<PKCS11Object> objlist = new ArrayList<PKCS11Object>();
+			PKCS11Object o;
 			for(SKey key : list){
-				objlist.add(PKCS11SkyTrustMapper.mapToCert(key));
-				objlist.add(PKCS11SkyTrustMapper.mapToPrivate(key));
-				objlist.add(PKCS11SkyTrustMapper.mapToPub(key));
+				o = PKCS11SkyTrustMapper.mapToCert(key);
+				if(o != null) objlist.add(o);
+				o = PKCS11SkyTrustMapper.mapToPrivate(key);
+				if(o != null) objlist.add(o);
+				o = PKCS11SkyTrustMapper.mapToPub(key);
+				if(o != null) objlist.add(o);
 			}
 			return objlist;
 		} catch (PKCS11Error e) {
