@@ -16,10 +16,16 @@ public class Server implements Serializable{
 	public class ServerInfo{
 		ServerInfo(String url){
 			this.url = url;
+			this.name = "teste";
+		}
+		ServerInfo(String url,String name){
+			this.url = url;
+			this.name = name;
 		}
 		private String url;
+		private String name;
 		public String getName(){
-			return url;
+			return name;
 		}
 		public String getUrl(){
 			return url;
@@ -27,6 +33,9 @@ public class Server implements Serializable{
 	}
 	public Server(String url){
 		info = new ServerInfo(url);
+	}
+	public Server(String url,String name){
+		info = new ServerInfo(url,name);
 	}
 	public void setCredentials(SAuthInfo cre){
 		credentials = cre;
