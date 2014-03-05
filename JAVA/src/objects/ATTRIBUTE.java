@@ -52,6 +52,9 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 		attribute_types.put(ATTRIBUTE_TYPE.VERIFY_RECOVER,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.DERIVE,boolean.class);
 		attribute_types.put(ATTRIBUTE_TYPE.KEY_GEN_MECHANISM,CK_BYTE_ARRAY.class);
+		attribute_types.put(ATTRIBUTE_TYPE.CERTIFICATE_CATEGORY,long.class);
+		attribute_types.put(ATTRIBUTE_TYPE.TRUSTED,boolean.class);
+		
 		//		  attribute_types.put(ATTRIBUTE_TYPE.START_DATE
 		//		  attribute_types.put(ATTRIBUTE_TYPE.END_DATE
 		attribute_types.put(ATTRIBUTE_TYPE.MODULUS,CK_BYTE_ARRAY.class);

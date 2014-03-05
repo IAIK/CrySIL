@@ -93,7 +93,9 @@ public class PKCS11SkyTrustMapper {
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.LABEL,"skytrust"));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_TYPE,CERT_TYPE.X_509));
-
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CERTIFICATE_CATEGORY,1));
+		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TRUSTED,true));
+		
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE,false));
 		cert_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true));
 		cert_template.add( new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false));
@@ -199,9 +201,24 @@ public class PKCS11SkyTrustMapper {
 		private_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SIGN,true));
 		private_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.DECRYPT,true));
 		private_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.UNWRAP,false));
-		byte[] data = new byte[10];
-		private_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS,data));
-		private_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,data));
+		
+		
+		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
+		
+		try {
+			byte[] cert = Util.fromBase64String(certb64);		
+			X509Certificate iaikcert = new X509Certificate(cert);
+
+			PublicKey k = iaikcert.getPublicKey();
+			RSAPublicKey rsakey = new RSAPublicKey(k.getEncoded());  //TODO geht das ned irgendwie schöner?
+			BigInteger mod = rsakey.getModulus();
+			private_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODULUS,mod.toByteArray()));
+		} catch (CertificateException | Base64Exception | InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		private_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,data));
 
 		PKCS11Object obj = ObjectBuilder.createFromTemplate(private_template);
 		obj.setTag(key);

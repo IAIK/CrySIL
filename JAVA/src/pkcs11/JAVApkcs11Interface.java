@@ -545,7 +545,8 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session = getRM().getSessionByHandle(hSession);
 		
 		session.signSetData(pData);
-
+		long buffferlen = pulSignatureLen.value();
+		long signlen = session.sign().length;
 		if(pSignature == null){
 			pulSignatureLen.assign(session.sign().length);
 			return RETURN_TYPE.OK.swigValue();
