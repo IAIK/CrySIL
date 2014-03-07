@@ -164,13 +164,13 @@ public class ATTRIBUTE extends proxys.CK_ATTRIBUTE {
 			}
 		}catch(IllegalArgumentException e){
 			if((int) getType() >= ATTRIBUTE_TYPE.VENDOR_DEFINED.swigValue()){
-				this.type = new ATTRIBUTE_TYPE("unknownVendorAttr_ "+getType(),(int) getType());
+				this.type = new ATTRIBUTE_TYPE((int) getType());
 				this.datatype = void.class;
 			}else{
 				this.type = null;
 				this.datatype = null;
 			}
-		} 
+		}
 	}
 
 	public ATTRIBUTE(ATTRIBUTE_TYPE type, byte[] val) throws PKCS11Error {

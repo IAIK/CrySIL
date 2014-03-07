@@ -19,7 +19,6 @@ import proxys.CK_ULONG_JPTR;
 import proxys.MECHANISM_TYPES;
 import proxys.RETURN_TYPE;
 import proxys.pkcs11Constants;
-import sun.misc.BASE64Encoder;
 import objects.ATTRIBUTE;
 
 
@@ -47,9 +46,19 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		  if(s == null /*|| s.isNullPtr()*/){
 			  throw new PKCS11Error(RETURN_TYPE.ARGUMENTS_BAD);
 		  }
+		  if(s instanceof MECHANISM){
+			  if(((MECHANISM) s).getType() == null){
+				  throw new PKCS11Error(RETURN_TYPE.MECHANISM_INVALID);
+			  }
+		  }
+		  if(s instanceof ATTRIBUTE){
+			  if(((ATTRIBUTE) s).getTypeEnum() == null){
+				  throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_TYPE_INVALID);
+			  }
+		  }
 	  }
   }
-	
+
   public static long C_OpenSession(long slotID, long flags, CK_BYTE_ARRAY pApplication, CK_NOTIFY_CALLBACK Notify, CK_ULONG_JPTR phSession) {
 	  System.err.println("C_OpenSession ............start.............");
 	  try {
@@ -528,8 +537,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			  for(int i=0; i<signed.length; i++){
 				  pSignature.setitem(i, signed[i]);
 			  }
-			  String load = new BASE64Encoder().encode(signed);
-			  System.err.println(load);
 			  session.signFinal();
 			  return RETURN_TYPE.OK.swigValue();
 		  }
@@ -545,8 +552,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 		Session session = getRM().getSessionByHandle(hSession);
 		
 		session.signSetData(pData);
-		long buffferlen = pulSignatureLen.value();
-		long signlen = session.sign().length;
 		if(pSignature == null){
 			pulSignatureLen.assign(session.sign().length);
 			return RETURN_TYPE.OK.swigValue();
@@ -559,8 +564,6 @@ public class JAVApkcs11Interface implements pkcs11Constants {
 			for(int i=0; i<signed.length; i++){
 				pSignature.setitem(i, signed[i]);
 			}
-			  String load = new BASE64Encoder().encode(signed);
-			  System.err.println(load);
 			session.signFinal();
 			return RETURN_TYPE.OK.swigValue();
 		}

@@ -82,18 +82,28 @@ public class MECHANISM extends CK_MECHANISM{
 		}
 		return false;
 	}
-	public MECHANISM(long cPtr, boolean cMemoryOwn) throws PKCS11Error{
+	public MECHANISM(long cPtr, boolean cMemoryOwn){
 		super(cPtr,cMemoryOwn);
-		if(cPtr == 0)
+		if(cPtr == 0){
+			this.datatype = null;
+			this.cdata = null;
+			this.type = null;
 			return;
-		this.type = MECHANISM_TYPES.swigToEnum((int) super.getMechanism());	
+		}
 		long cptr = 0;
 		SWIGTYPE_p_void p =super.getPParameter();
 		if(p != null){
 			cptr = p.getCPtr();
 		}
-		this.cdata = new CK_BYTE_ARRAY(cptr,false);
-		this.datatype = datatypeof(type);
+		try {
+			this.type = MECHANISM_TYPES.swigToEnum((int) super.getMechanism());	
+			this.datatype = datatypeof(type);
+			this.cdata = new CK_BYTE_ARRAY(cptr,false);
+		} catch (IllegalArgumentException | PKCS11Error e) {
+			this.datatype = null;
+			this.cdata = null;
+			this.type = null;
+		}
 	}
 	public <T extends StructSizeBase> MECHANISM(MECHANISM_TYPES type, T val) throws PKCS11Error {
 		super();

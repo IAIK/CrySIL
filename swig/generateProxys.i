@@ -36,11 +36,17 @@ typedef struct {
   }
 %}
 
+
 %typemap(javacode) enum SWIGTYPE %{
 	@Override
 	public int hashCode(){
 		return swigValue;
 	}
+	public $javaclassname(int swigValue) {
+    this.swigName = "unknown";
+    this.swigValue = swigValue;
+    swigNext = swigValue+1;
+  }
 %}
 /* Parse the header file to generate wrappers */
 
