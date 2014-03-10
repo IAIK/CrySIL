@@ -11,11 +11,11 @@ export INCLUDE_DIRS := $(realpath ../include/java/ ../include/)
 export LIBRARY_DIRS := $(realpath ../lib/)
 NAME = skytrustpkcs11
 WRAPNAME = pkcs11_java_wrap
-export $(DEBUG)
 #following variables get overwritten through commandline from ant
 JAR = $(realpath ../lib/PKCS11.jar)
-DEBUG = true
+DEBUG = false
 #end
+export $(DEBUG)
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir))

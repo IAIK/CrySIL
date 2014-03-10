@@ -34,7 +34,10 @@
     </path>
 	
     <target name="init" depends="clean,SWIG-preprocess,SWIG"/>
-    	
+    <target name="compile" depends="C-compile,JAVA-compile"/>
+    <target name="build" depends="C-compile,jar"/>
+    <target name="clean-build" depends="clean,jar,C-compile"/>
+    
     <target name="JAVA-clean">
         <delete dir="${java.build.dir}"/>
     </target>
@@ -57,7 +60,7 @@
       <exec input="${c.src.dir}/pkcs11t.h" executable="${swig.preproc.file}" output="${swig.dir}/pkcs11t_processed.h" failonerror="true"/>
       <exec dir="${swig.dir}" executable="./enums.sh" failonerror="true"/> 
     </target>
-    <target name="SWIG">
+    <target name="SWIG" depends="SWIG-preprocess">
       <mkdir dir="${swig.generated.dir}"/>
       <exec executable="swig2.0" failonerror="true" searchpath="true">
         <arg line="-java -package proxys -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
@@ -90,7 +93,7 @@
            runtest"/>
         </exec>
     </target>
-    <target name="compile" depends="C-compile,JAVA-compile"/>
+
 <!-- JAR -->   
     <target name="jar" depends="JAVA-compile">
      <jar destfile="${c.lib.dir}/${ant.project.name}.jar">
@@ -104,5 +107,4 @@
      </jar>
     </target>
 
-    <target name="clean-build" depends="clean,jar"/>
 </project>
