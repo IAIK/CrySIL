@@ -23,7 +23,7 @@
 		<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
     <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
 
-    <property name="debug" value="true"/>
+    <property name="debug" value="false"/>
     <property name="debuglevel" value="source,lines,vars"/>
      
      
@@ -33,21 +33,22 @@
         <pathelement location="${c.lib.dir}/dependencies.jar"/>
     </path>
 	
-    <target name="init" depends="clean,SWIG-preprocess,SWIG"/>
+    <target name="init" depends="clean,SWIG-preprocess,SWIG,cmake"/>
     <target name="compile" depends="C-compile,JAVA-compile"/>
     <target name="build" depends="C-compile,jar"/>
     <target name="clean-build" depends="clean,jar,C-compile"/>
-    
+    <target name="cmake">
+    	<mkdir dir="${c.build.dir}"/>
+    	<exec osfamily="Unix" failonerror="true" dir="${c.build.dir}" executable="cmake" searchpath="true">
+          <arg line="-D DEBUG=${debug} -D JAR='${c.lib.dir}/${ant.project.name}.jar' ../ "/>
+     </exec>
+    </target>
     <target name="JAVA-clean">
         <delete dir="${java.build.dir}"/>
     </target>
     <target name="C-clean" >
     		<exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} LIBRARY_DIRS=${c.lib.dir} 
-          INCLUDE_DIRS='${c.include.dir} ${c.include.java.dir}'
-          NAME=${c.lib.name}
-			    WRAPNAME=${c.wrapperlib.name}
-           clean"/>
+          <arg line="-C ${c.build.dir} clean"/>
         </exec>
     </target>
     <target name="SWIG-clean" >
@@ -81,10 +82,10 @@
     </target>
     <target name="C-compile">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
-          <arg line="-C ${c.dir} 
-			    JARNAME='${c.lib.dir}/${ant.project.name}.jar'
-			    DEBUG=${debug}
-           all"/>
+          <arg line="-C ${c.build.dir} DEBUG=${debug} all"/>
+        </exec>
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.build.dir} DEBUG=${debug} install"/>
         </exec>
     </target>
     <target name="C-runtest">
