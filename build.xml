@@ -33,7 +33,7 @@
         <pathelement location="${c.lib.dir}/dependencies.jar"/>
     </path>
 	
-    <target name="init" depends="clean,SWIG-preprocess,SWIG,cmake"/>
+    <target name="init" depends="SWIG-preprocess,SWIG,cmake"/>
     <target name="compile" depends="C-compile,JAVA-compile"/>
     <target name="build" depends="C-compile,jar"/>
     <target name="clean-build" depends="clean,jar,C-compile"/>
@@ -73,12 +73,6 @@
         <javac srcdir="${java.src.dir}" debug="${debug}" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
             <classpath refid="skytrust.classpath"/>
         </javac>
-    </target>
-    <target name="C-genPkcs11">
-        <exec osfamily="Unix" failonerror="true" executable="java" searchpath="true">
-        </exec>
-        <exec osfamily="Windows" failonerror="true" executable="msvc" searchpath="true">
-        </exec>
     </target>
     <target name="C-compile">
         <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
