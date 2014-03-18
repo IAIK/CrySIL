@@ -1,5 +1,5 @@
-pkcs11_private
-==============
+skytrust-pkcs11
+===============
 
 dependencies:
 swig2.0
