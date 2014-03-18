@@ -4,6 +4,7 @@ pkcs11_private
 dependencies:
 swig2.0
 
+set env var JAVA_HOME so cmake can find JNI
 
 to build shared object: 
 ant init
@@ -19,12 +20,8 @@ C-compile: führt make im C ordner aus; übergibt Variablen JAR (pfad zum .jar) 
 
 if debug in build.xml is true the JVM waits for remote debugger ant startup
 
-Makefiles:
-C/Makefile
-	targets for swig wrapper lib and pkcs11 lib
-	calls test/Makefile for test targets
-	commandline Variable:
-		 DEBUG=true/false (default false) 
-		 JAR=path_to_JAR (default ../lib/PKCS11.jar)
-C/test/Makefile
+execute export LD_LIBRARY_PATH=path to libjvm.so
+install libpkcs11_java_wrap.so into /usr/lib/
+install libskytrustpkcs11.so into /usr/lib/
+
 
