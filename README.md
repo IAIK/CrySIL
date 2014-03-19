@@ -34,7 +34,7 @@ each server that is configured in the GUI is represented by a Slot
 It is planned that the GUI is its own process that gets called via RMI or something similar.
 
 ## Flow Diagrams:
-
+<pre>
 on first use
 JAVAInterface			ResourceManager				    		GUI
     |---getInstance----->|											|
@@ -68,13 +68,13 @@ JAVAInterface			ResourceManager				Session			Slot			IToken			   Skytrust     	 G
 		|										|									|						|					|  Sign Response |					 |
 		|										|									|      Signature			|<---------------|					 |
 		|										|									|<--------------------|								 |					 |
-
+</pre>
 
 
 
 ## Class Diagram:
 
-
+<pre>
                   +-------------+         +-------------+       +---------+
                   |objectManager|         |PKCS11Object |       |ATTRIBUTE|
                   |-------------|1       n|-------------|1     n|---------|
@@ -105,8 +105,7 @@ JAVAInterface			ResourceManager				Session			Slot			IToken			   Skytrust     	 G
             |-----------|
             |           |
             +-----------+
-
-
+</pre>
 
 
 
