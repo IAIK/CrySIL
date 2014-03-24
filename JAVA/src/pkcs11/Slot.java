@@ -20,7 +20,6 @@ import proxys.RETURN_TYPE;
 
 
 
-
 /**
  * A Slot is a ServerInfo
  * 
