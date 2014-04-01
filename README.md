@@ -26,7 +26,6 @@ Targets:
  - clean: JAVA-clean, C-clean, SWIG-clean
 
 
-
 execute export LD_LIBRARY_PATH=path to libjvm.so
 install libpkcs11_java_wrap.so into /usr/lib/
 install libskytrustpkcs11.so into /usr/lib/
@@ -50,29 +49,38 @@ through this interface are PKCSObject and MECHANISM.
   Each PKCS11Object owns a set of ATTRIBUTE objects which define its properties.
 
 ### MECHANISM:
+  An object for representing different implemented mechanisms and their parameters.
+  A MECHANISM Object can be mapped to SkyTrust Mechanism identifiers by the PKCS11SkyTrustMapper Class
   
 The PKCS11 part consists mainly of the following classes: 
 ### JAVApkcs11Interface,
 ### ResourceManager(RM),
-### Slot,
-### Session,
-### ObjectManager and ObjectBuilder
-
-
+### Slot
+  Each Slot represents a Skytrust Server. A Slot owns 
+  an implementation of the IToken interface (for Skytrust the class Token), 
+  a list of Sessions that are connected to this Slot,
+  a, at the moment hard coded, list of Mechanisms that are supported by the Token
+  an ObjectManager that holds the PKCS11Objects that represent the crypto entities of the Skytrust server and all temporary objects created by the user in one of the Sessions. 
+  When a Slot gets created it asks for the PKCS11Objects representing the crypto entities of its Skytrust server through the IToken interface. These objects are added to the ObjectManager.
+  
+### Session
+  A Session object gets created if a new Session is opened by the user. It holds the sessionID, the type of the session (rw/ro), the Slot it is connected to and a set of Helper Objects to track the state of the multi command operations zb(findInit, find, findFinal).
+### ObjectManager
+   manages (add/del/find) all PKCS11Objects of a Slot
+### ObjectBuilder
+	Factory class to create PKCS11Objects from list of ATTRIBUTEs. Resposible for default value handling.
 
 The Skytrust part consists of the classes 
 ### Token 
-  (implements IToken)
-### PKCS11SkyTrustMapper. 
+  implements IToken Interface for Skytrust server.
+  uses PKCS11SkyTrustMapper to convert Skytrust objects into PKCS11Objects
+### Serversession
+  old Interface should be merged into Token.
+  builds the packets for Skytrust communication 
+  asks the GUI for Authentication if needed
+### PKCS11SkyTrustMapper 
 
 
-
-### Slot:
-each server that is configured in the (not yet existing) GUI is represented by a Slot
-It is planned that the GUI is its own process that gets called via RMI or something similar.
-When a Slot gets created it asks for the key list of the its skytrust server through the IToken interface.
-
-session handle encodes session and Slot id
 ## Flow Diagrams:
 
 on first use
@@ -109,8 +117,8 @@ JAVAInterface      ResourceManager        Session      Slot      IToken         
     |                   |                 |           |         |   Sign Response |           |
     |                   |                 |      Signature      |<----------------|           |
     |                   |                 |<--------------------|                 |           |
-</pre>
 
+</pre>
 
 
 ## Class Diagram:
