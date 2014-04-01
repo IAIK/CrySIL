@@ -51,8 +51,10 @@ through this interface are PKCSObject and MECHANISM.
 #### MECHANISM:
   An object for representing different implemented mechanisms and their parameters.
   A MECHANISM Object can be mapped to SkyTrust Mechanism identifiers by the PKCS11SkyTrustMapper Class
-  
-##The PKCS11 part consists mainly of the following classes: 
+
+
+##PKCS11 part  
+The PKCS11 part consists mainly of the following classes: 
 #### JAVApkcs11Interface
 #### ResourceManager(RM)
   Singleton, manages the Slots 
@@ -71,7 +73,8 @@ through this interface are PKCSObject and MECHANISM.
 #### ObjectBuilder
 	Factory class to create PKCS11Objects from list of ATTRIBUTEs. Resposible for default value handling.
 
-##The Skytrust part consists of the classes 
+###Skytrust part
+The Skytrust part consists of the classes 
 #### Token 
   implements IToken Interface for Skytrust server.
   uses PKCS11SkyTrustMapper to convert Skytrust objects into PKCS11Objects
