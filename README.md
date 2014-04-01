@@ -85,6 +85,7 @@ JAVAInterface      ResourceManager                GUI
     |<---- instance------|
 
 on Sign command:
+<pre>
 JAVAInterface      ResourceManager        Session      Slot      IToken         Skytrust        GUI
     |   getInstance     |                 |           |         |                 |           |
     |------------------>|                 |           |         |                 |           |
@@ -108,7 +109,7 @@ JAVAInterface      ResourceManager        Session      Slot      IToken         
     |                   |                 |           |         |   Sign Response |           |
     |                   |                 |      Signature      |<----------------|           |
     |                   |                 |<--------------------|                 |           |
-
+</pre>
 
 
 
