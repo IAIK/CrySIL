@@ -63,22 +63,22 @@ The PKCS11 part consists mainly of the following classes:
   an ObjectManager that holds the PKCS11Objects that represent the crypto entities of the Skytrust server and all temporary objects created by the user in one of the Sessions. 
   When a Slot gets created it asks for the PKCS11Objects representing the crypto entities of its Skytrust server through the IToken interface. These objects are added to the ObjectManager.
   
-### Session
+#### Session
   A Session object gets created if a new Session is opened by the user. It holds the sessionID, the type of the session (rw/ro), the Slot it is connected to and a set of Helper Objects to track the state of the multi command operations zb(findInit, find, findFinal).
-### ObjectManager
+#### ObjectManager
    manages (add/del/find) all PKCS11Objects of a Slot
-### ObjectBuilder
+#### ObjectBuilder
 	Factory class to create PKCS11Objects from list of ATTRIBUTEs. Resposible for default value handling.
 
 The Skytrust part consists of the classes 
-### Token 
+#### Token 
   implements IToken Interface for Skytrust server.
   uses PKCS11SkyTrustMapper to convert Skytrust objects into PKCS11Objects
-### Serversession
+#### Serversession
   old Interface should be merged into Token.
   builds the packets for Skytrust communication 
   asks the GUI for Authentication if needed
-### PKCS11SkyTrustMapper 
+#### PKCS11SkyTrustMapper 
 
 
 ## Flow Diagrams:
