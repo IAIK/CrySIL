@@ -38,24 +38,25 @@ The second part is the Skytrust part. It implements the communication with the s
 These two parts are connected through the IToken interface. The objects used to pass data 
 through this interface are PKCSObject and MECHANISM.
 
-### IToken: 
+#### IToken: 
   defines the crypto methods encrypt, decrypt, sign, verify and the method getObejcts
   getObejcts gets called when the first connection to a Skytrust server is made.
   It should return a list of PKCS11Objects representing all available crypto objects (public key, private key,certificate..)
   Each of the crypto methods has a PKCS11Object as key and a MECHANISM as parameters.
   
-### PKCSObject:
+#### PKCSObject:
   Is the main object used for storing and managing crypto entitys.
   Each PKCS11Object owns a set of ATTRIBUTE objects which define its properties.
 
-### MECHANISM:
+#### MECHANISM:
   An object for representing different implemented mechanisms and their parameters.
   A MECHANISM Object can be mapped to SkyTrust Mechanism identifiers by the PKCS11SkyTrustMapper Class
   
-The PKCS11 part consists mainly of the following classes: 
-### JAVApkcs11Interface,
-### ResourceManager(RM),
-### Slot
+##The PKCS11 part consists mainly of the following classes: 
+#### JAVApkcs11Interface
+#### ResourceManager(RM)
+  Singleton, manages the Slots 
+#### Slot
   Each Slot represents a Skytrust Server. A Slot owns 
   an implementation of the IToken interface (for Skytrust the class Token), 
   a list of Sessions that are connected to this Slot,
@@ -70,7 +71,7 @@ The PKCS11 part consists mainly of the following classes:
 #### ObjectBuilder
 	Factory class to create PKCS11Objects from list of ATTRIBUTEs. Resposible for default value handling.
 
-The Skytrust part consists of the classes 
+##The Skytrust part consists of the classes 
 #### Token 
   implements IToken Interface for Skytrust server.
   uses PKCS11SkyTrustMapper to convert Skytrust objects into PKCS11Objects
