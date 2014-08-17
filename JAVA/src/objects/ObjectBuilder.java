@@ -4,98 +4,94 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import obj.CK_ATTRIBUTE;
+import obj.CK_ATTRIBUTE_TYPE;
+import obj.CK_KEY_TYPE;
+import obj.CK_OBJECT_TYPE;
+import obj.CK_RETURN_TYPE;
+
 import pkcs11.PKCS11Error;
-import proxys.ATTRIBUTE_TYPE;
-import proxys.KEY_TYP;
-import proxys.OBJECT_CLASS;
-import proxys.RETURN_TYPE;
 
 public class ObjectBuilder {
 	
 
-	private static ArrayList<ATTRIBUTE> defaultKey_template;
-	private static ArrayList<ATTRIBUTE> defaultTemplate_secretKey;
-	private static ArrayList<ATTRIBUTE> defaultTemplate_publicKey;
-	private static ArrayList<ATTRIBUTE> defaultTemplate_certificate;
+	private static ArrayList<CK_ATTRIBUTE> defaultKey_template;
+	private static ArrayList<CK_ATTRIBUTE> defaultTemplate_secretKey;
+	private static ArrayList<CK_ATTRIBUTE> defaultTemplate_publicKey;
+	private static ArrayList<CK_ATTRIBUTE> defaultTemplate_certificate;
 	static{
-		try {
 			defaultKey_template = new ArrayList<>();
-			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.EXTRACTABLE,true));
-			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,true));
-			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,false));
-			defaultKey_template.add(new ATTRIBUTE(ATTRIBUTE_TYPE.KEY_TYPE,KEY_TYP.RSA_KEY));
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE,true, 1));
+			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,true,1));
+			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,false,1));
+			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_KEY_TYPE,CK_KEY_TYPE.CKK_RSA,8));
 	};
 	static {
-		try {
 			defaultTemplate_secretKey = new ArrayList<>();
-			defaultTemplate_secretKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.SECRET_KEY));
-			defaultTemplate_secretKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
-			defaultTemplate_secretKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			defaultTemplate_secretKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,CK_OBJECT_TYPE.CKO_SECRET_KEY,8));
+			defaultTemplate_secretKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,false,1));
+			defaultTemplate_secretKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,true,1));
 	};
 	static {
-		try {
 			defaultTemplate_publicKey = new ArrayList<>();
-			defaultTemplate_publicKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.PUBLIC_KEY));
-			defaultTemplate_publicKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
-			defaultTemplate_publicKey.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,false));
-			
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			defaultTemplate_publicKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,CK_OBJECT_TYPE.CKO_PUBLIC_KEY,8));
+			defaultTemplate_publicKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,false, 1));
+			defaultTemplate_publicKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,false,1));
 	};
 	static {
-		try {
 			defaultTemplate_certificate = new ArrayList<>();
-			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.TOKEN,true));
-			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.CLASS,OBJECT_CLASS.CERTIFICATE));
-			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.MODIFIABLE,false));
-			defaultTemplate_certificate.add(new ATTRIBUTE(ATTRIBUTE_TYPE.SENSITIVE,true));
-		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
+			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,CK_OBJECT_TYPE.CKO_CERTIFICATE, 8));
+			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,false,1));
+			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,true,1));
 	};
 	
-	private static Map<ATTRIBUTE_TYPE,ATTRIBUTE> copyToMap(ArrayList<ATTRIBUTE> template) throws PKCS11Error{
-		Map<ATTRIBUTE_TYPE,ATTRIBUTE> res = new HashMap<>();
-		for(ATTRIBUTE attr : template){
-			res.put(attr.getTypeEnum(), attr.createClone());
+	private static Map<Long,CK_ATTRIBUTE> copyToMap(CK_ATTRIBUTE[] template) throws PKCS11Error{
+		Map<Long,CK_ATTRIBUTE> res = new HashMap<>();
+		for(CK_ATTRIBUTE attr : template){
+			res.put(attr.getType(), attr.createClone());
 		}
 		return res;
 	}
 
-	public static PKCS11Object createFromTemplate(ArrayList<ATTRIBUTE> template) throws PKCS11Error{
-		ATTRIBUTE attr_class = ATTRIBUTE.find(template, ATTRIBUTE_TYPE.CLASS);
+	public static PKCS11Object createFromTemplate(CK_ATTRIBUTE[] template) throws PKCS11Error{
+		CK_ATTRIBUTE attr_class =CK_ATTRIBUTE.find(template, CK_ATTRIBUTE_TYPE.CKA_CLASS);
 		if(attr_class == null){
-			throw new PKCS11Error(RETURN_TYPE.TEMPLATE_INCOMPLETE);
+			throw new PKCS11Error(CK_RETURN_TYPE.CKR_TEMPLATE_INCOMPLETE);
 		}
-		OBJECT_CLASS obj_class = attr_class.copyToSwigEnum(OBJECT_CLASS.class);
+//		CK_OBJECT_TYPE.CKO_obj_class = attr_class.copyToSwigEnum(CK_OBJECT_TYPE.CKO_class);
 
-		HashMap<ATTRIBUTE_TYPE,ATTRIBUTE> default_attr = new HashMap<>(copyToMap(defaultKey_template));
-		if(obj_class.equals(OBJECT_CLASS.PRIVATE_KEY)){
-			 //private key template
-			default_attr.putAll(copyToMap(defaultTemplate_secretKey));
-		 }else if(obj_class.equals(OBJECT_CLASS.PUBLIC_KEY)){
-			default_attr.putAll(copyToMap(defaultTemplate_publicKey));
-		 }else if(obj_class.equals(OBJECT_CLASS.CERTIFICATE)){
+		HashMap<Long,CK_ATTRIBUTE> default_attr = new HashMap<>(copyToMap((CK_ATTRIBUTE[]) defaultKey_template.toArray(new CK_ATTRIBUTE[defaultKey_template.size()])));
+		if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_PRIVATE_KEY)){
+			default_attr.putAll(copyToMap((CK_ATTRIBUTE[]) defaultTemplate_secretKey.toArray(new CK_ATTRIBUTE[defaultTemplate_secretKey.size()])));
+		 }else if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_PUBLIC_KEY)){
+			default_attr.putAll(copyToMap((CK_ATTRIBUTE[]) defaultTemplate_publicKey.toArray(new CK_ATTRIBUTE[defaultTemplate_publicKey.size()])));
+		 }else if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_CERTIFICATE)){
 //			 default_attr.putAll(copyToMap(defaultTemplate_publicKey));
-			 default_attr.putAll(copyToMap(defaultTemplate_certificate));
-		 }else if(obj_class.equals(OBJECT_CLASS.SECRET_KEY)){
+			 default_attr.putAll(copyToMap((CK_ATTRIBUTE[]) defaultTemplate_certificate.toArray(new CK_ATTRIBUTE[defaultTemplate_certificate.size()])));
+		 }else if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_SECRET_KEY)){
 			 
-		 }else if(obj_class.equals(OBJECT_CLASS.DATA)){
+		 }else if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_DATA)){
 			 
 		 }else{
-			 throw new PKCS11Error(RETURN_TYPE.ATTRIBUTE_VALUE_INVALID);
+			 throw new PKCS11Error(CK_RETURN_TYPE.CKR_ATTRIBUTE_VALUE_INVALID);
 		 }
+		
+		
+//		if(obj_class.equals(CK_OBJECT_TYPE.CKO_PRIVATE_KEY)){
+//			 //private key template
+//			default_attr.putAll(copyToMap(defaultTemplate_secretKey));
+//		 }else if(obj_class.equals(CK_OBJECT_TYPE.CKO_PUBLIC_KEY)){
+//			default_attr.putAll(copyToMap(defaultTemplate_publicKey));
+//		 }else if(obj_class.equals(CK_OBJECT_TYPE.CKO_CERTIFICATE)){
+////			 default_attr.putAll(copyToMap(defaultTemplate_publicKey));
+//			 default_attr.putAll(copyToMap(defaultTemplate_certificate));
+//		 }else if(obj_class.equals(CK_OBJECT_TYPE.CKO_SECRET_KEY)){
+//			 
+//		 }else if(obj_class.equals(CK_OBJECT_TYPE.CKO_DATA)){ //			 
+//		 }else{
+//			 throw new PKCS11Error(CK_RETURN_TYPE.CKR_ATTRIBUTE_VALUE_INVALID);
+//		 }
 		
 		default_attr.putAll(copyToMap(template));
 		return new PKCS11Object(default_attr);

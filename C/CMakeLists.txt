@@ -34,4 +34,3 @@ SET(LIBSRC "src/pkcs11.c")
 add_library(skytrustpkcs11 SHARED ${LIBSRC})
 target_link_libraries(skytrustpkcs11 ${JAVA_JVM_LIBRARY})
 install(TARGETS skytrustpkcs11 DESTINATION ${CMAKE_SOURCE_DIR}/../lib/)
-

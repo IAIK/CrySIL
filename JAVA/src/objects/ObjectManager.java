@@ -7,16 +7,17 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 
 import pkcs11.PKCS11Error;
 import pkcs11.PKCS11SkyTrustMapper;
-import proxys.CK_ATTRIBUTE;
-import proxys.RETURN_TYPE;
+import obj.CK_ATTRIBUTE;
+import obj.CK_RETURN_TYPE;
 
 public class ObjectManager {
 
 	private ArrayList<PKCS11Object> objects = new ArrayList<>();
 	private ArrayList<Long> ids = new ArrayList<>();
 
-	synchronized public ArrayList<Long> findObjects(ATTRIBUTE[] template) throws PKCS11Error {
+	synchronized public ArrayList<Long> findObjects(CK_ATTRIBUTE[] template) throws PKCS11Error {
 		ArrayList<Long> result = new ArrayList<>();
+		System.err.println("findObjects: there are currently "+objects.size()+" objects available");
 		for (PKCS11Object tmp : objects) {
 			if (tmp.query(template)) {
 				result.add(ids.get(objects.indexOf(tmp)));
@@ -31,10 +32,11 @@ public class ObjectManager {
 				return objects.get(index);
 			}
 		}
-		throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
+		System.err.println("ObjectManager: getObject, id wanted: "+id);
+		throw new PKCS11Error(CK_RETURN_TYPE.CKR_OBJECT_HANDLE_INVALID);
 	}
 
-	synchronized public long createObject(ArrayList<ATTRIBUTE> template) throws PKCS11Error {
+	synchronized public long createObject(CK_ATTRIBUTE[] template) throws PKCS11Error {
 		Long id = getNextId();
 		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		objects.add(object);
@@ -45,11 +47,12 @@ public class ObjectManager {
 
 	synchronized public long addObject(PKCS11Object object) throws PKCS11Error {
 		if(object == null){
-			throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
+			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OBJECT_HANDLE_INVALID);
 		}
 		Long id = getNextId();
 		objects.add(object);
 		ids.add(id);
+		System.err.println("objectManager added Object! there are now "+objects.size()+" objects!");
 		return id;
 	}
 
@@ -62,7 +65,7 @@ public class ObjectManager {
 				return;
 			}
 		}
-		throw new PKCS11Error(RETURN_TYPE.OBJECT_HANDLE_INVALID);
+		throw new PKCS11Error(CK_RETURN_TYPE.CKR_OBJECT_HANDLE_INVALID);
 	}
 
 	private Long getNextId() {

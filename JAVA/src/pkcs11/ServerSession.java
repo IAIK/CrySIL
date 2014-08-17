@@ -16,8 +16,11 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.ArrayList;
 import java.util.List;
 
+
+import obj.CK_RETURN_TYPE;
 
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -40,9 +43,7 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.keydiscovery.SPa
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SCryptoParams;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadCryptoOperationRequest;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadWithLoadResponse;
-
-
-import proxys.RETURN_TYPE;
+import at.iaik.skytrust.element.skytrustprotocol.payload.status.SPayloadStatus;
 
 /*
  * Stellt verbindung zum Server dar ist für kommunikation zuständig
@@ -158,8 +159,9 @@ public class ServerSession implements IServerSession {
 	@Override
 	public byte[] decrypt(byte[] encdata, SKey key, SkyTrustAlgorithm mech)
 			throws PKCS11Error {
-		byte[] plaindata = doCryptoCommand("encrypt", mech.getAlgorithmName(),
+		byte[] plaindata = doCryptoCommand("decrypt", mech.getAlgorithmName(),
 				encdata, key.getId(), key.getSubId());
+	
 		return plaindata;
 	}
 	public boolean isAutheticated() {
@@ -192,9 +194,9 @@ public class ServerSession implements IServerSession {
         try{
         	skyTrustResponse = restTemplate.postForObject(server.getUrl(),authRequest,SResponse.class);
         }catch(ResourceAccessException e){
-        	throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+        	throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
         }catch(RestClientException e){
-        	throw new PKCS11Error(RETURN_TYPE.DEVICE_REMOVED);
+        	throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_REMOVED);
         }
         //TODO wie erkennen wir ob Auth erfolgreich war
         if(!rememberCredentialsForSession){
@@ -207,6 +209,17 @@ public class ServerSession implements IServerSession {
 
 
 	private List<SKey> discoverKeys(String representation) throws PKCS11Error {
+		if(true){
+			List<SKey> list = new ArrayList<>();
+			SKey k = new SKeyCertificate();
+			k.setId("testcert");
+			k.setSubId("siebzehn");
+			k.setRepresentation("certificate");
+			list.add(k);
+			return list;
+		}
+		
+		
         SPayloadDiscoverKeysRequest payload = new SPayloadDiscoverKeysRequest();
         payload.setRepresentation(representation);
 
@@ -222,10 +235,11 @@ public class ServerSession implements IServerSession {
         }
         if (payloadResponse instanceof SPayloadDiscoverKeysResponse) {
             SPayloadDiscoverKeysResponse discoverKeysResponse = (SPayloadDiscoverKeysResponse)payloadResponse;
+            SPayloadDiscoverKeysResponse resp = new SPayloadDiscoverKeysResponse();
             List<SKey> keys = discoverKeysResponse.getKey();
             return keys;
         }
-        throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+        throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
     }
 	private byte[] doCryptoCommand(String command, String algorithm,
 			byte[] data, String keyId, String keySubId) throws PKCS11Error {
@@ -251,21 +265,28 @@ public class ServerSession implements IServerSession {
 				request, SResponse.class);
 
 		SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
+		
 		if (payloadResponse instanceof SPayloadAuthResponse) {
 			skyTrustResponse = handleAuth(skyTrustResponse);
 			payloadResponse = skyTrustResponse.getPayload();
+		}
+		System.err.println(payloadResponse);
+
+		if(payloadResponse instanceof SPayloadStatus){
+			System.err.println("statuscode: "+((SPayloadStatus) payloadResponse).getCode());
+			throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
 		}
 
 		if (payloadResponse instanceof SPayloadWithLoadResponse) {
 			SPayloadWithLoadResponse payLoadWithLoadResponse = (SPayloadWithLoadResponse) payloadResponse;
 			String resp_b64Data = payLoadWithLoadResponse.getLoad();
-			
+			System.err.println(resp_b64Data);
 			try {
 				return Util.fromBase64String(resp_b64Data);
 			} catch (IOException e) {
-				throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+				throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
 			}
 		}
-		throw new PKCS11Error(RETURN_TYPE.DEVICE_ERROR);
+		throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
 	}
 }

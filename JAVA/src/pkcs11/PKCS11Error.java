@@ -1,16 +1,17 @@
 package pkcs11;
-import proxys.RETURN_TYPE;
-
 
 public class PKCS11Error extends Exception {
-	private RETURN_TYPE error;
-	public PKCS11Error(RETURN_TYPE er){
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8385653535225460037L;
+	private Long error;
+
+	public PKCS11Error(Long er) {
 		error = er;
 	}
-	public long getCode(){
-		return error.swigValue();
-	}
-	public RETURN_TYPE getType(){
+
+	public long getCode() {
 		return error;
 	}
 }

@@ -10,9 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import proxys.RETURN_TYPE;
-
-
+import obj.CK_RETURN_TYPE;
 
 /*
  * one per Application 
@@ -92,11 +90,11 @@ public class ResourceManager {
 	}
 	public Slot getSlotByID(long slotid) throws PKCS11Error{
 		if(slotid > Integer.MAX_VALUE || slotid > MAX_SLOT){
-			throw new PKCS11Error(RETURN_TYPE.SLOT_ID_INVALID);
+			throw new PKCS11Error(CK_RETURN_TYPE.CKR_SLOT_ID_INVALID);
 		}
 		Slot r = slotList.get((int) slotid-1);
 		if(r == null){
-			throw new PKCS11Error(RETURN_TYPE.SLOT_ID_INVALID);
+			throw new PKCS11Error(CK_RETURN_TYPE.CKR_SLOT_ID_INVALID);
 		}
 		return r;
 	}
@@ -127,7 +125,7 @@ public class ResourceManager {
 			id = id+1;		
 		}
 		if(id >= MAX_SLOT){
-			throw new PKCS11Error(RETURN_TYPE.GENERAL_ERROR);
+			throw new PKCS11Error(CK_RETURN_TYPE.CKR_GENERAL_ERROR);
 		}
 		return id;
 	}

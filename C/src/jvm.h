@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "pkcs11.h"
 
 #ifndef __JVM_H
 #define __JVM_H

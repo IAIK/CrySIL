@@ -8,7 +8,7 @@ import java.util.List;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 
-import objects.MECHANISM;
+import obj.CK_MECHANISM;
 import objects.PKCS11Object;
 
 public class Token implements IToken {
@@ -19,7 +19,7 @@ public class Token implements IToken {
 	}
 
 	@Override
-	public byte[] sign(byte[] data, PKCS11Object key, MECHANISM mech){
+	public byte[] sign(byte[] data, PKCS11Object key, CK_MECHANISM mech){
 		try {
 			return server.sign(data, PKCS11SkyTrustMapper.mapKey(key), PKCS11SkyTrustMapper.mapMechanism(mech));
 		} catch (PKCS11Error e) {
@@ -28,14 +28,15 @@ public class Token implements IToken {
 	}
 
 	@Override
-	public Boolean verify(byte[] data,byte[] signature, PKCS11Object key, MECHANISM mech){
+	public Boolean verify(byte[] data,byte[] signature, PKCS11Object key, CK_MECHANISM mech){
 		//TODO local verify
 		return null;
 	}
 
 	@Override
-	public byte[] encrypt(byte[] data, PKCS11Object key, MECHANISM mech){
+	public byte[] encrypt(byte[] data, PKCS11Object key, CK_MECHANISM mech){
 		try {
+			System.err.println("TOKEN.java: encrypting stuff....");
 			return server.encrypt(data, PKCS11SkyTrustMapper.mapKey(key), PKCS11SkyTrustMapper.mapMechanism(mech));
 		} catch (PKCS11Error e) {
 			return null;
@@ -43,11 +44,12 @@ public class Token implements IToken {
 	}
 
 	@Override
-	public byte[] decrypt(byte[] enc_data, PKCS11Object key, MECHANISM mech){
+	public byte[] decrypt(byte[] enc_data, PKCS11Object key, CK_MECHANISM mech) throws PKCS11Error{
 		try {
+
 			return server.decrypt(enc_data, PKCS11SkyTrustMapper.mapKey(key), PKCS11SkyTrustMapper.mapMechanism(mech));
 		} catch (PKCS11Error e) {
-			return null;
+			throw e;
 		}
 	}
 	
@@ -67,6 +69,7 @@ public class Token implements IToken {
 			}
 			return objlist;
 		} catch (PKCS11Error e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
