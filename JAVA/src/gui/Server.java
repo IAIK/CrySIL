@@ -16,7 +16,7 @@ public class Server implements Serializable{
 	public class ServerInfo{
 		ServerInfo(String url){
 			this.url = url;
-			this.name = "teste";
+			this.name = "http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth/rest/json";
 		}
 		ServerInfo(String url,String name){
 			this.url = url;

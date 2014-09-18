@@ -17,6 +17,8 @@ public class Token implements IToken {
 	public Token(Server.ServerInfo server_info){
 		server = new ServerSession(server_info);
 	}
+	
+	
 
 	@Override
 	public byte[] sign(byte[] data, PKCS11Object key, CK_MECHANISM mech){
@@ -46,9 +48,9 @@ public class Token implements IToken {
 	@Override
 	public byte[] decrypt(byte[] enc_data, PKCS11Object key, CK_MECHANISM mech) throws PKCS11Error{
 		try {
-
 			return server.decrypt(enc_data, PKCS11SkyTrustMapper.mapKey(key), PKCS11SkyTrustMapper.mapMechanism(mech));
 		} catch (PKCS11Error e) {
+			e.printStackTrace();
 			throw e;
 		}
 	}
@@ -60,6 +62,7 @@ public class Token implements IToken {
 			ArrayList<PKCS11Object> objlist = new ArrayList<PKCS11Object>();
 			PKCS11Object o;
 			for(SKey key : list){
+				key.setId(key.getId().concat(""+list.indexOf(key)));
 				o = PKCS11SkyTrustMapper.mapToCert(key);
 				if(o != null) objlist.add(o);
 				o = PKCS11SkyTrustMapper.mapToPrivate(key);

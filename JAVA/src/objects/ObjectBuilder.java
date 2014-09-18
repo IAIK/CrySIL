@@ -23,27 +23,29 @@ public class ObjectBuilder {
 			defaultKey_template = new ArrayList<>();
 			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE,true, 1));
 			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,true,1));
-			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,false,1));
 			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_KEY_TYPE,CK_KEY_TYPE.CKK_RSA,8));
+			defaultKey_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
 	};
 	static {
 			defaultTemplate_secretKey = new ArrayList<>();
 			defaultTemplate_secretKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,CK_OBJECT_TYPE.CKO_SECRET_KEY,8));
 			defaultTemplate_secretKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,false,1));
 			defaultTemplate_secretKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,true,1));
+			defaultTemplate_secretKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
 	};
 	static {
 			defaultTemplate_publicKey = new ArrayList<>();
 			defaultTemplate_publicKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,CK_OBJECT_TYPE.CKO_PUBLIC_KEY,8));
 			defaultTemplate_publicKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,false, 1));
 			defaultTemplate_publicKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,false,1));
+			defaultTemplate_publicKey.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
 	};
 	static {
 			defaultTemplate_certificate = new ArrayList<>();
-			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
 			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,CK_OBJECT_TYPE.CKO_CERTIFICATE, 8));
 			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE,false,1));
 			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,true,1));
+			defaultTemplate_certificate.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
 	};
 	
 	private static Map<Long,CK_ATTRIBUTE> copyToMap(CK_ATTRIBUTE[] template) throws PKCS11Error{

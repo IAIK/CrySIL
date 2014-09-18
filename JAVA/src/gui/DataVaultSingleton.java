@@ -31,11 +31,11 @@ public class DataVaultSingleton {
 	private DataVaultSingleton() {
 		servers = new ArrayList<Server>();
 		clients = new ArrayList<Client>();
-		Server ser = new Server("http://skytrust-dev.iaik.tugraz.at/skytrust-server/rest/json","skytrust-dev");
-		SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
-		cre.setUserName("testuser");
-		cre.setPassWord("");
-		ser.setCredentials(cre);
+		Server ser = new Server("http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth/rest/json","skytrust-dev");
+//		SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
+//		cre.setUserName("testuser");
+//		cre.setPassWord("");
+//		ser.setCredentials(cre);
 		servers.add(ser);
 	}
 

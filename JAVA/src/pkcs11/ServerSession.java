@@ -1,14 +1,12 @@
 package pkcs11;
-import gui.DataVaultSingleton;
 import gui.Server;
-
+import org.apache.commons.codec.binary.Base64;
 import iaik.asn1.structures.AlgorithmID;
 import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
 import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 import iaik.x509.X509Certificate;
 
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -16,34 +14,16 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.ArrayList;
 import java.util.List;
 
-
-import obj.CK_RETURN_TYPE;
-
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import at.iaik.skytrust.SkyTrustAPIFactory;
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
-import at.iaik.skytrust.element.skytrustprotocol.SRequest;
-import at.iaik.skytrust.element.skytrustprotocol.SResponse;
-import at.iaik.skytrust.element.skytrustprotocol.header.SkyTrustHeader;
-import at.iaik.skytrust.element.skytrustprotocol.payload.SPayloadResponse;
+import at.iaik.skytrust.element.receiver.skytrust.SkyTrustAPI;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
-import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthType;
-import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthRequest;
-import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SPayloadAuthResponse;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyCertificate;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyIdentifier;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.keydiscovery.SPayloadDiscoverKeysRequest;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.keydiscovery.SPayloadDiscoverKeysResponse;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SCryptoParams;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadCryptoOperationRequest;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.operation.SPayloadWithLoadResponse;
-import at.iaik.skytrust.element.skytrustprotocol.payload.status.SPayloadStatus;
 
 /*
  * Stellt verbindung zum Server dar ist für kommunikation zuständig
@@ -57,10 +37,13 @@ public class ServerSession implements IServerSession {
 
 	private SAuthInfo credentials = null;
 	private boolean rememberCredentialsForSession = true;
-
+	private SkyTrustAPI api = null;
 
 	public ServerSession(Server.ServerInfo s) {
 		server = s;
+		SkyTrustAPIFactory.initialize(s.getUrl());
+
+        this.api = SkyTrustAPIFactory.getSkyTrustAPI();
 	}
 
 	public Server.ServerInfo getInfo() {
@@ -68,13 +51,15 @@ public class ServerSession implements IServerSession {
 	}
 	@Override
 	public List<SKey> getKeyList() throws PKCS11Error{
-		return discoverKeys("certificate");
+		return api.discoverKeys("certificate");
 	}
+
 	@Override
 	public byte[] sign(byte[] pData, SKey key, SkyTrustAlgorithm mech) throws PKCS11Error {
-		pData = doCryptoCommand("sign", mech.getAlgorithmName(),
-				pData, key.getId(), key.getSubId());
-		return pData;
+		key.setId(key.getId().substring(0, key.getId().length()-1));
+		String data = new String(Base64.encodeBase64(pData));
+		String signedData = api.doCryptoCommand("sign", mech.getAlgorithmName(), data, key.getId(), key.getSubId());
+		return Base64.decodeBase64(signedData);
 	}
 	
 	public String mapSkytrustToJCE(SkyTrustAlgorithm m){
@@ -151,142 +136,27 @@ public class ServerSession implements IServerSession {
 
 	@Override
 	public byte[] encrypt(byte[] plaindata, SKey key, SkyTrustAlgorithm mech) throws PKCS11Error {
-		byte[] encdata = doCryptoCommand("encrypt", mech.getAlgorithmName(),
-				plaindata, key.getId(), key.getSubId());
-		return encdata;
+
+		key.setId(key.getId().substring(0, key.getId().length()-1));
+		String data = new String(Base64.encodeBase64(plaindata));
+		String encdata = api.doCryptoCommand("encrypt", mech.getAlgorithmName(), data, key.getId(), key.getSubId());
+		return Base64.decodeBase64(encdata);
 	}
 
 	@Override
 	public byte[] decrypt(byte[] encdata, SKey key, SkyTrustAlgorithm mech)
 			throws PKCS11Error {
-		byte[] plaindata = doCryptoCommand("decrypt", mech.getAlgorithmName(),
-				encdata, key.getId(), key.getSubId());
-	
-		return plaindata;
+
+		String data = new String(Base64.encodeBase64(encdata));
+		System.out.println("  encdata: "+ data);
+		String plaindata = api.doCryptoCommand("decrypt", mech.getAlgorithmName(), data, key.getId().substring(0, key.getId().length()-1), key.getSubId());
+		System.out.println("plaindata: "+ plaindata);
+		return Base64.decodeBase64(plaindata);
 	}
+
+	@Override
 	public boolean isAutheticated() {
 		// TODO Auto-generated method stub
-		return true;
-	}
-	private SRequest createBasicRequest() {
-		SRequest request = new SRequest();
-		SkyTrustHeader header = new SkyTrustHeader();
-		header.setSessionId(sessionID);
-		header.setProtocolVersion("0.1");
-		request.setHeader(header);
-		return request;
-	}
-	private SResponse handleAuth(SResponse skyTrustResponse) throws PKCS11Error{
-		SPayloadAuthResponse authResponse = (SPayloadAuthResponse)skyTrustResponse.getPayload();
-        SAuthType authType = authResponse.getAuthTypes().get(0);
-        //ask User for Credentials
-        if(credentials == null){
-        	credentials = DataVaultSingleton.getInstance().askForAuthInfo(authType,server);
-        }
-        //build authRequest
-        SRequest authRequest = createBasicRequest();
-        SPayloadAuthRequest authRequestPayload = new SPayloadAuthRequest();
-        authRequestPayload.setAuthInfo(credentials);
-        authRequestPayload.setCommand("authenticate");
-        authRequest.setPayload(authRequestPayload);
-        authRequest.getHeader().setCommandId(skyTrustResponse.getHeader().getCommandId());
-        //send authRequest and wait for Response
-        try{
-        	skyTrustResponse = restTemplate.postForObject(server.getUrl(),authRequest,SResponse.class);
-        }catch(ResourceAccessException e){
-        	throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
-        }catch(RestClientException e){
-        	throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_REMOVED);
-        }
-        //TODO wie erkennen wir ob Auth erfolgreich war
-        if(!rememberCredentialsForSession){
-        	credentials = null;
-        }
-        //save new (authenticated) SessionID
-        sessionID=skyTrustResponse.getHeader().getSessionId();
-        return skyTrustResponse;
-	}
-
-
-	private List<SKey> discoverKeys(String representation) throws PKCS11Error {
-		if(true){
-			List<SKey> list = new ArrayList<>();
-			SKey k = new SKeyCertificate();
-			k.setId("testcert");
-			k.setSubId("siebzehn");
-			k.setRepresentation("certificate");
-			list.add(k);
-			return list;
-		}
-		
-		
-        SPayloadDiscoverKeysRequest payload = new SPayloadDiscoverKeysRequest();
-        payload.setRepresentation(representation);
-
-        SRequest request = createBasicRequest();
-        request.setPayload(payload);
-
-        SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),request,SResponse.class);
-        SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
-
-        if (payloadResponse instanceof SPayloadAuthResponse) {
-            skyTrustResponse = handleAuth(skyTrustResponse);
-            payloadResponse = skyTrustResponse.getPayload();
-        }
-        if (payloadResponse instanceof SPayloadDiscoverKeysResponse) {
-            SPayloadDiscoverKeysResponse discoverKeysResponse = (SPayloadDiscoverKeysResponse)payloadResponse;
-            SPayloadDiscoverKeysResponse resp = new SPayloadDiscoverKeysResponse();
-            List<SKey> keys = discoverKeysResponse.getKey();
-            return keys;
-        }
-        throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
-    }
-	private byte[] doCryptoCommand(String command, String algorithm,
-			byte[] data, String keyId, String keySubId) throws PKCS11Error {
-		
-		String load = Util.toBase64String(data);
-		
-		SRequest request = createBasicRequest();
-		SPayloadCryptoOperationRequest payload = new SPayloadCryptoOperationRequest();
-
-		SCryptoParams params = new SCryptoParams();
-
-		SKey keyHandle = new SKeyIdentifier();
-		keyHandle.setId(keyId);
-		keyHandle.setSubId(keySubId);
-		params.setKey(keyHandle);
-		params.setAlgorithm(algorithm);
-		payload.setCryptoParams(params);
-		payload.setCommand(command);
-		payload.setLoad(load);
-		request.setPayload(payload);
-
-		SResponse skyTrustResponse = restTemplate.postForObject(server.getUrl(),
-				request, SResponse.class);
-
-		SPayloadResponse payloadResponse = skyTrustResponse.getPayload();
-		
-		if (payloadResponse instanceof SPayloadAuthResponse) {
-			skyTrustResponse = handleAuth(skyTrustResponse);
-			payloadResponse = skyTrustResponse.getPayload();
-		}
-		System.err.println(payloadResponse);
-
-		if(payloadResponse instanceof SPayloadStatus){
-			System.err.println("statuscode: "+((SPayloadStatus) payloadResponse).getCode());
-			throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
-		}
-
-		if (payloadResponse instanceof SPayloadWithLoadResponse) {
-			SPayloadWithLoadResponse payLoadWithLoadResponse = (SPayloadWithLoadResponse) payloadResponse;
-			String resp_b64Data = payLoadWithLoadResponse.getLoad();
-			System.err.println(resp_b64Data);
-			try {
-				return Util.fromBase64String(resp_b64Data);
-			} catch (IOException e) {
-				throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
-			}
-		}
-		throw new PKCS11Error(CK_RETURN_TYPE.CKR_DEVICE_ERROR);
+		return false;
 	}
 }

@@ -8,6 +8,8 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import pkcs11.PKCS11Error;
 import pkcs11.PKCS11SkyTrustMapper;
 import obj.CK_ATTRIBUTE;
+import obj.CK_ATTRIBUTE_TYPE;
+import obj.CK_MECHANISM;
 import obj.CK_RETURN_TYPE;
 
 public class ObjectManager {
@@ -49,6 +51,9 @@ public class ObjectManager {
 		if(object == null){
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OBJECT_HANDLE_INVALID);
 		}
+		if(objects.contains(object)){
+			return ids.get(objects.indexOf(object));
+		}
 		Long id = getNextId();
 		objects.add(object);
 		ids.add(id);
@@ -76,6 +81,14 @@ public class ObjectManager {
 			}
 		}
 		id++;
+		return id;
+	}
+	public long newObject(byte[] unwrappedKey, CK_ATTRIBUTE[] pTemplate) {
+		Long id=getNextId();
+	
+		PKCS11Object object = new PKCS11Object(pTemplate, unwrappedKey, true);
+		objects.add(object);
+		ids.add(id);
 		return id;
 	}
 }

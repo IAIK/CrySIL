@@ -168,11 +168,14 @@ public class Session {
 		if (decryptHelper == null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OPERATION_NOT_INITIALIZED);
 		}
-		byte[] plain_data = getSlot().getToken().decrypt(encdata,
-				decryptHelper.getKey(), decryptHelper.getMechanism());
-		if (plain_data == null) {
-			decryptHelper = null;
-		}
+		System.out.println("*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X");
+		System.out.println("dcH getKey: "+decryptHelper.getKey());
+		System.out.println("dcH getMech: "+decryptHelper.getMechanism());
+		System.out.println("dcH encdata: "+encdata.length);
+		System.out.println("*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X");
+		
+		byte[] plain_data = getSlot().getToken().decrypt(encdata, decryptHelper.getKey(), decryptHelper.getMechanism());
+		//throw something?
 		decryptHelper.setProcessedData(plain_data);
 	}
 

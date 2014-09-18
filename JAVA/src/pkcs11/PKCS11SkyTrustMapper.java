@@ -32,7 +32,9 @@ public class PKCS11SkyTrustMapper {
 
 	private static HashMap<Long, SkyTrustAlgorithm> mechanism_map = new HashMap<>();
 	private static ArrayList<CK_ATTRIBUTE> skytrust_template;
+
 	static {
+
 		skytrust_template = new ArrayList<>();
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,
 				true, 1));
@@ -97,34 +99,21 @@ public class PKCS11SkyTrustMapper {
 		if (!key.getRepresentation().equals("certificate")) {
 			return null;
 		}
-		ArrayList<CK_ATTRIBUTE> cert_template = new ArrayList<>(
-				skytrust_template);
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, key
-				.getId().getBytes(), key.getId().getBytes().length));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,
-				"skytrust" + key.getId(), 10)); // TODO: fix length
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,
-				CK_OBJECT_TYPE.CKO_CERTIFICATE, 8));
-		cert_template.add(new CK_ATTRIBUTE(
-				CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE,
-				CK_CERTIFICATE_TYPE.CKC_X_509, 8));
-		cert_template.add(new CK_ATTRIBUTE(
-				CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 8));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TRUSTED, true,
-				1));
+		ArrayList<CK_ATTRIBUTE> cert_template = new ArrayList<>( skytrust_template);
+		byte[] id = key.getId().getBytes();
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL, "" + key.getId(), id.length)); // TODO: fix length
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 8));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 8));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 8));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TRUSTED, true, 1));
 
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE,
-				false, 1));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE,
-				true, 1));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,
-				false, 1));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VERIFY, true,
-				1));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ENCRYPT, true,
-				1));
-		cert_template
-				.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_WRAP, false, 1));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE, true, 1));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE, false, 1));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VERIFY, true, 1));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ENCRYPT, true, 1));
+		cert_template .add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_WRAP, false, 1));
 
 		// byte[] data = new byte[10];
 		// cert_template.add(new
@@ -136,23 +125,18 @@ public class PKCS11SkyTrustMapper {
 		// data.length));
 
 		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
-		certb64 = "MIIEoDCCBAmgAwIBAgIHAoma5vyQ4jANBgkqhkiG9w0BAQUFADBAMSIwIAYDVQQDExlJQUlLIFRlc3QgSW50ZXJtZWRpYXRlIENBMQ0wCwYDVQQKEwRJQUlLMQswCQYDVQQGEwJBVDAeFw0xMzEwMDMxMDAxMThaFw0yMzEwMDMxMDAxMThaMIHSMQswCQYDVQQGEwJBVDENMAsGA1UEBxMER3JhejEmMCQGA1UEChMdR3JheiBVbml2ZXJzaXR5IG9mIFRlY2hub2xvZ3kxSDBGBgNVBAsTP0luc3RpdHV0ZSBmb3IgQXBwbGllZCBJbmZvcm1hdGlvbiBQcm9jZXNzaW5nIGFuZCBDb21tdW5pY2F0aW9uczETMBEGA1UEBBMKUmVpdGVyIEVuYzEQMA4GA1UEKhMHQW5kcmVhczEbMBkGA1UEAxMSQW5kcmVhcyBSZWl0ZXIgRW5jMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyLHXdCy/n9WjofFDG9X11vyBQESaDyNsY+XiRwxFMslJRYlG12yCN5ESle64HsfTMugOKxut1zlDVKefi5HqkZxf0pTeUd9lEZkLvXx5oUX95jsIZVHepumuw+aI1Fu4+O9kK/lTBHtSmR8vgPKXvnvdkgvFhKzlEUfpCth90JMN8pFzkzQaQWwQokZk3j325QYK0FYWua/HTZdDnzcboew4NPn0TJkSYbJQZb4QxIIBb72ZbyHK3v5TSmcG+QSbe/ZC5w++VPR60eMFfIB0IQUv/mwTN5t5y/o5uJMy42pd4sscBW6tC5Mw/NLxk59AFN7MX9mXyUor9ZsyQD/8CwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgQwMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFHtef3qaiBxZxmwx1iDNDtrMjUPRMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jYS5pYWlrLnR1Z3Jhei5hdC9jYXBzby9jcmxzL0lBSUtUZXN0X0ludGVybWVkaWF0ZUNBLmNybDCBqgYIKwYBBQUHAQEEgZ0wgZowSgYIKwYBBQUHMAGGPmh0dHA6Ly9jYS5pYWlrLnR1Z3Jhei5hdC9jYXBzby9PQ1NQP2NhPUlBSUtUZXN0X0ludGVybWVkaWF0ZUNBMEwGCCsGAQUFBzAChkBodHRwOi8vY2EuaWFpay50dWdyYXouYXQvY2Fwc28vY2VydHMvSUFJS1Rlc3RfSW50ZXJtZWRpYXRlQ0EuY2VyMCgGA1UdEQQhMB+BHWFuZHJlYXMucmVpdGVyQGlhaWsudHVncmF6LmF0MB8GA1UdIwQYMBaAFGiiXhHa3i+Aa0REv436ZTaBJKdvMA0GCSqGSIb3DQEBBQUAA4GBAGCfzauvTNTAVBPi/ziOtw1PZ5TRhxpabJljt3HmFoK+dtXarv6NcK2w4tLSdtHp+5/6TTB5KlY5tlfEs/LOlb3AGctVe1qinvGBdv+unD5mWiJ7Z+ASCzuzPGOaDtl4KfB+3UpqFYA+S8ncsmquEtetcxl+5Cqq5hX5T0bVDghd";
 		try {
 			byte[] cert = Util.fromBase64String(certb64);
-			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE,
-					cert, certb64.length()));
+			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE, cert, cert.length));
 
 			X509Certificate iaikcert = new X509Certificate(cert);
-			X500Principal subject = iaikcert.getSubjectX500Principal();
-			X500Principal issuer = iaikcert.getIssuerX500Principal();
-			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ISSUER,
-					issuer.getEncoded(), issuer.getEncoded().length));
-			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SUBJECT,
-					subject.getEncoded(), subject.getEncoded().length));
-			cert_template.add(new CK_ATTRIBUTE(
-					CK_ATTRIBUTE_TYPE.CKA_SERIAL_NUMBER, iaikcert
-							.getSerialNumber().toByteArray(), iaikcert
-							.getSerialNumber().toByteArray().length));
+			byte[] subject = iaikcert.getSubjectX500Principal().getEncoded();
+			byte[] issuer = iaikcert.getIssuerX500Principal().getEncoded();
+			byte[] serialNr = iaikcert.getSerialNumber().toByteArray();
+
+			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ISSUER, issuer, issuer.length));
+			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SUBJECT, subject, subject.length));
+			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SERIAL_NUMBER, serialNr, serialNr.length));
 
 		} catch (CertificateException | Base64Exception e) {
 			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ISSUER,
@@ -182,29 +166,22 @@ public class PKCS11SkyTrustMapper {
 		}
 		ArrayList<CK_ATTRIBUTE> pub_template = new ArrayList<>(
 				skytrust_template);
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, key.getId()
-				.getBytes(), key.getId().getBytes().length));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,
-				"skytrust" + key.getId(), 10));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,
-				CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 8));
-
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false,
-				1));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE,
-				true, 1));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,
-				false, 1));
-		pub_template
-				.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VERIFY, true, 1));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ENCRYPT, true,
-				1));
-		pub_template
-				.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_WRAP, false, 1));
+		byte[] id = key.getId().getBytes();
+		
+		
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL, "" + id, id.length));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 8));
+		
+		
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE, true, 1));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE, false, 1));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VERIFY, true, 1));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ENCRYPT, true, 1));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_WRAP, false, 1));
 
 		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
-		certb64 = "MIIEoDCCBAmgAwIBAgIHAoma5vyQ4jANBgkqhkiG9w0BAQUFADBAMSIwIAYDVQQDExlJQUlLIFRlc3QgSW50ZXJtZWRpYXRlIENBMQ0wCwYDVQQKEwRJQUlLMQswCQYDVQQGEwJBVDAeFw0xMzEwMDMxMDAxMThaFw0yMzEwMDMxMDAxMThaMIHSMQswCQYDVQQGEwJBVDENMAsGA1UEBxMER3JhejEmMCQGA1UEChMdR3JheiBVbml2ZXJzaXR5IG9mIFRlY2hub2xvZ3kxSDBGBgNVBAsTP0luc3RpdHV0ZSBmb3IgQXBwbGllZCBJbmZvcm1hdGlvbiBQcm9jZXNzaW5nIGFuZCBDb21tdW5pY2F0aW9uczETMBEGA1UEBBMKUmVpdGVyIEVuYzEQMA4GA1UEKhMHQW5kcmVhczEbMBkGA1UEAxMSQW5kcmVhcyBSZWl0ZXIgRW5jMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyLHXdCy/n9WjofFDG9X11vyBQESaDyNsY+XiRwxFMslJRYlG12yCN5ESle64HsfTMugOKxut1zlDVKefi5HqkZxf0pTeUd9lEZkLvXx5oUX95jsIZVHepumuw+aI1Fu4+O9kK/lTBHtSmR8vgPKXvnvdkgvFhKzlEUfpCth90JMN8pFzkzQaQWwQokZk3j325QYK0FYWua/HTZdDnzcboew4NPn0TJkSYbJQZb4QxIIBb72ZbyHK3v5TSmcG+QSbe/ZC5w++VPR60eMFfIB0IQUv/mwTN5t5y/o5uJMy42pd4sscBW6tC5Mw/NLxk59AFN7MX9mXyUor9ZsyQD/8CwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgQwMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFHtef3qaiBxZxmwx1iDNDtrMjUPRMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jYS5pYWlrLnR1Z3Jhei5hdC9jYXBzby9jcmxzL0lBSUtUZXN0X0ludGVybWVkaWF0ZUNBLmNybDCBqgYIKwYBBQUHAQEEgZ0wgZowSgYIKwYBBQUHMAGGPmh0dHA6Ly9jYS5pYWlrLnR1Z3Jhei5hdC9jYXBzby9PQ1NQP2NhPUlBSUtUZXN0X0ludGVybWVkaWF0ZUNBMEwGCCsGAQUFBzAChkBodHRwOi8vY2EuaWFpay50dWdyYXouYXQvY2Fwc28vY2VydHMvSUFJS1Rlc3RfSW50ZXJtZWRpYXRlQ0EuY2VyMCgGA1UdEQQhMB+BHWFuZHJlYXMucmVpdGVyQGlhaWsudHVncmF6LmF0MB8GA1UdIwQYMBaAFGiiXhHa3i+Aa0REv436ZTaBJKdvMA0GCSqGSIb3DQEBBQUAA4GBAGCfzauvTNTAVBPi/ziOtw1PZ5TRhxpabJljt3HmFoK+dtXarv6NcK2w4tLSdtHp+5/6TTB5KlY5tlfEs/LOlb3AGctVe1qinvGBdv+unD5mWiJ7Z+ASCzuzPGOaDtl4KfB+3UpqFYA+S8ncsmquEtetcxl+5Cqq5hX5T0bVDghd";
-
 		try {
 			byte[] cert = Util.fromBase64String(certb64);
 			X509Certificate iaikcert = new X509Certificate(cert);
@@ -214,26 +191,22 @@ public class PKCS11SkyTrustMapper {
 																	// das ned
 																	// irgendwie
 																	// schöner?
-			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE, k
-					.getEncoded(), k.getEncoded().length));
+			byte[] kenc = k.getEncoded();
+			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE, kenc, kenc.length));
 
 			BigInteger exp = rsakey.getPublicExponent();
+			byte[] expb =exp.toByteArray();
 			BigInteger mod = rsakey.getModulus();
+			byte[] modb = mod.toByteArray();
 			if (mod == null || exp == null) {
 				return null;
 			}
-			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS,
-					mod.toByteArray(), mod.toByteArray().length));
-			pub_template.add(new CK_ATTRIBUTE(
-					CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(),
-					8));
-			pub_template.add(new CK_ATTRIBUTE(
-					CK_ATTRIBUTE_TYPE.CKA_PUBLIC_EXPONENT, exp.toByteArray(),
-					exp.toByteArray().length));
+			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS, modb, modb.length));
+			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(), 8));
+			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_PUBLIC_EXPONENT, expb, expb.length));
 
-			X500Principal subject = iaikcert.getSubjectX500Principal();
-			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SUBJECT,
-					subject.getEncoded(), subject.getEncoded().length));
+			byte[] subject = iaikcert.getSubjectX500Principal().getEncoded();
+			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SUBJECT, subject, subject.length));
 
 		} catch (CertificateException | Base64Exception | InvalidKeyException e) {
 			e.printStackTrace();
@@ -250,8 +223,9 @@ public class PKCS11SkyTrustMapper {
 	public static PKCS11Object mapToPrivate(SKey key) throws PKCS11Error {
 		ArrayList<CK_ATTRIBUTE> private_template = new ArrayList<>(
 				skytrust_template);
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,
-				"skytrust" + key.getId(), 10));
+		byte[] id = key.getId().getBytes();
+//		System.out.println("map to private key: "+ key.getId()+"      " + key.getSubId());
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL, "" + id, id.length));
 
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,
 				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 8));
@@ -259,24 +233,16 @@ public class PKCS11SkyTrustMapper {
 				true, 1));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,
 				true, 1));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, key
-				.getId().getBytes(), key.getId().getBytes().length));
-		private_template.add(new CK_ATTRIBUTE(
-				CK_ATTRIBUTE_TYPE.CKA_ALWAYS_AUTHENTICATE, false, 1));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
+		private_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_ALWAYS_AUTHENTICATE, false, 1));
 
-		private_template.add(new CK_ATTRIBUTE(
-				CK_ATTRIBUTE_TYPE.CKA_NEVER_EXTRACTABLE, true, 1));
-		private_template.add(new CK_ATTRIBUTE(
-				CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE, false, 1));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SIGN, true,
-				1));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_DECRYPT,
-				true, 1));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_UNWRAP,
-				false, 1));
+		private_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_NEVER_EXTRACTABLE, true, 1));
+		private_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_EXTRACTABLE, false, 1));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SIGN, true, 1));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_DECRYPT, true, 1));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_UNWRAP, false, 1));
 
 		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
-		certb64 = "MIIEoDCCBAmgAwIBAgIHAoma5vyQ4jANBgkqhkiG9w0BAQUFADBAMSIwIAYDVQQDExlJQUlLIFRlc3QgSW50ZXJtZWRpYXRlIENBMQ0wCwYDVQQKEwRJQUlLMQswCQYDVQQGEwJBVDAeFw0xMzEwMDMxMDAxMThaFw0yMzEwMDMxMDAxMThaMIHSMQswCQYDVQQGEwJBVDENMAsGA1UEBxMER3JhejEmMCQGA1UEChMdR3JheiBVbml2ZXJzaXR5IG9mIFRlY2hub2xvZ3kxSDBGBgNVBAsTP0luc3RpdHV0ZSBmb3IgQXBwbGllZCBJbmZvcm1hdGlvbiBQcm9jZXNzaW5nIGFuZCBDb21tdW5pY2F0aW9uczETMBEGA1UEBBMKUmVpdGVyIEVuYzEQMA4GA1UEKhMHQW5kcmVhczEbMBkGA1UEAxMSQW5kcmVhcyBSZWl0ZXIgRW5jMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyLHXdCy/n9WjofFDG9X11vyBQESaDyNsY+XiRwxFMslJRYlG12yCN5ESle64HsfTMugOKxut1zlDVKefi5HqkZxf0pTeUd9lEZkLvXx5oUX95jsIZVHepumuw+aI1Fu4+O9kK/lTBHtSmR8vgPKXvnvdkgvFhKzlEUfpCth90JMN8pFzkzQaQWwQokZk3j325QYK0FYWua/HTZdDnzcboew4NPn0TJkSYbJQZb4QxIIBb72ZbyHK3v5TSmcG+QSbe/ZC5w++VPR60eMFfIB0IQUv/mwTN5t5y/o5uJMy42pd4sscBW6tC5Mw/NLxk59AFN7MX9mXyUor9ZsyQD/8CwIDAQABo4IBizCCAYcwDgYDVR0PAQH/BAQDAgQwMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFHtef3qaiBxZxmwx1iDNDtrMjUPRMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jYS5pYWlrLnR1Z3Jhei5hdC9jYXBzby9jcmxzL0lBSUtUZXN0X0ludGVybWVkaWF0ZUNBLmNybDCBqgYIKwYBBQUHAQEEgZ0wgZowSgYIKwYBBQUHMAGGPmh0dHA6Ly9jYS5pYWlrLnR1Z3Jhei5hdC9jYXBzby9PQ1NQP2NhPUlBSUtUZXN0X0ludGVybWVkaWF0ZUNBMEwGCCsGAQUFBzAChkBodHRwOi8vY2EuaWFpay50dWdyYXouYXQvY2Fwc28vY2VydHMvSUFJS1Rlc3RfSW50ZXJtZWRpYXRlQ0EuY2VyMCgGA1UdEQQhMB+BHWFuZHJlYXMucmVpdGVyQGlhaWsudHVncmF6LmF0MB8GA1UdIwQYMBaAFGiiXhHa3i+Aa0REv436ZTaBJKdvMA0GCSqGSIb3DQEBBQUAA4GBAGCfzauvTNTAVBPi/ziOtw1PZ5TRhxpabJljt3HmFoK+dtXarv6NcK2w4tLSdtHp+5/6TTB5KlY5tlfEs/LOlb3AGctVe1qinvGBdv+unD5mWiJ7Z+ASCzuzPGOaDtl4KfB+3UpqFYA+S8ncsmquEtetcxl+5Cqq5hX5T0bVDghd";
 		try {
 			byte[] cert = Util.fromBase64String(certb64);
 			X509Certificate iaikcert = new X509Certificate(cert);
@@ -287,9 +253,8 @@ public class PKCS11SkyTrustMapper {
 																	// irgendwie
 																	// schöner?
 			BigInteger mod = rsakey.getModulus();
-			private_template.add(new CK_ATTRIBUTE(
-					CK_ATTRIBUTE_TYPE.CKA_MODULUS, mod.toByteArray(), mod
-							.toByteArray().length));
+			byte[] modb = mod.toByteArray();
+			private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS, modb, modb.length));
 		} catch (CertificateException | Base64Exception | InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

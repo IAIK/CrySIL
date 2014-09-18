@@ -266,7 +266,7 @@ public class Slot {
 	public void loadMechanisms() {
 		// Note: right place to ask server for server-depended mechanisms
         CK_MECHANISM_INFO info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
-        info.setCKF_HW();info.setCKF_SIGN();info.setCKF_VERIFY();info.setCKF_WRAP();info.setCKF_UNWRAP();
+        info.setCKF_HW();info.setCKF_SIGN();info.setCKF_VERIFY();info.setCKF_WRAP();info.setCKF_UNWRAP();info.setCKF_DECRYPT();
 		mechanisms.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS, info);
 
         info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);

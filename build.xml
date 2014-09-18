@@ -31,6 +31,7 @@
 	<pathelement location="skytrust-element-java/common/target/classes/"/>
         <pathelement location="skytrust-element-java/core/target/classes/"/>
         <pathelement location="${c.lib.dir}/dependencies.jar"/>
+        <pathelement location="${c.lib.dir}/jce-to-remote-1.0-SNAPSHOT-jar-with-dependencies.jar"/>
     </path>
 	
     <target name="init" depends="SWIG-preprocess,SWIG,cmake"/>
@@ -96,6 +97,7 @@
 			<!--	<fileset dir="skytrust-element-java/common/target/classes/"/>
 				<fileset dir="skytrust-element-java/core/target/classes/"/> -->
 				<zipfileset includes="**/*.class" src="lib/dependencies.jar"/>
+				<zipfileset includes="**/*.class" src="lib/jce-to-remote-1.0-SNAPSHOT-jar-with-dependencies.jar"/>
 			<manifest>
 			    <attribute name="Class-Path" value="/usr/share/java/"/> 
 			</manifest>
