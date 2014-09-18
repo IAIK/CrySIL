@@ -4,26 +4,10 @@ skytrust-pkcs11
 # INSTALLATION:
 
 Dependencies:
- - swig2.0
  - java
  ....
 
 set environment variable JAVA_HOME so cmake can find JNI
-
-to build shared librarys: 
- ant init
- ant build
-
-Targets:
- - SWIG-preprocess: processes pkcs11t.h for swig; executes sed scripts in ./swig/
- - SWIG: generates Proxy classes and jni interface
- - cmake: initializes C part of project, runs cmake with arguments: JAR (path to .jar of JAVA part)  
-                                                                     DEBUG (true/false if the VM should start in Debug mode and wait for Remote Debugger at localhost:8000)
- - JAVA-compile: 
- - jar: build jar file; uses pre generated dependencies.jar with all dependencies for the skytrust element 
- - C-compile: executes cmake generated Makefile; install libraries into ./lib/
- - compile: JAVA-compile, C-compile
- - clean: JAVA-clean, C-clean, SWIG-clean
 
 
 execute export LD_LIBRARY_PATH=path to libjvm.so
