@@ -3,15 +3,12 @@ package pkcs11;
 import gui.Client;
 import gui.DataVaultSingleton;
 import gui.Server;
+import obj.CK_RETURN_TYPE;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
-
-import obj.CK_RETURN_TYPE;
 
 /*
  * one per Application 

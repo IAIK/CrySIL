@@ -1,16 +1,11 @@
 package gui;
 
-import gui.Server;
-import gui.Server.ServerInfo;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
-
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthType;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.credentials.SUserPasswordAuthInfo;
+import gui.Server.ServerInfo;
+
+import java.util.ArrayList;
 
 public class DataVaultSingleton {
 

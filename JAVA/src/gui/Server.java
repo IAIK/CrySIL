@@ -1,11 +1,8 @@
 package gui;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+
+import java.io.Serializable;
 
 
 public class Server implements Serializable{

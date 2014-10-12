@@ -1,16 +1,11 @@
 package objects;
 
+import obj.*;
+import pkcs11.PKCS11Error;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import obj.CK_ATTRIBUTE;
-import obj.CK_ATTRIBUTE_TYPE;
-import obj.CK_KEY_TYPE;
-import obj.CK_OBJECT_TYPE;
-import obj.CK_RETURN_TYPE;
-
-import pkcs11.PKCS11Error;
 
 public class ObjectBuilder {
 	

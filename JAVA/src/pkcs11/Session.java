@@ -1,12 +1,13 @@
 package pkcs11;
 
-import java.util.ArrayList;
-
 import obj.CK_ATTRIBUTE;
 import obj.CK_MECHANISM;
 import obj.CK_RETURN_TYPE;
-//import proxys.CK_VOID_PTR;
 import obj.CK_SESSION_STATE;
+
+import java.util.ArrayList;
+
+//import proxys.CK_VOID_PTR;
 
 public class Session {
 	public enum ACCESS_TYPE {

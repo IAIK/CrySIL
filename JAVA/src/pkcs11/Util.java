@@ -1,8 +1,8 @@
 package pkcs11;
 
-import java.util.Arrays;
-
 import obj.CK_FLAGS;
+
+import java.util.Arrays;
 
 
 public class Util {

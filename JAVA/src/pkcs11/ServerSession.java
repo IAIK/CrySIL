@@ -1,22 +1,4 @@
 package pkcs11;
-import gui.Server;
-import org.apache.commons.codec.binary.Base64;
-import iaik.asn1.structures.AlgorithmID;
-import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
-import iaik.utils.Base64Exception;
-import iaik.utils.Util;
-import iaik.x509.X509Certificate;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.CertificateException;
-import java.security.spec.AlgorithmParameterSpec;
-import java.util.List;
-
-import org.springframework.web.client.RestTemplate;
 
 import at.iaik.skytrust.SkyTrustAPIFactory;
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
@@ -24,6 +6,19 @@ import at.iaik.skytrust.element.receiver.skytrust.SkyTrustAPI;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyCertificate;
+import gui.Server;
+import iaik.asn1.structures.AlgorithmID;
+import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
+import iaik.utils.Base64Exception;
+import iaik.utils.Util;
+import iaik.x509.X509Certificate;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.web.client.RestTemplate;
+
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.util.List;
 
 /*
  * Stellt verbindung zum Server dar ist für kommunikation zuständig

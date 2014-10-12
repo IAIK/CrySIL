@@ -1,23 +1,11 @@
 package pkcs11;
 
 import gui.Server.ServerInfo;
+import obj.*;
+import objects.PKCS11Object;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import obj.CK_ATTRIBUTE;
-import obj.CK_ATTRIBUTE_TYPE;
-import obj.CK_FLAGS;
-import obj.CK_INFO;
-import obj.CK_MECHANISM;
-import obj.CK_MECHANISM_INFO;
-import obj.CK_RETURN_TYPE;
-import obj.CK_SESSION_INFO;
-import obj.CK_SLOT_INFO;
-import obj.CK_ULONG_PTR;
-import obj.CK_TOKEN_INFO;
-import obj.CK_USER_TYPE;
-import objects.PKCS11Object;
 
 public class JAVApkcs11Interface {
 	static {

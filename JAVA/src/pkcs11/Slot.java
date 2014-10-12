@@ -1,21 +1,14 @@
 package pkcs11;
 
 import gui.Server;
+import obj.*;
+import objects.ObjectManager;
+import objects.PKCS11Object;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import objects.ObjectManager;
-import objects.PKCS11Object;
-
-import obj.CK_ATTRIBUTE_TYPE;
-import obj.CK_MECHANISM;
-import obj.CK_MECHANISM_INFO;
-import obj.CK_MECHANISM_TYPE;
-import obj.CK_OBJECT_TYPE;
-import obj.CK_RETURN_TYPE;
 
 /**
  * A Slot is a ServerInfo

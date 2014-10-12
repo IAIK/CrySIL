@@ -1,10 +1,10 @@
 package pkcs11;
 
-import java.util.List;
-
 import gui.Server;
 import obj.CK_MECHANISM;
 import objects.PKCS11Object;
+
+import java.util.List;
 
 public interface IToken {
 

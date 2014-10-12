@@ -1,9 +1,15 @@
 package pkcs11;
 
+import at.iaik.skytrust.common.SkyTrustAlgorithm;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyCertificate;
 import iaik.security.rsa.RSAPublicKey;
 import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 import iaik.x509.X509Certificate;
+import obj.*;
+import objects.ObjectBuilder;
+import objects.PKCS11Object;
 
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -11,22 +17,6 @@ import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.security.auth.x500.X500Principal;
-
-import obj.CK_ATTRIBUTE;
-import obj.CK_ATTRIBUTE_TYPE;
-import obj.CK_CERTIFICATE_TYPE;
-import obj.CK_KEY_TYPE;
-import obj.CK_MECHANISM;
-import obj.CK_MECHANISM_TYPE;
-import obj.CK_OBJECT_TYPE;
-import obj.CK_RETURN_TYPE;
-import objects.ObjectBuilder;
-import objects.PKCS11Object;
-import at.iaik.skytrust.common.SkyTrustAlgorithm;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyCertificate;
 
 public class PKCS11SkyTrustMapper {
 

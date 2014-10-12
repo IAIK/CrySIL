@@ -1,10 +1,10 @@
 package objects;
 
-import java.util.HashMap;
-
 import obj.CK_ATTRIBUTE;
 import obj.CK_RETURN_TYPE;
 import pkcs11.PKCS11Error;
+
+import java.util.HashMap;
 
 public class PKCS11Object {
 

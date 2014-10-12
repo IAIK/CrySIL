@@ -1,9 +1,8 @@
 package gui;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
+
+import java.io.Serializable;
 
 public interface Authenticator extends Serializable{
 

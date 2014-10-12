@@ -1,16 +1,10 @@
 package objects;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-
-import pkcs11.PKCS11Error;
-import pkcs11.PKCS11SkyTrustMapper;
 import obj.CK_ATTRIBUTE;
-import obj.CK_ATTRIBUTE_TYPE;
-import obj.CK_MECHANISM;
 import obj.CK_RETURN_TYPE;
+import pkcs11.PKCS11Error;
+
+import java.util.ArrayList;
 
 public class ObjectManager {
 

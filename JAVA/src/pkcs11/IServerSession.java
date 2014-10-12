@@ -1,11 +1,10 @@
 package pkcs11;
 
-import gui.Server;
-import java.io.IOException;
-import java.util.List;
-
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import gui.Server;
+
+import java.util.List;
 
 
 public interface IServerSession {
