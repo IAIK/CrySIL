@@ -114,7 +114,7 @@ CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_InitializeJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Initialize", "()J");
@@ -142,7 +142,7 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_FinalizeJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Finalize", "()J");
@@ -162,7 +162,11 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
         dings->UnlockMutex(dings->ppMutex);
     }
 //g    (*(dings->jvm))->DetachCurrentThread(dings->jvm);
-    destroyVM();
+	printf("is this the oopsie?\n");
+	pthread_cond_signal(&(dings->finish));	
+	printf("before join?\n");
+	pthread_join(instance->thread,NULL);
+	printf("after join\n");
     return retVal;
 }
 
@@ -177,7 +181,7 @@ CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PT
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 //build arguments
@@ -242,7 +246,7 @@ CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -323,7 +327,7 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -457,7 +461,7 @@ CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -517,7 +521,7 @@ CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -560,7 +564,7 @@ CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication,
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -596,7 +600,7 @@ CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_CloseAllSessionsJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_CloseAllSessions", "(J)J");
@@ -626,7 +630,7 @@ CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_CloseSessionJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_CloseSession", "(J)J");
@@ -1075,7 +1079,7 @@ CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -1118,7 +1122,7 @@ CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_DecryptInitJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_DecryptInit", "(JLobj/CK_MECHANISM;J)J");
@@ -1152,7 +1156,7 @@ CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_DecryptUpdateJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_DecryptUpdate", "(J[BJLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
@@ -1212,7 +1216,7 @@ CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_DestroyObjectJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_DestroyObject", "(JJ)J");
@@ -1244,7 +1248,7 @@ CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, C
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -1306,7 +1310,7 @@ CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_FindObjectsFinalJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_FindObjectsFinal", "(J)J");
@@ -1336,7 +1340,7 @@ CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, 
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jobject array = createAttributeArray(environment, pTemplate, ulCount);
@@ -1364,7 +1368,7 @@ CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_UL
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_GenerateRandomJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_GenerateRandom", "(JLproxys/CK_BYTE_ARRAY;J)J");
@@ -1409,7 +1413,7 @@ CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -1584,7 +1588,7 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jclass versionClass = (*(environment))->FindClass(environment, "Lobj/CK_VERSION;");
@@ -1659,7 +1663,7 @@ CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -1714,7 +1718,7 @@ CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPi
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
 
@@ -1752,7 +1756,7 @@ CK_RV C_Logout(CK_SESSION_HANDLE hSession)
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_LogoutJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Logout", "(J)J");
@@ -1784,7 +1788,7 @@ CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSee
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_SeedRandomJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_SeedRandom", "(JLjava/lang/String;J)J");
@@ -1815,7 +1819,7 @@ CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_SetAttributeValueJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_SetAttributeValue", "(JJ[Lobjects/ATTRIBUTE;J)J");
@@ -1885,7 +1889,7 @@ CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLe
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_SetPINJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_SetPIN", "(JLjava/lang/String;JLjava/lang/String;J)J");
@@ -1918,7 +1922,7 @@ CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, 
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_SignJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Sign", "(J[BJ[BLobj/CK_ULONG_PTR;)J");
@@ -1982,7 +1986,7 @@ CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJ
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_SignInitJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_SignInit", "(JLobj/CK_MECHANISM;J)J");
@@ -2018,7 +2022,7 @@ CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OB
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_UnwrapKeyJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_UnwrapKey", "(JLobj/CK_MECHANISM;J[BJ[Lobj/CK_ATTRIBUTE;JLobj/CK_ULONG_PTR;)J");
@@ -2068,7 +2072,7 @@ CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJE
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_WrapKeyJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_WrapKey", "(JLobj/CK_MECHANISM;JJ[BLobj/CK_ULONG_PTR;)J");
@@ -2118,7 +2122,7 @@ CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPar
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_SignUpdateJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_SignUpdate", "(J[BJ)J");
@@ -2153,7 +2157,7 @@ CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_P
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_SignFinalJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_SignFinal", "(JLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
@@ -2208,7 +2212,7 @@ CK_RV C_DecryptFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_DecryptFinalJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_DecryptFinal", "(JLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");
@@ -2263,7 +2267,7 @@ CK_RV C_Decrypt(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG
         dings->LockMutex((dings->ppMutex));
     }
     JNIEnv* environment;
-    (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         jmethodID C_DecryptJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Decrypt", "(J[BJLproxys/CK_BYTE_ARRAY;Lproxys/CK_ULONG_JPTR;)J");

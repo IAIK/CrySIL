@@ -6,11 +6,16 @@ import objects.PKCS11Object;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
+
+import javax.swing.JFrame;
+
+import org.springframework.web.client.ResourceAccessException;
 
 public class JAVApkcs11Interface {
-	static {
-		System.load("/usr/lib/libpkcs11_java_wrap.so");
-	}
+//	static {
+//		System.load("/usr/lib/libpkcs11_java_wrap.so");
+//	}
 
 	private static ResourceManager getRM() throws PKCS11Error {
 		ResourceManager _instance = ResourceManager.getInstance(appID);
@@ -32,7 +37,11 @@ public class JAVApkcs11Interface {
 	// Tick from MaintenanceThread
 	public static void tick() {
 		try {
+			try{
 			getRM().updateSlotList();
+			}catch (ResourceAccessException e	){
+				e.printStackTrace();
+			}
 		} catch (PKCS11Error e) {
 			e.printStackTrace();
 		}
@@ -50,6 +59,10 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_Finalize() {
+		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+		for(Thread t : threadSet){
+			System.out.println(t);
+		}
 		maintenanceThread.stopMaintenanceThread();
 		maintenanceThread = null;
 		// now we can die gracefully
@@ -238,6 +251,9 @@ public class JAVApkcs11Interface {
 
 	public static long C_OpenSession(long slotID, long flags,
 			CK_ULONG_PTR phSession) {
+		
+		
+		
 		System.err.println("C_OpenSession ............start............."
 				+ slotID);
 		try {
@@ -554,12 +570,17 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_GetInfo(CK_INFO pInfo) {
+//		JFrame frame = new JFrame();
+//		frame.setTitle("just a title");
+//		frame.setSize(300,200);
+//		frame.setLocation(10, 200);
+//		frame.setVisible(true);
 		System.err.println("\n java is calling, C_GetINFO");
 		if (pInfo == null) {
 			return CK_RETURN_TYPE.CKR_ARGUMENTS_BAD;
 		}
-		pInfo.setManufacturerID("weeehaaaa");
-		pInfo.setLibraryDescription("tadaaa");
+		pInfo.setManufacturerID("TUG IAIK");
+		pInfo.setLibraryDescription("library description");
 		pInfo.getCryptokiVersion().setMajor((byte) 0x02);
 		pInfo.getCryptokiVersion().setMinor((byte) 0x14);
 
