@@ -1,9 +1,6 @@
-#include<pthread.h>
 #include"pkcs11.h"
 #include"jvm.h"
-#include"unistd.h"
-#include<string.h>
-#include"stdio.h"
+#include"Pkcs11Config.h"
 
 
 
@@ -90,8 +87,8 @@ CK_RV C_GetFunctionList(CK_FUNCTION_LIST_PTR_PTR ppFunctionList) {
 }
 
 CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
-{   fprintf(stdout,"\nC: called: C_Initialize    ");
-    fprintf(stdout,"\n\n\n\n************** lala\n\n\n\n\n");
+{   //fprintf(stdout,"\nC: called: C_Initialize    ");
+    //fprintf(stdout,"\n\n\n\n************** lala\n\n\n\n\n");
     CK_C_INITIALIZE_ARGS* args = pInitArgs;
     sing* blargl = get_instance();
     if(pInitArgs!=NULL) {
@@ -135,7 +132,7 @@ CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
 }
 
 CK_RV C_Finalize(CK_VOID_PTR pReserved)
-{   fprintf(stdout,"\nC: called: C_Finalize    ");
+{   //fprintf(stdout,"\nC: called: C_Finalize    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -149,8 +146,7 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
 
         if(C_FinalizeJava !=0)
         {
-            jobject obj0;
-            retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_FinalizeJava, obj0);
+            retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_FinalizeJava);
             (*(environment))->ExceptionDescribe(environment);
             if(pReserved != NULL) {
                 retVal = CKR_ARGUMENTS_BAD;
@@ -162,11 +158,8 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
         dings->UnlockMutex(dings->ppMutex);
     }
 //g    (*(dings->jvm))->DetachCurrentThread(dings->jvm);
-	printf("is this the oopsie?\n");
 	pthread_cond_signal(&(dings->finish));	
-	printf("before join?\n");
 	pthread_join(instance->thread,NULL);
-	printf("after join\n");
     return retVal;
 }
 
@@ -174,7 +167,7 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
 CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
 {
 
-    fprintf(stdout,"\nC: called: C_GetSlotList    ");
+    //fprintf(stdout,"\nC: called: C_GetSlotList    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -194,7 +187,7 @@ CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PT
         (*(environment))->ExceptionDescribe(environment);
         _pulCount  =(*(environment))->NewObject(environment, longClass, constructorLong, *pulCount);
         (*(environment))->ExceptionDescribe(environment);
-        fprintf(stdout,"\n pulCount: %d\n", *pulCount);
+        //fprintf(stdout,"\n pulCount: %d\n", *pulCount);
 
 //build long[]
         jlongArray _pSlotList = NULL;
@@ -211,7 +204,7 @@ CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PT
         (*(environment))->ExceptionDescribe(environment);
 
         if(C_GetSlotListJava==NULL) {
-            fprintf(stdout,"no id found!\n");
+            //fprintf(stdout,"no id found!\n");
         }
         if(C_GetSlotListJava !=0)
         {
@@ -220,7 +213,7 @@ CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PT
         }
         jmethodID getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
         *pulCount = (*(environment))->CallLongMethod(environment, _pulCount, getValue);
-        fprintf(stdout,"\n pulCount: %d\n", *pulCount);
+        //fprintf(stdout,"\n pulCount: %d\n", *pulCount);
 
         if(_pSlotList!=NULL && retVal!=CKR_BUFFER_TOO_SMALL) {
             long* data= (*(environment))->GetLongArrayElements(environment,_pSlotList, NULL);
@@ -301,14 +294,14 @@ CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
         pInfo->hardwareVersion.major=hardwareVersionMajor;
         jmethodID getHardwareVersionMinor = (*(environment))->GetMethodID(environment, versionClass,"getMinor", "()B");
         jbyte hardwareVersionMinor = (*(environment))->CallLongMethod(environment, version1, getHardwareVersionMinor);
-        pInfo->hardwareVersion.minor=hardwareVersionMajor;
+        pInfo->hardwareVersion.minor=hardwareVersionMinor;
 
         jmethodID getFirmwareVersionMajor = (*(environment))->GetMethodID(environment, versionClass,"getMajor", "()B");
         jbyte firmwareVersionMajor = (*(environment))->CallLongMethod(environment, version2, getFirmwareVersionMajor);
         pInfo->firmwareVersion.major=firmwareVersionMajor;
         jmethodID getFirmwareVersionMinor = (*(environment))->GetMethodID(environment, versionClass,"getMinor", "()B");
         jbyte firmwareVersionMinor = (*(environment))->CallLongMethod(environment, version2, getFirmwareVersionMinor);
-        pInfo->firmwareVersion.minor=firmwareVersionMajor;
+        pInfo->firmwareVersion.minor=firmwareVersionMinor;
 
     }
     if(dings->UnlockMutex != NULL) {
@@ -320,7 +313,7 @@ CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
 }
 
 CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
-{   fprintf(stdout,"\nC: called: C_GetTokenInfo    ");
+{   //fprintf(stdout,"\nC: called: C_GetTokenInfo    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -363,7 +356,7 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
         jstring ManufacturerID = (*(environment))->CallObjectMethod(environment, tokeninfo, getTokenManufacturerID);
         jsize lenManufacturerID = (*(environment))->GetStringLength(environment, ManufacturerID);
         const jchar* charManufacturerID = (*(environment))->GetStringChars(environment, ManufacturerID, NULL);
-        for(i=0; i<lenLabel; i++) {
+        for(i=0; i<lenManufacturerID; i++) {
             pInfo->manufacturerID[i]=charManufacturerID[i];
         }
 
@@ -371,7 +364,7 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
         jstring Model = (*(environment))->CallObjectMethod(environment, tokeninfo, getTokenModel);
         jsize lenModel = (*(environment))->GetStringLength(environment, Model);
         const jchar* charModel = (*(environment))->GetStringChars(environment, Model, NULL);
-        for(i=0; i<lenLabel; i++) {
+        for(i=0; i<lenModel; i++) {
             pInfo->model[i]=charModel[i];
         }
 
@@ -379,7 +372,7 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
         jstring SerialNumber = (*(environment))->CallObjectMethod(environment, tokeninfo, getTokenSerialNumber);
         jsize lenSerialNumber = (*(environment))->GetStringLength(environment, SerialNumber);
         const jchar* charSerialNumber = (*(environment))->GetStringChars(environment, SerialNumber, NULL);
-        for(i=0; i<lenLabel; i++) {
+        for(i=0; i<lenSerialNumber; i++) {
             pInfo->serialNumber[i]=charSerialNumber[i];
         }
 
@@ -423,14 +416,14 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
         pInfo->hardwareVersion.major=hardwareVersionMajor;
         jmethodID getHardwareVersionMinor = (*(environment))->GetMethodID(environment, versionClass,"getMinor", "()B");
         jbyte hardwareVersionMinor = (*(environment))->CallLongMethod(environment, version1, getHardwareVersionMinor);
-        pInfo->hardwareVersion.minor=hardwareVersionMajor;
+        pInfo->hardwareVersion.minor=hardwareVersionMinor;
 
         jmethodID getFirmwareVersionMajor = (*(environment))->GetMethodID(environment, versionClass,"getMajor", "()B");
         jbyte firmwareVersionMajor = (*(environment))->CallLongMethod(environment, version2, getFirmwareVersionMajor);
         pInfo->firmwareVersion.major=firmwareVersionMajor;
         jmethodID getFirmwareVersionMinor = (*(environment))->GetMethodID(environment, versionClass,"getMinor", "()B");
         jbyte firmwareVersionMinor = (*(environment))->CallLongMethod(environment, version2, getFirmwareVersionMinor);
-        pInfo->firmwareVersion.minor=firmwareVersionMajor;
+        pInfo->firmwareVersion.minor=firmwareVersionMinor;
 
 
         jmethodID getTime = (*(environment))->GetMethodID(environment, tokeninfoClass, "getUtcTime", "()Ljava/lang/String;");
@@ -454,7 +447,7 @@ CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
 }
 
 CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList, CK_ULONG_PTR pulCount)
-{   fprintf(stdout,"\nC: called: C_GetMechanismList    ");
+{   //fprintf(stdout,"\nC: called: C_GetMechanismList    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -488,20 +481,20 @@ CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList
 
         jmethodID getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
         *pulCount = (*(environment))->CallLongMethod(environment, _pulCount, getValue);
-        fprintf(stdout,"\n pulCount: %d\n", *pulCount);
+        //fprintf(stdout,"\n pulCount: %d\n", *pulCount);
 
         if(_pMechanismList!=NULL && retVal==CKR_OK) {
-            fprintf(stdout,"C: C_GetMechanismList: writing back....\n");
+            //fprintf(stdout,"C: C_GetMechanismList: writing back....\n");
             long* data= (*(environment))->GetLongArrayElements(environment,_pMechanismList, NULL);
             (*(environment))->ExceptionDescribe(environment);
             int j;
             for(j=0; j<*pulCount; j++) {
                 pMechanismList[j]=data[j];
             }
-            fprintf(stdout,"writing back finished\n");
+            //fprintf(stdout,"writing back finished\n");
         }
 
-        fprintf(stdout,"\n pulCount returned: : %d\n", *pulCount);
+        //fprintf(stdout,"\n pulCount returned: : %d\n", *pulCount);
 
     }
     if(dings->UnlockMutex != NULL) {
@@ -514,7 +507,7 @@ CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList
 
 
 CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM_INFO_PTR pInfo)
-{   fprintf(stdout,"\nC: called: C_GetMechanismInfo    ");
+{   //fprintf(stdout,"\nC: called: C_GetMechanismInfo    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -557,7 +550,7 @@ CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM
 
 
 CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
-{   fprintf(stdout,"\nC: called: C_OpenSession    ");
+{   //fprintf(stdout,"\nC: called: C_OpenSession    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -593,7 +586,7 @@ CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication,
 }
 
 CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
-{   fprintf(stdout,"\nC: called: C_CloseAllSessions    ");
+{   //fprintf(stdout,"\nC: called: C_CloseAllSessions    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -623,7 +616,7 @@ CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
 
 
 CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
-{   fprintf(stdout,"\nC: called: C_CloseSession    ");
+{   //fprintf(stdout,"\nC: called: C_CloseSession    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -653,12 +646,12 @@ CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
 
 
 jobject createAttributeArray(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount) {
-    fprintf(stdout,"\n\n*****creating attributeARRAY****\n\n");
+    //fprintf(stdout,"\n\n*****creating attributeARRAY****\n\n");
     if(pTemplate==NULL) {
         return NULL;
     }
 
-    sing* dings = get_instance();
+    //sing* dings = get_instance();
     jobject pTemplateArray=NULL;
     jobject pValue = NULL;
 
@@ -669,21 +662,23 @@ jobject createAttributeArray(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK
     int i;
     for(i=0; i<ulCount; i++) {
         if((pTemplate+i)->pValue==NULL) {
-            fprintf(stdout,"template->pValue==NULL\n");
+            //fprintf(stdout,"template->pValue==NULL\n");
             pValue=NULL;
         } else {
-            fprintf(stdout,"template->pValue!=NULL\n");
+            //fprintf(stdout,"template->pValue!=NULL\n");
             pValue = createAttributeValue(environment, pTemplate+i);
         }
+	//if(pValue!=NULL){
         CK_ULONG len = (pTemplate+i)->ulValueLen;
         jobject tmp=(*(environment))->NewObject(environment, ck_attributeClass, ck_attributeConstructor, (pTemplate+i)->type, pValue, len);
         (*(environment))->SetObjectArrayElement(environment, pTemplateArray, i, tmp);
+	//}
     }
 
     return  pTemplateArray;
 }
 jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
-    sing* dings = get_instance();
+    //sing* dings = get_instance();
 
 
     int type = getAttributeType(attribute->type);
@@ -697,20 +692,20 @@ jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
     case 9:
     case 10:
     case 0: {
-        fprintf(stdout,"creating longvalue\n");
+        //fprintf(stdout,"creating longvalue\n");
         CK_ULONG_PTR _pValue = (CK_ULONG_PTR) (attribute->pValue);
-        fprintf(stdout,"value: %d\n",*_pValue);
+        //fprintf(stdout,"value: %d\n",*_pValue);
         jclass longClass = (*(environment))->FindClass(environment, "Ljava/lang/Long;");
         jmethodID constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(J)V");
         jobject ob =  (*(environment))->NewObject(environment, longClass, constructorLong, *_pValue);
-        fprintf(stdout,"longvalue created!\n");
+        //fprintf(stdout,"longvalue created!\n");
         return ob;
     }
 
     break;
     //bool
     case 1: {
-        fprintf(stdout,"creating boolvalue\n");
+        //fprintf(stdout,"creating boolvalue\n");
         CK_BBOOL* _pValue = (CK_BBOOL*) attribute->pValue;
         jclass longClass = (*(environment))->FindClass(environment, "Ljava/lang/Boolean;");
         jmethodID constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(Z)V");
@@ -719,14 +714,15 @@ jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
     break;
     //string
     case 2:
-        fprintf(stdout,"creating stringvalue\n");
-        return (*(environment))->NewStringUTF(environment, attribute->pValue);
+    case 7:
+        //fprintf(stdout,"creating stringvalue |%s\n", attribute->pValue);
+        //return (*(environment))->NewStringUTF(environment, attribute->pValue);
 
-        break;
+        //break;
         //byte[]
     case 3: {
 
-        fprintf(stdout,"creating byte[]value\n");
+        //fprintf(stdout,"creating byte[]value\n");
         jbyteArray array =  (*(environment))->NewByteArray(environment, attribute->ulValueLen);
         (*(environment))->SetByteArrayRegion(environment, array, 0, attribute->ulValueLen, attribute->pValue);
         return array;
@@ -734,17 +730,19 @@ jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
     break;
     //date
     case 4: {
-        fprintf(stdout,"creating date value\n");
+        //fprintf(stdout,"creating date value\n");
         jclass longClass = (*(environment))->FindClass(environment, "Lobj/CK_DATE;");
         jmethodID constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(IIIIIIII)V");
         CK_DATE* date = (CK_DATE*) (attribute->pValue);
-        char* year = date->year;
-        char* month = date->month;
-        char* day = date->day;
+        unsigned char* year = date->year;
+        unsigned char* month = date->month;
+        unsigned char* day = date->day;
 
         return (*(environment))->NewObject(environment, longClass, constructorLong, year[0], year[1], year[2], year[3], month[0], month[1], day[0], day[1] );
     }
     break;
+    case 100: 
+	return NULL;
     //handle wrapped attribute arrays...
 
     }
@@ -961,10 +959,10 @@ int getAttributeType(CK_ULONG type) {
         value = 1;
         break;
     case CKA_WRAP_TEMPLATE:
-        value = 12;
+        value = 100;
         break;
     case CKA_UNWRAP_TEMPLATE:
-        value = 12;
+        value = 100;
         break;
     case CKA_OTP_FORMAT:
         value = 0;
@@ -1072,7 +1070,7 @@ int getAttributeType(CK_ULONG type) {
 
 
 CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject)
-{   fprintf(stdout,"\nC: called: C_CreateObject    ");
+{   //fprintf(stdout,"\nC: called: C_CreateObject    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1099,7 +1097,7 @@ CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_
         if(phObject!=NULL) {
             jmethodID getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
             *phObject = (*(environment))->CallLongMethod(environment, _phObject, getValue);
-	    fprintf(stdout, "Created Object with handle %d\n", *phObject);
+	    //fprintf(stdout, "Created Object with handle %d\n", *phObject);
         }
 
 
@@ -1115,7 +1113,7 @@ CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_
 
 
 CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{   fprintf(stdout,"\nC: called: C_DecryptInit    ");
+{   //fprintf(stdout,"\nC: called: C_DecryptInit    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1132,7 +1130,7 @@ CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_
         jmethodID mechanismConstructor = (*(environment))->GetMethodID(environment,mechanismClass, "<init>", "(JLjava/lang/Object;J)V");
         jobject _pMechanism = (*(environment))->NewObject(environment, mechanismClass, mechanismConstructor, pMechanism->mechanism, NULL, 0);
 	
-	printf("decryptInit__:%d\n", pMechanism->mechanism);
+	//printf("decryptInit__:%d\n", pMechanism->mechanism);
 
 
             retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_DecryptInitJava, hSession, _pMechanism, hKey);
@@ -1149,7 +1147,7 @@ CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_
 
 
 CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
-{   fprintf(stdout,"\nC: called: C_DecryptUpdate    ");
+{   //fprintf(stdout,"\nC: called: C_DecryptUpdate    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1209,7 +1207,7 @@ CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK
 
 
 CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
-{   fprintf(stdout,"\nC: called: C_DestroyObject    ");
+{   //fprintf(stdout,"\nC: called: C_DestroyObject    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1241,7 +1239,7 @@ CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
 
 
 CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, CK_ULONG ulMaxObjectCount, CK_ULONG_PTR pulObjectCount)
-{   fprintf(stdout,"\nC: called: C_FindObjects    ");
+{   //fprintf(stdout,"\nC: called: C_FindObjects    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1272,7 +1270,7 @@ CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, C
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_FindObjectsJava, hSession, _phObject, ulMaxObjectCount, _pulObjectCount);
         (*(environment))->ExceptionDescribe(environment);
 
-        fprintf(stdout,"\n backToBlack \n");
+        //fprintf(stdout,"\n backToBlack \n");
 
 
         jmethodID getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
@@ -1281,7 +1279,6 @@ CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, C
         if(retVal==CKR_OK) {
 
             if(phObject!=NULL) {
-                int i=0;
                 jlong* val = (*(environment))->GetLongArrayElements(environment, _phObject, NULL);
                 jlong len = (*(environment))->GetArrayLength(environment, _phObject);
                 memcpy(phObject, val, len*sizeof(CK_ULONG));
@@ -1303,7 +1300,7 @@ CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, C
 
 
 CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
-{   fprintf(stdout,"\nC: called: C_FindObjectsFinal    ");
+{   //fprintf(stdout,"\nC: called: C_FindObjectsFinal    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1320,7 +1317,7 @@ CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
 
             retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_FindObjectsFinalJava, hSession);
             (*(environment))->ExceptionDescribe(environment);
-            fprintf(stdout,"findObjectsFinal is back to c again...");
+            //fprintf(stdout,"findObjectsFinal is back to c again...");
         }
     }
     if(dings->UnlockMutex != NULL) {
@@ -1333,7 +1330,7 @@ CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
 
 
 CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{   fprintf(stdout,"\nC: called: C_FindObjectsInit    ");
+{   //fprintf(stdout,"\nC: called: C_FindObjectsInit    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1361,7 +1358,7 @@ CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, 
 
 
 CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_ULONG ulRandomLen)
-{   fprintf(stdout,"\nC: called: C_GenerateRandom    ");
+{   //fprintf(stdout,"\nC: called: C_GenerateRandom    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1403,10 +1400,10 @@ CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_UL
 
 
 CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{   fprintf(stdout,"\nC: called: C_GetAttributeValue    ");
-    fprintf(stdout,"C: hObject: %d\n", hObject);
-    fprintf(stdout,"C: hObject: %p\n", pTemplate);
-    fprintf(stdout,"C: hObject: %d\n", ulCount);
+{   //fprintf(stdout,"\nC: called: C_GetAttributeValue    ");
+    //fprintf(stdout,"C: hObject: %d\n", hObject);
+    //fprintf(stdout,"C: hObject: %p\n", pTemplate);
+    //fprintf(stdout,"C: hObject: %d\n", ulCount);
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1428,9 +1425,9 @@ CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetAttributeValueJava, hSession, hObject, array, ulCount);
         (*(environment))->ExceptionDescribe(environment);
 
-        fprintf(stdout,"\n backToBlack \n");
+        //fprintf(stdout,"\n backToBlack \n");
         copyDataToPTR(environment, pTemplate, ulCount, array, retVal);
-        fprintf(stdout,"\n the pure black...\n");
+        //fprintf(stdout,"\n the pure black...\n");
 
     }
     if(dings->UnlockMutex != NULL) {
@@ -1451,10 +1448,8 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
 
         CK_VOID_PTR ptr = (pTemplate+i)->pValue;
         CK_ULONG type = (pTemplate+i)->type;
-        CK_ULONG len = (pTemplate+i)->ulValueLen;
 
         jobject val = (*(environment))->GetObjectArrayElement(environment, array, i);
-        jobject _pValue = NULL;
 
         CK_ULONG ckType = (*(environment))->CallLongMethod(environment, val, getType);
         CK_ULONG ckLen = (*(environment))->CallLongMethod(environment, val, getLength);
@@ -1475,24 +1470,23 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
         case 9:
         case 10:
         case 0: {
-            fprintf(stdout,"copy back some long value\n");
+            //fprintf(stdout,"copy back some long value\n");
             if(ptr!=NULL) {
-                _pValue = NULL;
                 jmethodID getpValueL = (*(environment))->GetMethodID(environment, ckClass, "getpValueAsLong", "()J");
                 CK_ULONG ckType = (*(environment))->CallLongMethod(environment, val, getpValueL);
                 CK_ULONG_PTR p = (CK_ULONG_PTR) ptr;
                 *p=ckType;
-                fprintf(stdout,"really copying back some long value: %d\n",*p);
-                fprintf(stdout,"really copying back some long value: %d\n",ckType);
+                //fprintf(stdout,"really copying back some long value: %d\n",*p);
+                //fprintf(stdout,"really copying back some long value: %d\n",ckType);
             }
         }
         break;
         //bool
         case 1: {
-            fprintf(stdout,"copy back some bool value\n");
+            //fprintf(stdout,"copy back some bool value\n");
             if(ptr!=NULL) {
-                _pValue = NULL;
-                CK_BBOOL ckType = (*(environment))->CallBooleanMethod(environment, val, getpValue);
+                jmethodID getpValueB = (*(environment))->GetMethodID(environment, ckClass, "getpValueAsBool", "()Z");
+                CK_BBOOL ckType = (*(environment))->CallBooleanMethod(environment, val, getpValueB);
                 CK_BBOOL* p = (CK_BBOOL*) ptr;
                 *p=ckType;
             }
@@ -1502,15 +1496,21 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
         case 2:
         case 7:
             //return (*(environment))->NewStringUTF(environment, attribute->pValue);
-            fprintf(stdout,"copy back some string value\n");
-
-            if(ptr!=NULL) {
-                _pValue = NULL;
+            //fprintf(stdout,"copy back some string value\n");
+		
+     /*       if(ptr!=NULL) {
                 jstring ckpValue = (*(environment))->CallObjectMethod(environment, val, getpValue);
-                jsize strnlen = (*(environment))->GetStringLength(environment, ckpValue);
+		jsize strnlen =0;
+		if(ckpValue==NULL){
+                    //fprintf(stdout,"ERROR: ckpValue == NULL\n");
+		}else{
+                    //fprintf(stdout,"SUCCESS: woohooo!\n    $$$$$$ ---> %s <------$$$$$$",ckpValue);
+                    strnlen = (*(environment))->GetStringLength(environment, ckpValue);
+                    //fprintf(stdout,"SUCCESS: ckpValue != NULL\n");
+		}
                 if(strnlen != ckLen) {
-                    fprintf(stdout,"ERROR: Problem with Stringlength in copyDataToPtr(..)\n");
-                    fprintf(stdout,"ERROR: strnlen: %d    ckLen: %d\n", strnlen, ckLen);
+                    //fprintf(stdout,"ERROR: Problem with Stringlength in copyDataToPtr(..)\n");
+                    //fprintf(stdout,"ERROR: strnlen: %d    ckLen: %d\n", strnlen, ckLen);
                     if(strnlen > ckLen) {
 
                     } else {
@@ -1521,19 +1521,19 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
                 }
                 (*(environment))->GetStringUTFRegion(environment, ckpValue, 0, ckLen, ((char*)ptr));
             }
+            //fprintf(stdout,"finished: copy back some string value\n");
             break;
-            //byte[]
+      */      //byte[]
         case 12:
         case 3: {
-            fprintf(stdout,"copy back some byte[] value\n");
+            //fprintf(stdout,"copy back some byte[] value\n");
 
             if(ptr!=NULL) {
-                _pValue = NULL;
                 jbyteArray ckpValue = (*(environment))->CallObjectMethod(environment, val, getpValue);
                 jsize arrlen = (*(environment))->GetArrayLength(environment, ckpValue);
                 if(arrlen != ckLen) {
-                    fprintf(stdout,"ERROR: Problem with Arraylength in copyDataToPtr(..)\n");
-                    fprintf(stdout,"ERROR: arrlen: %d    ckLen: %d\n", arrlen, ckLen);
+                    //fprintf(stdout,"ERROR: Problem with Arraylength in copyDataToPtr(..)\n");
+                    //fprintf(stdout,"ERROR: arrlen: %d    ckLen: %d\n", arrlen, ckLen);
                     if(arrlen>ckLen) {
 
                     } else {
@@ -1555,7 +1555,7 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
         break;
         //date
         case 4: {
-            fprintf(stdout,"copy back some CK_DATE value\n");
+            //fprintf(stdout,"copy back some CK_DATE value\n");
 
             CK_DATE* date = (CK_DATE*) ((pTemplate+i)->pValue);
             date->year[0]=1;
@@ -1581,7 +1581,7 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
 
 
 CK_RV C_GetInfo(CK_INFO_PTR pInfo)
-{   fprintf(stdout,"\nC: called: C_GetInfo    ");
+{   //fprintf(stdout,"\nC: called: C_GetInfo    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1619,7 +1619,7 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo)
         jstring manufacturerID = (*(environment))->CallObjectMethod(environment, _pInfo, getmanufacturerID);
 
         jsize lenManufacturerID = (*(environment))->GetStringLength(environment, manufacturerID);
-        (*(environment))->GetStringUTFRegion(environment, manufacturerID, 0, lenDescription, ((char*)pInfo->manufacturerID));
+        (*(environment))->GetStringUTFRegion(environment, manufacturerID, 0, lenManufacturerID, ((char*)pInfo->manufacturerID));
 
 
         jmethodID getFlags = (*(environment))->GetMethodID(environment, infoClass,"getFlags", "()J");
@@ -1631,14 +1631,14 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo)
         pInfo->cryptokiVersion.major=cryptokiVersionMajor;
         jmethodID getCryptokiVersionMinor = (*(environment))->GetMethodID(environment, versionClass,"getMinor", "()B");
         jbyte cryptokiVersionMinor = (*(environment))->CallLongMethod(environment, version1, getCryptokiVersionMinor);
-        pInfo->cryptokiVersion.minor=cryptokiVersionMajor;
+        pInfo->cryptokiVersion.minor=cryptokiVersionMinor;
 
         jmethodID getLibraryVersionMajor = (*(environment))->GetMethodID(environment, versionClass,"getMajor", "()B");
         jbyte libraryVersionMajor = (*(environment))->CallLongMethod(environment, version2, getLibraryVersionMajor);
         pInfo->libraryVersion.major=libraryVersionMajor;
         jmethodID getLibraryVersionMinor = (*(environment))->GetMethodID(environment, versionClass,"getMinor", "()B");
         jbyte libraryVersionMinor = (*(environment))->CallLongMethod(environment, version2, getLibraryVersionMinor);
-        pInfo->libraryVersion.minor=libraryVersionMajor;
+        pInfo->libraryVersion.minor=libraryVersionMinor;
 
 
 
@@ -1656,7 +1656,7 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo)
 
 
 CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
-{   fprintf(stdout,"\nC: called: C_GetSessionInfo    ");
+{   //fprintf(stdout,"\nC: called: C_GetSessionInfo    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1711,7 +1711,7 @@ CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
 
 
 CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
-{   fprintf(stdout,"\nC: called: C_Login    ");
+{   //fprintf(stdout,"\nC: called: C_Login    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1725,7 +1725,7 @@ CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPi
         //string
         jstring _pPin = NULL;
         if(pPin!=NULL) {
-            _pPin =(*(environment))->NewStringUTF(environment, pPin);
+            _pPin =(*(environment))->NewStringUTF(environment, (const char *)pPin);
         }
 
 
@@ -1749,7 +1749,7 @@ CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPi
 
 
 CK_RV C_Logout(CK_SESSION_HANDLE hSession)
-{   fprintf(stdout,"\nC: called: C_Logout    ");
+{   //fprintf(stdout,"\nC: called: C_Logout    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1781,7 +1781,7 @@ CK_RV C_Logout(CK_SESSION_HANDLE hSession)
 
 
 CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSeedLen)
-{   fprintf(stdout,"\nC: called: C_SeedRandom    ");
+{   //fprintf(stdout,"\nC: called: C_SeedRandom    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1796,7 +1796,7 @@ CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSee
         if(C_SeedRandomJava !=0)
         {
             jobject string1;
-            string1 =(*(environment))->NewStringUTF(environment, pSeed);
+            string1 =(*(environment))->NewStringUTF(environment,(const char *) pSeed);
             retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_SeedRandomJava, hSession, string1, ulSeedLen);
             (*(environment))->ExceptionDescribe(environment);
 
@@ -1812,7 +1812,7 @@ CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSee
 
 
 CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{   fprintf(stdout,"\nC: called: C_SetAttributeValue    ");
+{   //fprintf(stdout,"\nC: called: C_SetAttributeValue    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1882,7 +1882,7 @@ CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
 
 
 CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLen, CK_CHAR_PTR pNewPin, CK_ULONG ulNewLen)
-{   fprintf(stdout,"\nC: called: C_SetPIN    ");
+{   //fprintf(stdout,"\nC: called: C_SetPIN    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1897,9 +1897,9 @@ CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLe
         if(C_SetPINJava !=0)
         {
             jobject string1;
-            string1 =(*(environment))->NewStringUTF(environment, pOldPin);
+            string1 =(*(environment))->NewStringUTF(environment,(const char *) pOldPin);
             jobject string3;
-            string3 =(*(environment))->NewStringUTF(environment, pNewPin);
+            string3 =(*(environment))->NewStringUTF(environment, (const char *)pNewPin);
             retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_SetPINJava, hSession, string1, ulOldLen, string3, ulNewLen);
             (*(environment))->ExceptionDescribe(environment);
 
@@ -1915,7 +1915,7 @@ CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLe
 
 
 CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{   fprintf(stdout,"\nC: called: C_Sign    ");
+{   //fprintf(stdout,"\nC: called: C_Sign    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1979,7 +1979,7 @@ CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, 
 
 
 CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{   fprintf(stdout,"\nC: called: C_SignInit    ");
+{   //fprintf(stdout,"\nC: called: C_SignInit    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -1999,7 +1999,6 @@ CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJ
 
         if(C_SignInitJava !=0)
         {
-            jobject obj1;
             retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_SignInitJava, hSession, mechanism, hKey);
             (*(environment))->ExceptionDescribe(environment);
 
@@ -2015,7 +2014,7 @@ CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJ
 
 
 CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hUnwrappingKey, CK_BYTE_PTR pWrappedKey, CK_ULONG ulWrappedKeyLen, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
-{   fprintf(stdout,"\nC: called: C_UnwrapKey    ");
+{   //fprintf(stdout,"\nC: called: C_UnwrapKey    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -2065,7 +2064,7 @@ CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OB
 
 
 CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hWrappingKey, CK_OBJECT_HANDLE hKey, CK_BYTE_PTR pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen)
-{   fprintf(stdout,"\nC: called: C_WrapKey    ");
+{   //fprintf(stdout,"\nC: called: C_WrapKey    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -2115,7 +2114,7 @@ CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJE
 
 
 CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{   fprintf(stdout,"\nC: called: C_SignUpdate    ");
+{   //fprintf(stdout,"\nC: called: C_SignUpdate    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -2150,7 +2149,7 @@ CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPar
 
 
 CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{   fprintf(stdout,"\nC: called: C_SignFinal    ");
+{   //fprintf(stdout,"\nC: called: C_SignFinal    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -2205,7 +2204,7 @@ CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_P
 
 
 CK_RV C_DecryptFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG_PTR pulLastPartLen)
-{   fprintf(stdout,"\nC: called: C_DecryptFinal    ");
+{   //fprintf(stdout,"\nC: called: C_DecryptFinal    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -2260,7 +2259,7 @@ CK_RV C_DecryptFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG
 
 
 CK_RV C_Decrypt(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
-{   fprintf(stdout,"\nC: called: C_Decrypt    ");
+{   //fprintf(stdout,"\nC: called: C_Decrypt    ");
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     if(dings->LockMutex != NULL) {
@@ -2324,165 +2323,165 @@ CK_RV C_Decrypt(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG
 #define CK_DEFINE_FUNCTION(returnType, name) returnType name
 CK_DEFINE_FUNCTION(CK_RV, C_InitPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
 {
-    fprintf(stdout,"not implemented function called: C_InitPIN\n");
+    //fprintf(stdout,"not implemented function called: C_InitPIN\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_EncryptUpdate\n");
+    //fprintf(stdout,"not implemented function called: C_EncryptUpdate\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetOperationState)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pOperationState, CK_ULONG_PTR pulOperationStateLen)
 {
-    fprintf(stdout,"not implemented function called: C_GetOperationState\n");
+    //fprintf(stdout,"not implemented function called: C_GetOperationState\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastEncryptedPart, CK_ULONG_PTR pulLastEncryptedPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_EncryptFinal\n");
+    //fprintf(stdout,"not implemented function called: C_EncryptFinal\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DigestInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism)
 {
-    fprintf(stdout,"not implemented function called: C_DigestInit\n");
+    //fprintf(stdout,"not implemented function called: C_DigestInit\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_Digest)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pDigest, CK_ULONG_PTR pulDigestLen)
 {
-    fprintf(stdout,"not implemented function called: C_Digest\n");
+    //fprintf(stdout,"not implemented function called: C_Digest\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_DigestUpdate\n");
+    //fprintf(stdout,"not implemented function called: C_DigestUpdate\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DigestKey)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hKey)
 {
-    fprintf(stdout,"not implemented function called: C_DigestKey\n");
+    //fprintf(stdout,"not implemented function called: C_DigestKey\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pDigest, CK_ULONG_PTR pulDigestLen)
 {
-    fprintf(stdout,"not implemented function called: C_DigestFinal\n");
+    //fprintf(stdout,"not implemented function called: C_DigestFinal\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {
-    fprintf(stdout,"not implemented function called: C_SignRecoverInit\n");
+    //fprintf(stdout,"not implemented function called: C_SignRecoverInit\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_SignRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
 {
-    fprintf(stdout,"not implemented function called: C_SignRecover\n");
+    //fprintf(stdout,"not implemented function called: C_SignRecover\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {
-    fprintf(stdout,"not implemented function called: C_VerifyInit\n");
+    //fprintf(stdout,"not implemented function called: C_VerifyInit\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_Verify)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
 {
-    fprintf(stdout,"not implemented function called: C_Verify\n");
+    //fprintf(stdout,"not implemented function called: C_Verify\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_VerifyUpdate\n");
+    //fprintf(stdout,"not implemented function called: C_VerifyUpdate\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen)
 {
-    fprintf(stdout,"not implemented function called: C_VerifyFinal\n");
+    //fprintf(stdout,"not implemented function called: C_VerifyFinal\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecoverInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {
-    fprintf(stdout,"not implemented function called: C_VerifyRecoverInit\n");
+    //fprintf(stdout,"not implemented function called: C_VerifyRecoverInit\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_VerifyRecover)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG ulSignatureLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
 {
-    fprintf(stdout,"not implemented function called: C_VerifyRecover\n");
+    //fprintf(stdout,"not implemented function called: C_VerifyRecover\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DigestEncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_DigestEncryptUpdate\n");
+    //fprintf(stdout,"not implemented function called: C_DigestEncryptUpdate\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptDigestUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_DecryptDigestUpdate\n");
+    //fprintf(stdout,"not implemented function called: C_DecryptDigestUpdate\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_SignEncryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen, CK_BYTE_PTR pEncryptedPart, CK_ULONG_PTR pulEncryptedPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_SignEncryptUpdate\n");
+    //fprintf(stdout,"not implemented function called: C_SignEncryptUpdate\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DecryptVerifyUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
 {
-    fprintf(stdout,"not implemented function called: C_DecryptVerifyUpdate\n");
+    //fprintf(stdout,"not implemented function called: C_DecryptVerifyUpdate\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GenerateKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phKey)
 {
-    fprintf(stdout,"not implemented function called: C_GenerateKey\n");
+    //fprintf(stdout,"not implemented function called: C_GenerateKey\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GenerateKeyPair)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_ATTRIBUTE_PTR pPublicKeyTemplate, CK_ULONG ulPublicKeyAttributeCount, CK_ATTRIBUTE_PTR pPrivateKeyTemplate, CK_ULONG ulPrivateKeyAttributeCount, CK_OBJECT_HANDLE_PTR phPublicKey, CK_OBJECT_HANDLE_PTR phPrivateKey)
 {
-    fprintf(stdout,"not implemented function called: C_GenerateKeyPair\n");
+    //fprintf(stdout,"not implemented function called: C_GenerateKeyPair\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_DeriveKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hBaseKey, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
 {
-    fprintf(stdout,"not implemented function called: C_DeriveKey\n");
+    //fprintf(stdout,"not implemented function called: C_DeriveKey\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_SetOperationState)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pOperationState, CK_ULONG ulOperationStateLen, CK_OBJECT_HANDLE hEncryptionKey, CK_OBJECT_HANDLE hAuthenticationKey)
 {
-    fprintf(stdout,"not implemented function called: C_SetOperationState\n");
+    //fprintf(stdout,"not implemented function called: C_SetOperationState\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_CopyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phNewObject)
 {
-    fprintf(stdout,"not implemented function called: C_CopyObject\n");
+    //fprintf(stdout,"not implemented function called: C_CopyObject\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetObjectSize)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ULONG_PTR pulSize)
 {
-    fprintf(stdout,"not implemented function called: C_GetObjectSize\n");
+    //fprintf(stdout,"not implemented function called: C_GetObjectSize\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_GetFunctionStatus)(CK_SESSION_HANDLE hSession)
 {
-    fprintf(stdout,"not implemented function called: C_GetFunctionStatus\n");
+    //fprintf(stdout,"not implemented function called: C_GetFunctionStatus\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_CancelFunction)(CK_SESSION_HANDLE hSession)
 {
-    fprintf(stdout,"not implemented function called: C_CancelFunction\n");
+    //fprintf(stdout,"not implemented function called: C_CancelFunction\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_InitToken)(CK_SLOT_ID slotID, CK_CHAR_PTR pPin, CK_ULONG ulPinLen, CK_CHAR_PTR pLabel)
 {
-    fprintf(stdout,"not implemented function called: C_InitToken\n");
+    //fprintf(stdout,"not implemented function called: C_InitToken\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_EncryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {
-    fprintf(stdout,"not implemented function called: C_EncryptInit\n");
+    //fprintf(stdout,"not implemented function called: C_EncryptInit\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_Encrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pEncryptedData, CK_ULONG_PTR pulEncryptedDataLen)
 {
-    fprintf(stdout,"not implemented function called: C_Encrypt\n");
+    //fprintf(stdout,"not implemented function called: C_Encrypt\n");
     return CKR_OK;
 }
 CK_DEFINE_FUNCTION(CK_RV, C_WaitForSlotEvent)(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved) {
-    fprintf(stdout,"not implemented function called: C_WaitForSlotEvent\n");
+    //fprintf(stdout,"not implemented function called: C_WaitForSlotEvent\n");
     return 0x00000054;
 }

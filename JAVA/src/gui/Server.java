@@ -13,14 +13,14 @@ public class Server implements Serializable{
 	public class ServerInfo{
 		ServerInfo(String url){
 			this.url = url;
-			this.name = "http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth/rest/json";
+			this.name = "http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth-2.0/rest/json ";
 		}
 		ServerInfo(String url,String name){
 			this.url = url;
 			this.name = name;
 		}
 		private String url;
-		private String name;
+		private String name; 
 		public String getName(){
 			return name;
 		}

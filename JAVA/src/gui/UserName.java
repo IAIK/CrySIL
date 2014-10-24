@@ -10,3 +10,4 @@ public class UserName implements Authenticator{
 		return new at.iaik.skytrust.element.skytrustprotocol.payload.auth.credentials.SUserPasswordAuthInfo();
 	}
 }
+ 

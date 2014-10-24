@@ -169,11 +169,6 @@ public class Session {
 		if (decryptHelper == null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OPERATION_NOT_INITIALIZED);
 		}
-		System.out.println("*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X");
-		System.out.println("dcH getKey: "+decryptHelper.getKey());
-		System.out.println("dcH getMech: "+decryptHelper.getMechanism());
-		System.out.println("dcH encdata: "+encdata.length);
-		System.out.println("*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X");
 		
 		byte[] plain_data = getSlot().getToken().decrypt(encdata, decryptHelper.getKey(), decryptHelper.getMechanism());
 		//throw something?
@@ -234,7 +229,11 @@ public class Session {
 		if (findObjectsHelper != null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OPERATION_ACTIVE);
 		}
+		for(CK_ATTRIBUTE tmp: attr){
+			System.out.println("attribute: "+ tmp);
+		}
 		ArrayList<Long> found_objs = getSlot().objectManager.findObjects(attr);
+		System.out.println("found "+ found_objs.size() + " objects!");
 		findObjectsHelper = new FindObjectsHelper(found_objs);
 	}
 

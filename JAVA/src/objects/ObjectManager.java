@@ -13,7 +13,6 @@ public class ObjectManager {
 
 	synchronized public ArrayList<Long> findObjects(CK_ATTRIBUTE[] template) throws PKCS11Error {
 		ArrayList<Long> result = new ArrayList<>();
-		System.err.println("findObjects: there are currently "+objects.size()+" objects available");
 		for (PKCS11Object tmp : objects) {
 			if (tmp.query(template)) {
 				result.add(ids.get(objects.indexOf(tmp)));
@@ -28,7 +27,6 @@ public class ObjectManager {
 				return objects.get(index);
 			}
 		}
-		System.err.println("ObjectManager: getObject, id wanted: "+id);
 		throw new PKCS11Error(CK_RETURN_TYPE.CKR_OBJECT_HANDLE_INVALID);
 	}
 
@@ -37,7 +35,6 @@ public class ObjectManager {
 		PKCS11Object object = ObjectBuilder.createFromTemplate(template);
 		objects.add(object);
 		ids.add(id);
-		System.err.println("created object with handle: "+id);
 		return id;
 	}
 
@@ -51,7 +48,6 @@ public class ObjectManager {
 		Long id = getNextId();
 		objects.add(object);
 		ids.add(id);
-		System.err.println("objectManager added Object! there are now "+objects.size()+" objects!");
 		return id;
 	}
 

@@ -30,17 +30,14 @@ public class Slot {
 	// private String pin;
 
 	public Slot(long slotid, Server.ServerInfo server) throws PKCS11Error {
-		System.err.println("slot constructed!");
 		slotID = slotid;
 		token = new Token(server);
 		loadMechanisms();
 		List<PKCS11Object> objs = token.getObjects();
-		System.err.println("slot constructed, get objects from token: " + objs);
 		if (objs == null) {
 			return;
 		}
 		for (PKCS11Object o : objs) {
-			System.err.println("Slot added object!");
 			objectManager.addObject(o);
 		}
 		// generate PIN

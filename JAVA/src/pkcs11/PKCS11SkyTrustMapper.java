@@ -1,13 +1,12 @@
 package pkcs11;
 
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKeyCertificate;
 import iaik.security.rsa.RSAPublicKey;
 import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 import iaik.x509.X509Certificate;
 import obj.*;
+import objects.MKey;
 import objects.ObjectBuilder;
 import objects.PKCS11Object;
 
@@ -26,8 +25,7 @@ public class PKCS11SkyTrustMapper {
 	static {
 
 		skytrust_template = new ArrayList<>();
-		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,
-				true, 1));
+		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN, true, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(
 				CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE, false, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_KEY_TYPE,
@@ -62,7 +60,7 @@ public class PKCS11SkyTrustMapper {
 		return algo;
 	}
 
-	public static SKey mapKey(PKCS11Object key) throws PKCS11Error {
+	public static MKey mapKey(PKCS11Object key) throws PKCS11Error {
 		if (key == null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_HANDLE_INVALID);
 		}
@@ -75,24 +73,25 @@ public class PKCS11SkyTrustMapper {
 
 		// key is not a SkytrustKey
 		Object skykey = key.getTag();
-		if (skykey == null || !(skykey instanceof SKey)) {
+		if (skykey == null || !(skykey instanceof MKey)) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_HANDLE_INVALID);
 		}
-		return (SKey) skykey;
+		return (MKey) skykey;
 	}
 
-	public static PKCS11Object mapToCert(SKey key) throws PKCS11Error {
+	public static PKCS11Object mapToCert(MKey key) throws PKCS11Error {
 		if (key == null) {
 			return null;
 		}
 
-		if (!key.getRepresentation().equals("certificate")) {
+		if (!key.getType().equals("certificate")) {
 			return null;
 		}
+		System.out.println("mapping...");
 		ArrayList<CK_ATTRIBUTE> cert_template = new ArrayList<>( skytrust_template);
 		byte[] id = key.getId().getBytes();
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL, "" + key.getId(), id.length)); // TODO: fix length
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length)); // TODO: fix length
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 8));
 		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 8));
 		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 8));
@@ -114,7 +113,7 @@ public class PKCS11SkyTrustMapper {
 		// CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PUBLIC_EXPONENT,data,
 		// data.length));
 
-		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
+		String certb64 = key.getEncodedCertificate();
 		try {
 			byte[] cert = Util.fromBase64String(certb64);
 			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE, cert, cert.length));
@@ -146,12 +145,12 @@ public class PKCS11SkyTrustMapper {
 		return obj;
 	}
 
-	public static PKCS11Object mapToPub(SKey key) throws PKCS11Error {
+	public static PKCS11Object mapToPub(MKey key) throws PKCS11Error {
 		if (key == null) {
 			return null;
 		}
 
-		if (!key.getRepresentation().equals("certificate")) {
+		if (!key.getType().equals("certificate")) {
 			return null;
 		}
 		ArrayList<CK_ATTRIBUTE> pub_template = new ArrayList<>(
@@ -160,7 +159,7 @@ public class PKCS11SkyTrustMapper {
 		
 		
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL, "" + id, id.length));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 8));
 		
 		
@@ -171,7 +170,7 @@ public class PKCS11SkyTrustMapper {
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ENCRYPT, true, 1));
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_WRAP, false, 1));
 
-		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
+		String certb64 = key.getEncodedCertificate();
 		try {
 			byte[] cert = Util.fromBase64String(certb64);
 			X509Certificate iaikcert = new X509Certificate(cert);
@@ -210,12 +209,11 @@ public class PKCS11SkyTrustMapper {
 		return obj;
 	}
 
-	public static PKCS11Object mapToPrivate(SKey key) throws PKCS11Error {
+	public static PKCS11Object mapToPrivate(MKey key) throws PKCS11Error {
 		ArrayList<CK_ATTRIBUTE> private_template = new ArrayList<>(
 				skytrust_template);
 		byte[] id = key.getId().getBytes();
-//		System.out.println("map to private key: "+ key.getId()+"      " + key.getSubId());
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL, "" + id, id.length));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
 
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,
 				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 8));
@@ -232,7 +230,7 @@ public class PKCS11SkyTrustMapper {
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_DECRYPT, true, 1));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_UNWRAP, false, 1));
 
-		String certb64 = ((SKeyCertificate) key).getEncodedCertificate();
+		String certb64 =key.getEncodedCertificate();
 		try {
 			byte[] cert = Util.fromBase64String(certb64);
 			X509Certificate iaikcert = new X509Certificate(cert);
