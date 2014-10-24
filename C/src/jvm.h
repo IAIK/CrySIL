@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "pkcs11.h"
 #include<string.h>
-#include <pthread.h>
+#include"Pkcs11Config.h"
 
 #ifndef __JVM_H
 #define __JVM_H
