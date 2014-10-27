@@ -8,12 +8,9 @@
 
 
 #ifndef WIN32
-
-
-#else
 #include <pthread.h>
-
-
+#else
+#include "pthread\pthread.h"
 #endif
 
 
