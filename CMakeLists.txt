@@ -23,7 +23,7 @@ if (WIN32)
 	
 else()
 	message ("This is a linux machine!")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c90 -pedantic")
 	add_definitions(-DWIN32=true)
 
 endif()
