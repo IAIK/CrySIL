@@ -12,7 +12,6 @@
 #endif
 
 
-//struct jvm_singleton;
 
 #ifdef DEBUG
 #define NUMJAVAOPTIONS 2
@@ -49,10 +48,10 @@ sing* get_instance()
     if (instance == NULL)
     {
 	instance =(sing*) malloc(sizeof(sing));
-	if(pthread_create(&(instance->thread), NULL, (void*)get_instance_thread, NULL)){
-		//fprintf(stderr, "Error creating thread\n");
+	if(pthread_create(&(instance->thread), NULL, (void * (*)(void *))get_instance_thread, NULL)){
+		
 	}else{
-		//wait here!
+		/*wait here*/	
 	}
 	
     }
@@ -103,14 +102,10 @@ void get_instance_thread(){
 
         }
 
-	//printf("thats odd\n");
 	pthread_mutex_init(&(instance->dummymutex), NULL);
 	pthread_cond_init (&(instance->finish), NULL);
 	
 	pthread_cond_wait(&(instance->finish),&(instance->dummymutex));
-	//for(;instance->finish==0;){
-		//pthread_yield();
-	//}
 	destroyVM();
 
 }
