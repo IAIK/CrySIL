@@ -1248,7 +1248,7 @@ typedef CK_CALLBACK_FUNCTION(CK_RV, CK_UNLOCKMUTEX)(
 /* CK_C_INITIALIZE_ARGS provides the optional arguments to
  * C_Initialize */
 typedef struct CK_C_INITIALIZE_ARGS {
-  CK_CREATEMUTEX CreateMutex;
+  CK_CREATEMUTEX CreateMutexX;
   CK_DESTROYMUTEX DestroyMutex;
   CK_LOCKMUTEX LockMutex;
   CK_UNLOCKMUTEX UnlockMutex;

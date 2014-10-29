@@ -1,15 +1,19 @@
 #include <jni.h>
 #include <stdlib.h>
-#include "pkcs11.h"
 #include<string.h>
 #include"Pkcs11Config.h"
 
 #ifndef __JVM_H
 #define __JVM_H
 
-#ifndef SYKTRUSTJAR
+//#ifndef SYKTRUSTJAR
+#ifndef WIN32
 #define SYKTRUSTJAR "/home/faxxe/skytrust-pkcs11/lib/PKCS11.jar"
+#else
+#define SYKTRUSTJAR "C:\pthread\PKCS11.jar"
 #endif
+
+//#endif
 
 
 
@@ -35,23 +39,48 @@ typedef struct jvm_singleton
     CK_LOCKMUTEX LockMutex;
     CK_UNLOCKMUTEX UnlockMutex;
     CK_VOID_PTR ppMutex;
+#ifndef WIN32
     pthread_t thread;
-    pthread_cond_t finish;
+	pthread_cond_t finish;
     pthread_mutex_t dummymutex;
+#else
+	HANDLE thread;
+	HANDLE thread_wait;
+	HANDLE thread_wait_instance;
+
+#endif
+
 } sing;
 
+#ifndef WIN32
 void get_instance_thread();
+#else
+DWORD WINAPI get_instance_thread(void *data);
+#endif
+
+
 void destroyVM();
 static struct jvm_singleton* instance = NULL;
+
+
 sing* get_instance()
 {
+
     if (instance == NULL)
     {
 	instance =(sing*) malloc(sizeof(sing));
-	if(pthread_create(&(instance->thread), NULL, (void * (*)(void *))get_instance_thread, NULL)){
+
+#ifndef WIN32
+if(pthread_create(&(instance->thread), NULL, (void * (*)(void *))get_instance_thread, NULL)){
+#else
+	instance->thread = CreateThread(NULL,0,get_instance_thread,NULL, 0, NULL);
+	if(instance->thread!=NULL){
+#endif
+	
 		
 	}else{
-		/*wait here*/	
+		/*wait here*/
+		WaitForSingleObject(instance->thread_wait_instance, INFINITE);
 	}
 	
     }
@@ -68,7 +97,11 @@ void destroyVM() {
     instance = NULL;
 }
 
+#ifndef WIN32
 void get_instance_thread(){
+#else
+DWORD WINAPI get_instance_thread(void* data){
+#endif
 	
         instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
 
@@ -102,10 +135,16 @@ void get_instance_thread(){
 
         }
 
+#ifndef WIN32
 	pthread_mutex_init(&(instance->dummymutex), NULL);
 	pthread_cond_init (&(instance->finish), NULL);
 	
 	pthread_cond_wait(&(instance->finish),&(instance->dummymutex));
+#else
+		SetEvent(instance->thread_wait_instance);
+		 WaitForSingleObject(instance->thread_wait, INFINITE);
+
+#endif
 	destroyVM();
 
 }

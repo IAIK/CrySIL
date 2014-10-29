@@ -1,4 +1,3 @@
-#include"pkcs11.h"
 #include"jvm.h"
 #include"Pkcs11Config.h"
 
@@ -81,21 +80,24 @@ static CK_FUNCTION_LIST pkcs11_functions =  { {2, 20},
     &C_WaitForSlotEvent
 };
 
-CK_RV C_GetFunctionList(CK_FUNCTION_LIST_PTR_PTR ppFunctionList) {
+CK_DEFINE_FUNCTION(CK_RV, C_GetFunctionList)(CK_FUNCTION_LIST_PTR_PTR ppFunctionList) {
     *ppFunctionList=&pkcs11_functions;
     return CKR_OK;
 }
 
-CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
+CK_DEFINE_FUNCTION(CK_RV,C_Initialize)(CK_VOID_PTR pInitArgs)
 {   
     
-    CK_C_INITIALIZE_ARGS* args = pInitArgs;
+    CK_C_INITIALIZE_ARGS_PTR args = (CK_C_INITIALIZE_ARGS_PTR)pInitArgs;
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
+
     JNIEnv* environment;
 	jmethodID C_InitializeJava ;
+	
     if(pInitArgs!=NULL) {
-        dings->CreateMutex = args->CreateMutex;
+		
+        dings->CreateMutex = args->CreateMutexX;
         dings->DestroyMutex = args->DestroyMutex;
         dings->LockMutex = args->LockMutex;
         dings->UnlockMutex = args->UnlockMutex;
@@ -107,10 +109,12 @@ CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
         dings->UnlockMutex = NULL;
     }
 
+
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
-    (*(dings->jvm))->AttachCurrentThreadAsDaemon(dings->jvm,(void**)&environment,NULL);
+
+	(*(dings->jvm))->AttachCurrentThreadAsDaemon((dings->jvm),(void**)&environment,NULL);
     if(dings->cls !=0)
     {
         C_InitializeJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Initialize", "()J");
@@ -125,11 +129,14 @@ CK_RV C_Initialize(CK_VOID_PTR pInitArgs)
     if(dings->UnlockMutex != NULL) {
         dings->UnlockMutex(dings->ppMutex);
     }
-
+	printf("exiting initialize");
+	
     return retVal;
+	
+	
 }
 
-CK_RV C_Finalize(CK_VOID_PTR pReserved)
+CK_DEFINE_FUNCTION(CK_RV,C_Finalize)(CK_VOID_PTR pReserved)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -156,14 +163,17 @@ CK_RV C_Finalize(CK_VOID_PTR pReserved)
     if(dings->UnlockMutex != NULL) {
         dings->UnlockMutex(dings->ppMutex);
     }
-
+#ifndef WIN32
 	pthread_cond_signal(&(dings->finish));	
 	pthread_join(instance->thread,NULL);
+#else
+
+#endif
     return retVal;
 }
 
 
-CK_RV C_GetSlotList(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
+CK_DEFINE_FUNCTION(CK_RV,C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
 {
 
     
@@ -230,7 +240,7 @@ jmethodID getValue;
     return retVal;
 }
 
-CK_RV C_GetSlotInfo(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
+CK_DEFINE_FUNCTION(CK_RV,C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -331,7 +341,7 @@ jclass versionClass;
     return retVal;
 }
 
-CK_RV C_GetTokenInfo(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
+CK_DEFINE_FUNCTION(CK_RV,C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -493,7 +503,7 @@ const jchar* charSerialNumber;
     return retVal;
 }
 
-CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList, CK_ULONG_PTR pulCount)
+CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList, CK_ULONG_PTR pulCount)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -555,7 +565,7 @@ CK_RV C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList
 }
 
 
-CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM_INFO_PTR pInfo)
+CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismInfo)(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM_INFO_PTR pInfo)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -598,7 +608,7 @@ CK_RV C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM
 }
 
 
-CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
+CK_DEFINE_FUNCTION(CK_RV,C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -635,7 +645,7 @@ CK_RV C_OpenSession(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication,
     return retVal;
 }
 
-CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
+CK_DEFINE_FUNCTION(CK_RV,C_CloseAllSessions)(CK_SLOT_ID slotID)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -665,7 +675,7 @@ CK_RV C_CloseAllSessions(CK_SLOT_ID slotID)
 }
 
 
-CK_RV C_CloseSession(CK_SESSION_HANDLE hSession)
+CK_DEFINE_FUNCTION(CK_RV,C_CloseSession)(CK_SESSION_HANDLE hSession)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1095,7 +1105,7 @@ int getAttributeType(CK_ULONG type) {
 
 
 
-CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject)
+CK_DEFINE_FUNCTION(CK_RV,C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1138,7 +1148,7 @@ CK_RV C_CreateObject(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_
 }
 
 
-CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+CK_DEFINE_FUNCTION(CK_RV,C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1172,7 +1182,7 @@ CK_RV C_DecryptInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_
 }
 
 
-CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
+CK_DEFINE_FUNCTION(CK_RV,C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1231,7 +1241,7 @@ CK_RV C_DecryptUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK
 }
 
 
-CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
+CK_DEFINE_FUNCTION(CK_RV,C_DestroyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1262,7 +1272,7 @@ CK_RV C_DestroyObject(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
 
 
 
-CK_RV C_FindObjects(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, CK_ULONG ulMaxObjectCount, CK_ULONG_PTR pulObjectCount)
+CK_DEFINE_FUNCTION(CK_RV,C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, CK_ULONG ulMaxObjectCount, CK_ULONG_PTR pulObjectCount)
 {   
     long retVal=CKR_GENERAL_ERROR;
         jlongArray _phObject = NULL;
@@ -1325,7 +1335,7 @@ jmethodID getValue;
 }
 
 
-CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
+CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1355,7 +1365,7 @@ CK_RV C_FindObjectsFinal(CK_SESSION_HANDLE hSession)
 }
 
 
-CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1383,7 +1393,7 @@ CK_RV C_FindObjectsInit(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, 
 }
 
 
-CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_ULONG ulRandomLen)
+CK_DEFINE_FUNCTION(CK_RV,C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_ULONG ulRandomLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1425,7 +1435,7 @@ CK_RV C_GenerateRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_UL
 }
 
 
-CK_RV C_GetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+CK_DEFINE_FUNCTION(CK_RV,C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 {   
     
     
@@ -1574,7 +1584,7 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
 
 
 
-CK_RV C_GetInfo(CK_INFO_PTR pInfo)
+CK_DEFINE_FUNCTION(CK_RV,C_GetInfo)(CK_INFO_PTR pInfo)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1654,7 +1664,7 @@ CK_RV C_GetInfo(CK_INFO_PTR pInfo)
 
 
 
-CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
+CK_DEFINE_FUNCTION(CK_RV,C_GetSessionInfo)(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1709,7 +1719,7 @@ CK_RV C_GetSessionInfo(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
 
 
 
-CK_RV C_Login(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
+CK_DEFINE_FUNCTION(CK_RV,C_Login)(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1748,7 +1758,7 @@ jmethodID C_LoginJava;
 }
 
 
-CK_RV C_Logout(CK_SESSION_HANDLE hSession)
+CK_DEFINE_FUNCTION(CK_RV,C_Logout)(CK_SESSION_HANDLE hSession)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1780,7 +1790,7 @@ CK_RV C_Logout(CK_SESSION_HANDLE hSession)
 
 
 
-CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSeedLen)
+CK_DEFINE_FUNCTION(CK_RV,C_SeedRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSeedLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1811,7 +1821,7 @@ CK_RV C_SeedRandom(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSee
 }
 
 
-CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
+CK_DEFINE_FUNCTION(CK_RV,C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1881,7 +1891,7 @@ CK_RV C_SetAttributeValue(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, 
 }
 
 
-CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLen, CK_CHAR_PTR pNewPin, CK_ULONG ulNewLen)
+CK_DEFINE_FUNCTION(CK_RV,C_SetPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLen, CK_CHAR_PTR pNewPin, CK_ULONG ulNewLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1914,7 +1924,7 @@ CK_RV C_SetPIN(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLe
 }
 
 
-CK_RV C_Sign(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
+CK_DEFINE_FUNCTION(CK_RV,C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -1979,7 +1989,7 @@ jclass longClass;
 }
 
 
-CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
+CK_DEFINE_FUNCTION(CK_RV,C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -2014,7 +2024,7 @@ CK_RV C_SignInit(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJ
 }
 
 
-CK_RV C_UnwrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hUnwrappingKey, CK_BYTE_PTR pWrappedKey, CK_ULONG ulWrappedKeyLen, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
+CK_DEFINE_FUNCTION(CK_RV,C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hUnwrappingKey, CK_BYTE_PTR pWrappedKey, CK_ULONG ulWrappedKeyLen, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -2067,7 +2077,7 @@ jmethodID constructorLong;
 }
 
 
-CK_RV C_WrapKey(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hWrappingKey, CK_OBJECT_HANDLE hKey, CK_BYTE_PTR pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen)
+CK_DEFINE_FUNCTION(CK_RV,C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hWrappingKey, CK_OBJECT_HANDLE hKey, CK_BYTE_PTR pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
 	jclass  longClass;
@@ -2119,7 +2129,7 @@ jmethodID constructorLong;
 }
 
 
-CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
+CK_DEFINE_FUNCTION(CK_RV,C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -2154,7 +2164,7 @@ CK_RV C_SignUpdate(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPar
 }
 
 
-CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
+CK_DEFINE_FUNCTION(CK_RV,C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
@@ -2210,7 +2220,7 @@ CK_RV C_SignFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_P
 }
 
 
-CK_RV C_DecryptFinal(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG_PTR pulLastPartLen)
+CK_DEFINE_FUNCTION(CK_RV,C_DecryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG_PTR pulLastPartLen)
 {
     long retVal=CKR_GENERAL_ERROR;
 jmethodID constructor2;
@@ -2266,7 +2276,7 @@ jmethodID constructor1;
 }
 
 
-CK_RV C_Decrypt(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
+CK_DEFINE_FUNCTION(CK_RV,C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
 {   
     long retVal=CKR_GENERAL_ERROR;
     jobject obj4;
@@ -2329,7 +2339,6 @@ jmethodID constructor3;
 
 
 
-#define CK_DEFINE_FUNCTION(returnType, name) returnType name
 CK_DEFINE_FUNCTION(CK_RV, C_InitPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
 {
     fprintf(stderr,"not implemented function called: C_InitPIN\n");
