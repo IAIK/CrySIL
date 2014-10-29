@@ -5,10 +5,18 @@
 #define Tutorial_VERSION_MAJOR @Tutorial_VERSION_MAJOR@
 #define Tutorial_VERSION_MINOR @Tutorial_VERSION_MINOR@
 
-
-
 #ifndef WIN32
 #include <pthread.h>
+#define CK_PTR *
+#define CK_DEFINE_FUNCTION(returnType, name)  returnType name
+#define CK_DECLARE_FUNCTION(returnType, name) returnType name
+#define CK_DECLARE_FUNCTION_POINTER(returnType, name) returnType (* name)
+#define CK_CALLBACK_FUNCTION(returnType, name) returnType (* name)
+#ifndef NULL_PTR
+#define NULL_PTR 0
+#include "pkcs11.h"
+#endif
+
 #else
 #include <windows.h>
 #include <process.h>
@@ -16,15 +24,15 @@
 // PKCS#11 related stuff
 #pragma pack(push, cryptoki, 1)
 
-#define CK_IMPORT_SPEC __declspec(dllimport) 
+#define CK_IMPORT_SPEC __declspec(dllimport)
 
-#ifdef CRYPTOKI_EXPORTS 
-#define CK_EXPORT_SPEC __declspec(dllexport) 
-#else 
-#define CK_EXPORT_SPEC CK_IMPORT_SPEC 
-#endif 
+#ifdef CRYPTOKI_EXPORTS
+#define CK_EXPORT_SPEC __declspec(dllexport)
+#else
+#define CK_EXPORT_SPEC CK_IMPORT_SPEC
+#endif
 
-#define CK_CALL_SPEC __cdecl 
+#define CK_CALL_SPEC __cdecl
 
 #define CK_PTR *
 #define CK_DEFINE_FUNCTION(returnType, name) returnType CK_EXPORT_SPEC CK_CALL_SPEC name

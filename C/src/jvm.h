@@ -6,14 +6,14 @@
 #ifndef __JVM_H
 #define __JVM_H
 
-//#ifndef SYKTRUSTJAR
+#ifndef SYKTRUSTJAR
 #ifndef WIN32
 #define SYKTRUSTJAR "/home/faxxe/skytrust-pkcs11/lib/PKCS11.jar"
 #else
 #define SYKTRUSTJAR "C:\pthread\PKCS11.jar"
 #endif
 
-//#endif
+#endif
 
 
 
@@ -80,7 +80,11 @@ if(pthread_create(&(instance->thread), NULL, (void * (*)(void *))get_instance_th
 		
 	}else{
 		/*wait here*/
+#ifndef WIN32
+#else
+
 		WaitForSingleObject(instance->thread_wait_instance, INFINITE);
+#endif
 	}
 	
     }
