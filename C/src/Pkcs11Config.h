@@ -15,6 +15,7 @@
 #ifndef NULL_PTR
 #define NULL_PTR 0
 #include "pkcs11.h"
+
 #endif
 
 #else

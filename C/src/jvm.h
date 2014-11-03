@@ -10,17 +10,18 @@
 #ifndef WIN32
 #define SYKTRUSTJAR "/home/faxxe/skytrust-pkcs11/lib/PKCS11.jar"
 #else
-#define SYKTRUSTJAR "C:\pthread\PKCS11.jar"
+#define SYKTRUSTJAR "C:\pthread"
+#endif
 #endif
 
-#endif
+
 
 
 
 #ifdef DEBUG
 #define NUMJAVAOPTIONS 2
 #else
-#define NUMJAVAOPTIONS 1
+#define NUMJAVAOPTIONS 2
 #endif
 
 typedef struct jvm_singleton
@@ -73,8 +74,10 @@ sing* get_instance()
 #ifndef WIN32
 if(pthread_create(&(instance->thread), NULL, (void * (*)(void *))get_instance_thread, NULL)){
 #else
-	instance->thread = CreateThread(NULL,0,get_instance_thread,NULL, 0, NULL);
-	if(instance->thread!=NULL){
+	//instance->thread = CreateThread(NULL,0,get_instance_thread,NULL, 0, NULL);
+	//if(instance->thread!=NULL){
+	if(1){
+	get_instance_thread(NULL);
 #endif
 	
 		
@@ -82,8 +85,7 @@ if(pthread_create(&(instance->thread), NULL, (void * (*)(void *))get_instance_th
 		/*wait here*/
 #ifndef WIN32
 #else
-
-		WaitForSingleObject(instance->thread_wait_instance, INFINITE);
+		//WaitForSingleObject(instance->thread_wait_instance, INFINITE);
 #endif
 	}
 	
@@ -106,32 +108,68 @@ void get_instance_thread(){
 #else
 DWORD WINAPI get_instance_thread(void* data){
 #endif
-	
-        instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
+//	typedef jint (WINAPI* JNI_CREATEJAVAVM)(JavaVM **pvm, void ** penv, void *args); 
+	FILE *fil = NULL;
+	long status=77;
+	//HMODULE hLib = LoadLibrary("C:\\Program Files (x86)\\Java\\jdk1.8.0_25\\jre\\bin\\server\\jvm.dll"); 
+//	HMODULE hLib = LoadLibrary("C:\\Program Files (x86)\\Java\\jre1.8.0_25\\bin\\client\\jvm.dll");
+//	JNI_CREATEJAVAVM JNI_CreateJavaVM = NULL; 
+	#define SYKTRUSTJAR "C:/pthread/PKCS11.jar"
+	instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
+	instance->options[1].optionString = "-Xcheck:jni";
+	instance->options[1].optionString = "-verbose:class";
+
 
 #ifdef DEBUG
         instance->options[2].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:8000";
 #endif
 
-        instance->vm_args.version = JNI_VERSION_1_4;
+		JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
+
+        instance->vm_args.version = JNI_VERSION_1_6;
         instance->vm_args.nOptions = NUMJAVAOPTIONS;
         instance->vm_args.ignoreUnrecognized = JNI_FALSE;
-        JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
+		instance->status=66;
+		instance->env = NULL;
+		instance->jvm=NULL;
         instance->vm_args.options = instance->options;
-        instance->status = JNI_CreateJavaVM(&instance->jvm, (void**)&(instance->env), &(instance->vm_args));
-	
-	(*(instance->jvm))->AttachCurrentThread((instance->jvm),(void**)&(instance->env),NULL);
+
+			fil = fopen("C:\\pthread\\my.log.txt","a");
+		fprintf(fil, "stauts: %d\n", status);
+		fprintf(fil, "last error: %d\n", GetLastError());
+		fprintf(fil, "instance: %p\n", instance);
+ 		fprintf(fil, "just before before createVM\n");
+		fprintf(fil, "inst->jvm: %p \n", instance->jvm);
+		fprintf(fil, "inst->env %p \n", instance->env);
+		fprintf(fil, "inst->vm_args: %p \n", instance->vm_args);
+	//	fprintf(fil, "hLib: %p \n", hLib);
+
+
+		fflush(fil);
+	//	JNI_CreateJavaVM = (JNI_CREATEJAVAVM) GetProcAddress (hLib, "JNI_CreateJavaVM");
+		fprintf(fil, "just before createVM\n");
+		fflush(fil);
+        instance->status = JNI_CreateJavaVM(&(instance->jvm), (void**)&(instance->env), &(instance->vm_args));
+
+
+
+
+		(*(instance->jvm))->AttachCurrentThread((instance->jvm),(void**)&(instance->env),NULL);
+
         if(instance->status==JNI_ERR) {
+			fprintf(fil, "JNI_ERR");
             free(instance);
             instance = NULL;
             return;
         }
         instance->cls = (*(instance->env))->FindClass(instance->env,"pkcs11/JAVApkcs11Interface");
+
         if ((*(instance->env))->ExceptionCheck(instance->env)) {
             (*(instance->env))->ExceptionDescribe(instance->env);
             return;
         }
         if(instance->cls ==0) {
+						fprintf(fil, "class is zero");
 
             return;
 
@@ -145,11 +183,13 @@ DWORD WINAPI get_instance_thread(void* data){
 	
 	pthread_cond_wait(&(instance->finish),&(instance->dummymutex));
 #else
-		SetEvent(instance->thread_wait_instance);
-		 WaitForSingleObject(instance->thread_wait, INFINITE);
+		//SetEvent(instance->thread_wait_instance);
+		// WaitForSingleObject(instance->thread_wait, INFINITE);
 
 #endif
-	destroyVM();
+		 		fclose(fil);
+
+	//destroyVM();
 
 }
 
