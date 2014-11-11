@@ -3,7 +3,7 @@ project (skytrust-pkcs11)
 
 SET(CMAKE_INSTALL_PREFIX "/usr/lib/skytrust/")
 
-SET(CMAKE_BUILD_TYPE Release)
+SET(CMAKE_BUILD_TYPE Debug)
 
 FIND_PACKAGE(JNI REQUIRED)
 

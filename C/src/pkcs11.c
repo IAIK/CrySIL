@@ -86,16 +86,15 @@ CK_DEFINE_FUNCTION(CK_RV, C_GetFunctionList)(CK_FUNCTION_LIST_PTR_PTR ppFunction
 }
 
 CK_DEFINE_FUNCTION(CK_RV,C_Initialize)(CK_VOID_PTR pInitArgs)
-{   
-	JNIEnv* environment;
-	jmethodID C_InitializeJava ;
+{
+    JNIEnv* environment;
+    jmethodID C_InitializeJava ;
     CK_C_INITIALIZE_ARGS_PTR args = (CK_C_INITIALIZE_ARGS_PTR)pInitArgs;
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
-		
 
     if(pInitArgs!=NULL) {
-		
+
         dings->CreateMutex = args->CreateMutexX;
         dings->DestroyMutex = args->DestroyMutex;
         dings->LockMutex = args->LockMutex;
@@ -112,17 +111,17 @@ CK_DEFINE_FUNCTION(CK_RV,C_Initialize)(CK_VOID_PTR pInitArgs)
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
+	
 
-	(*(dings->jvm))->AttachCurrentThread((dings->jvm),(void**)&environment,NULL);
+    (*(dings->jvm))->AttachCurrentThread((dings->jvm),(void**)&environment,NULL);
+printf("\n\nblafasl!\n %p %p\n", dings, dings->jvm);
 
     if(dings->cls !=0)
     {
-		printf("class found!\n");
         C_InitializeJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Initialize", "()J");
 
         if(C_InitializeJava !=0)
         {
-			printf("method found!");
             retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_InitializeJava);
             (*(environment))->ExceptionDescribe(environment);
 
@@ -131,29 +130,29 @@ CK_DEFINE_FUNCTION(CK_RV,C_Initialize)(CK_VOID_PTR pInitArgs)
     if(dings->UnlockMutex != NULL) {
         dings->UnlockMutex(dings->ppMutex);
     }
-	printf("exiting initialize");
-	
+    printf("exiting initialize");
+
 
 
 
     return retVal;
-	
-	
+
+
 }
 
 CK_DEFINE_FUNCTION(CK_RV,C_Finalize)(CK_VOID_PTR pReserved)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
-	jmethodID C_FinalizeJava;
+    jmethodID C_FinalizeJava;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
     (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
-      C_FinalizeJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Finalize", "()J");
+        C_FinalizeJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_Finalize", "()J");
 
         if(C_FinalizeJava !=0)
         {
@@ -169,8 +168,8 @@ CK_DEFINE_FUNCTION(CK_RV,C_Finalize)(CK_VOID_PTR pReserved)
         dings->UnlockMutex(dings->ppMutex);
     }
 #ifndef WIN32
-	pthread_cond_signal(&(dings->finish));	
-	pthread_join(instance->thread,NULL);
+    pthread_cond_signal(&(dings->finish));
+    pthread_join(instance->thread,NULL);
 #else
 
 #endif
@@ -181,15 +180,15 @@ CK_DEFINE_FUNCTION(CK_RV,C_Finalize)(CK_VOID_PTR pReserved)
 CK_DEFINE_FUNCTION(CK_RV,C_GetSlotList)(CK_BBOOL tokenPresent, CK_SLOT_ID_PTR pSlotList, CK_ULONG_PTR pulCount)
 {
 
-    
+
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
-jlongArray _pSlotList = NULL;
-jmethodID constructorLong;
-jboolean _tokenPresent;
-jmethodID C_GetSlotListJava;
-jmethodID getValue;
+    jlongArray _pSlotList = NULL;
+    jmethodID constructorLong;
+    jboolean _tokenPresent;
+    jmethodID C_GetSlotListJava;
+    jmethodID getValue;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -204,7 +203,7 @@ jmethodID getValue;
         (*(environment))->ExceptionDescribe(environment);
         _pulCount  =(*(environment))->NewObject(environment, longClass, constructorLong, (jlong)*pulCount);
         (*(environment))->ExceptionDescribe(environment);
-        
+
 
 
         if(pSlotList != NULL) {
@@ -218,7 +217,7 @@ jmethodID getValue;
         (*(environment))->ExceptionDescribe(environment);
 
         if(C_GetSlotListJava==NULL) {
-            
+
         }
         if(C_GetSlotListJava !=0)
         {
@@ -227,7 +226,7 @@ jmethodID getValue;
         }
         getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
         *pulCount = (*(environment))->CallLongMethod(environment, _pulCount, getValue);
-        
+
 
         if(_pSlotList!=NULL && retVal!=CKR_BUFFER_TOO_SMALL) {
             long* data= (*(environment))->GetLongArrayElements(environment,_pSlotList, NULL);
@@ -246,11 +245,11 @@ jmethodID getValue;
 }
 
 CK_DEFINE_FUNCTION(CK_RV,C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInfo)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
-jclass versionClass;
+    jclass versionClass;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -277,16 +276,16 @@ jclass versionClass;
         jsize lenDescription;
         const jchar* charDescription;
         int x =0;
-	jmethodID versionConstructor;
+        jmethodID versionConstructor;
         jobject version1;
         jobject version2;
         jclass slotinfoClass;
         jmethodID slotinfoConstructor;
         jobject slotinfo;
         jmethodID C_GetSlotInfoJava;
-		FILE* file=fopen("C:\\pthread\\my.log.txt", "a");
+        FILE* file=fopen("C:\\pthread\\my.log.txt", "a");
 
-		
+
 
         versionClass = (*(environment))->FindClass(environment, "obj/CK_VERSION");
         versionConstructor = (*(environment))->GetMethodID(environment, versionClass, "<init>", "(BB)V");
@@ -301,8 +300,8 @@ jclass versionClass;
         C_GetSlotInfoJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_GetSlotInfo", "(JLobj/CK_SLOT_INFO;)J");
 
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetSlotInfoJava, (jlong)slotID, slotinfo);
-			fprintf(file, "beginning");
-			fclose(file);
+        fprintf(file, "beginning");
+        fclose(file);
         (*(environment))->ExceptionDescribe(environment);
 
         getSlotDescription = (*(environment))->GetMethodID(environment, slotinfoClass,"getSlotDescription", "()Ljava/lang/String;");
@@ -351,7 +350,7 @@ jclass versionClass;
 }
 
 CK_DEFINE_FUNCTION(CK_RV,C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pInfo)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -380,7 +379,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pI
         jmethodID getTokenManufacturerID;
         jstring ManufacturerID;
         jsize lenManufacturerID;
-	const jchar* charLabel;
+        const jchar* charLabel;
         int i=0;
 
         jmethodID getTokenModel;
@@ -397,12 +396,12 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pI
         jbyte hardwareVersionMinor;
         jbyte firmwareVersionMajor;
         jbyte firmwareVersionMinor;
-	jmethodID get;
+        jmethodID get;
         jmethodID getTokenSerialNumber;
         jstring SerialNumber;
         jsize lenSerialNumber;
-	const jchar* charManufacturerID;
-const jchar* charSerialNumber;
+        const jchar* charManufacturerID;
+        const jchar* charSerialNumber;
 
 
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetTokenInfoJava, (jlong)slotID,tokeninfo );
@@ -494,7 +493,7 @@ const jchar* charSerialNumber;
         firmwareVersionMinor = (*(environment))->CallLongMethod(environment, version2, getFirmwareVersionMinor);
         pInfo->firmwareVersion.minor=firmwareVersionMinor;
 
-		/*
+        /*
         getTime = (*(environment))->GetMethodID(environment, tokeninfoClass, "getUtcTime", "()Ljava/lang/String;");
         utcTime = (*(environment))->CallObjectMethod(environment, tokeninfo, getTime);
         if(utcTime!=NULL) {
@@ -505,7 +504,7 @@ const jchar* charSerialNumber;
                 pInfo->utcTime[i]='\0';
             }
         }
-		*/
+        */
     }
     if(dings->UnlockMutex != NULL) {
         dings->UnlockMutex(dings->ppMutex);
@@ -516,7 +515,7 @@ const jchar* charSerialNumber;
 }
 
 CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList, CK_ULONG_PTR pulCount)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -533,8 +532,8 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TYP
         jclass longClass = (*(environment))->FindClass(environment, "Lobj/CK_ULONG_PTR;");
         CK_SLOT_ID _slotID = slotID;
         jlongArray _pMechanismList = NULL;
-	jmethodID C_GetMechanismListJava;
-	jmethodID getValue;
+        jmethodID C_GetMechanismListJava;
+        jmethodID getValue;
         jmethodID constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(J)V");
         _pulCount  =(*(environment))->NewObject(environment, longClass, constructorLong, (jlong)*pulCount);
 
@@ -552,10 +551,10 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TYP
 
         getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
         *pulCount = (*(environment))->CallLongMethod(environment, _pulCount, getValue);
-        
+
 
         if(_pMechanismList!=NULL && retVal==CKR_OK) {
-            
+
             int j;
             jlong* data= (*(environment))->GetLongArrayElements(environment,_pMechanismList, NULL);
             (*(environment))->ExceptionDescribe(environment);
@@ -564,7 +563,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TYP
             }
         }
 
-        
+
 
     }
     if(dings->UnlockMutex != NULL) {
@@ -577,7 +576,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismList)(CK_SLOT_ID slotID, CK_MECHANISM_TYP
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismInfo)(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type, CK_MECHANISM_INFO_PTR pInfo)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -620,7 +619,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetMechanismInfo)(CK_SLOT_ID slotID, CK_MECHANISM_TYP
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VOID_PTR pApplication, CK_NOTIFY Notify, CK_SESSION_HANDLE_PTR phSession)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -630,8 +629,8 @@ CK_DEFINE_FUNCTION(CK_RV,C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VO
     (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
-		
-	jmethodID C_OpenSessionJava; 
+
+        jmethodID C_OpenSessionJava;
 
         jobject _phSession = NULL;
         jclass longClass = (*(environment))->FindClass(environment, "Lobj/CK_ULONG_PTR;");
@@ -645,11 +644,11 @@ CK_DEFINE_FUNCTION(CK_RV,C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VO
 
 
         if(retVal==CKR_OK) {
-			jlong lo;
+            jlong lo;
             jmethodID getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
             lo = (*(environment))->CallLongMethod(environment, _phSession, getValue);
-			*phSession = (CK_ULONG) lo;
-			printf("SessionID in C: %u\n", *phSession);
+            *phSession = (CK_ULONG) lo;
+            printf("SessionID in C: %u\n", *phSession);
         }
     }
     if(dings->UnlockMutex != NULL) {
@@ -659,7 +658,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VO
 }
 
 CK_DEFINE_FUNCTION(CK_RV,C_CloseAllSessions)(CK_SLOT_ID slotID)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -689,7 +688,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_CloseAllSessions)(CK_SLOT_ID slotID)
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_CloseSession)(CK_SESSION_HANDLE hSession)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -724,7 +723,7 @@ jobject createAttributeArray(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK
     jclass ck_attributeClass;
     jmethodID ck_attributeConstructor;
     CK_ULONG i;
-	FILE* file=fopen("C:\\pthread\\my2.log.txt", "a");
+    FILE* file=fopen("C:\\pthread\\my2.log.txt", "a");
 
     if(pTemplate==NULL) {
         return NULL;
@@ -737,39 +736,31 @@ jobject createAttributeArray(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK
 
     for(i=0; i<ulCount; i++) {
 
-	CK_ULONG len;
-	jobject tmp;
+        CK_ULONG len;
+        jobject tmp;
 
-	fprintf(file,"\n whupp!");
-	fflush(file);
+        fflush(file);
         if((pTemplate+i)->pValue==NULL) {
-            
+
             pValue=NULL;
-				
+
         } else {
-				fprintf(file,"\n whupp else1!");
-	fflush(file);
+            fflush(file);
             pValue = createAttributeValue(environment, pTemplate+i);
-				
+
         }
-	
+
         len = (pTemplate+i)->ulValueLen;
-			fprintf(file,"\n whupp else2!");
-	fflush(file);
+        fflush(file);
         tmp=(*(environment))->NewObject(environment, ck_attributeClass, ck_attributeConstructor, (jlong)(pTemplate+i)->type, pValue, (jlong)len);
-			fprintf(file,"\n whupp else3!");
-	fflush(file);
         (*(environment))->SetObjectArrayElement(environment, pTemplateArray, (jlong)i, tmp);
-	fprintf(file,"\n whupp else4!");
-	fflush(file);
     }
 
-			fclose(file);
 
     return  pTemplateArray;
 }
 jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
-    
+
 
 
     int type = getAttributeType(attribute->type);
@@ -782,13 +773,13 @@ jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
     case 9:
     case 10:
     case 0: {
-        
+
         CK_ULONG_PTR _pValue = (CK_ULONG_PTR) (attribute->pValue);
-        
+
         jclass longClass = (*(environment))->FindClass(environment, "Ljava/lang/Long;");
         jmethodID constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(J)V");
         jobject ob =  (*(environment))->NewObject(environment, longClass, constructorLong, (jlong)*_pValue);
-        
+
         return ob;
     }
 
@@ -821,8 +812,8 @@ jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
         return (*(environment))->NewObject(environment, longClass, constructorLong, (jint)year[0],  (jint)year[1],  (jint)year[2],  (jint)year[3],  (jint)month[0],  (jint)month[1],  (jint)day[0],  (jint)day[1] );
     }
     break;
-    case 100: 
-	return NULL;
+    case 100:
+        return NULL;
 
     }
 
@@ -1123,7 +1114,7 @@ int getAttributeType(CK_ULONG type) {
         break;
     case CKA_ALLOWED_MECHANISMS:
         value = 11;
-        break;  
+        break;
     case CKA_VENDOR_DEFINED:
         value = 0;
         break;
@@ -1134,7 +1125,7 @@ int getAttributeType(CK_ULONG type) {
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount, CK_OBJECT_HANDLE_PTR phObject)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1144,7 +1135,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBUT
     (*(dings->jvm))->AttachCurrentThread(dings->jvm,(void**)&environment,NULL);
     if(dings->cls !=0)
     {
-	jmethodID C_CreateObjectJava;
+        jmethodID C_CreateObjectJava;
         jobject array = createAttributeArray(environment, pTemplate, ulCount);
 
         jobject _phObject = NULL;
@@ -1161,7 +1152,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBUT
         if(phObject!=NULL) {
             jmethodID getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
             *phObject = (*(environment))->CallLongMethod(environment, _phObject, getValue);
-	    
+
         }
 
 
@@ -1177,7 +1168,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_CreateObject)(CK_SESSION_HANDLE hSession, CK_ATTRIBUT
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1189,16 +1180,16 @@ CK_DEFINE_FUNCTION(CK_RV,C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
     {
         jmethodID C_DecryptInitJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_DecryptInit", "(JLobj/CK_MECHANISM;J)J");
 
-	
+
         jclass mechanismClass = (*(environment))->FindClass(environment, "Lobj/CK_MECHANISM;");
         jmethodID mechanismConstructor = (*(environment))->GetMethodID(environment,mechanismClass, "<init>", "(JLjava/lang/Object;J)V");
         jobject _pMechanism = (*(environment))->NewObject(environment, mechanismClass, mechanismConstructor, (jlong)pMechanism->mechanism, NULL, (jlong)0);
-	
-	
 
 
-            retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_DecryptInitJava, (jlong)hSession, _pMechanism, (jlong)hKey);
-            (*(environment))->ExceptionDescribe(environment);
+
+
+        retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_DecryptInitJava, (jlong)hSession, _pMechanism, (jlong)hKey);
+        (*(environment))->ExceptionDescribe(environment);
 
     }
     if(dings->UnlockMutex != NULL) {
@@ -1211,7 +1202,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_DecryptInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedPart, CK_ULONG ulEncryptedPartLen, CK_BYTE_PTR pPart, CK_ULONG_PTR pulPartLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1233,7 +1224,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
             (*(environment))->ExceptionDescribe(environment);
             (*(environment))->SetByteArrayRegion(environment, result, 0, ulEncryptedPartLen,(jbyte*)pEncryptedPart);
             if(pPart != NULL) {
-                jclass cls3 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY"); 
+                jclass cls3 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY");
                 jmethodID constructor3 = (*(environment))->GetMethodID(environment, cls3, "<init>", "(JZ)V");
                 obj3=(*(environment))->NewObject(environment, cls3, constructor3, pPart, JNI_FALSE);
 
@@ -1245,7 +1236,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
                 obj3=NULL;
             }
             if(pulPartLen != NULL) {
-                jclass cls4 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR"); 
+                jclass cls4 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR");
                 jmethodID constructor4 = (*(environment))->GetMethodID(environment, cls4, "<init>", "(JZ)V");
                 obj4=(*(environment))->NewObject(environment, cls4, constructor4, pulPartLen, JNI_FALSE);
 
@@ -1270,7 +1261,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_DecryptUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PT
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_DestroyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1301,14 +1292,14 @@ CK_DEFINE_FUNCTION(CK_RV,C_DestroyObject)(CK_SESSION_HANDLE hSession, CK_OBJECT_
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_FindObjects)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE_PTR phObject, CK_ULONG ulMaxObjectCount, CK_ULONG_PTR pulObjectCount)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
-        jlongArray _phObject = NULL;
+    jlongArray _phObject = NULL;
     sing* dings = get_instance();
     JNIEnv* environment;
-jmethodID C_FindObjectsJava;
-jmethodID getValue;
-int i=0;
+    jmethodID C_FindObjectsJava;
+    jmethodID getValue;
+    int i=0;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -1335,7 +1326,7 @@ int i=0;
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_FindObjectsJava, (jlong)hSession, _phObject, (jlong)ulMaxObjectCount, _pulObjectCount);
         (*(environment))->ExceptionDescribe(environment);
 
-        
+
 
 
         getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
@@ -1346,10 +1337,9 @@ int i=0;
             if(phObject!=NULL) {
                 jlong* val = (*(environment))->GetLongArrayElements(environment, _phObject, NULL);
                 jlong len = (*(environment))->GetArrayLength(environment, _phObject);
-				for(i=0; i<len; i++){
-					phObject[i]=val[i];
-                //memcpy(phObject, val, len*sizeof(jlong));
-				}
+                for(i=0; i<len; i++) {
+                    phObject[i]=val[i];
+                }
 
             }
         }
@@ -1368,7 +1358,7 @@ int i=0;
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1385,7 +1375,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
 
             retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_FindObjectsFinalJava, (jlong)hSession);
             (*(environment))->ExceptionDescribe(environment);
-            
+
         }
     }
     if(dings->UnlockMutex != NULL) {
@@ -1398,11 +1388,11 @@ CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsFinal)(CK_SESSION_HANDLE hSession)
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
-	jlong jhSession =(jlong)hSession;
+    jlong jhSession =(jlong)hSession;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -1414,12 +1404,12 @@ CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTRI
         jmethodID C_FindObjectsInitJava;
 
 
-			array = createAttributeArray(environment, pTemplate, ulCount);
+        array = createAttributeArray(environment, pTemplate, ulCount);
 
-			C_FindObjectsInitJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_FindObjectsInit", "(J[Lobj/CK_ATTRIBUTE;J)J");
-			
+        C_FindObjectsInitJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_FindObjectsInit", "(J[Lobj/CK_ATTRIBUTE;J)J");
 
-			
+
+
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_FindObjectsInitJava, jhSession, array, (jlong)ulCount);
         (*(environment))->ExceptionDescribe(environment);
 
@@ -1434,7 +1424,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_FindObjectsInit)(CK_SESSION_HANDLE hSession, CK_ATTRI
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR RandomData, CK_ULONG ulRandomLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1448,7 +1438,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 
         if(C_GenerateRandomJava !=0)
         {
-           retVal = CKR_OK;
+            retVal = CKR_OK;
         }
     }
     if(dings->UnlockMutex != NULL) {
@@ -1461,13 +1451,13 @@ CK_DEFINE_FUNCTION(CK_RV,C_GenerateRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_P
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{   
-    
-    
-    
+{
+
+
+
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
-	jmethodID C_GetAttributeValueJava;
+    jmethodID C_GetAttributeValueJava;
     JNIEnv* environment;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
@@ -1487,9 +1477,9 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OBJ
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetAttributeValueJava, (jlong)hSession, (jlong)hObject, array, (jlong)ulCount);
         (*(environment))->ExceptionDescribe(environment);
 
-        
+
         copyDataToPTR(environment, pTemplate, ulCount, array, retVal);
-        
+
 
     }
     if(dings->UnlockMutex != NULL) {
@@ -1507,7 +1497,7 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
     int i=0;
 
     for(i=0; i< ulCount; i++) {
-	int dataType;
+        int dataType;
         CK_VOID_PTR ptr = (pTemplate+i)->pValue;
         CK_ULONG type = (pTemplate+i)->type;
 
@@ -1524,7 +1514,7 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
         dataType = getAttributeType(type);
         switch(dataType) {
 
-            
+
         default:
         case 5:
         case 6:
@@ -1540,9 +1530,9 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
             }
         }
         break;
-        
+
         case 1: {
-            
+
             if(ptr!=NULL) {
                 jmethodID getpValueB = (*(environment))->GetMethodID(environment, ckClass, "getpValueAsBool", "()Z");
                 CK_BBOOL ckType = (*(environment))->CallBooleanMethod(environment, val, getpValueB);
@@ -1551,17 +1541,17 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
             }
         }
         break;
-        
+
         case 2:
         case 7:
-            
-            
-		
+
+
+
         case 12:
         case 3: {
 
             if(ptr!=NULL) {
-		jbyte* bytes; 
+                jbyte* bytes;
                 jbyteArray ckpValue = (*(environment))->CallObjectMethod(environment, val, getpValue);
                 jsize arrlen = (*(environment))->GetArrayLength(environment, ckpValue);
                 if(arrlen != ckLen) {
@@ -1585,7 +1575,7 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
         }
         break;
         case 4: {
-            
+
 
             CK_DATE* date = (CK_DATE*) ((pTemplate+i)->pValue);
             date->year[0]=1;
@@ -1610,7 +1600,7 @@ void copyDataToPTR(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulC
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_GetInfo)(CK_INFO_PTR pInfo)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1646,7 +1636,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetInfo)(CK_INFO_PTR pInfo)
         jmethodID versionConstructor = (*(environment))->GetMethodID(environment, versionClass, "<init>", "(BB)V");
         jobject version1=(*(environment))->NewObject(environment, versionClass, versionConstructor, (jbyte)0, (jbyte)0);
         jobject version2=(*(environment))->NewObject(environment, versionClass, versionConstructor, (jbyte)0, (jbyte)0);
-		jstring str = (*(environment))->NewStringUTF(environment, "jniText");
+        jstring str = (*(environment))->NewStringUTF(environment, "jniText");
         jobject _pInfo = NULL;
 
         jmethodID constructorInfo = (*(environment))->GetMethodID(environment, infoClass, "<init>", "(Lobj/CK_VERSION;Ljava/lang/String;JLjava/lang/String;Lobj/CK_VERSION;)V");
@@ -1654,7 +1644,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetInfo)(CK_INFO_PTR pInfo)
         _pInfo  =(*(environment))->NewObject(environment, infoClass, constructorInfo, version1, str,(jlong) 0, str, version2);
 
 
-      retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetInfoJava, _pInfo);
+        retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetInfoJava, _pInfo);
 
         (*(environment))->ExceptionDescribe(environment);
         libraryDescription = (*(environment))->CallObjectMethod(environment, _pInfo, getLibraryDescription);
@@ -1681,18 +1671,18 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetInfo)(CK_INFO_PTR pInfo)
     }
 
 
-    return retVal; 
+    return retVal;
 }
 
 
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_GetSessionInfo)(CK_SESSION_HANDLE hSession, CK_SESSION_INFO_PTR pInfo)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
-	jlong jhSession = (jlong) hSession;
+    jlong jhSession = (jlong) hSession;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -1741,11 +1731,11 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetSessionInfo)(CK_SESSION_HANDLE hSession, CK_SESSIO
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_Login)(CK_SESSION_HANDLE hSession, CK_USER_TYPE userType, CK_CHAR_PTR pPin, CK_ULONG ulPinLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
-jstring _pPin;
-jmethodID C_LoginJava;
+    jstring _pPin;
+    jmethodID C_LoginJava;
     JNIEnv* environment;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
@@ -1754,7 +1744,7 @@ jmethodID C_LoginJava;
     if(dings->cls !=0)
     {
 
-         _pPin = NULL;
+        _pPin = NULL;
         if(pPin!=NULL) {
             _pPin =(*(environment))->NewStringUTF(environment, (const char *)pPin);
         }
@@ -1780,7 +1770,7 @@ jmethodID C_LoginJava;
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_Logout)(CK_SESSION_HANDLE hSession)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1812,7 +1802,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_Logout)(CK_SESSION_HANDLE hSession)
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_SeedRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSeed, CK_ULONG ulSeedLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1843,7 +1833,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_SeedRandom)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OBJECT_HANDLE hObject, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulCount)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1862,7 +1852,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OBJ
                 jsize size = ulCount;
                 int i;
                 jobject obj2;
-                jclass cls2 = (*(environment))->FindClass(environment, "objects/ATTRIBUTE"); 
+                jclass cls2 = (*(environment))->FindClass(environment, "objects/ATTRIBUTE");
 
 
 
@@ -1913,7 +1903,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_SetAttributeValue)(CK_SESSION_HANDLE hSession, CK_OBJ
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_SetPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldPin, CK_ULONG ulOldLen, CK_CHAR_PTR pNewPin, CK_ULONG ulNewLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -1946,14 +1936,14 @@ CK_DEFINE_FUNCTION(CK_RV,C_SetPIN)(CK_SESSION_HANDLE hSession, CK_CHAR_PTR pOldP
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
-        jobject _pulSignatureLen = NULL;
+    jobject _pulSignatureLen = NULL;
     JNIEnv* environment;
-        jbyteArray arr;
-        jbyteArray arr2;
-jclass longClass;
+    jbyteArray arr;
+    jbyteArray arr2;
+    jclass longClass;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -1989,10 +1979,10 @@ jclass longClass;
 
             jbyte* val = (*(environment))->GetByteArrayElements(environment, arr2, NULL);
             jlong len = (*(environment))->GetArrayLength(environment, arr2);
-			int i=0;
-			for(i; i<len; i++){
-				pSignature[i] = val[i];
-			}
+            int i=0;
+            for(i; i<len; i++) {
+                pSignature[i] = val[i];
+            }
         }
 
         if(_pulSignatureLen !=NULL) {
@@ -2014,7 +2004,7 @@ jclass longClass;
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hKey)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -2049,14 +2039,14 @@ CK_DEFINE_FUNCTION(CK_RV,C_SignInit)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PT
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hUnwrappingKey, CK_BYTE_PTR pWrappedKey, CK_ULONG ulWrappedKeyLen, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
-	jmethodID getValue;
-        jobject _phKey = NULL;
+    jmethodID getValue;
+    jobject _phKey = NULL;
     JNIEnv* environment;
-jclass longClass;
-jmethodID constructorLong;
+    jclass longClass;
+    jmethodID constructorLong;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -2102,13 +2092,13 @@ jmethodID constructorLong;
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism, CK_OBJECT_HANDLE hWrappingKey, CK_OBJECT_HANDLE hKey, CK_BYTE_PTR pWrappedKey, CK_ULONG_PTR pulWrappedKeyLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
-	jclass  longClass;
+    jclass  longClass;
     sing* dings = get_instance();
     jobject _pulWrappedKeyLen = NULL;
     JNIEnv* environment;
-jmethodID constructorLong;
+    jmethodID constructorLong;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
     }
@@ -2135,16 +2125,16 @@ jmethodID constructorLong;
         constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(J)V");
         _pulWrappedKeyLen  =(*(environment))->NewObject(environment, longClass, constructorLong, *pulWrappedKeyLen);
 
-            retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_WrapKeyJava, (jlong)hSession, _pMechanism, (jlong)hWrappingKey, (jlong)hKey, _pWrappedKey, _pulWrappedKeyLen);
-            (*(environment))->ExceptionDescribe(environment);
-		
-	if(pWrappedKey!=NULL){
-                jbyte* bytes=(*(environment))->GetByteArrayElements(environment, _pWrappedKey, NULL);
-				int i=0;
-				for(i; i<*pulWrappedKeyLen; i++){
-					pWrappedKey[i] = bytes[i];
-				}
-	}
+        retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_WrapKeyJava, (jlong)hSession, _pMechanism, (jlong)hWrappingKey, (jlong)hKey, _pWrappedKey, _pulWrappedKeyLen);
+        (*(environment))->ExceptionDescribe(environment);
+
+        if(pWrappedKey!=NULL) {
+            jbyte* bytes=(*(environment))->GetByteArrayElements(environment, _pWrappedKey, NULL);
+            int i=0;
+            for(i; i<*pulWrappedKeyLen; i++) {
+                pWrappedKey[i] = bytes[i];
+            }
+        }
 
     }
     if(dings->UnlockMutex != NULL) {
@@ -2157,7 +2147,7 @@ jmethodID constructorLong;
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pPart, CK_ULONG ulPartLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
     JNIEnv* environment;
@@ -2192,13 +2182,13 @@ CK_DEFINE_FUNCTION(CK_RV,C_SignUpdate)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR p
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     sing* dings = get_instance();
-	jmethodID constructor2;
-	jmethodID constructor1;
-            jobject obj2;
-            jobject obj1;
+    jmethodID constructor2;
+    jmethodID constructor1;
+    jobject obj2;
+    jobject obj1;
     JNIEnv* environment;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
@@ -2211,7 +2201,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pS
         if(C_SignFinalJava !=0)
         {
             if(pSignature != NULL) {
-                jclass cls1 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY"); 
+                jclass cls1 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY");
                 constructor1 = (*(environment))->GetMethodID(environment, cls1, "<init>", "(JZ)V");
                 obj1=(*(environment))->NewObject(environment, cls1, constructor1, pSignature, JNI_FALSE);
 
@@ -2223,7 +2213,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pS
                 obj1=NULL;
             }
             if(pulSignatureLen != NULL) {
-                jclass cls2 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR"); 
+                jclass cls2 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR");
                 constructor2 = (*(environment))->GetMethodID(environment, cls2, "<init>", "(JZ)V");
                 obj2=(*(environment))->NewObject(environment, cls2, constructor2, (jlong)pulSignatureLen, JNI_FALSE);
 
@@ -2250,10 +2240,10 @@ CK_DEFINE_FUNCTION(CK_RV,C_SignFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pS
 CK_DEFINE_FUNCTION(CK_RV,C_DecryptFinal)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pLastPart, CK_ULONG_PTR pulLastPartLen)
 {
     long retVal=CKR_GENERAL_ERROR;
-jmethodID constructor2;
-jmethodID constructor1;
-            jobject obj2;
-            jobject obj1;
+    jmethodID constructor2;
+    jmethodID constructor1;
+    jobject obj2;
+    jobject obj1;
     sing* dings = get_instance();
     JNIEnv* environment;
     if(dings->LockMutex != NULL) {
@@ -2267,7 +2257,7 @@ jmethodID constructor1;
         if(C_DecryptFinalJava !=0)
         {
             if(pLastPart != NULL) {
-                jclass cls1 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY"); 
+                jclass cls1 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY");
                 constructor1 = (*(environment))->GetMethodID(environment, cls1, "<init>", "(JZ)V");
                 obj1=(*(environment))->NewObject(environment, cls1, constructor1, pLastPart, JNI_FALSE);
 
@@ -2279,8 +2269,8 @@ jmethodID constructor1;
                 obj1=NULL;
             }
             if(pulLastPartLen != NULL) {
-                jclass cls2 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR"); 
-                 constructor2 = (*(environment))->GetMethodID(environment, cls2, "<init>", "(JZ)V");
+                jclass cls2 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR");
+                constructor2 = (*(environment))->GetMethodID(environment, cls2, "<init>", "(JZ)V");
                 obj2=(*(environment))->NewObject(environment, cls2, constructor2, pulLastPartLen, JNI_FALSE);
 
                 (*(environment))->ExceptionDescribe(environment);
@@ -2304,13 +2294,13 @@ jmethodID constructor1;
 
 
 CK_DEFINE_FUNCTION(CK_RV,C_Decrypt)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pEncryptedData, CK_ULONG ulEncryptedDataLen, CK_BYTE_PTR pData, CK_ULONG_PTR pulDataLen)
-{   
+{
     long retVal=CKR_GENERAL_ERROR;
     jobject obj4;
-            jobject obj3;
+    jobject obj3;
     sing* dings = get_instance();
-jmethodID constructor4;
-jmethodID constructor3;
+    jmethodID constructor4;
+    jmethodID constructor3;
     JNIEnv* environment;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
@@ -2328,7 +2318,7 @@ jmethodID constructor3;
             (*(environment))->ExceptionDescribe(environment);
             (*(environment))->SetByteArrayRegion(environment, result, 0, ulEncryptedDataLen,(jbyte*)pEncryptedData);
             if(pData != NULL) {
-                jclass cls3 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY"); 
+                jclass cls3 = (*(environment))->FindClass(environment, "proxys/CK_BYTE_ARRAY");
                 constructor3 = (*(environment))->GetMethodID(environment, cls3, "<init>", "(JZ)V");
                 obj3=(*(environment))->NewObject(environment, cls3, constructor3, pData, JNI_FALSE);
 
@@ -2340,7 +2330,7 @@ jmethodID constructor3;
                 obj3=NULL;
             }
             if(pulDataLen != NULL) {
-                jclass cls4 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR"); 
+                jclass cls4 = (*(environment))->FindClass(environment, "proxys/CK_ULONG_JPTR");
                 constructor4 = (*(environment))->GetMethodID(environment, cls4, "<init>", "(JZ)V");
                 obj4=(*(environment))->NewObject(environment, cls4, constructor4, pulDataLen, JNI_FALSE);
 
