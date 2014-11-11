@@ -24,7 +24,7 @@ public class CK_SLOT_INFO {
 	public void setSlotDescription(String slotDescription) {
 		
 		this.slotDescription = slotDescription;
-		this.slotDescription= (this.slotDescription+empty).substring(0, 63);
+		this.slotDescription= (this.slotDescription+empty).substring(0, 64);
 	}
 
 	public String getManufacturerID() {
@@ -33,7 +33,7 @@ public class CK_SLOT_INFO {
 
 	public void setManufacturerID(String manufacturerID) {
 		this.manufacturerID = manufacturerID;
-		this.manufacturerID= (this.manufacturerID+empty).substring(0, 31);
+		this.manufacturerID= (this.manufacturerID+empty).substring(0, 32);
 	}
 
 	public long getFlags() {

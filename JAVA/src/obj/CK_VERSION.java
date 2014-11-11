@@ -1,5 +1,7 @@
 package obj;
 
+import java.lang.Override;
+
 public class CK_VERSION {
 
 	private byte major;
@@ -26,6 +28,11 @@ public class CK_VERSION {
 	public void setMinor(byte minor) {
 		this.minor = minor;
 	}
+
+    @Override
+    public String toString(){
+        return "null null wooohoooo buh!   "+ major + " " + minor;
+    }
 	
 	
 }

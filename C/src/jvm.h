@@ -21,7 +21,7 @@
 #ifdef DEBUG
 #define NUMJAVAOPTIONS 2
 #else
-#define NUMJAVAOPTIONS 2
+#define NUMJAVAOPTIONS 1
 #endif
 
 typedef struct jvm_singleton
@@ -117,7 +117,7 @@ DWORD WINAPI get_instance_thread(void* data){
 	#define SYKTRUSTJAR "C:/pthread/PKCS11.jar"
 	instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
 	instance->options[1].optionString = "-Xcheck:jni";
-	instance->options[1].optionString = "-verbose:class";
+	instance->options[2].optionString = "-verbose:class";
 
 
 #ifdef DEBUG

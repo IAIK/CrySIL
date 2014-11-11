@@ -4,6 +4,7 @@ import gui.Server.ServerInfo;
 import obj.*;
 import objects.PKCS11Object;
 
+import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -228,11 +229,9 @@ public class JAVApkcs11Interface {
 		}
 	}
 
-	public static long C_OpenSession(long slotID, long flags,
-			CK_ULONG_PTR phSession) {
-		
-		
-		
+	public static long C_OpenSession(long slotID, long flags,CK_ULONG_PTR phSession) {
+		System.out.println("slotID: "+slotID);
+        System.out.println("flags: "+flags);
 		try {
 
 			if (!Util.isFlagSet(flags, CK_FLAGS.CKF_SERIAL_SESSION)) {
@@ -243,6 +242,7 @@ public class JAVApkcs11Interface {
 				atype = Session.ACCESS_TYPE.RW;
 			}
 			phSession.setValue(getRM().newSession(slotID, atype));
+            System.out.println("new SessionID:  "+phSession.getValue()  );
 			return CK_RETURN_TYPE.CKR_OK;
 		} catch (PKCS11Error e){
 			e.printStackTrace();
@@ -251,6 +251,8 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_GetSessionInfo(long hSession, CK_SESSION_INFO pInfo) {
+
+        System.out.println("hSession: "+hSession);
 		try {
 			// Decrypt: not implemented
 			Session session = getRM().getSessionByHandle(hSession);
@@ -338,7 +340,10 @@ public class JAVApkcs11Interface {
 				if (attr.getpValue() == null) {
 					attr.setUlValueLen(src.getUlValueLen());
 				} else if (attr.getUlValueLen() < src.getUlValueLen()) {
-					attr.setUlValueLen(src.getUlValueLen());
+                    System.out.println("src len:   "+src.getUlValueLen());
+                    System.out.println("attr len:  "+attr.getUlValueLen());
+
+                    attr.setUlValueLen(attr.getUlValueLen());
 					res = CK_RETURN_TYPE.CKR_BUFFER_TOO_SMALL;
 				} else {
 					attr.setpValue(src.getpValue());
@@ -454,11 +459,26 @@ public class JAVApkcs11Interface {
 		}
 	}
 
-	public static long C_FindObjectsInit(long hSession,
-			CK_ATTRIBUTE[] pTemplate, long ulCount) {
-		try {
+	public static long C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount) {
+
+        System.out.println("findobjectsinitSession:   "+ hSession);
+        CK_ATTRIBUTE[] array;
+
+        if(pTemplate == null){
+            array = new CK_ATTRIBUTE[0];
+        }else{
+            array = pTemplate.clone();
+        }
+        /*
+        try{
+            Thread.sleep(8000);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+*/
+        try {
 			Session session = getRM().getSessionByHandle(hSession);
-			session.find(pTemplate.clone());
+			session.find(array);
 
 		} catch (PKCS11Error e) {
 			e.printStackTrace();
@@ -502,8 +522,7 @@ public class JAVApkcs11Interface {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
-	public static long C_GenerateRandom(long hSession, byte[] RandomData,
-			long ulRandomLen) {
+	public static long C_GenerateRandom(long hSession, byte[] RandomData,			long ulRandomLen) {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
@@ -593,6 +612,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_Sign(long hSession, byte[] pData, long ulDataLen,
 			byte[] pSignature, CK_ULONG_PTR pulSignatureLen) {
+        System.out.println("Data to sign: \r\n"+ new String(pData));
 
 			long val = C_SignUpdate(hSession, pData, ulDataLen);
 			if (val != CK_RETURN_TYPE.CKR_OK) {
