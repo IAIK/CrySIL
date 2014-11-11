@@ -516,6 +516,14 @@ public class JAVApkcs11Interface {
 		if (pInfo == null) {
 			return CK_RETURN_TYPE.CKR_ARGUMENTS_BAD;
 		}
+		if (pInfo.getLibraryVersion()==null){
+			System.out.println("LibraryVersion null");
+			pInfo.setLibraryVersion(new CK_VERSION((byte)0x00, (byte)0x00));
+		}
+		if (pInfo.getCryptokiVersion()==null){
+			System.out.println("Cryptokiversion null");
+			pInfo.setCryptokiVersion(new CK_VERSION((byte)0x00, (byte)0x00));
+		}
 		pInfo.setManufacturerID("TUG IAIK");
 		pInfo.setLibraryDescription("library description");
 		pInfo.getCryptokiVersion().setMajor((byte) 0x02);
