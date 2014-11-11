@@ -29,7 +29,7 @@ public class PKCS11SkyTrustMapper {
 		skytrust_template.add(new CK_ATTRIBUTE(
 				CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE, false, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_KEY_TYPE,
-				CK_KEY_TYPE.CKK_RSA, 8));
+				CK_KEY_TYPE.CKK_RSA, 4));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LOCAL,
 				false, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_DERIVE,
@@ -92,9 +92,9 @@ public class PKCS11SkyTrustMapper {
 		byte[] id = key.getId().getBytes();
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length)); // TODO: fix length
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 8));
-		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 8));
-		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 8));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 4));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 4));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 4));
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TRUSTED, true, 1));
 
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
@@ -160,7 +160,7 @@ public class PKCS11SkyTrustMapper {
 		
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 8));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 4));
 		
 		
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
@@ -191,7 +191,7 @@ public class PKCS11SkyTrustMapper {
 				return null;
 			}
 			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS, modb, modb.length));
-			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(), 8));
+			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(), 4));
 			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_PUBLIC_EXPONENT, expb, expb.length));
 
 			byte[] subject = iaikcert.getSubjectX500Principal().getEncoded();
@@ -216,7 +216,7 @@ public class PKCS11SkyTrustMapper {
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
 
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,
-				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 8));
+				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 4));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE,
 				true, 1));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,

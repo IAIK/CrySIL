@@ -21,7 +21,9 @@ public class Slot {
 
 	private long slotID;
 	private boolean roToken = false;
-	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
+//	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
+    static final public long MAX_SESSIONS_PER_SLOT = 100000l;
+
 	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 
@@ -109,11 +111,13 @@ public class Slot {
 	}
 
 	public Session getSessionByID(long sessionID) throws PKCS11Error {
+        System.out.println("looking for session: "+sessionID +" id from first: "+sessionList.get(0).getID());
 		for (Session s : sessionList) {
 			if (s.getID() == sessionID) {
 				return s;
-			}
+        }
 		}
+        System.out.println("session with id "+ sessionID + " not found");
 		throw new PKCS11Error(CK_RETURN_TYPE.CKR_SESSION_HANDLE_INVALID);
 	}
 	public int getSessionCount(){
@@ -248,6 +252,7 @@ public class Slot {
 			throws PKCS11Error {
 		CK_MECHANISM_INFO local_info = mechanisms.get(type);
 		if (local_info == null) {
+            System.out.println("mechanisminfo == null" + type);
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_MECHANISM_INVALID);
 		}
 		return local_info;

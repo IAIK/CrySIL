@@ -67,7 +67,7 @@ public class Session {
 
 	// ID = SessionID (Slot local)
 	protected long getID() {
-		return handle % Slot.MAX_SESSIONS_PER_SLOT;
+		return (handle % Slot.MAX_SESSIONS_PER_SLOT);
 	}
 
 	public Slot getSlot() {

@@ -5,6 +5,7 @@ import gui.DataVaultSingleton;
 import gui.Server;
 import obj.CK_RETURN_TYPE;
 
+import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,6 +87,7 @@ public class ResourceManager {
 		// slotIndex = Handle/MAX_SESSIONS_PER_SLOT
 		long slotid = handle / Slot.MAX_SESSIONS_PER_SLOT;
 		long session = handle % Slot.MAX_SESSIONS_PER_SLOT;
+        System.out.println("slotid: "+slotid + " session: "+session);
 		return getSlotByID(slotid).getSessionByID(session);
 	}
 
@@ -96,11 +98,16 @@ public class ResourceManager {
 
 	public Slot getSlotByID(long slotid) throws PKCS11Error {
 		if (slotid > Integer.MAX_VALUE || slotid > MAX_SLOT) {
+            System.out.println("some strange things happened..." + slotid + " " + Integer.MAX_VALUE + "  " + MAX_SLOT);
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_SLOT_ID_INVALID);
+
 		}
-		Slot r = slotList.get((int) slotid - 1);
+		Slot r = slotList.get((int) (slotid - 1));
 		if (r == null) {
-			throw new PKCS11Error(CK_RETURN_TYPE.CKR_SLOT_ID_INVALID);
+            System.out.println("some really" +
+                    "strange things happened...");
+
+            throw new PKCS11Error(CK_RETURN_TYPE.CKR_SLOT_ID_INVALID);
 		}
 		return r;
 	}
