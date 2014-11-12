@@ -130,7 +130,6 @@ printf("\n\nblafasl!\n %p %p\n", dings, dings->jvm);
     if(dings->UnlockMutex != NULL) {
         dings->UnlockMutex(dings->ppMutex);
     }
-    printf("exiting initialize");
 
 
 

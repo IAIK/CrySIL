@@ -2,9 +2,9 @@
 
     <property name="name" value="PKCS11"/>
 	
-		<property name="java.dir"     value="JAVA"/>
-    <property name="java.src.dir"     value="JAVA/src"/>
-    <property name="java.build.dir"   value="JAVA/build"/>
+    <property name="java.dir"     value="src/JAVA"/>
+    <property name="java.src.dir"     value="src/JAVA/src"/>
+    <property name="java.build.dir"   value="src/JAVA/build"/>
     <property name="java.classes.dir" value="${java.build.dir}/classes"/>
 
 		<property name="c.dir"     value="C"/>

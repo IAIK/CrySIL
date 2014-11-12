@@ -8,7 +8,6 @@ public class CK_VERSION {
 	public CK_VERSION(byte major, byte minor){
 		this.major=major;
 		this.minor=minor;
-		System.out.println("Created CK_VERSION");
 	}
 
 	public byte getMajor() {

@@ -8,9 +8,9 @@
 
 #ifndef SYKTRUSTJAR
 #ifndef WIN32
-#define SYKTRUSTJAR "/home/faxxe/skytrust-pkcs11/lib/PKCS11.jar"
+#define SYKTRUSTJAR "/opt/skytrust/"
 #else
-#define SYKTRUSTJAR "C:\pthread"
+#define SYKTRUSTJAR "C:\skytrust"
 #endif
 #endif
 
@@ -65,8 +65,6 @@ static struct jvm_singleton* instance = NULL;
 
 sing* get_instance()
 {
-	printf("getinstancethread...");
-
     if (instance == NULL)
     {
         instance =(sing*) malloc(sizeof(sing));

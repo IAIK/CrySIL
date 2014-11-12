@@ -87,7 +87,6 @@ public class PKCS11SkyTrustMapper {
 		if (!key.getType().equals("certificate")) {
 			return null;
 		}
-		System.out.println("mapping...");
 		ArrayList<CK_ATTRIBUTE> cert_template = new ArrayList<>( skytrust_template);
 		byte[] id = key.getId().getBytes();
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
