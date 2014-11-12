@@ -6,17 +6,6 @@
 #ifndef __JVM_H
 #define __JVM_H
 
-#ifndef SYKTRUSTJAR
-#ifndef WIN32
-#define SYKTRUSTJAR "/opt/skytrust/"
-#else
-#define SYKTRUSTJAR "C:\skytrust"
-#endif
-#endif
-
-
-
-
 
 #ifdef DEBUG
 #define NUMJAVAOPTIONS 2
@@ -56,7 +45,7 @@ typedef struct jvm_singleton
 #ifndef WIN32
 void get_instance_thread();
 #else
-DWORD WINAPI get_instance_thread(void *data);
+void get_instance_thread(void *data);
 #endif
 
 
@@ -105,7 +94,7 @@ void destroyVM() {
 #ifndef WIN32
 void get_instance_thread() {
 #else
-DWORD WINAPI get_instance_thread(void* data) {
+void get_instance_thread(void* data) {
 #endif
     /*	typedef jint (WINAPI* JNI_CREATEJAVAVM)(JavaVM **pvm, void ** penv, void *args); */
     long status=77;
@@ -123,7 +112,7 @@ DWORD WINAPI get_instance_thread(void* data) {
 
     JNI_GetDefaultJavaVMInitArgs(&(instance->vm_args));
 
-    instance->vm_args.version = JNI_VERSION_1_6;
+    instance->vm_args.version = JNI_VERSION_1_4;
     instance->vm_args.nOptions = NUMJAVAOPTIONS;
     instance->vm_args.ignoreUnrecognized = JNI_FALSE;
     instance->status=66;
@@ -168,6 +157,7 @@ DWORD WINAPI get_instance_thread(void* data) {
 #else
     //SetEvent(instance->thread_wait_instance);
     // WaitForSingleObject(instance->thread_wait, INFINITE);
+	return 0;
 
 #endif
 

@@ -461,21 +461,20 @@ public class JAVApkcs11Interface {
 
 	public static long C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount) {
 
-        System.out.println("findobjectsinitSession:   "+ hSession);
         CK_ATTRIBUTE[] array;
+
 
         if(pTemplate == null){
             array = new CK_ATTRIBUTE[0];
         }else{
             array = pTemplate.clone();
         }
-        /*
-        try{
-            Thread.sleep(8000);
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
-*/
+	for(CK_ATTRIBUTE tmp : array){
+
+		System.out.println("attribute: " + tmp.toString());
+
+	}
+        System.out.println("findobjectsinitSession:   "+ hSession + " " + array.length);
         try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.find(array);

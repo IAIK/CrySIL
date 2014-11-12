@@ -25,8 +25,9 @@
 // PKCS#11 related stuff
 #pragma pack(push, cryptoki, 1)
 
-#define CK_IMPORT_SPEC __declspec(dllimport)
 
+#define CK_IMPORT_SPEC __declspec(dllimport)
+#define CRYPTOKI_EXPORTS
 #ifdef CRYPTOKI_EXPORTS
 #define CK_EXPORT_SPEC __declspec(dllexport)
 #else

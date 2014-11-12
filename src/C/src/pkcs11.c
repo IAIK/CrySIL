@@ -722,7 +722,6 @@ jobject createAttributeArray(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK
     jclass ck_attributeClass;
     jmethodID ck_attributeConstructor;
     CK_ULONG i;
-    FILE* file=fopen("C:\\pthread\\my2.log.txt", "a");
 
     if(pTemplate==NULL) {
         return NULL;
@@ -738,19 +737,16 @@ jobject createAttributeArray(JNIEnv* environment, CK_ATTRIBUTE_PTR pTemplate, CK
         CK_ULONG len;
         jobject tmp;
 
-        fflush(file);
         if((pTemplate+i)->pValue==NULL) {
 
             pValue=NULL;
 
         } else {
-            fflush(file);
             pValue = createAttributeValue(environment, pTemplate+i);
 
         }
 
         len = (pTemplate+i)->ulValueLen;
-        fflush(file);
         tmp=(*(environment))->NewObject(environment, ck_attributeClass, ck_attributeConstructor, (jlong)(pTemplate+i)->type, pValue, (jlong)len);
         (*(environment))->SetObjectArrayElement(environment, pTemplateArray, (jlong)i, tmp);
     }
@@ -785,9 +781,16 @@ jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
     break;
     case 1: {
         CK_BBOOL* _pValue = (CK_BBOOL*) attribute->pValue;
-        jclass longClass = (*(environment))->FindClass(environment, "Ljava/lang/Boolean;");
+        jclass longClass = (*(environment))->FindClass(environment, "java/lang/Boolean");
         jmethodID constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(Z)V");
-        return (*(environment))->NewObject(environment, longClass, constructorLong, (jboolean)_pValue);
+		printf("\n\n strange bool value %u \n\n", (jboolean) _pValue);
+		if(_pValue == 0){
+			        return (*(environment))->NewObject(environment, longClass, constructorLong, JNI_FALSE);
+
+		}else{
+			        return (*(environment))->NewObject(environment, longClass, constructorLong, JNI_TRUE);
+
+		}
     }
     break;
     case 2:

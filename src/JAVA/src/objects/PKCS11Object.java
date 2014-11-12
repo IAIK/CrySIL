@@ -57,6 +57,7 @@ public class PKCS11Object {
 	}
 
 	public boolean query(CK_ATTRIBUTE[] attributes) {
+
 		if (attributes == null) {
 			return true;
 		}

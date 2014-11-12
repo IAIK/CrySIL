@@ -48,6 +48,8 @@ public class CK_ATTRIBUTE {
 	@Override
 	public boolean equals(Object obj){
 		
+
+		
 		if(!pValue.getClass().equals(((CK_ATTRIBUTE)obj).pValue.getClass())){
 			return false;
 		}
@@ -61,10 +63,10 @@ public class CK_ATTRIBUTE {
 			return  ret;
 		}
 		if(pValue instanceof Boolean){
-			Boolean val = (Boolean) ((CK_ATTRIBUTE)obj).pValue;
-			Boolean val2= (Boolean) pValue;
+			boolean val = (boolean) ((CK_ATTRIBUTE)obj).pValue;
+			boolean val2= (boolean) pValue;
 			boolean ret = false;
-			if((val==true && val2==true)||(val==false && val2==false)){
+			if((val==true && val2==true)||(val==false && val2==false)|| val == val2){
 				ret = true;
 			}
 			
@@ -72,7 +74,6 @@ public class CK_ATTRIBUTE {
 		}
 		
 		if(pValue instanceof byte[]){
-			System.out.println("compare byte[]");
 			boolean res= true; //Arrays.deepEquals(((Object[])pValue), ((Object[])((CK_ATTRIBUTE)obj).pValue));
 			byte[] arr1 = (byte[]) pValue;
 			byte[] arr2 = (byte[]) ((CK_ATTRIBUTE)obj).pValue;
@@ -93,7 +94,6 @@ public class CK_ATTRIBUTE {
             return res;
 		}
 		if(pValue instanceof String){
-			System.out.println("compare String");
 			boolean res=  (((String)pValue).compareTo((String) ((CK_ATTRIBUTE)obj).pValue))==0;
             return res;
 		}
@@ -121,6 +121,7 @@ public class CK_ATTRIBUTE {
 		if(query_attr.getpValue()==null){
 			return true; //no data --> irrelevant
 		}
+	
 		return query_attr.equals(this);
 
 	}
