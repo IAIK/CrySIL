@@ -97,13 +97,12 @@ void get_instance_thread() {
 void get_instance_thread(void* data) {
 #endif
     /*	typedef jint (WINAPI* JNI_CREATEJAVAVM)(JavaVM **pvm, void ** penv, void *args); */
-    long status=77;
     /*	HMODULE hLib = LoadLibrary("C:\\Program Files (x86)\\Java\\jdk1.8.0_25\\jre\\bin\\server\\jvm.dll"); */
     /*	HMODULE hLib = LoadLibrary("C:\\Program Files (x86)\\Java\\jre1.8.0_25\\bin\\client\\jvm.dll"); */
     /*	JNI_CREATEJAVAVM JNI_CreateJavaVM = NULL; */
     instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
-    instance->options[1].optionString = "-Xcheck:jni";
-    instance->options[2].optionString = "-verbose:class";
+    /*instance->options[1].optionString = "-Xcheck:jni";*/
+    /*instance->options[2].optionString = "-verbose:class";*/
 
 
 #ifdef DEBUG

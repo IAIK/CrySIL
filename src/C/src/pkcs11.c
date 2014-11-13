@@ -114,7 +114,6 @@ CK_DEFINE_FUNCTION(CK_RV,C_Initialize)(CK_VOID_PTR pInitArgs)
 	
 
     (*(dings->jvm))->AttachCurrentThread((dings->jvm),(void**)&environment,NULL);
-printf("\n\nblafasl!\n %p %p\n", dings, dings->jvm);
 
     if(dings->cls !=0)
     {
@@ -299,7 +298,6 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInf
         C_GetSlotInfoJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_GetSlotInfo", "(JLobj/CK_SLOT_INFO;)J");
 
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetSlotInfoJava, (jlong)slotID, slotinfo);
-        fprintf(file, "beginning");
         fclose(file);
         (*(environment))->ExceptionDescribe(environment);
 
@@ -389,8 +387,6 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetTokenInfo)(CK_SLOT_ID slotID, CK_TOKEN_INFO_PTR pI
         jmethodID getHardwareVersionMinor;
         jmethodID getFirmwareVersionMajor;
         jmethodID getFirmwareVersionMinor;
-        jmethodID getTime;
-        jstring utcTime;
         jbyte hardwareVersionMajor;
         jbyte hardwareVersionMinor;
         jbyte firmwareVersionMajor;
@@ -647,7 +643,6 @@ CK_DEFINE_FUNCTION(CK_RV,C_OpenSession)(CK_SLOT_ID slotID, CK_FLAGS flags, CK_VO
             jmethodID getValue = (*(environment))->GetMethodID(environment, longClass, "getValue", "()J");
             lo = (*(environment))->CallLongMethod(environment, _phSession, getValue);
             *phSession = (CK_ULONG) lo;
-            printf("SessionID in C: %u\n", *phSession);
         }
     }
     if(dings->UnlockMutex != NULL) {
@@ -783,7 +778,6 @@ jobject createAttributeValue(JNIEnv* environment, CK_ATTRIBUTE_PTR attribute) {
         CK_BBOOL* _pValue = (CK_BBOOL*) attribute->pValue;
         jclass longClass = (*(environment))->FindClass(environment, "java/lang/Boolean");
         jmethodID constructorLong = (*(environment))->GetMethodID(environment, longClass, "<init>", "(Z)V");
-		printf("\n\n strange bool value %u \n\n", (jboolean) _pValue);
 		if(_pValue == 0){
 			        return (*(environment))->NewObject(environment, longClass, constructorLong, JNI_FALSE);
 
@@ -1943,8 +1937,8 @@ CK_DEFINE_FUNCTION(CK_RV,C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, 
     sing* dings = get_instance();
     jobject _pulSignatureLen = NULL;
     JNIEnv* environment;
-    jbyteArray arr;
-    jbyteArray arr2;
+    jbyteArray arr = NULL;
+    jbyteArray arr2 = NULL;
     jclass longClass;
     if(dings->LockMutex != NULL) {
         dings->LockMutex((dings->ppMutex));
@@ -1982,7 +1976,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, 
             jbyte* val = (*(environment))->GetByteArrayElements(environment, arr2, NULL);
             jlong len = (*(environment))->GetArrayLength(environment, arr2);
             int i=0;
-            for(i; i<len; i++) {
+            for(; i<len; i++) {
                 pSignature[i] = val[i];
             }
         }
@@ -2063,7 +2057,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_UnwrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_P
 
         jobject array = createAttributeArray(environment, pTemplate, ulAttributeCount);
 
-        jbyteArray _pWrappedKey;
+        jbyteArray _pWrappedKey = NULL;
         if(pWrappedKey!=NULL) {
             _pWrappedKey = (*(environment))->NewByteArray(environment, ulWrappedKeyLen);
             (*(environment))->SetByteArrayRegion(environment, _pWrappedKey, 0, ulWrappedKeyLen,(jbyte*)pWrappedKey);
@@ -2116,7 +2110,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR
         jobject _pMechanism = (*(environment))->NewObject(environment, mechanismClass, mechanismConstructor, (jlong)pMechanism->mechanism, NULL, (jlong)0);
 
 
-        jbyteArray _pWrappedKey;
+        jbyteArray _pWrappedKey = NULL;
         if(pWrappedKey!=NULL) {
             _pWrappedKey = (*(environment))->NewByteArray(environment, (jlong)*pulWrappedKeyLen);
             (*(environment))->SetByteArrayRegion(environment, _pWrappedKey, (jlong)0, (jlong)*pulWrappedKeyLen,(jbyte*)pWrappedKey);
@@ -2133,7 +2127,7 @@ CK_DEFINE_FUNCTION(CK_RV,C_WrapKey)(CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR
         if(pWrappedKey!=NULL) {
             jbyte* bytes=(*(environment))->GetByteArrayElements(environment, _pWrappedKey, NULL);
             int i=0;
-            for(i; i<*pulWrappedKeyLen; i++) {
+            for(; i<*pulWrappedKeyLen; i++) {
                 pWrappedKey[i] = bytes[i];
             }
         }
