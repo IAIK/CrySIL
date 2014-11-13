@@ -21,21 +21,29 @@ public class PKCS11SkyTrustMapper {
 
 	private static HashMap<Long, SkyTrustAlgorithm> mechanism_map = new HashMap<>();
 	private static ArrayList<CK_ATTRIBUTE> skytrust_template;
+	private static Long architekturkorrekturmanufaktur = 1L;
 
 	static {
+		if(System.getProperty("os.arch").compareTo("amd64")==0){
+			architekturkorrekturmanufaktur=2L;
+		}
 
 		skytrust_template = new ArrayList<>();
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN, true, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(
 				CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE, false, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_KEY_TYPE,
-				CK_KEY_TYPE.CKK_RSA, 4));
+				CK_KEY_TYPE.CKK_RSA, 4*architekturkorrekturmanufaktur));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LOCAL,
 				false, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_DERIVE,
 				false, 1));
 	}
 	static {
+		if(System.getProperty("os.arch").compareTo("amd64")==0){
+			architekturkorrekturmanufaktur=2L;
+			System.out.println("korrectur erforderlich!");
+		}
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS,
 				SkyTrustAlgorithm.RSAES_PKCS1_V1_5);
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS_PSS,
@@ -91,9 +99,9 @@ public class PKCS11SkyTrustMapper {
 		byte[] id = key.getId().getBytes();
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length)); // TODO: fix length
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 4));
-		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 4));
-		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 4));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 4*architekturkorrekturmanufaktur));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 4*architekturkorrekturmanufaktur));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 4*architekturkorrekturmanufaktur));
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TRUSTED, true, 1));
 
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
@@ -159,7 +167,7 @@ public class PKCS11SkyTrustMapper {
 		
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 4));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 4*architekturkorrekturmanufaktur));
 		
 		
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
@@ -190,7 +198,7 @@ public class PKCS11SkyTrustMapper {
 				return null;
 			}
 			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS, modb, modb.length));
-			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(), 4));
+			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(), 4*architekturkorrekturmanufaktur));
 			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_PUBLIC_EXPONENT, expb, expb.length));
 
 			byte[] subject = iaikcert.getSubjectX500Principal().getEncoded();
@@ -215,7 +223,7 @@ public class PKCS11SkyTrustMapper {
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
 
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,
-				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 4));
+				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 4*architekturkorrekturmanufaktur));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE,
 				true, 1));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,
