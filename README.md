@@ -1,6 +1,12 @@
 skytrust-pkcs11
 ===============
 
+
+
+
+--- Deprecated! ----
+
+
 # INSTALLATION:
 
 Dependencies:
