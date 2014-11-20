@@ -42,7 +42,6 @@ public class PKCS11SkyTrustMapper {
 	static {
 		if(System.getProperty("os.arch").compareTo("amd64")==0){
 			architekturkorrekturmanufaktur=2L;
-			System.out.println("korrectur erforderlich!");
 		}
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS,
 				SkyTrustAlgorithm.RSAES_PKCS1_V1_5);

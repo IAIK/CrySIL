@@ -17,8 +17,8 @@ elseif (UNIX)
 	ADD_CUSTOM_TARGET(ant_build ant jar)
 	ADD_CUSTOM_COMMAND(TARGET ant_build COMMAND ant)
 
-elseif (APPLE)
-	message ("This is a mac machine!")
+#elseif (APPLE)
+#	message ("This is a mac machine!")
 	
 
 endif()
