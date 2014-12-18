@@ -46,17 +46,16 @@ JAVA_HOME
 # GENERATED FILES:
 
 @Linux
-_ PKCS11.jar
-_ libskytrustpkcs11.so
-<br>
+ PKCS11.jar
+ libskytrustpkcs11.so
+
 @Windows
-- PKCS11.jar
-- skytrustlib.dll
-<br>
+ PKCS11.jar
+ skytrustlib.dll
+
 @MAC
-- PKCS11.jar
-- libdings.dylib
-<br>
+ PKCS11.jar
+ libdings.dylib
 
 # known Problems:
 
