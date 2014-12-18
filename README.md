@@ -46,8 +46,8 @@ JAVA_HOME
 # GENERATED FILES:
 
 @Linux
-- PKCS11.jar
-- libskytrustpkcs11.so
+_ PKCS11.jar
+_ libskytrustpkcs11.so
 <br>
 @Windows
 - PKCS11.jar
