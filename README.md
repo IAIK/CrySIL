@@ -28,12 +28,14 @@ set the following Environment Variables properly:
 @Linux:
 LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')
 JAVA_HOME
-
+<br>
 @Mac
 JAVA_HOME
+<br>
 
 @Windows
 JAVA_HOME
+<br>
 
 # BUILDING:
 
@@ -46,12 +48,15 @@ JAVA_HOME
 @Linux
 - PKCS11.jar
 - libskytrustpkcs11.so
+<br>
 @Windows
 - PKCS11.jar
 - skytrustlib.dll
+<br>
 @MAC
 - PKCS11.jar
 - libdings.dylib
+<br>
 
 # known Problems:
 
