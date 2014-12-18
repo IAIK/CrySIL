@@ -1,24 +1,68 @@
 skytrust-pkcs11
 ===============
 
+# Tested working on:
+- Debian Linux 64 bit
+- Debian Linux 32 bit
+- Windows 7 - 64 bit
+- Windows 7 - 32 bit
+- Mac osX
 
+# Dependencies:
+- cmake
+- make
+- gcc with supporting c89 standard or visual studio
+	(tested with visual studio express 2012) ?
+- ant
+- java >= 1.7
 
+You have to have identical Architectures for JAVA and
+the Client application. Say if you have 32-bit Thunderbird,
+you need 32-bit JAVA. 
+Otherwise you may not see any Certificates at all.
 
---- Deprecated! ----
+# System Variables:
+
+set the following Environment Variables properly:
+
+@Linux:
+LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')
+JAVA_HOME
+
+@Mac
+JAVA_HOME
+
+@Windows
+JAVA_HOME
+
+# BUILDING:
+
+- cmake .
+- make
+- make ant_build
+
+# GENERATED FILES:
+
+@Linux
+- PKCS11.jar
+- libskytrustpkcs11.so
+@Windows
+- PKCS11.jar
+- skytrustlib.dll
+@MAC
+- PKCS11.jar
+- libdings.dylib
+
+# known Problems:
+
+@MAC
+If you have installed multiple Versions of JAVA, there may be a Problem with CMAKE.
+In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
 
 # INSTALLATION:
 
-Dependencies:
- - java
- ....
-
-set environment variable JAVA_HOME so cmake can find JNI
-
-
-execute export LD_LIBRARY_PATH=path to libjvm.so
-install libpkcs11_java_wrap.so into /usr/lib/
-install libskytrustpkcs11.so into /usr/lib/
+Leave everything just in place...
 
 # DESIGN:
 The JAVA component can be divided into two strong connected parts. 

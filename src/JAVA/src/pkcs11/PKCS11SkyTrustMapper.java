@@ -87,6 +87,9 @@ public class PKCS11SkyTrustMapper {
 	}
 
 	public static PKCS11Object mapToCert(MKey key) throws PKCS11Error {
+		if(key.isCertificate == false){
+			return null;
+		}
 		if (key == null) {
 			return null;
 		}
@@ -152,6 +155,9 @@ public class PKCS11SkyTrustMapper {
 	}
 
 	public static PKCS11Object mapToPub(MKey key) throws PKCS11Error {
+		if(key.isCertificate == false){
+			return null;
+		}
 		if (key == null) {
 			return null;
 		}
@@ -216,6 +222,9 @@ public class PKCS11SkyTrustMapper {
 	}
 
 	public static PKCS11Object mapToPrivate(MKey key) throws PKCS11Error {
+		if(key.isCertificate == false){
+			return null;
+		}
 		ArrayList<CK_ATTRIBUTE> private_template = new ArrayList<>(
 				skytrust_template);
 		byte[] id = key.getId().getBytes();
@@ -254,6 +263,33 @@ public class PKCS11SkyTrustMapper {
 			e.printStackTrace();
 		}
 
+		// private_template.add(new
+		// ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,data));
+
+		PKCS11Object obj = ObjectBuilder
+				.createFromTemplate((CK_ATTRIBUTE[]) private_template
+						.toArray(new CK_ATTRIBUTE[private_template.size()]));
+		obj.setTag(key);
+		return obj;
+	}
+
+	public static PKCS11Object mapToKeyFile(MKey key) throws PKCS11Error {
+		ArrayList<CK_ATTRIBUTE> private_template = new ArrayList<>();
+		System.out.println("encoding this shit!");
+		byte[] value = null;
+		byte[] id = key.getId().getBytes();
+		try {
+			value = Util.fromBase64String(key.getEncodedCertificate());
+		} catch (Base64Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_DATA, 8));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, true, 1));
+		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE,value, value.length));
+		
 		// private_template.add(new
 		// ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,data));
 

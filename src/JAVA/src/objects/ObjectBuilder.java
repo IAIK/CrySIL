@@ -3,6 +3,8 @@ package objects;
 import obj.*;
 import pkcs11.PKCS11Error;
 
+import iaik.utils.Util;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +59,7 @@ public class ObjectBuilder {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_TEMPLATE_INCOMPLETE);
 		}
 //		CK_OBJECT_TYPE.CKO_obj_class = attr_class.copyToSwigEnum(CK_OBJECT_TYPE.CKO_class);
+		
 
 		HashMap<Long,CK_ATTRIBUTE> default_attr = new HashMap<>(copyToMap((CK_ATTRIBUTE[]) defaultKey_template.toArray(new CK_ATTRIBUTE[defaultKey_template.size()])));
 		if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_PRIVATE_KEY)){
@@ -69,7 +72,7 @@ public class ObjectBuilder {
 		 }else if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_SECRET_KEY)){
 			 
 		 }else if(attr_class.getpValue().equals(CK_OBJECT_TYPE.CKO_DATA)){
-			 
+			 default_attr.putAll(copyToMap((CK_ATTRIBUTE[]) defaultTemplate_certificate.toArray(new CK_ATTRIBUTE[defaultTemplate_certificate.size()])));
 		 }else{
 			 throw new PKCS11Error(CK_RETURN_TYPE.CKR_ATTRIBUTE_VALUE_INVALID);
 		 }

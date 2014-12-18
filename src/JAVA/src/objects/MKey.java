@@ -10,9 +10,17 @@ public class MKey {
 	protected String id;
 	protected String subId;
 	protected String type="certificate";
+	public boolean isCertificate = true;
 
 	private MKey() {
 
+	}
+	public static MKey fromBase64String(String label, String base64){
+		MKey mKey = new MKey();
+		mKey.isCertificate = false;
+		mKey.id = label;
+		mKey.encodedCertificate = base64;
+		return mKey;
 	}
 
 	public static MKey fromSKey(SKey key) {

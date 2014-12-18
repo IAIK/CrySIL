@@ -59,6 +59,11 @@ public class ServerSession implements IServerSession {
 			for(SKey k : keys){
 				mKeys.add(MKey.fromSKey(k));
 			}
+		
+			MKey mkey = MKey.fromBase64String("keyfile", "2QGIYSID96JCYO4SnPruw5KFR/or8bAJyw6KFa+yikLeNcC9AXhnpswU08R/xe1qIjY9mPFqnoHiBU4WVQLd9g==");
+			mKeys.add(mkey);
+			
+			
 			return mKeys;
 		} catch (SkyTrustException e) {
 			e.printStackTrace();
