@@ -28,14 +28,11 @@ set the following Environment Variables properly:
 @Linux:
 LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')
 JAVA_HOME
-<br>
 @Mac
 JAVA_HOME
-<br>
 
 @Windows
 JAVA_HOME
-<br>
 
 # BUILDING:
 
@@ -45,17 +42,17 @@ JAVA_HOME
 
 # GENERATED FILES:
 
-@Linux
+-Linux
  PKCS11.jar
  libskytrustpkcs11.so
 
-@Windows
+-Windows
  PKCS11.jar
  skytrustlib.dll
 
-@MAC
+-MAC
  PKCS11.jar
- libdings.dylib
+ libsomething.dylib
 
 # known Problems:
 
@@ -63,10 +60,40 @@ JAVA_HOME
 If you have installed multiple Versions of JAVA, there may be a Problem with CMAKE.
 In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
+# CONFIG FILES
+
+For configuration Purposes, we use plain-text config files. You can put multiple Servers in this file:
+
+...
+tokenname=servername 
+server=http://url.com
+username=username
+password=password
+...
 
 # INSTALLATION:
 
 Leave everything just in place...
+
+# IMPLEMENTATION DETAILS:
+
+Not all functions specified by the PKCS#11 v2.20 standard are implemented in C. But the 
+implemented functions should suffice standard operations such as encryption, decryption, listing, etc...
+If a function is not implemented you will get output on std:err, saying so.
+
+Usual functioncall: Client application calls function in our dynamic library. The library builds the nessesary 
+JAVA-Objects and calls the corresponding JAVA function. Our JAVA implementation than handles this call and
+returns the correct data through the formentioned Objects. After that, the exection returns to C again.
+There the data is extracted from the JAVA-Objects and returned to the Client application.
+
+Since there is no way to write to the skytrust-server, we are offering pure read-only Tokens.
+However, we can handle temporary Session Objects. These are lost if you restart the application.
+
+
+
+
+
+
 
 # DESIGN:
 The JAVA component can be divided into two strong connected parts. 
