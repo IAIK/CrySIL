@@ -25,13 +25,14 @@ Otherwise you may not see any certificates at all.
 
 set the following environment variables properly:
 
-Linux:
-LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')
-JAVA_HOME
-Mac
-JAVA_HOME
+Linux:<br>
+LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')<br>
+JAVA_HOME<br>
 
-Windows
+Mac:<br>
+JAVA_HOME<br>
+
+Windows:<br>
 JAVA_HOME
 
 # BUILDING:
@@ -42,21 +43,21 @@ JAVA_HOME
 
 # GENERATED FILES:
 
- on Linux:
- PKCS11.jar
- libskytrustpkcs11.so
+ Linux:<br>
+ PKCS11.jar<br>
+ libskytrustpkcs11.so<br>
 
- on Windows: 
- PKCS11.jar
- skytrustlib.dll
+ Windows: <br>
+ PKCS11.jar<br>
+ skytrustlib.dll<br>
 
- on MAC
- PKCS11.jar
- libsomething.dylib
+ MAC:<br>
+ PKCS11.jar<br>
+ libsomething.dylib<br>
 
 # known Problems:
 
-on MAC
+MAC:<br>
 If you have installed multiple versions of JAVA, there may be a problem with CMAKE.
 In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
@@ -64,9 +65,9 @@ In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
 For configuration purposes, we use a plain-text config file. You can put multiple servers in this file.
 
--tokenname=servername 
--server=http://url.com
--username=username
+-tokenname=servername <br>
+-server=http://url.com <br>
+-username=username <br>
 -password=password
 
 
