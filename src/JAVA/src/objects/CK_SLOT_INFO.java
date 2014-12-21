@@ -1,4 +1,4 @@
-package obj;
+package objects;
 
 public class CK_SLOT_INFO {
 	

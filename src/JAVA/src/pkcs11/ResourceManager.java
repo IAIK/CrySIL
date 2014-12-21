@@ -1,13 +1,14 @@
 package pkcs11;
 
-import gui.DataVaultSingleton;
-import gui.Server;
-import obj.CK_RETURN_TYPE;
+import objects.CK_RETURN_TYPE;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+
+import configuration.DataVaultSingleton;
+import configuration.Server;
 
 /*
  * one per Application 

@@ -1,6 +1,5 @@
 package pkcs11;
 
-import gui.Server;
 import iaik.asn1.structures.AlgorithmID;
 import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
 import iaik.utils.Base64Exception;
@@ -9,6 +8,8 @@ import iaik.x509.X509Certificate;
 import objects.MKey;
 
 import org.springframework.web.client.RestTemplate;
+
+import configuration.Server;
 
 import at.iaik.skytrust.SkyTrustAPIFactory;
 import at.iaik.skytrust.common.SkyTrustAlgorithm;

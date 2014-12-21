@@ -1,7 +1,5 @@
 package objects;
 
-import obj.CK_ATTRIBUTE;
-import obj.CK_RETURN_TYPE;
 import pkcs11.PKCS11Error;
 
 import java.util.ArrayList;

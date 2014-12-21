@@ -16,14 +16,14 @@ skytrust-pkcs11
 - ant
 - java >= 1.7
 
-You have to have identical Architectures for JAVA and
-the Client application. Say if you have 32-bit Thunderbird,
+You have to have identical architectures for JAVA and
+the client application. Say if you have 32-bit Thunderbird,
 you need 32-bit JAVA. 
-Otherwise you may not see any Certificates at all.
+Otherwise you may not see any certificates at all.
 
 # System Variables:
 
-set the following Environment Variables properly:
+set the following environment variables properly:
 
 @Linux:
 LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')
@@ -57,23 +57,22 @@ JAVA_HOME
 # known Problems:
 
 @MAC
-If you have installed multiple Versions of JAVA, there may be a Problem with CMAKE.
+If you have installed multiple versions of JAVA, there may be a problem with CMAKE.
 In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
 # CONFIG FILES
 
-For configuration Purposes, we use a plain-text config file. You can put multiple Servers in this file.
+For configuration purposes, we use a plain-text config file. You can put multiple servers in this file.
 
-...
 tokenname=servername 
 server=http://url.com
 username=username
 password=password
-...
 
 
 (tokenname is just a human readable identifier for the emulated card)
 The file is called 'config' and lies in the root directory of the project. 
+There you will find an example configuration
 
 _IMPORTANT!_
 

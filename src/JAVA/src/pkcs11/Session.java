@@ -1,9 +1,9 @@
 package pkcs11;
 
-import obj.CK_ATTRIBUTE;
-import obj.CK_MECHANISM;
-import obj.CK_RETURN_TYPE;
-import obj.CK_SESSION_STATE;
+import objects.CK_ATTRIBUTE;
+import objects.CK_MECHANISM;
+import objects.CK_RETURN_TYPE;
+import objects.CK_SESSION_STATE;
 
 import java.util.ArrayList;
 

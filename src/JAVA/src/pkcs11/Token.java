@@ -1,14 +1,15 @@
 package pkcs11;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-import gui.Server;
-import gui.Server.ServerInfo;
-import obj.CK_MECHANISM;
+import objects.CK_MECHANISM;
 import objects.MKey;
 import objects.PKCS11Object;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import configuration.Server;
+import configuration.Server.ServerInfo;
 
 public class Token implements IToken {
 	private ServerSession server;

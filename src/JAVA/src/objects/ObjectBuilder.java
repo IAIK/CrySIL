@@ -1,6 +1,6 @@
 package objects;
 
-import obj.*;
+import objects.*;
 import pkcs11.PKCS11Error;
 
 import iaik.utils.Util;

@@ -1,5 +1,5 @@
 package pkcs11;
-import obj.CK_MECHANISM;
+import objects.CK_MECHANISM;
 import objects.PKCS11Object;
 import pkcs11.Slot.CryptoOperationParams;
 

@@ -5,10 +5,7 @@ import iaik.security.rsa.RSAPublicKey;
 import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 import iaik.x509.X509Certificate;
-import obj.*;
-import objects.MKey;
-import objects.ObjectBuilder;
-import objects.PKCS11Object;
+import objects.*;
 
 import java.math.BigInteger;
 import java.security.InvalidKeyException;

@@ -1,14 +1,13 @@
 package pkcs11;
 
-import gui.Server;
-import obj.*;
-import objects.ObjectManager;
-import objects.PKCS11Object;
+import objects.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import configuration.Server;
 
 /**
  * A Slot is a ServerInfo

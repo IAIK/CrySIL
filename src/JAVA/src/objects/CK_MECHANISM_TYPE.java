@@ -1,4 +1,4 @@
-package obj;
+package objects;
 
 public class CK_MECHANISM_TYPE {
 	public static final Long CKM_RSA_PKCS_KEY_PAIR_GEN      =0x00000000L;

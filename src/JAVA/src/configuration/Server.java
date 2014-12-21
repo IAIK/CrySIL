@@ -1,4 +1,4 @@
-package gui;
+package configuration;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
 

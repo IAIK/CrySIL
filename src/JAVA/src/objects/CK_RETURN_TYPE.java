@@ -1,4 +1,4 @@
-package obj;
+package objects;
 
 public class CK_RETURN_TYPE {
 	public static final Long CKR_OK                                =0x00000000L;

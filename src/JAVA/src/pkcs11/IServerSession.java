@@ -1,9 +1,10 @@
 package pkcs11;
 
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
-import gui.Server;
 
 import java.util.List;
+
+import configuration.Server;
 
 import objects.MKey;
 

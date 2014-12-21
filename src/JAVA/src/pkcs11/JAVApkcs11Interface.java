@@ -1,8 +1,6 @@
 package pkcs11;
 
-import gui.Server.ServerInfo;
-import obj.*;
-import objects.PKCS11Object;
+import objects.*;
 
 import java.lang.InterruptedException;
 import java.util.ArrayList;
@@ -12,6 +10,8 @@ import java.util.Set;
 import javax.swing.JFrame;
 
 import org.springframework.web.client.ResourceAccessException;
+
+import configuration.Server.ServerInfo;
 
 public class JAVApkcs11Interface {
 //	static {

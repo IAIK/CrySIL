@@ -1,6 +1,6 @@
 package pkcs11;
 
-import obj.CK_FLAGS;
+import objects.CK_FLAGS;
 
 import java.util.Arrays;
 

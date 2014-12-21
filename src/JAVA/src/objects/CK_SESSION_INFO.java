@@ -1,4 +1,4 @@
-package obj;
+package objects;
 
 public class CK_SESSION_INFO {
 	private long slotID;

@@ -1,4 +1,4 @@
-package obj;
+package objects;
 
 public class CK_OBJECT_TYPE {
 	public static final Long CKO_DATA              =0x00000000L;

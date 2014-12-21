@@ -1,4 +1,4 @@
-package obj;
+package objects;
 
 public class CK_KEY_TYPE {
 	public static final Long  CKK_RSA             =0X00000000L;

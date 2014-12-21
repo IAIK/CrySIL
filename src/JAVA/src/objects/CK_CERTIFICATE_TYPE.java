@@ -1,4 +1,4 @@
-package obj;
+package objects;
 
 public class CK_CERTIFICATE_TYPE {
 public static final long CKC_X_509=0x00000000L;
