@@ -11,7 +11,7 @@ skytrust-pkcs11
 # Dependencies:
 - cmake
 - make
-- gcc with supporting c89 standard or visual studio
+- gcc or visual studio
 	(tested with visual studio express 2012) ?
 - ant
 - java >= 1.7
@@ -25,13 +25,13 @@ Otherwise you may not see any certificates at all.
 
 set the following environment variables properly:
 
-@Linux:
+Linux:
 LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')
 JAVA_HOME
-@Mac
+Mac
 JAVA_HOME
 
-@Windows
+Windows
 JAVA_HOME
 
 # BUILDING:
@@ -42,21 +42,21 @@ JAVA_HOME
 
 # GENERATED FILES:
 
--Linux
+ on Linux:
  PKCS11.jar
  libskytrustpkcs11.so
 
--Windows
+ on Windows: 
  PKCS11.jar
  skytrustlib.dll
 
--MAC
+ on MAC
  PKCS11.jar
  libsomething.dylib
 
 # known Problems:
 
-@MAC
+on MAC
 If you have installed multiple versions of JAVA, there may be a problem with CMAKE.
 In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
@@ -64,10 +64,10 @@ In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
 For configuration purposes, we use a plain-text config file. You can put multiple servers in this file.
 
-tokenname=servername 
-server=http://url.com
-username=username
-password=password
+-tokenname=servername 
+-server=http://url.com
+-username=username
+-password=password
 
 
 (tokenname is just a human readable identifier for the emulated card)
