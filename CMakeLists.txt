@@ -7,6 +7,7 @@ include_directories(${JNI_INCLUDE_DIRS})
 LINK_DIRECTORIES(${JNI_LIBRARIES})
 
 add_definitions(-DSYKTRUSTJAR="${PROJECT_BINARY_DIR}/lib/PKCS11.jar")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
 
 if (WIN32)
 	message ("This is a WIN32 machine!")

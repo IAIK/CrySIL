@@ -2,19 +2,12 @@ package configuration;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
 
-import java.io.Serializable;
-
-
-public class Server implements Serializable{
+public class Server{
 
 	private ServerInfo info;
 	private SAuthInfo credentials = null;
 	
 	public class ServerInfo{
-		ServerInfo(String url){
-			this.url = url;
-			this.name = "http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth-2.0/rest/json ";
-		}
 		ServerInfo(String url,String name){
 			this.url = url;
 			this.name = name;
@@ -27,9 +20,6 @@ public class Server implements Serializable{
 		public String getUrl(){
 			return url;
 		}
-	}
-	public Server(String url){
-		info = new ServerInfo(url);
 	}
 	public Server(String url,String name){
 		info = new ServerInfo(url,name);

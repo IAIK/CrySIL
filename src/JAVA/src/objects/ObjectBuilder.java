@@ -1,5 +1,10 @@
 package objects;
 
+import obj.CK_ATTRIBUTE;
+import obj.CK_ATTRIBUTE_TYPE;
+import obj.CK_KEY_TYPE;
+import obj.CK_OBJECT_TYPE;
+import obj.CK_RETURN_TYPE;
 import objects.*;
 import pkcs11.PKCS11Error;
 

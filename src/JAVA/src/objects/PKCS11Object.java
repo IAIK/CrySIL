@@ -4,6 +4,10 @@ import pkcs11.PKCS11Error;
 
 import java.util.HashMap;
 
+import obj.CK_ATTRIBUTE;
+import obj.CK_RETURN_TYPE;
+
+
 public class PKCS11Object {
 
 	private HashMap<Long, CK_ATTRIBUTE> attributes = new HashMap<>();

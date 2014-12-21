@@ -32,7 +32,7 @@ public class DataVaultSingleton {
 	}
 
 	private void readConfig() {
-		System.out.println("reading info!");
+		L.log("reading info!", 1);
 		String tokenname = "default";
 		String serverurl = "";
 		String username = "";
@@ -45,10 +45,9 @@ public class DataVaultSingleton {
 		try {
 			String wholeline = breader.readLine().trim();
 			while (wholeline != null) {
-				System.out.println("current line: " + wholeline);
 				if (wholeline.compareTo("") == 0) {
 					// empty line... new server!
-					System.out.println("initiating serverclass");
+					L.log("DataVAultSingleton.java: found server in configfile", 0);
 					server = new Server(serverurl, tokenname);
 					SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
 					cre.setUserName(username);
@@ -68,23 +67,26 @@ public class DataVaultSingleton {
 				switch (line[0]) {
 				case "tokenname":
 					tokenname = line[1];
-					System.out.println("read tokenname: " + tokenname);
+					L.log("DataVaultSingleton.java: tokenname: " + tokenname, 1);
 					break;
 				case "serverurl":
 					serverurl = line[1];
-					System.out.println("read serverurl: " + serverurl);
+					L.log("DataVAultSingleton.java: serverurl: " + serverurl,1);
 					break;
 				case "username":
 					username = line[1];
+					L.log("DataVAultSingleton.java: username: " + username,1);
 					break;
 				case "password":
 					password = line[1];
+					L.log("DataVAultSingleton.java: password: " + password,1);
 					break;
 				}
 				wholeline = breader.readLine();
 			}
 			if(serverurl!=null){
 					server = new Server(serverurl, tokenname);
+					L.log("DataVAultSingleton.java: found server in configfile", 0);
 					SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
 					cre.setUserName(username);
 					cre.setPassWord(password);
@@ -102,6 +104,7 @@ public class DataVaultSingleton {
 	}
 
 	public ArrayList<ServerInfo> getServerInfoList() {
+		L.log("DataVaultSingleton.java: getServerInfoList", 3);
 		ArrayList<Server.ServerInfo> res = new ArrayList<ServerInfo>();
 		for (Server s : servers) {
 			res.add(s.getInfo());

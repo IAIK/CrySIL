@@ -1,6 +1,6 @@
 package pkcs11;
 
-import objects.CK_MECHANISM;
+import obj.CK_MECHANISM;
 import objects.PKCS11Object;
 
 import java.util.List;

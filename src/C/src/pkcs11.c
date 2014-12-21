@@ -281,7 +281,6 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInf
         jmethodID slotinfoConstructor;
         jobject slotinfo;
         jmethodID C_GetSlotInfoJava;
-        FILE* file=fopen("C:\\pthread\\my.log.txt", "a");
 
 
 
@@ -298,7 +297,6 @@ CK_DEFINE_FUNCTION(CK_RV,C_GetSlotInfo)(CK_SLOT_ID slotID, CK_SLOT_INFO_PTR pInf
         C_GetSlotInfoJava = (*(environment))->GetStaticMethodID(environment, dings->cls,"C_GetSlotInfo", "(JLobj/CK_SLOT_INFO;)J");
 
         retVal = (*(environment))->CallStaticLongMethod(environment, dings->cls, C_GetSlotInfoJava, (jlong)slotID, slotinfo);
-        fclose(file);
         (*(environment))->ExceptionDescribe(environment);
 
         getSlotDescription = (*(environment))->GetMethodID(environment, slotinfoClass,"getSlotDescription", "()Ljava/lang/String;");

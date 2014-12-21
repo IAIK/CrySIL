@@ -1,4 +1,4 @@
-package objects;
+package obj;
 
 import java.io.IOException;
 import java.lang.InterruptedException;

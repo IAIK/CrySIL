@@ -4,6 +4,10 @@ import pkcs11.PKCS11Error;
 
 import java.util.ArrayList;
 
+import obj.CK_ATTRIBUTE;
+import obj.CK_RETURN_TYPE;
+
+
 public class ObjectManager {
 
 	private ArrayList<PKCS11Object> objects = new ArrayList<>();

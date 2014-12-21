@@ -5,6 +5,14 @@ import iaik.security.rsa.RSAPublicKey;
 import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 import iaik.x509.X509Certificate;
+import obj.CK_ATTRIBUTE;
+import obj.CK_ATTRIBUTE_TYPE;
+import obj.CK_CERTIFICATE_TYPE;
+import obj.CK_KEY_TYPE;
+import obj.CK_MECHANISM;
+import obj.CK_MECHANISM_TYPE;
+import obj.CK_OBJECT_TYPE;
+import obj.CK_RETURN_TYPE;
 import objects.*;
 
 import java.math.BigInteger;
@@ -14,6 +22,8 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import configuration.L;
+
 public class PKCS11SkyTrustMapper {
 
 	private static HashMap<Long, SkyTrustAlgorithm> mechanism_map = new HashMap<>();
@@ -22,10 +32,10 @@ public class PKCS11SkyTrustMapper {
 
 	static {
 		if(System.getProperty("os.arch").compareTo("amd64")==0){
-			System.out.println("adapting to 64bit architecture");
+			L.log("adapting to 64bit architecture", 1);
 			architekturkorrekturmanufaktur=2L;
 		}else{
-			System.out.println("32-bit is really okay!");
+			L.log("32-bit is really okay!", 1);
 		}
 
 		skytrust_template = new ArrayList<>();
@@ -275,13 +285,11 @@ public class PKCS11SkyTrustMapper {
 
 	public static PKCS11Object mapToKeyFile(MKey key) throws PKCS11Error {
 		ArrayList<CK_ATTRIBUTE> private_template = new ArrayList<>();
-		System.out.println("encoding this shit!");
 		byte[] value = null;
 		byte[] id = key.getId().getBytes();
 		try {
 			value = Util.fromBase64String(key.getEncodedCertificate());
 		} catch (Base64Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));

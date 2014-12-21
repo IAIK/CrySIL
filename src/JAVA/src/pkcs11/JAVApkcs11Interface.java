@@ -1,5 +1,18 @@
 package pkcs11;
 
+import obj.CK_ATTRIBUTE;
+import obj.CK_ATTRIBUTE_TYPE;
+import obj.CK_FLAGS;
+import obj.CK_INFO;
+import obj.CK_MECHANISM;
+import obj.CK_MECHANISM_INFO;
+import obj.CK_RETURN_TYPE;
+import obj.CK_SESSION_INFO;
+import obj.CK_SLOT_INFO;
+import obj.CK_TOKEN_INFO;
+import obj.CK_ULONG_PTR;
+import obj.CK_USER_TYPE;
+import obj.CK_VERSION;
 import objects.*;
 
 import java.lang.InterruptedException;
@@ -11,6 +24,7 @@ import javax.swing.JFrame;
 
 import org.springframework.web.client.ResourceAccessException;
 
+import configuration.L;
 import configuration.Server.ServerInfo;
 
 public class JAVApkcs11Interface {
@@ -39,6 +53,8 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_Initialize() {
+		L.log("function called: C_Initialize",  1);
+
 		if (maintenanceThread == null) {
 			maintenanceThread = new MaintenanceThread();
 		}
@@ -52,10 +68,12 @@ public class JAVApkcs11Interface {
 		} catch (PKCS11Error e) {
 			e.printStackTrace();
 		}
+		L.log("leaving C_Initialize", 1);
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
 	public static long C_Finalize() {
+		L.log("function called: C_Finalize",  1);
 		maintenanceThread.stopMaintenanceThread();
 		maintenanceThread = null;
 		// now we can die gracefully
@@ -64,6 +82,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_GetSlotList(boolean tokenPresent, long[] pSlotList,
 			CK_ULONG_PTR pulCount) {
+		L.log("function called: C_GetSlotList",  1);
 
 		try {
 			ArrayList<Slot> slotlist = null;
@@ -93,6 +112,8 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
+		L.log("function called: C_GetSlotInfo",  1);
+
 		if (pInfo == null) {
 			return -1;
 		}
@@ -141,25 +162,20 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
+		L.log("function called: C_GetTokenInfo",  1);
 		try {
 			Slot slot = getRM().getSlotByID(slotID);
 
 			ServerInfo s = slot.getTokenInfo();
-			pInfo.setLabel(Util.fixStringLen(s.getName(), 32));// 32 char
+			pInfo.setLabel(Util.fixStringLen(s.getName().replaceAll(":", "_"), 32));// 32 char
 			pInfo.setManufacturerID(Util.fixStringLen("IAIK", 32));
-			pInfo.setModel(Util.fixStringLen("", 32));// 32
+			pInfo.setModel(Util.fixStringLen("skytrust token", 32));// 32
 			pInfo.setSerialNumber(Util.fixStringLen("0.1", 32));
 
-			pInfo.setLabel("tokenlabel");
-			pInfo.setManufacturerID("IAIK");
-			pInfo.setModel("Token 43");
-			pInfo.setSerialNumber("0.1");
 
 			pInfo.setCKF_WRITE_PROTECTED();
 			pInfo.setCKF_PROTECTED_AUTHENTICATION_PATH();
 			pInfo.setCKF_TOKEN_INITIALIZED();
-			// flags = Util.setFlag(flags, slot.getCapabilities().getAsFlags());
-			// //does this belong here?
 
 			pInfo.setUlRwSessionCount(slot.getSessionCount());
 			pInfo.setUlSessionCount(slot.getSessionCount());
@@ -190,6 +206,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_GetMechanismList(long slotID, long[] pMechanismList,
 			CK_ULONG_PTR pulCount) {
+		L.log("function called: C_GetMechanismList",  1);
 		try {
 			Slot slot = getRM().getSlotByID(slotID);
 			int mech_count = slot.getMechanisms().length;
@@ -216,6 +233,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_GetMechanismInfo(long slotID, long type,
 			CK_MECHANISM_INFO pInfo) {
+		L.log("function called: C_GetMechanismList",  1);
 		try {
 			Slot slot = getRM().getSlotByID(slotID);
 			pInfo = slot.getMechanismInfo(type);
@@ -227,8 +245,9 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_OpenSession(long slotID, long flags,CK_ULONG_PTR phSession) {
-		System.out.println("slotID: "+slotID);
-        System.out.println("flags: "+flags);
+		L.log("function called: C_GetMechanismList",  1);
+		L.log("slotID: "+slotID, 2);
+        L.log("flags: "+flags, 2);
 		try {
 
 			if (!Util.isFlagSet(flags, CK_FLAGS.CKF_SERIAL_SESSION)) {
@@ -239,7 +258,7 @@ public class JAVApkcs11Interface {
 				atype = Session.ACCESS_TYPE.RW;
 			}
 			phSession.setValue(getRM().newSession(slotID, atype));
-            System.out.println("new SessionID:  "+phSession.getValue()  );
+            L.log("new SessionID:  "+phSession.getValue(), 5  );
 			return CK_RETURN_TYPE.CKR_OK;
 		} catch (PKCS11Error e){
 			e.printStackTrace();
@@ -248,8 +267,8 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_GetSessionInfo(long hSession, CK_SESSION_INFO pInfo) {
-
-        System.out.println("hSession: "+hSession);
+		L.log("function called: C_GetSessionInfo",  1);
+        L.log("hSession: "+hSession, 2);
 		try {
 			// Decrypt: not implemented
 			Session session = getRM().getSessionByHandle(hSession);
@@ -269,6 +288,7 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_Login(long hSession, long userType, String pPin) {
+		L.log("function called: C_Login",  1);
 		if (userType == CK_USER_TYPE.CKU_SO) {
 			return CK_RETURN_TYPE.CKR_USER_TYPE_INVALID;
 		}
@@ -286,10 +306,12 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_Logout(long hSession) {
+		L.log("function called: C_Logout",  1);
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
 	public static long C_CloseSession(long hSession) {
+		L.log("function called: C_CloseSession",  1);
 		try {
 			getRM().delSession(hSession);
 			return CK_RETURN_TYPE.CKR_OK;
@@ -299,6 +321,7 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_CloseAllSessions(long slotID) {
+		L.log("function called: C_CloseAllSessions",  1);
 		try {
 			getRM().delAllSessionsToSlot(slotID);
 			return CK_RETURN_TYPE.CKR_OK;
@@ -309,6 +332,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_GetAttributeValue(long hSession, long hObject,
 			CK_ATTRIBUTE[] pTemplate, long ulCount) {
+		L.log("function called: C_GetAttributeValue",  1);
 		try {
 			Long res = CK_RETURN_TYPE.CKR_OK;
 			if (pTemplate.length != ulCount) {
@@ -320,7 +344,7 @@ public class JAVApkcs11Interface {
 					.getObject(hObject);
 
 			CK_ATTRIBUTE src;
-			System.out.println("J: object: "+ hObject);
+			L.log("J: object: "+ hObject,5);
 			for (CK_ATTRIBUTE attr : pTemplate) {
 				try {
 					src = obj.getAttribute(attr.getType());
@@ -337,15 +361,15 @@ public class JAVApkcs11Interface {
 				if (attr.getpValue() == null) {
 					attr.setUlValueLen(src.getUlValueLen());
 				} else if (attr.getUlValueLen() < src.getUlValueLen()) {
-                    System.out.println("src len:   "+src.getUlValueLen());
-                    System.out.println("attr len:  "+attr.getUlValueLen());
+                    L.log("src len:   "+src.getUlValueLen(),5);
+                    L.log("attr len:  "+attr.getUlValueLen(),5);
 
                     attr.setUlValueLen(attr.getUlValueLen());
 					res = CK_RETURN_TYPE.CKR_BUFFER_TOO_SMALL;
 				} else {
 					attr.setpValue(src.getpValue());
 					attr.setUlValueLen(src.getUlValueLen());
-					System.out.println("J: attribute: "+ attr.toString());
+					L.log("J: attribute: "+ attr.toString(), 5);
 				}
 			}
 			return res;
@@ -357,6 +381,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_SetAttributeValue(long hSession, long hObject,
 			CK_ATTRIBUTE[] pTemplate, long ulCount) {
+		L.log("function called: C_SetAttributeValue",  1);
 		try {
 			// checkNullPtr(pTemplate);
 			Session session = getRM().getSessionByHandle(hSession);
@@ -375,6 +400,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate,
 			long ulCount, CK_ULONG_PTR phObject) {
+		L.log("function called: C_CreateObject",  1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			long handle = session.getSlot().objectManager
@@ -390,6 +416,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_DecryptInit(long hSession, CK_MECHANISM pMechanism,
 			long hKey) {
+		L.log("function called: C_DecryptInit",  1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.decryptInit(pMechanism, hKey);
@@ -402,6 +429,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_Decrypt(long hSession, byte[] pEncryptedData,
 			long ulEnryptedDataLen, byte[] pData, CK_ULONG_PTR pulDataLen) {
+		L.log("function called: C_Decrypt",  1);
 
 		try {
 			long val = C_DecryptUpdate(hSession, pEncryptedData,
@@ -421,6 +449,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_DecryptUpdate(long hSession, byte[] pEncryptedPart,
 			long ulEncryptedPartLen, byte[] pPart, CK_ULONG_PTR pulPartLen) {
+		L.log("function called: C_DecryptUpdate",  1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.decrypt(pEncryptedPart);
@@ -446,6 +475,7 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_DestroyObject(long hSession, long hObject) {
+		L.log("function called: C_DestroyObject",  1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.getSlot().objectManager.deleteObject(hObject);
@@ -457,6 +487,7 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount) {
+		L.log("function called: C_FindObjectsInit",  1);
 
         CK_ATTRIBUTE[] array;
 
@@ -468,10 +499,9 @@ public class JAVApkcs11Interface {
         }
 	for(CK_ATTRIBUTE tmp : array){
 
-		System.out.println("attribute: " + tmp.toString());
+		L.log("attribute: " + tmp.toString(), 5);
 
 	}
-        System.out.println("findobjectsinitSession:   "+ hSession + " " + array.length);
         try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.find(array);
@@ -487,6 +517,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_FindObjects(long hSession, long[] phObject,
 			long ulMaxObjectCount, CK_ULONG_PTR pulObjectCount) {
+		L.log("function called: C_FindObjects",  1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 
@@ -508,6 +539,7 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_FindObjectsFinal(long hSession) {
+		L.log("function called: C_FindObjectsFinal",  1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.findFinal();
@@ -519,24 +551,19 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_GenerateRandom(long hSession, byte[] RandomData,			long ulRandomLen) {
+		L.log("function called: C_GenerateRandom | Be careful, Not implemented right now!",  0);
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
 	public static long C_GetInfo(CK_INFO pInfo) {
-//		JFrame frame = new JFrame();
-//		frame.setTitle("just a title");
-//		frame.setSize(300,200);
-//		frame.setLocation(10, 200);
-//		frame.setVisible(true);
+		L.log("function called: C_GetInfo",  1);
 		if (pInfo == null) {
 			return CK_RETURN_TYPE.CKR_ARGUMENTS_BAD;
 		}
 		if (pInfo.getLibraryVersion()==null){
-			System.out.println("LibraryVersion null");
 			pInfo.setLibraryVersion(new CK_VERSION((byte)0x00, (byte)0x00));
 		}
 		if (pInfo.getCryptokiVersion()==null){
-			System.out.println("Cryptokiversion null");
 			pInfo.setCryptokiVersion(new CK_VERSION((byte)0x00, (byte)0x00));
 		}
 		pInfo.setManufacturerID("TUG IAIK");
@@ -554,6 +581,7 @@ public class JAVApkcs11Interface {
 	}
 
 	public static long C_SeedRandom(long hSession, String pSeed, long ulSeedLen) {
+		L.log("function called: C_SeedRandom | Be careful, Not implemented right now!",  0);
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
@@ -564,6 +592,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_SignInit(long hSession, CK_MECHANISM pMechanism,
 			long hKey) {
+		L.log("function called: C_SignInit",  1);
 
 		try {
 			if (pMechanism == null) {
@@ -580,6 +609,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_SignUpdate(long hSession, byte[] pPart, long ulPartLen) {
 		try {
+		L.log("function called: C_SignUpdate",  1);
 			Session session = getRM().getSessionByHandle(hSession);
 			session.signAddData(pPart);
 			return CK_RETURN_TYPE.CKR_OK;
@@ -590,6 +620,7 @@ public class JAVApkcs11Interface {
 
 	public static long C_SignFinal(long hSession, byte[] pSignature,
 			CK_ULONG_PTR pulSignatureLen) {
+		L.log("function called: C_SignFinal",  1);
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
@@ -616,7 +647,8 @@ public class JAVApkcs11Interface {
 
 	public static long C_Sign(long hSession, byte[] pData, long ulDataLen,
 			byte[] pSignature, CK_ULONG_PTR pulSignatureLen) {
-        System.out.println("Data to sign: \r\n"+ new String(pData));
+		L.log("function called: C_Sign",  1);
+        L.log("Data to sign: \r\n"+ new String(pData), 2);
 
 			long val = C_SignUpdate(hSession, pData, ulDataLen);
 			if (val != CK_RETURN_TYPE.CKR_OK) {
@@ -654,6 +686,7 @@ public class JAVApkcs11Interface {
 	public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism,
 			long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen,
 			CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_PTR phKey) {
+		L.log("function called: C_UnwrapKey",  1);
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
@@ -715,6 +748,7 @@ public class JAVApkcs11Interface {
 			long hWrappingKey, long hKey, byte[] pWrappedKey,
 			CK_ULONG_PTR pulWrappedKeyLen) {
 
+		L.log("function called: C_WrapKey",  1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session = getRM().getSessionByHandle(hSession);

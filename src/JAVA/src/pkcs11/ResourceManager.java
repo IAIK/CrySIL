@@ -1,6 +1,6 @@
 package pkcs11;
 
-import objects.CK_RETURN_TYPE;
+import obj.CK_RETURN_TYPE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 import configuration.DataVaultSingleton;
+import configuration.L;
 import configuration.Server;
 
 /*
@@ -75,9 +76,6 @@ public class ResourceManager {
 		}
 		Slot r = slotList.get((int) (slotid - 1));
 		if (r == null) {
-            System.out.println("some really" +
-                    "strange things happened...");
-
             throw new PKCS11Error(CK_RETURN_TYPE.CKR_SLOT_ID_INVALID);
 		}
 		return r;
@@ -128,6 +126,7 @@ public class ResourceManager {
 	}
 
 	public void updateSlotList() throws PKCS11Error {
+		L.log("ResourceManager.java: updateSlotLiset()", 3);
 		ArrayList<Server.ServerInfo> info_list = DataVaultSingleton
 				.getInstance().getServerInfoList();
 		if (info_list.size() > MAX_SLOT) {

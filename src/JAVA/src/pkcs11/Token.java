@@ -1,7 +1,7 @@
 package pkcs11;
 
 import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-import objects.CK_MECHANISM;
+import obj.CK_MECHANISM;
 import objects.MKey;
 import objects.PKCS11Object;
 

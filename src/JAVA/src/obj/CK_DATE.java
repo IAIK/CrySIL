@@ -1,4 +1,4 @@
-package objects;
+package obj;
 
 import java.util.Arrays;
 

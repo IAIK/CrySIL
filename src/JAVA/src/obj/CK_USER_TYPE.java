@@ -1,4 +1,4 @@
-package objects;
+package obj;
 
 public class CK_USER_TYPE {
 	public static final Long CKU_SO=0L;

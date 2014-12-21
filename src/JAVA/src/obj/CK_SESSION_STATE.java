@@ -1,4 +1,4 @@
-package objects;
+package obj;
 
 public class CK_SESSION_STATE {
 	public static final Long CKS_RO_PUBLIC_SESSION = 0L;

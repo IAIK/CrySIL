@@ -9,6 +9,7 @@ import objects.MKey;
 
 import org.springframework.web.client.RestTemplate;
 
+import configuration.L;
 import configuration.Server;
 
 import at.iaik.skytrust.SkyTrustAPIFactory;
@@ -39,9 +40,8 @@ public class ServerSession implements IServerSession {
 
 	public ServerSession(Server.ServerInfo s) {
 		server = s;
-		System.out.println("url:"+s.getUrl());
-		System.out.println("http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth-2.0/rest/json ");
-		SkyTrustAPIFactory.initialize("http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth-2.0/rest/json");
+		L.log("ServerSession.java: using server: "+s.getUrl(),1);
+		SkyTrustAPIFactory.initialize(s.getUrl());
 		api = SkyTrustAPI.getInstance();
 	}
 

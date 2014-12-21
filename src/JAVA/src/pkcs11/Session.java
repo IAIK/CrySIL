@@ -1,11 +1,13 @@
 package pkcs11;
 
-import objects.CK_ATTRIBUTE;
-import objects.CK_MECHANISM;
-import objects.CK_RETURN_TYPE;
-import objects.CK_SESSION_STATE;
+import obj.CK_ATTRIBUTE;
+import obj.CK_MECHANISM;
+import obj.CK_RETURN_TYPE;
+import obj.CK_SESSION_STATE;
 
 import java.util.ArrayList;
+
+import configuration.L;
 
 //import proxys.CK_VOID_PTR;
 
@@ -229,11 +231,8 @@ public class Session {
 		if (findObjectsHelper != null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OPERATION_ACTIVE);
 		}
-		for(CK_ATTRIBUTE tmp: attr){
-			System.out.println("attribute: "+ tmp);
-		}
 		ArrayList<Long> found_objs = getSlot().objectManager.findObjects(attr);
-		System.out.println("found "+ found_objs.size() + " objects!");
+		L.log("found "+ found_objs.size() + " objects!", 5);
 		findObjectsHelper = new FindObjectsHelper(found_objs);
 	}
 
