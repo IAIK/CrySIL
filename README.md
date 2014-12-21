@@ -62,7 +62,7 @@ In this case have a Look at CMakeLists.txt. There you will find useful hints.
 
 # CONFIG FILES
 
-For configuration Purposes, we use plain-text config files. You can put multiple Servers in this file:
+For configuration Purposes, we use a plain-text config file. You can put multiple Servers in this file.
 
 ...
 tokenname=servername 
@@ -70,6 +70,18 @@ server=http://url.com
 username=username
 password=password
 ...
+
+
+(tokenname is just a human readable identifier for the emulated card)
+The file is called 'config' and lies in the root directory of the project. 
+
+_IMPORTANT!_
+
+Seperate different servers with blank lines.
+
+The file is packed into the generated 'PKCS11.jar' file.
+So, after editing call 'ant jar' or 'make ant_build' again.
+
 
 # INSTALLATION:
 

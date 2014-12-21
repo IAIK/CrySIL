@@ -25,7 +25,10 @@ public class PKCS11SkyTrustMapper {
 
 	static {
 		if(System.getProperty("os.arch").compareTo("amd64")==0){
+			System.out.println("adapting to 64bit architecture");
 			architekturkorrekturmanufaktur=2L;
+		}else{
+			System.out.println("32-bit is really okay!");
 		}
 
 		skytrust_template = new ArrayList<>();

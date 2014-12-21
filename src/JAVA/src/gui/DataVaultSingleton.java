@@ -5,14 +5,17 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthType;
 import at.iaik.skytrust.element.skytrustprotocol.payload.auth.credentials.SUserPasswordAuthInfo;
 import gui.Server.ServerInfo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class DataVaultSingleton {
 
 	private static DataVaultSingleton _instance;
 
-	private ArrayList<Server> servers;
-	private ArrayList<Client> clients;
+	private ArrayList<Server> servers = new ArrayList<>();
 
 	public static DataVaultSingleton getInstance() {
 		if (_instance == null) {
@@ -24,14 +27,77 @@ public class DataVaultSingleton {
 	}
 
 	private DataVaultSingleton() {
-		servers = new ArrayList<Server>();
-		clients = new ArrayList<Client>();
-		Server ser = new Server("http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth/rest/json","skytrust-dev");
-//		SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
-//		cre.setUserName("testuser");
-//		cre.setPassWord("");
-//		ser.setCredentials(cre);
-		servers.add(ser);
+		readConfig();
+	}
+
+	private void readConfig() {
+		System.out.println("reading info!");
+		String tokenname = "default";
+		String serverurl = "";
+		String username = "";
+		String password = "";
+		Server server;
+
+		InputStream input = getClass().getResourceAsStream("/config");
+		BufferedReader breader = new BufferedReader(
+				new InputStreamReader(input));
+		try {
+			String wholeline = breader.readLine().trim();
+			while (wholeline != null) {
+				System.out.println("current line: " + wholeline);
+				if (wholeline.compareTo("") == 0) {
+					// empty line... new server!
+					System.out.println("initiating serverclass");
+					server = new Server(serverurl, tokenname);
+					SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
+					cre.setUserName(username);
+					cre.setPassWord(password);
+					server.setCredentials(cre);
+					servers.add(server);
+					tokenname ="default";
+					serverurl = null;
+
+				}
+				String[] line = wholeline.split("=");
+				if (line.length == 1) {
+					wholeline = breader.readLine();
+					continue;
+				}
+
+				switch (line[0]) {
+				case "tokenname":
+					tokenname = line[1];
+					System.out.println("read tokenname: " + tokenname);
+					break;
+				case "serverurl":
+					serverurl = line[1];
+					System.out.println("read serverurl: " + serverurl);
+					break;
+				case "username":
+					username = line[1];
+					break;
+				case "password":
+					password = line[1];
+					break;
+				}
+				wholeline = breader.readLine();
+			}
+			if(serverurl!=null){
+					server = new Server(serverurl, tokenname);
+					SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
+					cre.setUserName(username);
+					cre.setPassWord(password);
+					server.setCredentials(cre);
+					servers.add(server);
+					tokenname ="default";
+					serverurl = null;
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public ArrayList<ServerInfo> getServerInfoList() {
@@ -40,58 +106,6 @@ public class DataVaultSingleton {
 			res.add(s.getInfo());
 		}
 		return res;
-	}
-
-	public SAuthInfo askForAuthInfo(SAuthType authType,
-			Server.ServerInfo server_info) {
-		for (Server s : servers) {
-			if (s.getInfo().equals(server_info)) {
-				if (s.isAutheticated()) {
-					// GUI.askUserIf App:ID isAllowed to connect to server_info
-					SAuthInfo cre = s.getCredentials();
-					String info_type = cre.getType();
-					info_type = info_type.replace("Info", "Type");
-					String req_type = authType.getType();
-					if (info_type.compareTo(req_type) == 0){
-						return cre;
-					}
-				} else {
-					// GUI.askUserFor Credentials for App:ID,server_info
-				}
-			}
-		}
-		return null;
-	}
-
-	private void doStuff(){
-//		Properties configFile = new Properties();
-//	    try {
-	    	
-	    	
-//			configFile.load(new FileInputStream("my_config.properties"));
-//			SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
-//			Server ser = new Server(configFile.getProperty("url"));
-//			cre.setUserName(configFile.getProperty("username"));
-//			cre.setPassWord(configFile.getProperty("password"));
-	    	
-	    	
-			SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
-			Server ser = new Server("url");
-			cre.setUserName("test");
-			cre.setPassWord("test");
-			ser.setCredentials(cre);
-			servers.add(ser);
-			
-			
-			
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-
-	public void registerClient(Client c) {
-		clients.add(c);
 	}
 
 }

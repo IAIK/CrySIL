@@ -19,14 +19,12 @@ public class JAVApkcs11Interface {
 //	}
 
 	private static ResourceManager getRM() throws PKCS11Error {
-		ResourceManager _instance = ResourceManager.getInstance(appID);
+		ResourceManager _instance = ResourceManager.getInstance();
 		if (_instance == null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_GENERAL_ERROR);
 		}
 		return _instance;
 	}
-
-	private static String appID;
 
 	/*
 	 * whatever you do, keep that thing running! always! start with C_Initailize
@@ -45,7 +43,6 @@ public class JAVApkcs11Interface {
 			maintenanceThread = new MaintenanceThread();
 		}
 		maintenanceThread.start();
-		appID = "newRandomID";
 		try {
 			try{
 			getRM().updateSlotList();

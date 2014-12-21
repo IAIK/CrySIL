@@ -1,11 +1,9 @@
 package pkcs11;
 
-import gui.Client;
 import gui.DataVaultSingleton;
 import gui.Server;
 import obj.CK_RETURN_TYPE;
 
-import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,35 +19,12 @@ public class ResourceManager {
 	private static ResourceManager _instance;
 	private ArrayList<Slot> slotList = new ArrayList<Slot>();;
 	static final public long MAX_SLOT = 1000;
-	private String appID;
 
-	public class DefaultClient implements Client {
-		private String id;
-		private ResourceManager lib;
 
-		public DefaultClient(String id, ResourceManager lib) {
-			this.lib = lib;
-			this.id = id;
-		}
-
-		public String getID() {
-			return id;
-		}
-
-		public void inform() {
-//			try {
-//				lib.updateSlotList();
-//			} catch (PKCS11Error e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-		}
-	}
-
-	public static ResourceManager getInstance(String appID) {
+	public static ResourceManager getInstance() {
 		if (_instance == null) {
 			try {
-				_instance = new ResourceManager(appID);
+				_instance = new ResourceManager();
 				// _instance.updateSlotList();
 			} catch (PKCS11Error e) {
 				// TODO Auto-generated catch block
@@ -59,10 +34,7 @@ public class ResourceManager {
 		return _instance;
 	}
 
-	private ResourceManager(String appID) throws PKCS11Error {
-		this.appID = appID;
-		DataVaultSingleton.getInstance().registerClient(
-				new DefaultClient(appID, this));
+	private ResourceManager() throws PKCS11Error {
 		// updateSlotList();
 	}
 

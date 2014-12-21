@@ -94,6 +94,7 @@
     <target name="jar" depends="JAVA-compile">
      <jar destfile="${c.lib.dir}/${ant.project.name}.jar">
 				<fileset dir="${java.classes.dir}"/>
+				<fileset file="config"/>
 			<!--	<fileset dir="skytrust-element-java/common/target/classes/"/>
 				<fileset dir="skytrust-element-java/core/target/classes/"/> -->
 				<!-- <zipfileset includes="**/*.class" src="lib/dependencies.jar"/>-->
