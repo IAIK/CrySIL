@@ -27,15 +27,13 @@ public class Slot {
 
 	private long slotID;
 	private boolean roToken = false;
-//	static final public long MAX_SESSIONS_PER_SLOT = 100000000000l;
-    static final public long MAX_SESSIONS_PER_SLOT = 100000l;
+	// static final public long MAX_SESSIONS_PER_SLOT = 100000000000l; 
+	static final public long MAX_SESSIONS_PER_SLOT = 100000l;
 
 	private ArrayList<Session> sessionList = new ArrayList<Session>();
 	private Session.USER_TYPE utype = Session.USER_TYPE.PUBLIC;
 
 	public ObjectManager objectManager = new ObjectManager();
-
-	// private String pin;
 
 	public Slot(long slotid, Server.ServerInfo server) throws PKCS11Error {
 		slotID = slotid;
@@ -48,7 +46,6 @@ public class Slot {
 		for (PKCS11Object o : objs) {
 			objectManager.addObject(o);
 		}
-		// generate PIN
 	}
 
 	public Session.USER_TYPE getUserType() {
@@ -90,7 +87,8 @@ public class Slot {
 
 	public long newSession(Session.ACCESS_TYPE atype) throws PKCS11Error {
 		if (atype == Session.ACCESS_TYPE.RO && utype == Session.USER_TYPE.SO) {
-			throw new PKCS11Error(CK_RETURN_TYPE.CKR_SESSION_READ_WRITE_SO_EXISTS);
+			throw new PKCS11Error(
+					CK_RETURN_TYPE.CKR_SESSION_READ_WRITE_SO_EXISTS);
 		}
 		if (roToken && atype == Session.ACCESS_TYPE.RW) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_TOKEN_WRITE_PROTECTED);
@@ -117,16 +115,18 @@ public class Slot {
 	}
 
 	public Session getSessionByID(long sessionID) throws PKCS11Error {
-        L.log("looking for session: "+sessionID +" id from first: "+sessionList.get(0).getID(), 3);
+		L.log("looking for session: " + sessionID + " id from first: "
+				+ sessionList.get(0).getID(), 3);
 		for (Session s : sessionList) {
 			if (s.getID() == sessionID) {
 				return s;
-        }
+			}
 		}
-        L.log("session with id "+ sessionID + " not found",3);
+		L.log("session with id " + sessionID + " not found", 3);
 		throw new PKCS11Error(CK_RETURN_TYPE.CKR_SESSION_HANDLE_INVALID);
 	}
-	public int getSessionCount(){
+
+	public int getSessionCount() {
 		return sessionList.size();
 	}
 
@@ -175,8 +175,8 @@ public class Slot {
 		}
 	}
 
-	public CryptoOperationParams checkAndInit(long hKey, CK_MECHANISM mechanism,
-			String operation) throws PKCS11Error {
+	public CryptoOperationParams checkAndInit(long hKey,
+			CK_MECHANISM mechanism, String operation) throws PKCS11Error {
 		PKCS11Object key = objectManager.getObject(hKey);
 		CK_MECHANISM_INFO mech_info = getMechanismInfo(mechanism.getMechanism());
 		// OBJECT_CLASS cl =
@@ -194,7 +194,8 @@ public class Slot {
 			}
 			if (!(boolean) key.getAttribute(CK_ATTRIBUTE_TYPE.CKA_SIGN)
 					.getpValue()) {
-				throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
+				throw new PKCS11Error(
+						CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;
 		case "verify":
@@ -206,7 +207,8 @@ public class Slot {
 			}
 			if (!(boolean) key.getAttribute(CK_ATTRIBUTE_TYPE.CKA_VERIFY)
 					.getpValue()) {
-				throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
+				throw new PKCS11Error(
+						CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;
 		case "decrypt":
@@ -218,7 +220,8 @@ public class Slot {
 			}
 			if (!(boolean) key.getAttribute(CK_ATTRIBUTE_TYPE.CKA_DECRYPT)
 					.getpValue()) {
-				throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
+				throw new PKCS11Error(
+						CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;
 		case "encrypt":
@@ -230,7 +233,8 @@ public class Slot {
 			}
 			if (!(boolean) key.getAttribute(CK_ATTRIBUTE_TYPE.CKA_ENCRYPT)
 					.getpValue()) {
-				throw new PKCS11Error(CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
+				throw new PKCS11Error(
+						CK_RETURN_TYPE.CKR_KEY_FUNCTION_NOT_PERMITTED);
 			}
 			break;
 		default:
@@ -245,20 +249,19 @@ public class Slot {
 		return mechanisms.keySet().toArray(new Long[0]);
 	}
 
-//	public void getMechanismInfo(long type, CK_MECHANISM_INFO info)
-//			throws PKCS11Error {
-//		CK_MECHANISM_INFO local_info = mechanisms.get(type);
-//		if (local_info == null) {
-//			throw new PKCS11Error(CK_RETURN_TYPE.CKR_MECHANISM_INVALID);
-//		}
-////		local_info.writeInto(info);
-//	}
+	// public void getMechanismInfo(long type, CK_MECHANISM_INFO info)
+	// throws PKCS11Error {
+	// CK_MECHANISM_INFO local_info = mechanisms.get(type);
+	// if (local_info == null) {
+	// throw new PKCS11Error(CK_RETURN_TYPE.CKR_MECHANISM_INVALID);
+	// }
+	// // local_info.writeInto(info);
+	// }
 
-	public CK_MECHANISM_INFO getMechanismInfo(long type)
-			throws PKCS11Error {
+	public CK_MECHANISM_INFO getMechanismInfo(long type) throws PKCS11Error {
 		CK_MECHANISM_INFO local_info = mechanisms.get(type);
 		if (local_info == null) {
-            L.log("mechanisminfo == null" + type, 2);
+			L.log("mechanisminfo == null" + type, 2);
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_MECHANISM_INVALID);
 		}
 		return local_info;
@@ -266,28 +269,43 @@ public class Slot {
 
 	public void loadMechanisms() {
 		// Note: right place to ask server for server-depended mechanisms
-        CK_MECHANISM_INFO info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
-        info.setCKF_HW();info.setCKF_SIGN();info.setCKF_VERIFY();info.setCKF_WRAP();info.setCKF_UNWRAP();info.setCKF_DECRYPT();
+		CK_MECHANISM_INFO info = new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
+		info.setCKF_HW();
+		info.setCKF_SIGN();
+		info.setCKF_VERIFY();
+		info.setCKF_WRAP();
+		info.setCKF_UNWRAP();
+		info.setCKF_DECRYPT();
 		mechanisms.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS, info);
 
-        info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
-        info.setCKF_HW();info.setCKF_ENCRYPT();info.setCKF_DECRYPT();
+		info = new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
+		info.setCKF_HW();
+		info.setCKF_ENCRYPT();
+		info.setCKF_DECRYPT();
 		mechanisms.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS_OAEP, info);
 
-        info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
-        info.setCKF_HW();info.setCKF_SIGN();info.setCKF_VERIFY();
+		info = new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
+		info.setCKF_HW();
+		info.setCKF_SIGN();
+		info.setCKF_VERIFY();
 		mechanisms.put(CK_MECHANISM_TYPE.CKM_SHA1_RSA_PKCS, info);
-	
-        info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
-        info.setCKF_HW();info.setCKF_SIGN();info.setCKF_VERIFY();
+
+		info = new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
+		info.setCKF_HW();
+		info.setCKF_SIGN();
+		info.setCKF_VERIFY();
 		mechanisms.put(CK_MECHANISM_TYPE.CKM_SHA224_RSA_PKCS, info);
 
-        info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
-        info.setCKF_HW();info.setCKF_SIGN();info.setCKF_VERIFY();
+		info = new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
+		info.setCKF_HW();
+		info.setCKF_SIGN();
+		info.setCKF_VERIFY();
 		mechanisms.put(CK_MECHANISM_TYPE.CKM_SHA256_RSA_PKCS, info);
 
-        info =  new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
-        info.setCKF_HW();info.setCKF_SIGN();info.setCKF_VERIFY();
+		info = new CK_MECHANISM_INFO(0, Long.MAX_VALUE, 0);
+		info.setCKF_HW();
+		info.setCKF_SIGN();
+		info.setCKF_VERIFY();
 		mechanisms.put(CK_MECHANISM_TYPE.CKM_SHA512_RSA_PKCS, info);
 
 	}

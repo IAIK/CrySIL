@@ -4,7 +4,11 @@ import obj.CK_FLAGS;
 
 import java.util.Arrays;
 
-
+/**
+ * 
+ * needful things...
+ *
+ */
 public class Util {
 	public static boolean isFlagSet(long bitfield, Long ckfSerialSession){
 		return (bitfield & ckfSerialSession) != 0;

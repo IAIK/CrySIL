@@ -15,22 +15,20 @@ import obj.CK_USER_TYPE;
 import obj.CK_VERSION;
 import objects.*;
 
-import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
-
-import javax.swing.JFrame;
 
 import org.springframework.web.client.ResourceAccessException;
 
 import configuration.L;
 import configuration.Server.ServerInfo;
 
+/**
+ * 
+ * This is the main entry point to our PKCS#11 library.
+ * 
+ */
 public class JAVApkcs11Interface {
-//	static {
-//		System.load("/usr/lib/libpkcs11_java_wrap.so");
-//	}
 
 	private static ResourceManager getRM() throws PKCS11Error {
 		ResourceManager _instance = ResourceManager.getInstance();
@@ -40,11 +38,6 @@ public class JAVApkcs11Interface {
 		return _instance;
 	}
 
-	/*
-	 * whatever you do, keep that thing running! always! start with C_Initailize
-	 * kill with C_Finalize! use it to do maintenance and other stuff, change
-	 * the sleep interval if you like but keep it running!
-	 */
 	private static MaintenanceThread maintenanceThread = null;
 
 	// Tick from MaintenanceThread
@@ -52,17 +45,25 @@ public class JAVApkcs11Interface {
 
 	}
 
+	/**
+	 * C_Initialize initializes the Cryptoki library. This function needs to be
+	 * called befor other C_xxx functions.
+	 * 
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_Initialize() {
-		L.log("function called: C_Initialize",  1);
+		L.log("function called: C_Initialize", 1);
 
 		if (maintenanceThread == null) {
 			maintenanceThread = new MaintenanceThread();
 		}
 		maintenanceThread.start();
 		try {
-			try{
-			getRM().updateSlotList();
-			}catch (ResourceAccessException e	){
+			try {
+				getRM().updateSlotList();
+			} catch (ResourceAccessException e) {
 				e.printStackTrace();
 			}
 		} catch (PKCS11Error e) {
@@ -72,17 +73,43 @@ public class JAVApkcs11Interface {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * 
+	 * C_Finalize is called to indicate that an application is finished with the
+	 * Cryptoki library. It should be the last Cryptoki call made by an
+	 * application.
+	 * 
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_Finalize() {
-		L.log("function called: C_Finalize",  1);
+		L.log("function called: C_Finalize", 1);
 		maintenanceThread.stopMaintenanceThread();
 		maintenanceThread = null;
 		// now we can die gracefully
 		return CK_RETURN_TYPE.CKR_OK;
+
 	}
 
+	/**
+	 * 
+	 * C_GetSlotList is used to obtain a list of slots in the system.
+	 * 
+	 * @param tokenPresent
+	 *            indicates whether the list obtained includes only those slots
+	 *            with a token present (CK_TRUE), or all slots (CK_FALSE);
+	 * @param pSlotList
+	 *            receives the Slot IDs
+	 * @param pulCount
+	 *            (non-NULL) receives the number of slots
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_GetSlotList(boolean tokenPresent, long[] pSlotList,
 			CK_ULONG_PTR pulCount) {
-		L.log("function called: C_GetSlotList",  1);
+		L.log("function called: C_GetSlotList", 1);
 
 		try {
 			ArrayList<Slot> slotlist = null;
@@ -111,8 +138,20 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * C_GetSlotInfo obtains information about a particular slot in the system.
+	 * 
+	 * @param slotID
+	 *            is the ID of the slot;
+	 * @param pInfo
+	 *            receives the slot information.
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
+
 	public static long C_GetSlotInfo(long slotID, CK_SLOT_INFO pInfo) {
-		L.log("function called: C_GetSlotInfo",  1);
+		L.log("function called: C_GetSlotInfo", 1);
 
 		if (pInfo == null) {
 			return -1;
@@ -122,7 +161,6 @@ public class JAVApkcs11Interface {
 		try {
 			slot = getRM().getSlotByID(slotID);
 		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return e.getCode();
 		}
@@ -161,17 +199,28 @@ public class JAVApkcs11Interface {
 		// return 0;
 	}
 
+	/**
+	 * obtains information about a particular token in the system
+	 * 
+	 * @param slotID
+	 *            is the ID of the token's slot
+	 * @param pInfo
+	 *            receives the token information
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_GetTokenInfo(long slotID, CK_TOKEN_INFO pInfo) {
-		L.log("function called: C_GetTokenInfo",  1);
+		L.log("function called: C_GetTokenInfo", 1);
 		try {
 			Slot slot = getRM().getSlotByID(slotID);
 
 			ServerInfo s = slot.getTokenInfo();
-			pInfo.setLabel(Util.fixStringLen(s.getName().replaceAll(":", "_"), 32));// 32 char
+			pInfo.setLabel(Util.fixStringLen(s.getName().replaceAll(":", "_"),
+					32));// 32 char
 			pInfo.setManufacturerID(Util.fixStringLen("IAIK", 32));
 			pInfo.setModel(Util.fixStringLen("skytrust token", 32));// 32
 			pInfo.setSerialNumber(Util.fixStringLen("0.1", 32));
-
 
 			pInfo.setCKF_WRITE_PROTECTED();
 			pInfo.setCKF_PROTECTED_AUTHENTICATION_PATH();
@@ -204,9 +253,21 @@ public class JAVApkcs11Interface {
 
 	}
 
+	/**
+	 * is used to obtain a list of mechanism types supported by a token
+	 * 
+	 * @param slotID
+	 *            is the ID of the token’s slot
+	 * @param pMechanismList
+	 * @param pulCount
+	 *            receives the number of mechanisms
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_GetMechanismList(long slotID, long[] pMechanismList,
 			CK_ULONG_PTR pulCount) {
-		L.log("function called: C_GetMechanismList",  1);
+		L.log("function called: C_GetMechanismList", 1);
 		try {
 			Slot slot = getRM().getSlotByID(slotID);
 			int mech_count = slot.getMechanisms().length;
@@ -231,9 +292,25 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * obtains information about a particular mechanism possibly supported by a
+	 * token
+	 * 
+	 * @param slotID
+	 *            is the ID of the token’s slot
+	 * @param type
+	 *            is the type of mechanism
+	 * 
+	 * @param pInfo
+	 *            receives the mechanism information
+	 * 
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_GetMechanismInfo(long slotID, long type,
 			CK_MECHANISM_INFO pInfo) {
-		L.log("function called: C_GetMechanismList",  1);
+		L.log("function called: C_GetMechanismList", 1);
 		try {
 			Slot slot = getRM().getSlotByID(slotID);
 			pInfo = slot.getMechanismInfo(type);
@@ -244,10 +321,25 @@ public class JAVApkcs11Interface {
 		}
 	}
 
-	public static long C_OpenSession(long slotID, long flags,CK_ULONG_PTR phSession) {
-		L.log("function called: C_GetMechanismList",  1);
-		L.log("slotID: "+slotID, 2);
-        L.log("flags: "+flags, 2);
+	/**
+	 * opens a session between an application and a token in a particular slot
+	 * 
+	 * @param slotID
+	 *            is the ID of the token's slot
+	 * @param flags
+	 *            indicates the type of session
+	 * @param phSession
+	 *            receives the handle for the new session
+	 * 
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
+	public static long C_OpenSession(long slotID, long flags,
+			CK_ULONG_PTR phSession) {
+		L.log("function called: C_GetMechanismList", 1);
+		L.log("slotID: " + slotID, 2);
+		L.log("flags: " + flags, 2);
 		try {
 
 			if (!Util.isFlagSet(flags, CK_FLAGS.CKF_SERIAL_SESSION)) {
@@ -258,17 +350,28 @@ public class JAVApkcs11Interface {
 				atype = Session.ACCESS_TYPE.RW;
 			}
 			phSession.setValue(getRM().newSession(slotID, atype));
-            L.log("new SessionID:  "+phSession.getValue(), 5  );
+			L.log("new SessionID:  " + phSession.getValue(), 5);
 			return CK_RETURN_TYPE.CKR_OK;
-		} catch (PKCS11Error e){
+		} catch (PKCS11Error e) {
 			e.printStackTrace();
 			return e.getCode();
 		}
 	}
 
+	/**
+	 * obtains information about a session
+	 * 
+	 * @param hSession
+	 *            is the session’s handle
+	 * @param pInfo
+	 *            receives the session information
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_GetSessionInfo(long hSession, CK_SESSION_INFO pInfo) {
-		L.log("function called: C_GetSessionInfo",  1);
-        L.log("hSession: "+hSession, 2);
+		L.log("function called: C_GetSessionInfo", 1);
+		L.log("hSession: " + hSession, 2);
 		try {
 			// Decrypt: not implemented
 			Session session = getRM().getSessionByHandle(hSession);
@@ -287,8 +390,22 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * logs a user into a token
+	 * 
+	 * 
+	 * @param hSession
+	 *            is a session handle
+	 * @param userType
+	 *            is the user type
+	 * @param pPin
+	 *            is the user's pin
+	 * @return A long value according to PKCS#11 standard.
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_Login(long hSession, long userType, String pPin) {
-		L.log("function called: C_Login",  1);
+		L.log("function called: C_Login", 1);
 		if (userType == CK_USER_TYPE.CKU_SO) {
 			return CK_RETURN_TYPE.CKR_USER_TYPE_INVALID;
 		}
@@ -305,13 +422,31 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * logs a user out from a token
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_Logout(long hSession) {
-		L.log("function called: C_Logout",  1);
+		L.log("function called: C_Logout", 1);
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * closes a session between an application and a token
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_CloseSession(long hSession) {
-		L.log("function called: C_CloseSession",  1);
+		L.log("function called: C_CloseSession", 1);
 		try {
 			getRM().delSession(hSession);
 			return CK_RETURN_TYPE.CKR_OK;
@@ -320,8 +455,16 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * closes all sessions an application has with a token
+	 * 
+	 * @param slotID
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_CloseAllSessions(long slotID) {
-		L.log("function called: C_CloseAllSessions",  1);
+		L.log("function called: C_CloseAllSessions", 1);
 		try {
 			getRM().delAllSessionsToSlot(slotID);
 			return CK_RETURN_TYPE.CKR_OK;
@@ -330,9 +473,25 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * obtains the value of one or more attributes of an object
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param hObject
+	 *            is the object's handle
+	 * @param pTemplate
+	 *            specifies which attribute values are to be obtained, and
+	 *            receives the attribute values
+	 * @param ulCount
+	 *            is the number of attributes in the template
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_GetAttributeValue(long hSession, long hObject,
 			CK_ATTRIBUTE[] pTemplate, long ulCount) {
-		L.log("function called: C_GetAttributeValue",  1);
+		L.log("function called: C_GetAttributeValue", 1);
 		try {
 			Long res = CK_RETURN_TYPE.CKR_OK;
 			if (pTemplate.length != ulCount) {
@@ -344,7 +503,7 @@ public class JAVApkcs11Interface {
 					.getObject(hObject);
 
 			CK_ATTRIBUTE src;
-			L.log("J: object: "+ hObject,5);
+			L.log("J: object: " + hObject, 5);
 			for (CK_ATTRIBUTE attr : pTemplate) {
 				try {
 					src = obj.getAttribute(attr.getType());
@@ -361,15 +520,15 @@ public class JAVApkcs11Interface {
 				if (attr.getpValue() == null) {
 					attr.setUlValueLen(src.getUlValueLen());
 				} else if (attr.getUlValueLen() < src.getUlValueLen()) {
-                    L.log("src len:   "+src.getUlValueLen(),5);
-                    L.log("attr len:  "+attr.getUlValueLen(),5);
+					L.log("src len:   " + src.getUlValueLen(), 5);
+					L.log("attr len:  " + attr.getUlValueLen(), 5);
 
-                    attr.setUlValueLen(attr.getUlValueLen());
+					attr.setUlValueLen(attr.getUlValueLen());
 					res = CK_RETURN_TYPE.CKR_BUFFER_TOO_SMALL;
 				} else {
 					attr.setpValue(src.getpValue());
 					attr.setUlValueLen(src.getUlValueLen());
-					L.log("J: attribute: "+ attr.toString(), 5);
+					L.log("J: attribute: " + attr.toString(), 5);
 				}
 			}
 			return res;
@@ -379,9 +538,25 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * modifies the value of one or more attributes of an object
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param hObject
+	 *            is the object's handle
+	 * @param pTemplate
+	 *            specifies which attribute values are to be modified and their
+	 *            new values
+	 * @param ulCount
+	 *            is the number of attributes in the template
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_SetAttributeValue(long hSession, long hObject,
 			CK_ATTRIBUTE[] pTemplate, long ulCount) {
-		L.log("function called: C_SetAttributeValue",  1);
+		L.log("function called: C_SetAttributeValue", 1);
 		try {
 			// checkNullPtr(pTemplate);
 			Session session = getRM().getSessionByHandle(hSession);
@@ -398,9 +573,25 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * creates a new object
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pTemplate
+	 *            the object’s template
+	 * @param ulCount
+	 *            is the number of attributes in the template
+	 * @param phObject
+	 *            receives the new object’s handle
+	 * 
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_CreateObject(long hSession, CK_ATTRIBUTE[] pTemplate,
 			long ulCount, CK_ULONG_PTR phObject) {
-		L.log("function called: C_CreateObject",  1);
+		L.log("function called: C_CreateObject", 1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			long handle = session.getSlot().objectManager
@@ -414,9 +605,23 @@ public class JAVApkcs11Interface {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * initializes a decryption operation
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pMechanism
+	 *            is the decryption mechanism
+	 * @param hKey
+	 *            is the handle of the decryption key
+	 * 
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_DecryptInit(long hSession, CK_MECHANISM pMechanism,
 			long hKey) {
-		L.log("function called: C_DecryptInit",  1);
+		L.log("function called: C_DecryptInit", 1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.decryptInit(pMechanism, hKey);
@@ -427,9 +632,27 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * 
+	 * decrypts encrypted data in a single part
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pEncryptedData
+	 *            is the encrypted data
+	 * @param ulEnryptedDataLen
+	 *            is the length of the encrypted data
+	 * @param pData
+	 *            receives the recovered data
+	 * @param pulDataLen
+	 *            receives the length of the recovered data
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_Decrypt(long hSession, byte[] pEncryptedData,
 			long ulEnryptedDataLen, byte[] pData, CK_ULONG_PTR pulDataLen) {
-		L.log("function called: C_Decrypt",  1);
+		L.log("function called: C_Decrypt", 1);
 
 		try {
 			long val = C_DecryptUpdate(hSession, pEncryptedData,
@@ -447,9 +670,28 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * continues a multiple-part decryption operation, processing another
+	 * encrypted data part
+	 * 
+	 * @param hSession
+	 *            is the session’s handle
+	 * 
+	 * @param pEncryptedPart
+	 *            is the encrypted data part
+	 * @param ulEncryptedPartLen
+	 *            is the length of the encrypted data part
+	 * @param pPart
+	 *            receives the recovered data part
+	 * @param pulPartLen
+	 *            length of the recovered data part
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_DecryptUpdate(long hSession, byte[] pEncryptedPart,
 			long ulEncryptedPartLen, byte[] pPart, CK_ULONG_PTR pulPartLen) {
-		L.log("function called: C_DecryptUpdate",  1);
+		L.log("function called: C_DecryptUpdate", 1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.decrypt(pEncryptedPart);
@@ -474,8 +716,19 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * destroys an object
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param hObject
+	 *            is the object's handle
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_DestroyObject(long hSession, long hObject) {
-		L.log("function called: C_DestroyObject",  1);
+		L.log("function called: C_DestroyObject", 1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.getSlot().objectManager.deleteObject(hObject);
@@ -486,23 +739,39 @@ public class JAVApkcs11Interface {
 		}
 	}
 
-	public static long C_FindObjectsInit(long hSession, CK_ATTRIBUTE[] pTemplate, long ulCount) {
-		L.log("function called: C_FindObjectsInit",  1);
+	/**
+	 * initializes a search for token and session objects that match a template
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pTemplate
+	 *            is a search template that specifies the attribute values to
+	 *            match
+	 * 
+	 * @param ulCount
+	 *            is the number of attributes in the search template
+	 * 
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
+	public static long C_FindObjectsInit(long hSession,
+			CK_ATTRIBUTE[] pTemplate, long ulCount) {
+		L.log("function called: C_FindObjectsInit", 1);
 
-        CK_ATTRIBUTE[] array;
+		CK_ATTRIBUTE[] array;
 
+		if (pTemplate == null) {
+			array = new CK_ATTRIBUTE[0];
+		} else {
+			array = pTemplate.clone();
+		}
+		for (CK_ATTRIBUTE tmp : array) {
 
-        if(pTemplate == null){
-            array = new CK_ATTRIBUTE[0];
-        }else{
-            array = pTemplate.clone();
-        }
-	for(CK_ATTRIBUTE tmp : array){
+			L.log("attribute: " + tmp.toString(), 5);
 
-		L.log("attribute: " + tmp.toString(), 5);
-
-	}
-        try {
+		}
+		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.find(array);
 
@@ -515,9 +784,28 @@ public class JAVApkcs11Interface {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * continues a search for token and session objects that match a template,
+	 * obtaining additional object handles
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param phObject
+	 *            location that receives the list (array) of additional object
+	 *            handles
+	 * 
+	 * @param ulMaxObjectCount
+	 *            is the maximum number of object handles to be returned
+	 * 
+	 * @param pulObjectCount
+	 *            receives the actual number of object handles returned
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_FindObjects(long hSession, long[] phObject,
 			long ulMaxObjectCount, CK_ULONG_PTR pulObjectCount) {
-		L.log("function called: C_FindObjects",  1);
+		L.log("function called: C_FindObjects", 1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 
@@ -538,8 +826,17 @@ public class JAVApkcs11Interface {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * terminates a search for token and session objects
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_FindObjectsFinal(long hSession) {
-		L.log("function called: C_FindObjectsFinal",  1);
+		L.log("function called: C_FindObjectsFinal", 1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session.findFinal();
@@ -550,21 +847,49 @@ public class JAVApkcs11Interface {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
-	public static long C_GenerateRandom(long hSession, byte[] RandomData,			long ulRandomLen) {
-		L.log("function called: C_GenerateRandom | Be careful, Not implemented right now!",  0);
+	/**
+	 * generates random or pseudo-random data
+	 * 
+	 * @deprecated not implemented right now!
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param RandomData
+	 *            receives the random data
+	 * @param ulRandomLen
+	 *            is the length in bytes of the random or pseudo-random data to
+	 *            be generated
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
+	@Deprecated
+	public static long C_GenerateRandom(long hSession, byte[] RandomData,
+			long ulRandomLen) {
+		L.log("function called: C_GenerateRandom | Be careful, Not implemented right now!",
+				0);
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * returns general information about Cryptoki
+	 * 
+	 * @param pInfo
+	 *            receives the information
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_GetInfo(CK_INFO pInfo) {
-		L.log("function called: C_GetInfo",  1);
+		L.log("function called: C_GetInfo", 1);
 		if (pInfo == null) {
 			return CK_RETURN_TYPE.CKR_ARGUMENTS_BAD;
 		}
-		if (pInfo.getLibraryVersion()==null){
-			pInfo.setLibraryVersion(new CK_VERSION((byte)0x00, (byte)0x00));
+		if (pInfo.getLibraryVersion() == null) {
+			pInfo.setLibraryVersion(new CK_VERSION((byte) 0x00, (byte) 0x00));
 		}
-		if (pInfo.getCryptokiVersion()==null){
-			pInfo.setCryptokiVersion(new CK_VERSION((byte)0x00, (byte)0x00));
+		if (pInfo.getCryptokiVersion() == null) {
+			pInfo.setCryptokiVersion(new CK_VERSION((byte) 0x00, (byte) 0x00));
 		}
 		pInfo.setManufacturerID("TUG IAIK");
 		pInfo.setLibraryDescription("library description");
@@ -580,19 +905,73 @@ public class JAVApkcs11Interface {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * mixes additional seed material into the token’s random number generator
+	 * 
+	 * @deprecated, not implemented right now
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pSeed
+	 *            is the seed material
+	 * @param ulSeedLen
+	 *            is the length of the seed material
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
+	@Deprecated
 	public static long C_SeedRandom(long hSession, String pSeed, long ulSeedLen) {
-		L.log("function called: C_SeedRandom | Be careful, Not implemented right now!",  0);
+		L.log("function called: C_SeedRandom | Be careful, Not implemented right now!",
+				0);
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * modifies the PIN of the user that is currently logged in, or the CKU_USER
+	 * PIN if the session is not logged in
+	 * 
+	 * @deprecated, doesn't touch the pin at all by now.
+	 * 
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pOldPin
+	 *            is the old pin
+	 * @param ulOldLen
+	 *            is the length of the old pin
+	 * @param pNewPin
+	 *            is the new pin
+	 * @param ulNewLen
+	 *            is the length of the new pin
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
+
+	@Deprecated
 	public static long C_SetPIN(long hSession, String pOldPin, long ulOldLen,
 			String pNewPin, long ulNewLen) {
 		return CK_RETURN_TYPE.CKR_OK;
 	}
 
+	/**
+	 * initializes a signature operation, where the signature is an appendix to
+	 * the data
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pMechanism
+	 *            is the signature mechanism
+	 * @param hKey
+	 *            is the handle of the signature key
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_SignInit(long hSession, CK_MECHANISM pMechanism,
 			long hKey) {
-		L.log("function called: C_SignInit",  1);
+		L.log("function called: C_SignInit", 1);
 
 		try {
 			if (pMechanism == null) {
@@ -607,9 +986,23 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * continues a multiple-part signature operation, processing another data
+	 * part
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pPart
+	 *            points to the data part
+	 * @param ulPartLen
+	 *            is the length of the data part
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_SignUpdate(long hSession, byte[] pPart, long ulPartLen) {
 		try {
-		L.log("function called: C_SignUpdate",  1);
+			L.log("function called: C_SignUpdate", 1);
 			Session session = getRM().getSessionByHandle(hSession);
 			session.signAddData(pPart);
 			return CK_RETURN_TYPE.CKR_OK;
@@ -618,9 +1011,22 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * finishes a multiple-part signature operation, returning the signature
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pSignature
+	 *            receives the signature
+	 * @param pulSignatureLen
+	 *            receives the length of the signature
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_SignFinal(long hSession, byte[] pSignature,
 			CK_ULONG_PTR pulSignatureLen) {
-		L.log("function called: C_SignFinal",  1);
+		L.log("function called: C_SignFinal", 1);
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
@@ -645,20 +1051,38 @@ public class JAVApkcs11Interface {
 		}
 	}
 
+	/**
+	 * signs data in a single part, where the signature is an appendix to the
+	 * data
+	 * 
+	 * @param hSession
+	 *            is the session's handle
+	 * @param pData
+	 *            is the data
+	 * @param ulDataLen
+	 *            is the length of the data
+	 * @param pSignature
+	 *            receives the signature
+	 * @param pulSignatureLen
+	 *            receives the length of the signature
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
+	 */
 	public static long C_Sign(long hSession, byte[] pData, long ulDataLen,
 			byte[] pSignature, CK_ULONG_PTR pulSignatureLen) {
-		L.log("function called: C_Sign",  1);
-        L.log("Data to sign: \r\n"+ new String(pData), 2);
+		L.log("function called: C_Sign", 1);
+		L.log("Data to sign: \r\n" + new String(pData), 2);
 
-			long val = C_SignUpdate(hSession, pData, ulDataLen);
-			if (val != CK_RETURN_TYPE.CKR_OK) {
-				return val;
-			}
-			val = C_SignFinal(hSession, pSignature, pulSignatureLen);
-			if (val != CK_RETURN_TYPE.CKR_OK) {
-				return val;
-			}
-			return CK_RETURN_TYPE.CKR_OK;
+		long val = C_SignUpdate(hSession, pData, ulDataLen);
+		if (val != CK_RETURN_TYPE.CKR_OK) {
+			return val;
+		}
+		val = C_SignFinal(hSession, pSignature, pulSignatureLen);
+		if (val != CK_RETURN_TYPE.CKR_OK) {
+			return val;
+		}
+		return CK_RETURN_TYPE.CKR_OK;
 	}
 
 	/**
@@ -681,17 +1105,19 @@ public class JAVApkcs11Interface {
 	 *            number of attributes
 	 * @param phKey
 	 *            pointer to the key
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
 	 * 
 	 */
 	public static long C_UnwrapKey(long hSession, CK_MECHANISM pMechanism,
 			long hUnwrappingKey, byte[] pWrappedKey, long ulWrappedKeyLen,
 			CK_ATTRIBUTE[] pTemplate, long ulAttributeCount, CK_ULONG_PTR phKey) {
-		L.log("function called: C_UnwrapKey",  1);
+		L.log("function called: C_UnwrapKey", 1);
 		Session session;
 		try {
 			session = getRM().getSessionByHandle(hSession);
-			PKCS11Object obj = session.getSlot().objectManager
-					.getObject(hUnwrappingKey);
+	//		PKCS11Object obj = session.getSlot().objectManager .getObject(hUnwrappingKey);
 			session.decryptInit(pMechanism, hUnwrappingKey);
 			session.decrypt(pWrappedKey);
 			byte[] unwrappedKey = session.decryptGetData();
@@ -700,7 +1126,9 @@ public class JAVApkcs11Interface {
 			for (int i = 0; i < pTemplate.length; i++) {
 				pTemplate2[i] = pTemplate[i];
 			}
-			pTemplate2[pTemplate2.length - 1] = new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_VALUE, unwrappedKey, unwrappedKey.length);
+			pTemplate2[pTemplate2.length - 1] = new CK_ATTRIBUTE(
+					CK_ATTRIBUTE_TYPE.CKA_VALUE, unwrappedKey,
+					unwrappedKey.length);
 			C_FindObjectsInit(hSession, pTemplate2, 1);
 			CK_ULONG_PTR foundObjectCount = new CK_ULONG_PTR(0);
 			C_FindObjects(hSession, null, 3, foundObjectCount);
@@ -718,7 +1146,6 @@ public class JAVApkcs11Interface {
 			phKey.setValue(hKey);
 
 		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return e.getCode();
 		}
@@ -742,13 +1169,16 @@ public class JAVApkcs11Interface {
 	 *            buffer for the wrapped key
 	 * @param pulWrappedKeyLen
 	 *            pointer to the length of the wrapped key
+	 * @return A long value according to PKCS#11 standard
+	 * @see PKCS#11 v2.20 standard: <br>
+	 *      ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-11/v2-20/pkcs-11v2-20.pdf
 	 * 
 	 */
 	public static long C_WrapKey(long hSession, CK_MECHANISM pMechanism,
 			long hWrappingKey, long hKey, byte[] pWrappedKey,
 			CK_ULONG_PTR pulWrappedKeyLen) {
 
-		L.log("function called: C_WrapKey",  1);
+		L.log("function called: C_WrapKey", 1);
 		try {
 			Session session = getRM().getSessionByHandle(hSession);
 			session = getRM().getSessionByHandle(hSession);
@@ -760,7 +1190,6 @@ public class JAVApkcs11Interface {
 			pWrappedKey = session.encryptGetData();
 			session.decryptFinal();
 		} catch (PKCS11Error e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return e.getCode();
 		}

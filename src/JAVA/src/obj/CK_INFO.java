@@ -1,10 +1,5 @@
 package obj;
 
-import java.io.IOException;
-import java.lang.InterruptedException;
-import java.lang.NullPointerException;
-import java.lang.Object;
-import java.lang.String;
 
 public class CK_INFO {
 	private final String empty = "                                                  ";
@@ -19,19 +14,6 @@ public class CK_INFO {
 
 		this.cryptokiVersion = cryptokiVersion;
 		this.libraryVersion = libraryVersion;
-//		if (manufacturerID == null) {
-//			this.manufacturerID = empty.substring(0, 32);
-//		} else {
-//			this.manufacturerID = (manufacturerID.concat(empty)).substring(0,
-//					31);
-//		}
-//		this.flags = flags;
-//		if (libraryDescription == null) {
-//			this.libraryDescription = empty.substring(0, 32);
-//		} else {
-//			this.libraryDescription = (libraryDescription.concat(empty))
-//					.substring(0, 31);
-//		}
 	}
 
 	public CK_VERSION getCryptokiVersion() {

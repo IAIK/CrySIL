@@ -6,8 +6,6 @@ import pkcs11.Slot.CryptoOperationParams;
 
 public class CryptoHelper {
 
-//	private sMechanism mechanism;
-//	private PKCS11Object key;
 	private CryptoOperationParams params;
 	private byte[] pData = new byte[0];
 	private byte[] cData = null;

@@ -9,8 +9,12 @@ import java.util.ArrayList;
 
 import configuration.L;
 
-//import proxys.CK_VOID_PTR;
-
+/**
+ * 
+ * represents a PKCS#11 Session.
+ * does the object-handling, and crypto stuff.
+ *
+ */
 public class Session {
 	public enum ACCESS_TYPE {
 		RO, RW
@@ -22,9 +26,7 @@ public class Session {
 
 	// private USER_TYPE utype;
 	private ACCESS_TYPE atype;
-	private byte[] pApplication;
 	private Slot slot;
-	private long flags;
 	private long handle;
 
 	public CryptoHelper signHelper;
@@ -171,9 +173,10 @@ public class Session {
 		if (decryptHelper == null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OPERATION_NOT_INITIALIZED);
 		}
-		
-		byte[] plain_data = getSlot().getToken().decrypt(encdata, decryptHelper.getKey(), decryptHelper.getMechanism());
-		//throw something?
+
+		byte[] plain_data = getSlot().getToken().decrypt(encdata,
+				decryptHelper.getKey(), decryptHelper.getMechanism());
+		// throw something?
 		decryptHelper.setProcessedData(plain_data);
 	}
 
@@ -232,7 +235,7 @@ public class Session {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_OPERATION_ACTIVE);
 		}
 		ArrayList<Long> found_objs = getSlot().objectManager.findObjects(attr);
-		L.log("found "+ found_objs.size() + " objects!", 5);
+		L.log("found " + found_objs.size() + " objects!", 5);
 		findObjectsHelper = new FindObjectsHelper(found_objs);
 	}
 

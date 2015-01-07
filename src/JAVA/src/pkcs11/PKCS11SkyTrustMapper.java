@@ -23,17 +23,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import configuration.L;
-
+/**
+ * 
+ * maps skytrust objects to PKCS#11 objects, creates the templates for PKCS11#11.
+ * 
+ *
+ */
 public class PKCS11SkyTrustMapper {
 
 	private static HashMap<Long, SkyTrustAlgorithm> mechanism_map = new HashMap<>();
 	private static ArrayList<CK_ATTRIBUTE> skytrust_template;
-	private static Long architekturkorrekturmanufaktur = 1L;
+	private static Long architekturkorrektur = 1L;
 
 	static {
-		if(System.getProperty("os.arch").compareTo("amd64")==0){
+		if(System.getProperty("os.arch").compareTo("amd64")==0 || System.getProperty("os.arch").compareTo("x86_64")==0){
 			L.log("adapting to 64bit architecture", 1);
-			architekturkorrekturmanufaktur=2L;
+			architekturkorrektur=2L;
 		}else{
 			L.log("32-bit is really okay!", 1);
 		}
@@ -43,15 +48,18 @@ public class PKCS11SkyTrustMapper {
 		skytrust_template.add(new CK_ATTRIBUTE(
 				CK_ATTRIBUTE_TYPE.CKA_MODIFIABLE, false, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_KEY_TYPE,
-				CK_KEY_TYPE.CKK_RSA, 4*architekturkorrekturmanufaktur));
+				CK_KEY_TYPE.CKK_RSA, 4*architekturkorrektur));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LOCAL,
 				false, 1));
 		skytrust_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_DERIVE,
 				false, 1));
 	}
 	static {
-		if(System.getProperty("os.arch").compareTo("amd64")==0){
-			architekturkorrekturmanufaktur=2L;
+		if(System.getProperty("os.arch").compareTo("amd64")==0 || System.getProperty("os.arch").compareTo("x86_64")==0){
+			L.log("adapting to 64bit architecture", 1);
+			architekturkorrektur=2L;
+		}else{
+			L.log("32-bit is really okay!", 1);
 		}
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS,
 				SkyTrustAlgorithm.RSAES_PKCS1_V1_5);
@@ -97,10 +105,10 @@ public class PKCS11SkyTrustMapper {
 	}
 
 	public static PKCS11Object mapToCert(MKey key) throws PKCS11Error {
-		if(key.isCertificate == false){
+		if (key == null) {
 			return null;
 		}
-		if (key == null) {
+		if(key.isCertificate == false){
 			return null;
 		}
 
@@ -110,10 +118,10 @@ public class PKCS11SkyTrustMapper {
 		ArrayList<CK_ATTRIBUTE> cert_template = new ArrayList<>( skytrust_template);
 		byte[] id = key.getId().getBytes();
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length)); // TODO: fix length
-		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 4*architekturkorrekturmanufaktur));
-		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 4*architekturkorrekturmanufaktur));
-		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 4*architekturkorrekturmanufaktur));
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length)); 
+		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_CERTIFICATE, 4*architekturkorrektur));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_TYPE, CK_CERTIFICATE_TYPE.CKC_X_509, 4*architekturkorrektur));
+		cert_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_CERTIFICATE_CATEGORY, 1L, 4*architekturkorrektur));
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TRUSTED, true, 1));
 
 		cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
@@ -165,10 +173,10 @@ public class PKCS11SkyTrustMapper {
 	}
 
 	public static PKCS11Object mapToPub(MKey key) throws PKCS11Error {
-		if(key.isCertificate == false){
+		if (key == null) {
 			return null;
 		}
-		if (key == null) {
+		if(key.isCertificate == false){
 			return null;
 		}
 
@@ -182,7 +190,7 @@ public class PKCS11SkyTrustMapper {
 		
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ID, id, id.length));
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
-		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 4*architekturkorrekturmanufaktur));
+		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_PUBLIC_KEY, 4*architekturkorrektur));
 		
 		
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, false, 1));
@@ -198,10 +206,8 @@ public class PKCS11SkyTrustMapper {
 			X509Certificate iaikcert = new X509Certificate(cert);
 
 			PublicKey k = iaikcert.getPublicKey();
-			RSAPublicKey rsakey = new RSAPublicKey(k.getEncoded()); // TODO geht
-																	// das ned
-																	// irgendwie
-																	// schöner?
+			RSAPublicKey rsakey = new RSAPublicKey(k.getEncoded()); 
+																	
 			byte[] kenc = k.getEncoded();
 			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE, kenc, kenc.length));
 
@@ -213,7 +219,7 @@ public class PKCS11SkyTrustMapper {
 				return null;
 			}
 			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS, modb, modb.length));
-			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(), 4*architekturkorrekturmanufaktur));
+			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_MODULUS_BITS, (long) mod.bitLength(), 4*architekturkorrektur));
 			pub_template.add(new CK_ATTRIBUTE( CK_ATTRIBUTE_TYPE.CKA_PUBLIC_EXPONENT, expb, expb.length));
 
 			byte[] subject = iaikcert.getSubjectX500Principal().getEncoded();
@@ -241,7 +247,7 @@ public class PKCS11SkyTrustMapper {
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
 
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS,
-				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 4*architekturkorrekturmanufaktur));
+				CK_OBJECT_TYPE.CKO_PRIVATE_KEY, 4*architekturkorrektur));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE,
 				true, 1));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SENSITIVE,
@@ -261,15 +267,13 @@ public class PKCS11SkyTrustMapper {
 			X509Certificate iaikcert = new X509Certificate(cert);
 
 			PublicKey k = iaikcert.getPublicKey();
-			RSAPublicKey rsakey = new RSAPublicKey(k.getEncoded()); // TODO geht
-																	// das ned
-																	// irgendwie
-																	// schöner?
+			RSAPublicKey rsakey = new RSAPublicKey(k.getEncoded()); 
+																	
+																	
 			BigInteger mod = rsakey.getModulus();
 			byte[] modb = mod.toByteArray();
 			private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS, modb, modb.length));
 		} catch (CertificateException | Base64Exception | InvalidKeyException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -283,28 +287,29 @@ public class PKCS11SkyTrustMapper {
 		return obj;
 	}
 
-	public static PKCS11Object mapToKeyFile(MKey key) throws PKCS11Error {
-		ArrayList<CK_ATTRIBUTE> private_template = new ArrayList<>();
-		byte[] value = null;
-		byte[] id = key.getId().getBytes();
-		try {
-			value = Util.fromBase64String(key.getEncodedCertificate());
-		} catch (Base64Exception e) {
-			e.printStackTrace();
-		}
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_DATA, 8));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, true, 1));
-		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE,value, value.length));
-		
-		// private_template.add(new
-		// ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,data));
-
-		PKCS11Object obj = ObjectBuilder
-				.createFromTemplate((CK_ATTRIBUTE[]) private_template
-						.toArray(new CK_ATTRIBUTE[private_template.size()]));
-		obj.setTag(key);
-		return obj;
-	}
+	
+//	public static PKCS11Object mapToKeyFile(MKey key) throws PKCS11Error {
+//		ArrayList<CK_ATTRIBUTE> private_template = new ArrayList<>();
+//		byte[] value = null;
+//		byte[] id = key.getId().getBytes();
+//		try {
+//			value = Util.fromBase64String(key.getEncodedCertificate());
+//		} catch (Base64Exception e) {
+//			e.printStackTrace();
+//		}
+//		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_TOKEN,true, 1));
+//		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_LABEL,id, id.length));
+//		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_CLASS, CK_OBJECT_TYPE.CKO_DATA, 8));
+//		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PRIVATE, true, 1));
+//		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE,value, value.length));
+//		
+//		// private_template.add(new
+//		// ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,data));
+//
+//		PKCS11Object obj = ObjectBuilder
+//				.createFromTemplate((CK_ATTRIBUTE[]) private_template
+//						.toArray(new CK_ATTRIBUTE[private_template.size()]));
+//		obj.setTag(key);
+//		return obj;
+//	}
 }

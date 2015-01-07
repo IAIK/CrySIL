@@ -29,7 +29,6 @@ public class ResourceManager {
 				_instance = new ResourceManager();
 				// _instance.updateSlotList();
 			} catch (PKCS11Error e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

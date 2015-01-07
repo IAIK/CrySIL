@@ -1,13 +1,11 @@
 package pkcs11;
 
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-import obj.CK_MECHANISM;
-import objects.MKey;
-import objects.PKCS11Object;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import obj.CK_MECHANISM;
+import objects.MKey;
+import objects.PKCS11Object;
 import configuration.Server;
 import configuration.Server.ServerInfo;
 
@@ -74,9 +72,11 @@ public class Token implements IToken {
 				o = PKCS11SkyTrustMapper.mapToPub(key);
 				if (o != null)
 					objlist.add(o);
-				o = PKCS11SkyTrustMapper.mapToKeyFile(key);
-				if (o != null)
-					objlist.add(o);
+				/*
+				 * //for futur use with veracrypt o =
+				 * PKCS11SkyTrustMapper.mapToKeyFile(key); if (o != null)
+				 * objlist.add(o);
+				 */
 			}
 			return objlist;
 		} catch (PKCS11Error e) {

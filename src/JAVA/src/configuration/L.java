@@ -1,12 +1,10 @@
 package configuration;
 
-public class L {
-	/*		Loglevel explaination:
+	/**		Loglevel explaination:
 	 * 		0... log nothing, well, almost nothing, just the important stuff!
 	 * 		increase for more output...
 	 */
-	
-	
+public class L {
 	
 	
 	public static int level = 0;
