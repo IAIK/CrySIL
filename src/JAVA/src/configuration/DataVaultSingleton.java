@@ -55,7 +55,7 @@ public class DataVaultSingleton {
 					serverurl = null;
 
 				}
-				String[] line = wholeline.split("=");
+				String[] line = wholeline.split("=", 2);
 				if (line.length == 1) {
 					wholeline = breader.readLine();
 					continue;
