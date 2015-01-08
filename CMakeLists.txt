@@ -3,25 +3,34 @@ project (skytrust-pkcs11)
 
 SET(CMAKE_BUILD_TYPE Release)
 FIND_PACKAGE(JNI REQUIRED)
+
+
+if (APPLE)
+## JUST FOR APPLE/MAC MACHINES:
+## IF YOU HAVE INSTALLED MULTIPLE VERSIONS OF JAVA YOU MAYBE HAVE TO SET THE JNI DIRECTORIES MANUALLY
+## UNCOMMENT THE FOLLOWING LINES AND SET THE PATHS CORRECTLY
+##
+# SET(JNI_INCLUDE_DIRS "/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/include;/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/include/darwin")
+# SET(JNI_LIBRARIES "/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/jre/lib/server/libjvm.dylib")
+endif()
+
+
+
 include_directories(${JNI_INCLUDE_DIRS})
 LINK_DIRECTORIES(${JNI_LIBRARIES})
 
 add_definitions(-DSYKTRUSTJAR="${PROJECT_BINARY_DIR}/lib/PKCS11.jar")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
 
+
 if (WIN32)
-	message ("This is a WIN32 machine!")
+	message ("This is a WIN machine!")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWIN32=true ")
 else()
-	message ("This is a linux machine!")
+	message ("This is a linux/mac machine!")
 	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c99 -pedantic")
 	ADD_CUSTOM_TARGET(ant_build ant jar)
 	ADD_CUSTOM_COMMAND(TARGET ant_build COMMAND ant)
-
-#elseif (APPLE)
-#	message ("This is a mac machine!")
-	
-
 endif()
 
 SET(LIBSRC "src/C/src/pkcs11.c")

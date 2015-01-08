@@ -12,8 +12,8 @@ skytrust-pkcs11
 - cmake
 - make
 - gcc or visual studio
-	(tested with visual studio express 2012) ?
-- ant
+	(tested with visual studio express 2012)
+- ant (if you want to build from source)
 - java >= 1.7
 
 You have to have identical architectures for JAVA and
@@ -37,9 +37,15 @@ JAVA_HOME
 
 # BUILDING:
 
-- cmake .
-- make
-- make ant_build
+Linux/Mac:<br>
+- 'cmake .'
+- 'make'
+- 'make ant_build' or 'ant jar'
+Windows:<br>
+- 'cmake .'
+- 'ant jar'
+- 'msbuild skytrust-pkcs11.sln'
+
 
 # GENERATED FILES:
 
@@ -49,11 +55,11 @@ JAVA_HOME
 
  Windows: <br>
  PKCS11.jar<br>
- skytrustlib.dll<br>
+ skytrustpkcs11.dll<br>
 
  MAC:<br>
  PKCS11.jar<br>
- libsomething.dylib<br>
+ libskytrust.dylib<br>
 
 # known Problems:
 

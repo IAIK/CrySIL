@@ -2,4 +2,3 @@ tokenname=jartoken
 serverurl=http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth-2.0/rest/json
 username=
 password=
-debug=10
