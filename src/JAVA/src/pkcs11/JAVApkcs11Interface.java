@@ -18,7 +18,6 @@ import objects.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.springframework.web.client.ResourceAccessException;
 
 import configuration.L;
 import configuration.Server.ServerInfo;
@@ -61,11 +60,7 @@ public class JAVApkcs11Interface {
 		}
 		maintenanceThread.start();
 		try {
-			try {
 				getRM().updateSlotList();
-			} catch (ResourceAccessException e) {
-				e.printStackTrace();
-			}
 		} catch (PKCS11Error e) {
 			e.printStackTrace();
 		}

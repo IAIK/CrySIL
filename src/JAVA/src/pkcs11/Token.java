@@ -14,6 +14,7 @@ public class Token implements IToken {
 
 	public Token(Server.ServerInfo server_info) {
 		server = new ServerSession(server_info);
+		server.init();
 	}
 
 	@Override

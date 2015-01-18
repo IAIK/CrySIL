@@ -3,13 +3,35 @@ package pkcs11;
 import iaik.asn1.structures.AlgorithmID;
 import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-import objects.MKey;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
-import org.springframework.web.client.RestTemplate;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import objects.MKey;
 
 import at.iaik.skytrust.SkyTrustAPIFactory;
 import at.iaik.skytrust.common.SkyTrustAlgorithm;
@@ -26,18 +48,64 @@ import configuration.Server;
  * 
  * 
  * */
-public class ServerSession implements IServerSession {
+public class ServerSession implements IServerSession, ActionListener {
 
 	// private String sessionID;
 	private Server.ServerInfo server;
-	protected RestTemplate restTemplate = new RestTemplate();
 
 	private SkyTrustAPI api = null;
+	JFrame frame;
+	JTextField field;
 
 	public ServerSession(Server.ServerInfo s) {
 		server = s;
-		L.log("ServerSession.java: using server: " + s.getUrl(), 1);
-		SkyTrustAPIFactory.initialize(s.getUrl());
+	}
+
+	public void init() {
+
+		initAPI(server.getUrl());
+		
+//		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+//		frame = new JFrame();
+//
+//		frame.setSize(250, 150);
+//		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height
+//				/ 2 - frame.getSize().height / 2);
+//		JLabel label = new JLabel("URL:");
+//		field = new JTextField("http://skytrust-dev.iaik.tugraz.at/skytrust-server-with-auth-2.0/rest/json");
+//		JButton button = new JButton("OK");
+//		button.addActionListener(this);
+//		frame.add(label, BorderLayout.NORTH);
+//		frame.add(field);
+//		frame.add(button, BorderLayout.SOUTH);
+//		frame.show();
+//		try {
+//			synchronized (this) {
+//
+//				this.wait();
+//			}
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		synchronized (this) {
+
+			System.out.println("action performed!");
+			initAPI(field.getText());
+			this.notify();
+			frame.hide();
+			System.out.println("finished action");
+		}
+
+	}
+
+	private void initAPI(String url) {
+		SkyTrustAPIFactory.initialize(url);
 		api = SkyTrustAPI.getInstance();
 	}
 
@@ -227,4 +295,5 @@ public class ServerSession implements IServerSession {
 	public boolean isAutheticated() {
 		return false;
 	}
+
 }

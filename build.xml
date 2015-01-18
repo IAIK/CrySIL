@@ -32,6 +32,7 @@
         <pathelement location="skytrust-element-java/core/target/classes/"/>
         <!--<pathelement location="${c.lib.dir}/dependencies.jar"/>-->
         <pathelement location="${c.lib.dir}/instance-jce-to-remote-1.0-SNAPSHOT-jar-with-dependencies.jar"/>
+        <pathelement location="${c.lib.dir}/okhttp-2.3.0-SNAPSHOT.jar"/>
     </path>
 	
     <target name="init" depends="SWIG-preprocess,SWIG,cmake"/>

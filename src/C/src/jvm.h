@@ -6,9 +6,10 @@
 #ifndef __JVM_H
 #define __JVM_H
 
+//#define DEBUG true
 
 #ifdef DEBUG
-#define NUMJAVAOPTIONS 2
+#define NUMJAVAOPTIONS 3
 #else
 #define NUMJAVAOPTIONS 1
 #endif
@@ -101,11 +102,10 @@ void get_instance_thread(void* data) {
     /*	HMODULE hLib = LoadLibrary("C:\\Program Files (x86)\\Java\\jre1.8.0_25\\bin\\client\\jvm.dll"); */
     /*	JNI_CREATEJAVAVM JNI_CreateJavaVM = NULL; */
     instance->options[0].optionString = "-Djava.class.path="SYKTRUSTJAR;
-    /*instance->options[1].optionString = "-Xcheck:jni";*/
-    /*instance->options[2].optionString = "-verbose:class";*/
 
 
 #ifdef DEBUG
+    instance->options[1].optionString = "-verbose:class";
     instance->options[2].optionString = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:8000";
 #endif
 
