@@ -27,7 +27,6 @@ set the following environment variables properly:
 
 Linux:<br>
 LD_LIBRARY_PATH (e.g. Debian 64 bit: 'export LD_LIBRARY_PATH = /usr/lib/jvm/default-java/jre/lib/amd64/server')<br>
-JAVA_HOME<br>
 
 Mac:<br>
 JAVA_HOME<br>
@@ -44,7 +43,7 @@ Linux/Mac:<br>
 Windows:<br>
 - 'cmake .'
 - 'ant jar'
-- 'msbuild skytrust-pkcs11.sln'
+- 'msbuild skytrust-pkcs11.sln' (in the VS Developer Command Prompt)
 
 
 # GENERATED FILES:
@@ -73,9 +72,6 @@ For configuration purposes, we use a plain-text config file. You can put multipl
 
 -tokenname=servername <br>
 -server=http://url.com <br>
--username=username <br>
--password=password
-
 
 (tokenname is just a human readable identifier for the emulated card)
 The file is called 'config' and lies in the root directory of the project. 
@@ -87,6 +83,12 @@ Seperate different servers with blank lines.
 
 The file is packed into the generated 'PKCS11.jar' file.
 So, after editing call 'ant jar' or 'make ant_build' again.
+
+Since this happens at compile-time, you maybe want to change url 
+while running. You can use 'file:/path/to/file' as URI and give
+give the real ServerUrl in form of 'target = http://....';
+
+
 
 
 # INSTALLATION:
