@@ -5,14 +5,13 @@ SET(CMAKE_BUILD_TYPE Release)
 FIND_PACKAGE(JNI REQUIRED)
 
 
-if (APPLE)
 ## JUST FOR APPLE/MAC MACHINES:
 ## IF YOU HAVE INSTALLED MULTIPLE VERSIONS OF JAVA YOU MAYBE HAVE TO SET THE JNI DIRECTORIES MANUALLY
 ## UNCOMMENT THE FOLLOWING LINES AND SET THE PATHS CORRECTLY
+## There is another Line at the end of this file
 ##
 # SET(JNI_INCLUDE_DIRS "/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/include;/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/include/darwin")
 # SET(JNI_LIBRARIES "/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/jre/lib/server/libjvm.dylib")
-endif()
 
 
 
@@ -40,5 +39,11 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/lib)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/lib)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 add_library(skytrustpkcs11 SHARED ${LIBSRC})
+
+
+## JUST FOR APPLE/MAC MACHINES:
+## IF YOU HAVE INSTALLED MULTIPLE VERSIONS OF JAVA YOU MAYBE HAVE TO SET THE JNI DIRECTORIES MANUALLY
+## UNCOMMENT THE FOLLOWING LINES AND SET THE PATHS CORRECTLY
+#SET(JAVA_JVM_LIBRARY "/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/jre/lib/server/libjvm.dylib")
 target_link_libraries(skytrustpkcs11 ${JAVA_JVM_LIBRARY})
 #install(TARGETS skytrustpkcs11 DESTINATION ${CMAKE_INSTALL_PREFIX}/lib) 
