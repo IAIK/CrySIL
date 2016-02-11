@@ -1,5 +1,6 @@
 package org.crysil.commons;
 
+import org.crysil.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 
@@ -14,6 +15,7 @@ public interface Module {
 	 * Takes a CrySIL protocol package.
 	 * 
 	 * @param object
+	 * @throws UnsupportedRequestException 
 	 */
-	public Response take(Request request);
+	public Response take(Request request) throws UnsupportedRequestException;
 }
