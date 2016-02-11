@@ -11,6 +11,7 @@
 
     <modules>
         <module>commons/java</module>
+        <module>actors/java/staticKeyEncryptionActor</module>
     </modules>
 
     <properties>
