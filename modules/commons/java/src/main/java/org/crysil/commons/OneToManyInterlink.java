@@ -6,7 +6,11 @@ import java.util.List;
  * The 1:n Interlink implementation allows exactly multiple outgoing paths.
  */
 public class OneToManyInterlink implements Interlink {
-	protected List<Module> modules;
+
+	/**
+	 * The list of modules. This list is only accessible to implementing classes by its getter.
+	 */
+	private List<Module> modules;
 
 	/*
 	 * (non-Javadoc)
