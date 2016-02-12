@@ -4,13 +4,17 @@
   <groupId>org.crysil.actor</groupId>
   <artifactId>staticKeyEncryption</artifactId>
   
-      <parent>
+    <parent>
         <artifactId>main</artifactId>
         <groupId>org.crysil</groupId>
         <version>2.0-1</version>
         <relativePath>../../..</relativePath>
     </parent>
-  
+
+    <properties>
+        <guava.version>14.0.1</guava.version>
+    </properties>
+
   <dependencies>
   	<dependency>
   		<groupId>org.crysil.commons</groupId>
@@ -18,12 +22,27 @@
   		<version>${crysil.version}</version>
   	</dependency>
 
+    <!-- Crypto -->
+    <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>1.54</version>
+    </dependency>
+
     <!-- Test -->
     <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
         <version>${testng.version}</version>
         <scope>test</scope>
+    </dependency>
+
+    <!-- Misc -->
+    <dependency>
+        <artifactId>guava</artifactId>
+        <groupId>com.google.guava</groupId>
+        <type>jar</type>
+        <version>${guava.version}</version>
     </dependency>
   </dependencies>
 </project>
