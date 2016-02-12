@@ -1,5 +1,6 @@
 package org.crysil.builders;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.crysil.protocol.payload.PayloadResponse;
@@ -25,6 +26,10 @@ public class PayloadBuilder {
 		tmp.setEncryptionKeys(encryptionKeys);
 
 		return tmp;
+	}
+
+	public static Object buildEncryptRequest(String algorithm, String string, Key key) {
+		return buildEncryptRequest(algorithm, Arrays.asList(new String[] { string }), Arrays.asList(new Key[] { key }));
 	}
 
 	public static PayloadResponse buildStatusResponse(int errorCode) {

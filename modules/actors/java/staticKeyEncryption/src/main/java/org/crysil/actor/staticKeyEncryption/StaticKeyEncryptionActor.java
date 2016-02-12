@@ -10,6 +10,7 @@ import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 
 /**
@@ -20,6 +21,7 @@ public class StaticKeyEncryptionActor implements Module {
 
 	public StaticKeyEncryptionActor() {
 		commands.put(PayloadDiscoverKeysRequest.class, new DiscoverKeys());
+		commands.put(PayloadEncryptRequest.class, new Encrypt());
 	}
 
 	@Override

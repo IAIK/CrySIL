@@ -11,6 +11,8 @@ import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
+import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptResponse;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysResponse;
@@ -59,11 +61,28 @@ public class TestTest {
 				"public key value does not match");
 		Assert.assertEquals(Base64.toBase64String(DUT.getJCEPrivateKey(new KeyHandle()).getEncoded()), rawPrivateKey,
 				"private key value does not match");
-		System.out.println(Base64.toBase64String(DUT.getX509Certificate(new KeyHandle()).getEncoded()).replace("\r", "")
-				.replace("\n", "").replace(" ", ""));
-		System.out.println(rawCert);
 		Assert.assertEquals(Base64.toBase64String(DUT.getX509Certificate(new KeyHandle()).getEncoded())
 				.replace("\r", "").replace("\n", "").replace(" ", ""), rawCert, "cert does not match");
 	}
 
+	@DataProvider
+	Object[][] encryptFixtures() {
+		return new Object[][] {
+				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data",
+						KeyBuilder.buildKeyHandle("testkey", "1")) },
+				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data",
+						KeyBuilder.buildInternalCertificate("testkey", "1", "is ignored anyways")) },
+				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data", KeyBuilder.buildExternalCertificate(
+						"MIICzjCCAbagAwIBAgIGAVLViUrLMA0GCSqGSIb3DQEBCwUAMBExDzANBgNVBAMTBmNyeXNpbDAeFw0xNjAyMTExMjUxMzBaFw0xNjAxMjcyMTA5NDFaMCMxITAfBgNVBAMMGHN0YXRpY0tleUVuY3J5cHRpb25BY3RvcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMEEnkrsyfTJ3ZCXgZMpqL7w4hYwjmLHfMz4ARsNvnrhX2SN2jSd9nWVjH8VtQNqgxd/TGsy7AgLBOmdlaOQUF89sRIj5Zk5KPHFK4zPULI9Fl3NL1JmCmz7K4IXKPbUPfDzFUJ/eZFFE6SwzkjxU3my+q6JVPlhLXQtS0Lay2jYa6MFidDp8bRiSDXP/2 WRTa6B1s3ZoOq5bvgaI3j0gcxKEe/9l JnhkCuO7xOyrDpeMzFvfROp4wqe72pw5yvdl5Tnx5AB/KWKZwQ82wQcHSoE6JOrHz9fPx6EBjfOd6kqtj1y4JOgjayaChweTfS6dURDusgmTGq5uHkWAndhiIcCAwEAAaMaMBgwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggEBAAh7motLy9RdpvFCEgqMidrgON+n3570OTBjgePsWxHLXzdWRiKevmAI1VAi7K+Qr7KqdZhE7CM5KM5tmhUJ+9 SorPmEPbyeaA8SVMDF0whibena3KorBTqIlTkYLwZL9UXkTnOb876VlijxqABKt/rOTP7dZrgErqgcbbTo8KVi2BueiXjLwlV8CJK4s2BWYcLPdMO+Z0jGIjcI4/wuk+60 oR8tb5vUwWH62pXw+1 IgpnVrklkkM3tNQ0v38A9xKgrK3c1UL7F9KWpZgsCkUR8lfDP0wHAx+Yd5fDp4vTdxSyH/WydLxy2syo1hyoRSE4SXWJBj+N0C+IgGOX3GsNQ=")) } };
+	}
+
+	@Test(dataProvider = "encryptFixtures")
+	public void encryptTest(PayloadRequest payload) throws Exception {
+		Module DUT = new StaticKeyEncryptionActor();
+
+		Request request = new Request(null, payload);
+
+		Response response = DUT.take(request);
+		Assert.assertTrue(response.getPayload() instanceof PayloadEncryptResponse);
+	}
 }
