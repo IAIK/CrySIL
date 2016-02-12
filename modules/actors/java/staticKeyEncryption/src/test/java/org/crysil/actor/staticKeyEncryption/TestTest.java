@@ -9,9 +9,11 @@ import org.crysil.commons.Module;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
+import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptResponse;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
@@ -84,5 +86,19 @@ public class TestTest {
 
 		Response response = DUT.take(request);
 		Assert.assertTrue(response.getPayload() instanceof PayloadEncryptResponse);
+	}
+
+	@Test
+	public void decryptionTest() throws UnsupportedRequestException {
+		PayloadRequest payload = PayloadBuilder.buildDecryptRequest(new KeyHandle(),
+				"UgKSFG8R0meUoR3VbewR20MwrEJI3Nx2Qvdb2/htnPmTnTqx6+qacplg5jtMB6h8W4YaQZ1L3IEGJeLqI/fkPrvxoh95pIacpEJQzz3zyg1YGqtDo6NZARfMAYIj0COmpY2E1BcJmVbtUYW95DcqYt7Brsyse+lqZBkIo5WObpqBIhGkDcmw+5goRcY92/kpwV8YL8g8nMbqOJpq85vZfbmtR1rtoo1kWt+erUN4ThkQw7jaFvJmjSFAMpKql4OzdKb4NYrb28WA66VIKGqiHzcUDAJC5KGtp3a4UYKcAEW4mm+8vcMAjLwxbUGU7CPvRwyk3TQ+GCaVw5EA8ZopYw==");
+
+		Module DUT = new StaticKeyEncryptionActor();
+
+		Request request = new Request(null, payload);
+
+		Response response = DUT.take(request);
+		Assert.assertTrue(response.getPayload() instanceof PayloadDecryptResponse);
+		Assert.assertEquals(((PayloadDecryptResponse) response.getPayload()).getPlainData().get(0), "data");
 	}
 }
