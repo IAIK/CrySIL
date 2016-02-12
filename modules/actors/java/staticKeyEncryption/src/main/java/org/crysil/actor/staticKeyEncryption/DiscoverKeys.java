@@ -3,7 +3,7 @@ package org.crysil.actor.staticKeyEncryption;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.crysil.UnsupportedRequestException;
+import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.payload.PayloadRequest;
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.key.InternalCertificate;

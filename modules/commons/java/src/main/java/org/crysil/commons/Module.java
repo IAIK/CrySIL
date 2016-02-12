@@ -1,6 +1,6 @@
 package org.crysil.commons;
 
-import org.crysil.UnsupportedRequestException;
+import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 

@@ -1,11 +1,11 @@
 package org.crysil.actor.staticKeyEncryption;
 
-import org.crysil.UnsupportedRequestException;
 import org.crysil.builders.KeyBuilder;
+import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
+import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysResponse;
 import org.testng.Assert;
@@ -18,12 +18,11 @@ public class TestTest {
 	Object[][] fixtures() {
 		return new Object[][] { { "handle", false, KeyBuilder.buildKeyHandle("testkey", "1") },
 				{ "certificate", false, KeyBuilder.buildInternalCertificate("testkey", "1", "TODO") },
-				{ "wrong", true, null } };
-
+				{ "wrong", true, PayloadBuilder.buildStatusResponse(601) } };
 	}
 
 	@Test(dataProvider = "fixtures")
-	public void discoverKeyTest(String keytype, boolean exceptionExpected, Key expected) {
+	public void discoverKeyTest(String keytype, boolean expectError, Object expected) {
 		Module DUT = new StaticKeyEncryptionActor();
 
 		Request request = new Request();
@@ -34,11 +33,14 @@ public class TestTest {
 		Response response;
 		try {
 			response = DUT.take(request);
-			Assert.assertFalse(exceptionExpected, "we should not be here");
-			Assert.assertEquals(((PayloadDiscoverKeysResponse) response.getPayload()).getKey().size(), 1);
-			Assert.assertEquals(((PayloadDiscoverKeysResponse) response.getPayload()).getKey().get(0), expected);
+			if (expectError)
+				Assert.assertEquals(response.getPayload(), expected);
+			else {
+				Assert.assertEquals(((PayloadDiscoverKeysResponse) response.getPayload()).getKey().size(), 1);
+				Assert.assertEquals(((PayloadDiscoverKeysResponse) response.getPayload()).getKey().get(0), expected);
+			}
 		} catch (UnsupportedRequestException e) {
-			Assert.assertTrue(exceptionExpected, "we should not be here");
+			Assert.fail("An exception occured where it should not have");
 		}
 	}
 }
