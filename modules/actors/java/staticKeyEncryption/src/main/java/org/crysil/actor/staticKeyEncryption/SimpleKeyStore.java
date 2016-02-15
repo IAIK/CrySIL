@@ -80,10 +80,8 @@ public class SimpleKeyStore {
 		if (current instanceof KeyHandle || current instanceof InternalCertificate) {
 			return pubKey;
 		} else if (current instanceof ExternalCertificate) {
-			X509Certificate cert;
 			try {
-				cert = X509Certificate.getInstance(((ExternalCertificate) current).getEncodedCertificate());
-				return cert.getPublicKey();
+				return ((ExternalCertificate) current).getCertificate().getPublicKey();
 			} catch (CertificateException e) {
 				throw new InvalidCertificateException();
 			}
@@ -118,7 +116,7 @@ public class SimpleKeyStore {
 			return cert;
 		} else if (current instanceof ExternalCertificate) {
 			try {
-				return X509Certificate.getInstance(((ExternalCertificate) current).getEncodedCertificate());
+				return ((ExternalCertificate) current).getCertificate();
 			} catch (CertificateException e) {
 				throw new InvalidCertificateException();
 			}

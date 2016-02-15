@@ -1,6 +1,7 @@
 package org.crysil.actor.staticKeyEncryption;
 
 import javax.security.cert.CertificateEncodingException;
+import javax.security.cert.CertificateException;
 
 import org.crysil.builders.KeyBuilder;
 import org.crysil.builders.PayloadBuilder;
@@ -32,7 +33,7 @@ public class TestTest {
 	String rawCert = "MIICzjCCAbagAwIBAgIGAVLViUrLMA0GCSqGSIb3DQEBCwUAMBExDzANBgNVBAMTBmNyeXNpbDAeFw0xNjAyMTExMjUxMzBaFw0xNjAxMjcyMTA5NDFaMCMxITAfBgNVBAMMGHN0YXRpY0tleUVuY3J5cHRpb25BY3RvcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMEEnkrsyfTJ3ZCXgZMpqL7w4hYwjmLHfMz4ARsNvnrhX2SN2jSd9nWVjH8VtQNqgxd/TGsy7AgLBOmdlaOQUF89sRIj5Zk5KPHFK4zPULI9Fl3NL1JmCmz7K4IXKPbUPfDzFUJ/eZFFE6SwzkjxU3my+q6JVPlhLXQtS0Lay2jYa6MFidDp8bRiSDXP/2WRTa6B1s3ZoOq5bvgaI3j0gcxKEe/9lJnhkCuO7xOyrDpeMzFvfROp4wqe72pw5yvdl5Tnx5AB/KWKZwQ82wQcHSoE6JOrHz9fPx6EBjfOd6kqtj1y4JOgjayaChweTfS6dURDusgmTGq5uHkWAndhiIcCAwEAAaMaMBgwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggEBAAh7motLy9RdpvFCEgqMidrgON+n3570OTBjgePsWxHLXzdWRiKevmAI1VAi7K+Qr7KqdZhE7CM5KM5tmhUJ+9SorPmEPbyeaA8SVMDF0whibena3KorBTqIlTkYLwZL9UXkTnOb876VlijxqABKt/rOTP7dZrgErqgcbbTo8KVi2BueiXjLwlV8CJK4s2BWYcLPdMO+Z0jGIjcI4/wuk+60oR8tb5vUwWH62pXw+1IgpnVrklkkM3tNQ0v38A9xKgrK3c1UL7F9KWpZgsCkUR8lfDP0wHAx+Yd5fDp4vTdxSyH/WydLxy2syo1hyoRSE4SXWJBj+N0C+IgGOX3GsNQ=";
 
 	@DataProvider
-	Object[][] discoverKeyFixtures() {
+	Object[][] discoverKeyFixtures() throws CertificateEncodingException, CertificateException {
 		return new Object[][] { { "handle", false, KeyBuilder.buildKeyHandle("testkey", "1") },
 				{ "certificate", false, KeyBuilder.buildInternalCertificate("testkey", "1", rawCert) },
 				{ "wrong", true, PayloadBuilder.buildStatusResponse(601) } };
@@ -70,7 +71,7 @@ public class TestTest {
 	}
 
 	@DataProvider
-	Object[][] encryptFixtures() {
+	Object[][] encryptFixtures() throws CertificateEncodingException, CertificateException {
 		return new Object[][] {
 				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data",
 						KeyBuilder.buildKeyHandle("testkey", "1")) },

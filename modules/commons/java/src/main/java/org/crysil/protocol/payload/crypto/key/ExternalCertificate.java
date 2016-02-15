@@ -1,5 +1,9 @@
 package org.crysil.protocol.payload.crypto.key;
 
+import javax.security.cert.CertificateEncodingException;
+import javax.security.cert.CertificateException;
+import javax.security.cert.X509Certificate;
+
 import org.crysil.logging.Logger;
 
 import com.google.common.io.BaseEncoding;
@@ -12,18 +16,19 @@ public class ExternalCertificate extends Key {
 	/** The encoded certificate. */
 	protected String encodedCertificate = "";
 
-	/**
-	 * Gets the encoded certificate.
-	 *
-	 * @return the encoded certificate
-	 */
-	public byte[] getEncodedCertificate() {
-		return BaseEncoding.base64().decode(encodedCertificate);
-	}
-
 	@Override
 	public String getType() {
 		return "externalCertificate";
+	}
+
+	/**
+	 * get the certificate
+	 * 
+	 * @return
+	 * @throws CertificateException
+	 */
+	public X509Certificate getCertificate() throws CertificateException {
+		return X509Certificate.getInstance(BaseEncoding.base64().decode(encodedCertificate));
 	}
 
 	/**
@@ -31,9 +36,11 @@ public class ExternalCertificate extends Key {
 	 *
 	 * @param encodedCertificate
 	 *            the new encoded certificate
+	 * @throws CertificateEncodingException 
+	 * @throws javax.security.cert.CertificateEncodingException 
 	 */
-	public void setEncodedCertificate(byte[] encodedCertificate) {
-		this.encodedCertificate = BaseEncoding.base64().encode(encodedCertificate);
+	public void setCertificate(X509Certificate cert) throws CertificateEncodingException {
+		this.encodedCertificate = BaseEncoding.base64().encode(cert.getEncoded());
 	}
 
 	@Override

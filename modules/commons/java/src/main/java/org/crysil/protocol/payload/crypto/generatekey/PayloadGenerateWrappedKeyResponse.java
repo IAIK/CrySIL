@@ -1,7 +1,13 @@
 package org.crysil.protocol.payload.crypto.generatekey;
 
+import javax.security.cert.CertificateEncodingException;
+import javax.security.cert.CertificateException;
+import javax.security.cert.X509Certificate;
+
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.PayloadResponse;
+
+import com.google.common.io.BaseEncoding;
 
 /**
  * Holds an encrypted (wrapped) key. Only the service which can decrypt the key container can use the key.
@@ -39,22 +45,25 @@ public class PayloadGenerateWrappedKeyResponse extends PayloadResponse {
 	}
 
 	/**
-	 * Gets the encoded x509 certificate.
-	 *
-	 * @return the encoded x509 certificate
+	 * get the certificate
+	 * 
+	 * @return
+	 * @throws CertificateException
 	 */
-	public String getEncodedX509Certificate() {
-		return encodedX509Certificate;
+	public X509Certificate getCertificate() throws CertificateException {
+		return X509Certificate.getInstance(BaseEncoding.base64().decode(encodedX509Certificate));
 	}
 
 	/**
-	 * Sets the encoded x509 certificate.
+	 * Sets the encoded certificate.
 	 *
-	 * @param encodedX509Certificate
-	 *            the new encoded x509 certificate
+	 * @param encodedCertificate
+	 *            the new encoded certificate
+	 * @throws CertificateEncodingException 
+	 * @throws javax.security.cert.CertificateEncodingException 
 	 */
-	public void setEncodedX509Certificate(String encodedX509Certificate) {
-		this.encodedX509Certificate = encodedX509Certificate;
+	public void setCertificate(X509Certificate cert) throws CertificateEncodingException {
+		this.encodedX509Certificate = BaseEncoding.base64().encode(cert.getEncoded());
 	}
 
 	@Override
@@ -64,5 +73,36 @@ public class PayloadGenerateWrappedKeyResponse extends PayloadResponse {
 		result.encodedX509Certificate = Logger.isDebugEnabled() ? encodedX509Certificate : "*****";
 
 		return result;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((encodedWrappedKey == null) ? 0 : encodedWrappedKey.hashCode());
+		result = prime * result + ((encodedX509Certificate == null) ? 0 : encodedX509Certificate.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PayloadGenerateWrappedKeyResponse other = (PayloadGenerateWrappedKeyResponse) obj;
+		if (encodedWrappedKey == null) {
+			if (other.encodedWrappedKey != null)
+				return false;
+		} else if (!encodedWrappedKey.equals(other.encodedWrappedKey))
+			return false;
+		if (encodedX509Certificate == null) {
+			if (other.encodedX509Certificate != null)
+				return false;
+		} else if (!encodedX509Certificate.equals(other.encodedX509Certificate))
+			return false;
+		return true;
 	}
 }

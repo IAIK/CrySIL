@@ -147,4 +147,47 @@ public class PayloadGenerateWrappedKeyRequest extends PayloadRequest implements 
 
 		return result;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((certificateSubject == null) ? 0 : certificateSubject.hashCode());
+		result = prime * result + ((encryptionKeys == null) ? 0 : encryptionKeys.hashCode());
+		result = prime * result + ((keyType == null) ? 0 : keyType.hashCode());
+		result = prime * result + ((signingKey == null) ? 0 : signingKey.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PayloadGenerateWrappedKeyRequest other = (PayloadGenerateWrappedKeyRequest) obj;
+		if (certificateSubject == null) {
+			if (other.certificateSubject != null)
+				return false;
+		} else if (!certificateSubject.equals(other.certificateSubject))
+			return false;
+		if (encryptionKeys == null) {
+			if (other.encryptionKeys != null)
+				return false;
+		} else if (!encryptionKeys.equals(other.encryptionKeys))
+			return false;
+		if (keyType == null) {
+			if (other.keyType != null)
+				return false;
+		} else if (!keyType.equals(other.keyType))
+			return false;
+		if (signingKey == null) {
+			if (other.signingKey != null)
+				return false;
+		} else if (!signingKey.equals(other.signingKey))
+			return false;
+		return true;
+	}
 }

@@ -42,7 +42,7 @@ public class DiscoverKeys implements Command {
 			internalcertificate.setSubId("1");
 			try {
 				SimpleKeyStore keystore = SimpleKeyStore.getInstance();
-				internalcertificate.setEncodedCertificate(keystore.getX509Certificate(new KeyHandle()).getEncoded());
+				internalcertificate.setCertificate(keystore.getX509Certificate(new KeyHandle()));
 				keys.add(internalcertificate);
 			} catch (KeyStoreUnavailableException | CertificateEncodingException | InvalidCertificateException
 					| KeyNotFoundException e) {
