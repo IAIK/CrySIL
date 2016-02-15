@@ -12,6 +12,7 @@
     <modules>
         <module>commons/java</module>
         <module>actors/java/staticKeyEncryption</module>
+        <module>communications/java/http-json-commons</module>
     </modules>
 
     <properties>

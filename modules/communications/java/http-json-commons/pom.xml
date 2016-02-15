@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>org.crysil.communications</groupId>
+  <artifactId>http-json-commons</artifactId>
+
+  <parent>
+  	<groupId>org.crysil</groupId>
+  	<artifactId>main</artifactId>
+  	<version>2.0-1</version>
+  	<relativePath>../../..</relativePath>
+  </parent>
+  
+    <properties>
+        <gson.version>2.6.1</gson.version>
+    </properties>
+  
+    <dependencies>
+        <dependency>
+            <groupId>org.crysil.commons</groupId>
+            <artifactId>commons</artifactId>
+            <version>${crysil.version}</version>
+        </dependency>
+      	<dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+    </dependencies>
+</project>
