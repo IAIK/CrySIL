@@ -14,6 +14,7 @@
         <module>actors/java/staticKeyEncryption</module>
         <module>communications/java/http-json-commons</module>
         <module>communications/java/http-json-receiver</module>
+        <module>communications/java/http-json-transmitter</module>
     </modules>
 
     <properties>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ SkyTrust Core
+  ~ This file is subject to the license defined in the directory “license” at the top level of this package.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.crysil.communcations</groupId>
+    <artifactId>http-json-transmitter</artifactId>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.crysil</groupId>
+        <artifactId>main</artifactId>
+        <version>2.0-1</version>
+        <relativePath>../../..</relativePath>
+    </parent>
+    
+    <properties>
+        <okhttp.version>2.3.0</okhttp.version>
+    </properties>
+    
+    <dependencies>
+        <!-- CrySIL -->
+        <dependency>
+	        <groupId>org.crysil.commons</groupId>
+	        <artifactId>commons</artifactId>
+	        <version>${crysil.version}</version>
+        </dependency>
+        
+        <dependency>
+	        <groupId>org.crysil.communications</groupId>
+	        <artifactId>http-json-commons</artifactId>
+	        <version>${crysil.version}</version>
+        </dependency>
+        
+        <!-- Misc -->
+        <dependency>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+    </dependencies>
+</project>
