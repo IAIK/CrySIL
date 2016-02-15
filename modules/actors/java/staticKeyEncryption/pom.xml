@@ -11,10 +11,6 @@
         <relativePath>../../..</relativePath>
     </parent>
 
-    <properties>
-        <guava.version>14.0.1</guava.version>
-    </properties>
-
   <dependencies>
   	<dependency>
   		<groupId>org.crysil.commons</groupId>

@@ -1,14 +1,14 @@
 package org.crysil.builders;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
+import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.status.PayloadStatus;
+
+import com.google.common.io.BaseEncoding;
 
 public class PayloadBuilder {
 
@@ -19,18 +19,13 @@ public class PayloadBuilder {
 		return tmp;
 	}
 
-	public static PayloadEncryptRequest buildEncryptRequest(String algorithm, List<String> plainData,
-			List<Key> encryptionKeys) {
+	public static Object buildEncryptRequest(String algorithm, String string, Key key) {
 		PayloadEncryptRequest tmp = new PayloadEncryptRequest();
 		tmp.setAlgorithm(algorithm);
-		tmp.setPlainData(plainData);
-		tmp.setEncryptionKeys(encryptionKeys);
+		tmp.addPlainData(string.getBytes());
+		tmp.addEncryptionKey(key);
 
 		return tmp;
-	}
-
-	public static Object buildEncryptRequest(String algorithm, String string, Key key) {
-		return buildEncryptRequest(algorithm, Arrays.asList(new String[] { string }), Arrays.asList(new Key[] { key }));
 	}
 
 	public static PayloadResponse buildStatusResponse(int errorCode) {
@@ -41,15 +36,17 @@ public class PayloadBuilder {
 	}
 
 	public static PayloadDecryptRequest buildDecryptRequest(Key decryptionKey, String plaintext) {
-		return buildDecryptRequest(decryptionKey, Arrays.asList(new String[] { plaintext }));
-	}
-
-	public static PayloadDecryptRequest buildDecryptRequest(Key decryptionKey, List<String> encryptedData) {
 		PayloadDecryptRequest tmp = new PayloadDecryptRequest();
 		tmp.setDecryptionKey(decryptionKey);
-		tmp.setEncryptedData(encryptedData);
+		tmp.addEncryptedData(BaseEncoding.base64().decode(plaintext));
 
 		return tmp;
 	}
 
+	public static PayloadDecryptResponse buildDecryptResponse(String plaintext) {
+		PayloadDecryptResponse tmp = new PayloadDecryptResponse();
+		tmp.addPlainData(plaintext.getBytes());
+
+		return tmp;
+	}
 }

@@ -5,6 +5,8 @@ import org.crysil.protocol.payload.crypto.key.InternalCertificate;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
+import com.google.common.io.BaseEncoding;
+
 public class KeyBuilder {
 
 	public static KeyHandle buildKeyHandle(String id, String subId) {
@@ -18,13 +20,13 @@ public class KeyBuilder {
 		InternalCertificate tmp = new InternalCertificate();
 		tmp.setId(id);
 		tmp.setSubId(subId);
-		tmp.setEncodedCertificate(encodedCertificate);
+		tmp.setEncodedCertificate(BaseEncoding.base64().decode(encodedCertificate));
 		return tmp;
 	}
 
 	public static Key buildExternalCertificate(String base64X509Certificate) {
 		ExternalCertificate tmp = new ExternalCertificate();
-		tmp.setEncodedCertificate(base64X509Certificate);
+		tmp.setEncodedCertificate(BaseEncoding.base64().decode(base64X509Certificate));
 		return tmp;
 	}
 

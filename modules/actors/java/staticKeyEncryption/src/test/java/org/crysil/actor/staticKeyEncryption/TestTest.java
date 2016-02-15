@@ -12,6 +12,7 @@ import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
+import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.PayloadRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptResponse;
@@ -73,9 +74,9 @@ public class TestTest {
 				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data",
 						KeyBuilder.buildKeyHandle("testkey", "1")) },
 				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data",
-						KeyBuilder.buildInternalCertificate("testkey", "1", "is ignored anyways")) },
-				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data", KeyBuilder.buildExternalCertificate(
-						"MIICzjCCAbagAwIBAgIGAVLViUrLMA0GCSqGSIb3DQEBCwUAMBExDzANBgNVBAMTBmNyeXNpbDAeFw0xNjAyMTExMjUxMzBaFw0xNjAxMjcyMTA5NDFaMCMxITAfBgNVBAMMGHN0YXRpY0tleUVuY3J5cHRpb25BY3RvcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMEEnkrsyfTJ3ZCXgZMpqL7w4hYwjmLHfMz4ARsNvnrhX2SN2jSd9nWVjH8VtQNqgxd/TGsy7AgLBOmdlaOQUF89sRIj5Zk5KPHFK4zPULI9Fl3NL1JmCmz7K4IXKPbUPfDzFUJ/eZFFE6SwzkjxU3my+q6JVPlhLXQtS0Lay2jYa6MFidDp8bRiSDXP/2 WRTa6B1s3ZoOq5bvgaI3j0gcxKEe/9l JnhkCuO7xOyrDpeMzFvfROp4wqe72pw5yvdl5Tnx5AB/KWKZwQ82wQcHSoE6JOrHz9fPx6EBjfOd6kqtj1y4JOgjayaChweTfS6dURDusgmTGq5uHkWAndhiIcCAwEAAaMaMBgwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggEBAAh7motLy9RdpvFCEgqMidrgON+n3570OTBjgePsWxHLXzdWRiKevmAI1VAi7K+Qr7KqdZhE7CM5KM5tmhUJ+9 SorPmEPbyeaA8SVMDF0whibena3KorBTqIlTkYLwZL9UXkTnOb876VlijxqABKt/rOTP7dZrgErqgcbbTo8KVi2BueiXjLwlV8CJK4s2BWYcLPdMO+Z0jGIjcI4/wuk+60 oR8tb5vUwWH62pXw+1 IgpnVrklkkM3tNQ0v38A9xKgrK3c1UL7F9KWpZgsCkUR8lfDP0wHAx+Yd5fDp4vTdxSyH/WydLxy2syo1hyoRSE4SXWJBj+N0C+IgGOX3GsNQ=")) } };
+						KeyBuilder.buildInternalCertificate("testkey", "1", rawCert)) },
+				{ PayloadBuilder.buildEncryptRequest("is ignored anyways", "data",
+						KeyBuilder.buildExternalCertificate(rawCert)) } };
 	}
 
 	@Test(dataProvider = "encryptFixtures")
@@ -95,10 +96,10 @@ public class TestTest {
 
 		Module DUT = new StaticKeyEncryptionActor();
 
-		Request request = new Request(null, payload);
+		Request request = new Request(new StandardHeader(), payload);
 
 		Response response = DUT.take(request);
 		Assert.assertTrue(response.getPayload() instanceof PayloadDecryptResponse);
-		Assert.assertEquals(((PayloadDecryptResponse) response.getPayload()).getPlainData().get(0), "data");
+		Assert.assertEquals(response.getPayload(), PayloadBuilder.buildDecryptResponse("data"));
 	}
 }

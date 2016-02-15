@@ -35,7 +35,26 @@ public class PayloadDiscoverKeysResponse extends PayloadResponse {
 	 *            the new keys
 	 */
 	public void setKey(List<Key> key) {
-		this.key = key;
+		clearKeys();
+
+		for (Key current : key)
+			addKey(current);
+	}
+
+	/**
+	 * clear keys
+	 */
+	public void clearKeys() {
+		key.clear();
+	}
+
+	/**
+	 * add single key to the list
+	 * 
+	 * @param key
+	 */
+	public void addKey(Key key) {
+		this.key.add(key);
 	}
 
 	@Override

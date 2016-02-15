@@ -14,7 +14,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Base64;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.payload.PayloadRequest;
@@ -35,23 +34,21 @@ public class Encrypt implements Command {
 			Security.addProvider(new BouncyCastleProvider());
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
 
+			// assemble response
+			PayloadEncryptResponse result = new PayloadEncryptResponse();
+
 			// for each key
-			List<List<String>> encryptedData = new ArrayList<List<String>>();
 			for (Key currentKey : request.getKeys()) {
 				PublicKey key = keystore.getJCEPublicKey(currentKey);
 				cipher.init(Cipher.ENCRYPT_MODE, key);
 
 				// encrypt
-				List<String> encryptedDataForKey = new ArrayList<String>();
-				for (String currentData : request.getPlainData())
-					encryptedDataForKey.add(Base64.toBase64String(cipher.doFinal(currentData.getBytes())));
+				List<byte[]> encryptedDataForKey = new ArrayList<>();
+				for (byte[] currentData : request.getPlainData())
+					encryptedDataForKey.add(cipher.doFinal(currentData));
 
-				encryptedData.add(encryptedDataForKey);
+				result.addEncryptedDataPerKey(encryptedDataForKey);
 			}
-
-			// assemble response
-			PayloadEncryptResponse result = new PayloadEncryptResponse();
-			result.setEncryptedData(encryptedData);
 
 			return result;
 

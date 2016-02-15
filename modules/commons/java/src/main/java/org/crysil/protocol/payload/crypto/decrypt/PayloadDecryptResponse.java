@@ -6,10 +6,12 @@ import java.util.List;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.PayloadResponse;
 
+import com.google.common.io.BaseEncoding;
+
 public class PayloadDecryptResponse extends PayloadResponse {
 
 	/** The plain data. */
-	protected List<String> plainData;
+	protected List<String> plainData = new ArrayList<>();
 
 	@Override
 	public String getType() {
@@ -21,18 +23,40 @@ public class PayloadDecryptResponse extends PayloadResponse {
 	 *
 	 * @return the plain data
 	 */
-	public List<String> getPlainData() {
-		return plainData;
+	public List<byte[]> getPlainData() {
+		List<byte[]> tmp = new ArrayList<>();
+		for (String current : plainData)
+			tmp.add(BaseEncoding.base64().decode(current));
+		return tmp;
 	}
 
 	/**
-	 * Sets the plain data.
+	 * clear and set new data
 	 *
-	 * @param plainData
-	 *            the new plain data
+	 * @param data
+	 *            the new data
 	 */
-	public void setPlainData(List<String> plainData) {
-		this.plainData = plainData;
+	public void setPlainData(List<byte[]> plainData) {
+		clearPlainData();
+
+		for (byte[] current : plainData)
+			addPlainData(current);
+	}
+
+	/**
+	 * clear any encrypted data that has already been added
+	 */
+	public void clearPlainData() {
+		this.plainData.clear();
+	}
+
+	/**
+	 * add data to set
+	 * 
+	 * @param data
+	 */
+	public void addPlainData(byte[] plainData) {
+		this.plainData.add(BaseEncoding.base64().encode(plainData));
 	}
 
 	@Override
@@ -43,5 +67,30 @@ public class PayloadDecryptResponse extends PayloadResponse {
 			data.add(Logger.isDebugEnabled() ? current : "*****");
 		result.plainData = data;
 		return result;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((plainData == null) ? 0 : plainData.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PayloadDecryptResponse other = (PayloadDecryptResponse) obj;
+		if (plainData == null) {
+			if (other.plainData != null)
+				return false;
+		} else if (!plainData.equals(other.plainData))
+			return false;
+		return true;
 	}
 }

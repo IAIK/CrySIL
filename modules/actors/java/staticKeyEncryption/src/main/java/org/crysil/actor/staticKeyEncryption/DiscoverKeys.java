@@ -18,8 +18,6 @@ import org.crysil.protocol.payload.crypto.key.KeyHandle;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysResponse;
 
-import com.google.common.io.BaseEncoding;
-
 /**
  * can handle discover key requests.
  */
@@ -44,8 +42,7 @@ public class DiscoverKeys implements Command {
 			internalcertificate.setSubId("1");
 			try {
 				SimpleKeyStore keystore = SimpleKeyStore.getInstance();
-				internalcertificate.setEncodedCertificate(
-						BaseEncoding.base64().encode(keystore.getX509Certificate(new KeyHandle()).getEncoded()));
+				internalcertificate.setEncodedCertificate(keystore.getX509Certificate(new KeyHandle()).getEncoded());
 				keys.add(internalcertificate);
 			} catch (KeyStoreUnavailableException | CertificateEncodingException | InvalidCertificateException
 					| KeyNotFoundException e) {

@@ -11,7 +11,7 @@
 
     <modules>
         <module>commons/java</module>
-        <module>actors/java/staticKeyEncryptionActor</module>
+        <module>actors/java/staticKeyEncryption</module>
     </modules>
 
     <properties>
@@ -25,6 +25,9 @@
 
         <!-- Testing -->
         <testng.version>6.8.21</testng.version>
+ 
+        <!-- Misc -->
+        <guava.version>14.0.1</guava.version>
 
         <!-- Maven plugins -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>

@@ -18,7 +18,7 @@ public class PayloadGenerateWrappedKeyRequest extends PayloadRequest implements 
 	protected String keyType;
 
 	/** The encryption keys. */
-	protected List<Key> encryptionKeys;
+	protected List<Key> encryptionKeys = new ArrayList<>();
 
 	/** The signing key. */
 	protected Key signingKey;
@@ -61,7 +61,26 @@ public class PayloadGenerateWrappedKeyRequest extends PayloadRequest implements 
 	 *            the new encryption keys
 	 */
 	public void setEncryptionKeys(List<Key> encryptionKeys) {
-		this.encryptionKeys = encryptionKeys;
+		clearEncryptionKeys();
+
+		for (Key current : encryptionKeys)
+			addEncryptionKey(current);
+	}
+
+	/**
+	 * clear the list of encryption keys
+	 */
+	public void clearEncryptionKeys() {
+		encryptionKeys.clear();
+	}
+
+	/**
+	 * add another encryption key to the list
+	 * 
+	 * @param encryptionKey
+	 */
+	public void addEncryptionKey(Key encryptionKey) {
+		this.encryptionKeys.add(encryptionKey);
 	}
 
 	/**

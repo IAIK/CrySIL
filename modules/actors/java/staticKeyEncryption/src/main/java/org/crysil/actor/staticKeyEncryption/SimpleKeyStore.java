@@ -11,7 +11,6 @@ import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Base64;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
@@ -19,6 +18,8 @@ import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
 import org.crysil.protocol.payload.crypto.key.InternalCertificate;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
+
+import com.google.common.io.BaseEncoding;
 
 /**
  * holds exactly one hardcoded key for demonstration purposes.
@@ -59,13 +60,13 @@ public class SimpleKeyStore {
 			Security.addProvider(new BouncyCastleProvider());
 
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
-			X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(Base64.decode(rawPublicKey));
+			X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(BaseEncoding.base64().decode(rawPublicKey));
 			pubKey = keyFactory.generatePublic(pubKeySpec);
 
-			PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(Base64.decode(rawPrivateKey));
+			PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(rawPrivateKey));
 			privKey = keyFactory.generatePrivate(privKeySpec);
 
-			cert = X509Certificate.getInstance(Base64.decode(rawCert));
+			cert = X509Certificate.getInstance(BaseEncoding.base64().decode(rawCert));
 		} catch (Exception e) {
 			throw new KeyStoreUnavailableException();
 		}
@@ -85,8 +86,7 @@ public class SimpleKeyStore {
 		} else if (current instanceof ExternalCertificate) {
 			X509Certificate cert;
 			try {
-				cert = X509Certificate
-						.getInstance(Base64.decode(((ExternalCertificate) current).getEncodedCertificate()));
+				cert = X509Certificate.getInstance(((ExternalCertificate) current).getEncodedCertificate());
 				return cert.getPublicKey();
 			} catch (CertificateException e) {
 				throw new InvalidCertificateException();
@@ -122,8 +122,7 @@ public class SimpleKeyStore {
 			return cert;
 		} else if (current instanceof ExternalCertificate) {
 			try {
-				return X509Certificate
-						.getInstance(Base64.decode(((ExternalCertificate) current).getEncodedCertificate()));
+				return X509Certificate.getInstance(((ExternalCertificate) current).getEncodedCertificate());
 			} catch (CertificateException e) {
 				throw new InvalidCertificateException();
 			}

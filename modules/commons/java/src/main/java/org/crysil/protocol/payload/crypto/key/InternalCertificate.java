@@ -2,6 +2,8 @@ package org.crysil.protocol.payload.crypto.key;
 
 import org.crysil.logging.Logger;
 
+import com.google.common.io.BaseEncoding;
+
 /**
  * {@link Key} implementation representing a simple X509 certificate that is already known to the
  * CrySIL infrastructure as a key handle but also supply the certificate.
@@ -16,8 +18,8 @@ public class InternalCertificate extends KeyHandle {
 	 *
 	 * @return the encoded certificate
 	 */
-	public String getEncodedCertificate() {
-		return encodedCertificate;
+	public byte[] getEncodedCertificate() {
+		return BaseEncoding.base64().decode(encodedCertificate);
 	}
 
 	/**
@@ -26,8 +28,8 @@ public class InternalCertificate extends KeyHandle {
 	 * @param encodedCertificate
 	 *            the new encoded certificate
 	 */
-	public void setEncodedCertificate(String encodedCertificate) {
-		this.encodedCertificate = encodedCertificate;
+	public void setEncodedCertificate(byte[] encodedCertificate) {
+		this.encodedCertificate = BaseEncoding.base64().encode(encodedCertificate);
 	}
 
 	@Override
