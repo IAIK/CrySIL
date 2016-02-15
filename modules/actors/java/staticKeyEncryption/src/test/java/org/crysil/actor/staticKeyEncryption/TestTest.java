@@ -2,7 +2,6 @@ package org.crysil.actor.staticKeyEncryption;
 
 import javax.security.cert.CertificateEncodingException;
 
-import org.bouncycastle.util.encoders.Base64;
 import org.crysil.builders.KeyBuilder;
 import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
@@ -22,6 +21,8 @@ import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRespon
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.google.common.io.BaseEncoding;
 
 public class TestTest {
 
@@ -60,11 +61,11 @@ public class TestTest {
 			CertificateEncodingException {
 
 		SimpleKeyStore DUT = SimpleKeyStore.getInstance();
-		Assert.assertEquals(Base64.toBase64String(DUT.getJCEPublicKey(new KeyHandle()).getEncoded()), rawPublicKey,
-				"public key value does not match");
-		Assert.assertEquals(Base64.toBase64String(DUT.getJCEPrivateKey(new KeyHandle()).getEncoded()), rawPrivateKey,
-				"private key value does not match");
-		Assert.assertEquals(Base64.toBase64String(DUT.getX509Certificate(new KeyHandle()).getEncoded())
+		Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPublicKey(new KeyHandle()).getEncoded()),
+				rawPublicKey, "public key value does not match");
+		Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPrivateKey(new KeyHandle()).getEncoded()),
+				rawPrivateKey, "private key value does not match");
+		Assert.assertEquals(BaseEncoding.base64().encode(DUT.getX509Certificate(new KeyHandle()).getEncoded())
 				.replace("\r", "").replace("\n", "").replace(" ", ""), rawCert, "cert does not match");
 	}
 

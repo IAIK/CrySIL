@@ -3,14 +3,12 @@ package org.crysil.actor.staticKeyEncryption;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Security;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
@@ -57,9 +55,7 @@ public class SimpleKeyStore {
 		try {
 
 			// create java representation of the raw key data
-			Security.addProvider(new BouncyCastleProvider());
-
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 			X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(BaseEncoding.base64().decode(rawPublicKey));
 			pubKey = keyFactory.generatePublic(pubKeySpec);
 

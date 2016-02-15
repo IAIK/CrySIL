@@ -2,9 +2,7 @@ package org.crysil.actor.staticKeyEncryption;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PublicKey;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +11,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.payload.PayloadRequest;
@@ -31,8 +28,7 @@ public class Encrypt implements Command {
 		try {
 			// prepare stuff
 			SimpleKeyStore keystore = SimpleKeyStore.getInstance();
-			Security.addProvider(new BouncyCastleProvider());
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
+			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
 			// assemble response
 			PayloadEncryptResponse result = new PayloadEncryptResponse();
@@ -53,7 +49,7 @@ public class Encrypt implements Command {
 			return result;
 
 		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException
-				| NoSuchProviderException | NoSuchPaddingException e) {
+				| NoSuchPaddingException e) {
 			throw new UnknownErrorException();
 		}
 	}
