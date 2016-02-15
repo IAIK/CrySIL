@@ -1,0 +1,306 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Responses",
+    "description": "v2",
+    "type": "object",
+    "properties": {
+        "header": {
+            "description": "The world readable header",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["standardSkyTrustHeader"]
+                },
+                "protocolVersion" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "commandId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "sessionId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required" : ["type", "protocolVersion", "sessionId"]
+        },
+        "payload": {
+            "description": "The payload",
+            "type": "object",
+            "required": ["type"],
+            "oneOf": [
+                { "$ref": "#/definitions/authChallengeRequest" },
+                { "$ref": "#/definitions/decryptResponse" },
+                { "$ref": "#/definitions/decryptCMSResponse" },
+                { "$ref": "#/definitions/discoverKeysResponse" },
+                { "$ref": "#/definitions/encryptResponse" },
+                { "$ref": "#/definitions/encryptCMSResponse" },
+                { "$ref": "#/definitions/exportWrappedKeyResponse" },
+                { "$ref": "#/definitions/generateWrappedKeyResponse" },
+                { "$ref": "#/definitions/getKeyResponse" },
+                { "$ref": "#/definitions/signResponse" },
+                { "$ref": "#/definitions/status" }
+            ]
+        }
+    },
+    "required": ["header", "payload"],
+    "definitions": {
+        "authChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "type" : {
+                    "enum": ["authChallengeRequest"]
+                },
+                "authTypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "enum": ["IdentifierAuthType", "SecretAuthType", "UserNamePasswordAuthType", "OauthAuthType"]
+                            },
+                            "url": {
+                                "type" : "string",
+                                "maxLength": 500
+                            }
+                        },
+                        "required": ["type"],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": ["authTypes"],
+            "additionalProperties": false
+        },
+        "decryptResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["decryptResponse"]
+                },
+                "plainData": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                }
+            },
+            "required": ["plainData"],
+            "additionalProperties": false
+        },
+        "decryptCMSResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["decryptCMSResponse"]
+                },
+                "plainData": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                }
+            },
+            "required": ["plainData"],
+            "additionalProperties": false
+        },
+        "discoverKeysResponse": {
+            "properties": {
+                "type": {
+                    "enum": ["discoverKeysResponse"]
+                },
+                "key": {
+                    "type": "array",
+                    "items": {
+                        "$ref" : "#/definitions/key"
+                    }
+                }
+            },
+            "required": ["key"],
+            "additionalProperties": false
+        },
+        "encryptResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["encryptResponse"]
+                },
+                "encryptedData": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/base64string"
+                        }
+                    }
+                }
+            },
+            "required": ["encryptedData"],
+            "additionalProperties": false
+        },
+        "encryptCMSResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["encryptCMSResponse"]
+                },
+                "encryptedCMSData": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                }
+            },
+            "required": ["encryptedCMSData"],
+            "additionalProperties": false
+        },
+        "exportWrappedKeyResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["exportWrappedKeyResponse"]
+                },
+                "encodedPrivateKey": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "encodedX509Certificate": {
+                    "$ref": "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedPrivateKey", "encodedX509Certificate"],
+            "additionalProperties": false
+        },
+        "generateWrappedKeyResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["generateWrappedKeyResponse", "modifyWrappedKeyResponse"]
+                },
+                "encodedWrappedKey": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "encodedX509Certificate": {
+                    "$ref": "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedWrappedKey", "encodedX509Certificate"],
+            "additionalProperties": false
+        },
+        "getKeyResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["getKeyResponse"]
+                },
+                "key": {
+                    "$ref" : "#/definitions/key"
+                }
+            },
+            "required": ["key"],
+            "additionalProperties": false
+        },
+        "signResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["signResponse"]
+                },
+                "signedHashes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                }
+            },
+            "required": ["signedHashes"],
+            "additionalProperties": false
+        },
+        "status": {
+            "properties": {
+                "type": {
+                    "enum": ["status"]
+                },
+                "code" : {
+                    "type": "number"
+                }
+            },
+            "required": ["code"],
+            "additionalProperties": false
+        },
+        "key" : {
+            "type": "object",
+            "oneOf": [
+                { "$ref": "#/definitions/key-handle" },
+                { "$ref": "#/definitions/key-externalCertificate" },
+                { "$ref": "#/definitions/key-internalCertificate" },
+                { "$ref": "#/definitions/key-wrappedKey" }
+            ],
+            "required": ["type"]
+        },
+        "key-handle": {
+            "properties": {
+                "type": {
+                    "enum": ["handle"]
+                },
+                "id" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "subId": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required": ["id", "subId"],
+            "additionalProperties": false
+        },
+        "key-externalCertificate": {
+            "properties": {
+                "type": {
+                    "enum": ["externalCertificate"]
+                },
+                "encodedCertificate" : {
+                    "$ref" :  "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedCertificate"],
+            "additionalProperties": false
+        },
+        "key-internalCertificate": {
+            "properties": {
+                "type": {
+                    "enum": ["internalCertificate"]
+                },
+                "id" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "subId": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "encodedCertificate" : {
+                    "$ref" :  "#/definitions/base64string"
+                }
+            },
+            "required": ["id", "subId", "encodedCertificate"],
+            "additionalProperties": false
+        },
+        "key-wrappedKey": {
+            "properties": {
+                "type": {
+                    "enum": ["wrappedKey"]
+                },
+                "encodedWrappedKey" : {
+                    "$ref" :  "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedWrappedKey"],
+            "additionalProperties": false
+        },
+        "base64string": {
+            "description": "Base64 encoding following RFC4648",
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9/+]|\\r\\n)+=?=?$"
+        },
+        "finiteLengthString": {
+            "type": "string",
+            "maxLength": 200
+        }
+    }
+}

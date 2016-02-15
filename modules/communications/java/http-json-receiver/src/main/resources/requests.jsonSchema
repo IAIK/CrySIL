@@ -1,0 +1,374 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Requests",
+    "description": "v2",
+    "type": "object",
+    "properties": {
+        "header": {
+            "description": "The world readable header",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["standardSkyTrustHeader"]
+                },
+                "protocolVersion" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "commandId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "sessionId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "path" : {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required" : ["type", "protocolVersion", "sessionId"]
+        },
+        "payload": {
+            "description": "The payload",
+            "type": "object",
+            "required": ["type"],
+            "oneOf": [
+                { "$ref": "#/definitions/authChallengeResponse" },
+                { "$ref": "#/definitions/decryptRequest" },
+                { "$ref": "#/definitions/decryptCMSRequest" },
+                { "$ref": "#/definitions/discoverKeysRequest" },
+                { "$ref": "#/definitions/encryptRequest" },
+                { "$ref": "#/definitions/exportWrappedKeyRequest"},
+                { "$ref": "#/definitions/generateWrappedKeyRequest"},
+                { "$ref": "#/definitions/getKeyRequest" },
+                { "$ref": "#/definitions/modifyWrappedKeyRequest"},
+                { "$ref": "#/definitions/signRequest" }
+            ]
+        }
+    },
+    "required": ["header", "payload"],
+    "definitions": {
+        "authChallengeResponse": {
+            "properties": {
+                "type": {
+                    "enum": ["authChallengeResponse"]
+                },
+                "authInfo": {
+                    "type": "object",
+                    "oneOf": [
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": ["IdentifierAuthInfo"]
+                                },
+                                "identifier": {
+                                    "$ref" : "#/definitions/finiteLengthString"
+                                }
+                            },
+                            "required": ["type", "identifier"],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": ["SecretAuthInfo"]
+                                },
+                                "secret": {
+                                    "$ref" : "#/definitions/finiteLengthString"
+                                }
+                            },
+                            "required": ["type", "secret"],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": ["UserNamePasswordAuthInfo"]
+                                },
+                                "userName": {
+                                    "$ref" : "#/definitions/finiteLengthString"
+                                },
+                                "passWord": {
+                                    "$ref" : "#/definitions/finiteLengthString"
+                                }
+                            },
+                            "required": ["type", "userName", "passWord"],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": ["OauthAuthInfo"]
+                                },
+                                "authorizationCode" : {
+                                    "$ref" : "#/definitions/finiteLengthString"
+                                }
+                            },
+                            "required": ["type", "authorizationCode"],
+                            "additionalProperties": false
+                        }
+                    ]
+                }
+            },
+            "required": ["authInfo"],
+            "additionalProperties": false
+        },
+        "discoverKeysRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["discoverKeysRequest"]
+                },
+                "representation": {
+                    "enum": ["certificate", "handle"]
+                }
+            },
+            "additionalProperties": false
+        },
+        "decryptRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["decryptRequest"]
+                },
+                "decryptionKey": {
+                    "$ref" : "#/definitions/key"
+                },
+                "encryptedData": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                },
+                "algorithm": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required": ["decryptionKey", "algorithm", "encryptedData"],
+            "additionalProperties": false
+        },
+        "decryptCMSRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["decryptCMSRequest"]
+                },
+                "decryptionKey": {
+                    "$ref" : "#/definitions/key"
+                },
+                "encryptedCMSData": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                }
+            },
+            "required": ["decryptionKey", "encryptedCMSData"],
+            "additionalProperties": false
+        },
+        "encryptRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["encryptRequest", "encryptCMSRequest"]
+                },
+                "encryptionKeys": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/key"
+                    }
+                },
+                "plainData": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                },
+                "algorithm": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required": ["encryptionKeys", "algorithm", "plainData"],
+            "additionalProperties": false
+        },
+        "exportWrappedKeyRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["exportWrappedKeyRequest"]
+                },
+                "encodedWrappedKey": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "decryptionKey": {
+                    "$ref" : "#/definitions/key"
+                }
+            },
+            "required": ["encodedWrappedKey"],
+            "additionalProperties": false
+        },
+        "generateWrappedKeyRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["generateWrappedKeyRequest"]
+                },
+                "keyType": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "certificateSubject": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "encryptionKeys": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/key"
+                    }
+                },
+                "signingKey": {
+                    "$ref" : "#/definitions/key"
+                }
+            },
+            "required": ["keyType", "certificateSubject", "encryptionKeys"],
+            "additionalProperties": false
+        },
+        "getKeyRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["getKeyRequest"]
+                },
+                "key": {
+                    "$ref" : "#/definitions/key"
+                },
+                "representation": {
+                    "enum": ["certificate", "handle"]
+                }
+            },
+            "additionalProperties": false
+        },
+        "modifyWrappedKeyRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["modifyWrappedKeyRequest"]
+                },
+                "encodedWrappedKey": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "encryptionKeys": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/key"
+                    }
+                },
+                "decryptionKey": {
+                    "$ref" : "#/definitions/key"
+                },
+                "signingKey": {
+                    "$ref" : "#/definitions/key"
+                }
+            },
+            "required": ["encodedWrappedKey", "encryptionKeys"],
+            "additionalProperties": false
+        },
+        "signRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["signRequest"]
+                },
+                "signatureKey": {
+                    "$ref" : "#/definitions/key"
+                },
+                "algorithm": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "hashesToBeSigned": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/base64string"
+                    }
+                }
+            },
+            "required": ["signatureKey", "algorithm", "hashesToBeSigned"],
+            "additionalProperties": false
+        },
+        "key" : {
+            "type": "object",
+            "oneOf": [
+                { "$ref": "#/definitions/key-handle" },
+                { "$ref": "#/definitions/key-externalCertificate" },
+                { "$ref": "#/definitions/key-internalCertificate" },
+                { "$ref": "#/definitions/key-wrappedKey" }
+            ],
+            "required": ["type"]
+        },
+        "key-handle": {
+            "properties": {
+                "type": {
+                    "enum": ["handle"]
+                },
+                "id" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "subId": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required": ["id", "subId"],
+            "additionalProperties": false
+        },
+        "key-externalCertificate": {
+            "properties": {
+                "type": {
+                    "enum": ["externalCertificate"]
+                },
+                "encodedCertificate" : {
+                    "$ref" :  "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedCertificate"],
+            "additionalProperties": false
+        },
+        "key-internalCertificate": {
+            "properties": {
+                "type": {
+                    "enum": ["internalCertificate"]
+                },
+                "id" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "subId": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "encodedCertificate" : {
+                    "$ref" :  "#/definitions/base64string"
+                }
+            },
+            "required": ["id", "subId", "encodedCertificate"],
+            "additionalProperties": false
+        },
+        "key-wrappedKey": {
+            "properties": {
+                "type": {
+                    "enum": ["wrappedKey"]
+                },
+                "encodedWrappedKey" : {
+                    "$ref" :  "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedWrappedKey"],
+            "additionalProperties": false
+        },
+        "base64string": {
+            "description": "Base64 encoding following RFC4648",
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9/+]|\\r\\n)+=?=?$",
+            "maxLength": 1000000000
+        },
+        "finiteLengthString": {
+            "type": "string",
+            "maxLength": 200
+        }
+    }
+}
