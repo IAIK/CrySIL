@@ -25,9 +25,13 @@ import com.google.gson.JsonParseException;
 /**
  * custom deserializer for GSon to cope with polymorphic stuff.
  */
-public class JsonSerializerHelper implements JsonDeserializer<PolymorphicStuff> {
+public class JsonUtils implements JsonDeserializer<PolymorphicStuff> {
 
-	private static JsonSerializerHelper instance = null;
+	private static JsonUtils instance = null;
+
+	private static JsonNode requestSchema;
+
+	private static JsonNode responseSchema;
 
 	Map<String, Class<?>> lut;
 
@@ -40,7 +44,7 @@ public class JsonSerializerHelper implements JsonDeserializer<PolymorphicStuff> 
 	 * %s/\//\./g
 	 * %s/java/class);/g
 	 */
-	public JsonSerializerHelper() {
+	public JsonUtils() {
 		lut = new HashMap<>();
 		lut.put("OauthAuthInfo", org.crysil.protocol.payload.auth.oauth.OAuthAuthInfo.class);
 		lut.put("OauthAuthType", org.crysil.protocol.payload.auth.oauth.OAuthAuthType.class);
@@ -117,7 +121,7 @@ public class JsonSerializerHelper implements JsonDeserializer<PolymorphicStuff> 
 	 */
 	public static <T> T fromJson(String jsonString, Class<T> objectType) {
 		if (null == instance)
-			instance = new JsonSerializerHelper();
+			instance = new JsonUtils();
 		return instance.getBuilder().create().fromJson(jsonString, objectType);
 	}
 
@@ -131,6 +135,42 @@ public class JsonSerializerHelper implements JsonDeserializer<PolymorphicStuff> 
 		return new Gson().toJson(object);
 	}
 
+	private static void loadSchemas() {
+
+		try {
+			if (null == requestSchema)
+				requestSchema = JsonLoader.fromResource("/requests.jsonSchema");
+			if (null == responseSchema)
+				responseSchema = JsonLoader.fromResource("/responses.jsonSchema");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Checks if the given string is a valid JSON request.
+	 * 
+	 * @param jsonString
+	 * @return false, if invalid
+	 */
+	public static boolean isValidJSONRequest(String jsonString) {
+		loadSchemas();
+
+		return isValidJSON(jsonString, requestSchema);
+	}
+
+	/**
+	 * Checks if the given string is a valid JSON response.
+	 * 
+	 * @param jsonString
+	 * @return false, if invalid
+	 */
+	public static boolean isValidJSONResponse(String jsonString) {
+		loadSchemas();
+
+		return isValidJSON(jsonString, responseSchema);
+	}
+
 	/**
 	 * Checks if is valid json.
 	 *
@@ -138,7 +178,7 @@ public class JsonSerializerHelper implements JsonDeserializer<PolymorphicStuff> 
 	 * @param jsonSchema the json schema
 	 * @return true, if is valid json
 	 */
-	public static boolean isValidJSON(String jsonString, JsonNode jsonSchema) {
+	private static boolean isValidJSON(String jsonString, JsonNode jsonSchema) {
 		JsonNode data;
 
 		try {

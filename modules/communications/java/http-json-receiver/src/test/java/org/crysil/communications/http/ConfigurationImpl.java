@@ -1,4 +1,4 @@
-package org.crysil.receiver.http;
+package org.crysil.communications.http;
 
 import org.crysil.actor.staticKeyEncryption.StaticKeyEncryptionActor;
 import org.crysil.commons.Module;
