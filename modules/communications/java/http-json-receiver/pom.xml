@@ -35,7 +35,7 @@
         
         <dependency>
 	        <groupId>org.crysil.communications</groupId>
-	        <artifactId>http-json-commons</artifactId>
+	        <artifactId>json-commons</artifactId>
 	        <version>${crysil.version}</version>
         </dependency>
         
@@ -43,6 +43,7 @@
 	        <groupId>org.crysil.actor</groupId>
 	        <artifactId>staticKeyEncryption</artifactId>
 	        <version>${crysil.version}</version>
+	        <scope>test</scope>
         </dependency>
 	    
     	<!-- JSON/XML -->

@@ -2,6 +2,7 @@ package org.crysil.communications.http;
 
 import java.io.IOException;
 
+import org.crysil.communications.json.GSonHelper;
 import org.crysil.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;

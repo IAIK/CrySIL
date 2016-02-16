@@ -1,4 +1,4 @@
-package org.crysil.communications.http;
+package org.crysil.communications.json;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
+import org.crysil.communications.json.GSonHelper;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
