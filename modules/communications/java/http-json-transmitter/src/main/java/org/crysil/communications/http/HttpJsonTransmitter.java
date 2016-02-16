@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
-import org.crysil.communications.json.GSonHelper;
+import org.crysil.communications.json.JsonSerializerHelper;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
@@ -51,12 +51,12 @@ public class HttpJsonTransmitter implements Module {
 		String url = targetURI;
 
 		try {
-			byte[] data = GSonHelper.toJson(crysilRequest).getBytes();
+			byte[] data = JsonSerializerHelper.toJson(crysilRequest).getBytes();
 			RequestBody body = RequestBody.create(JSON, data);
 			com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).post(body).build();
 			com.squareup.okhttp.Response response = client.newCall(request).execute();
 
-			return GSonHelper.fromJson(response.body().string(), Response.class);
+			return JsonSerializerHelper.fromJson(response.body().string(), Response.class);
 		} catch (IOException e) {
 			Logger.error("could not find host {}", e.getMessage());
 		}

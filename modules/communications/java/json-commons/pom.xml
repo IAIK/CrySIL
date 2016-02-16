@@ -13,6 +13,7 @@
   
     <properties>
         <gson.version>2.6.1</gson.version>
+        <json-schema-validator.version>2.2.6</json-schema-validator.version>
     </properties>
   
     <dependencies>
@@ -21,10 +22,18 @@
             <artifactId>commons</artifactId>
             <version>${crysil.version}</version>
         </dependency>
+
+        <!-- JSON/XML -->
       	<dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.fge</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${json-schema-validator.version}</version>
         </dependency>
     </dependencies>
 </project>

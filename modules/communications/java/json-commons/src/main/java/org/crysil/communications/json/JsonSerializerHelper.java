@@ -1,5 +1,6 @@
 package org.crysil.communications.json;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -7,8 +8,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.crysil.logging.Logger;
 import org.crysil.protocol.PolymorphicStuff;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -19,9 +25,9 @@ import com.google.gson.JsonParseException;
 /**
  * custom deserializer for GSon to cope with polymorphic stuff.
  */
-public class GSonHelper implements JsonDeserializer<PolymorphicStuff> {
+public class JsonSerializerHelper implements JsonDeserializer<PolymorphicStuff> {
 
-	private static GSonHelper instance = null;
+	private static JsonSerializerHelper instance = null;
 
 	Map<String, Class<?>> lut;
 
@@ -34,7 +40,7 @@ public class GSonHelper implements JsonDeserializer<PolymorphicStuff> {
 	 * %s/\//\./g
 	 * %s/java/class);/g
 	 */
-	public GSonHelper() {
+	public JsonSerializerHelper() {
 		lut = new HashMap<>();
 		lut.put("OauthAuthInfo", org.crysil.protocol.payload.auth.oauth.OAuthAuthInfo.class);
 		lut.put("OauthAuthType", org.crysil.protocol.payload.auth.oauth.OAuthAuthType.class);
@@ -111,7 +117,7 @@ public class GSonHelper implements JsonDeserializer<PolymorphicStuff> {
 	 */
 	public static <T> T fromJson(String jsonString, Class<T> objectType) {
 		if (null == instance)
-			instance = new GSonHelper();
+			instance = new JsonSerializerHelper();
 		return instance.getBuilder().create().fromJson(jsonString, objectType);
 	}
 
@@ -123,6 +129,33 @@ public class GSonHelper implements JsonDeserializer<PolymorphicStuff> {
 	 */
 	public static String toJson(Object object) {
 		return new Gson().toJson(object);
+	}
+
+	/**
+	 * Checks if is valid json.
+	 *
+	 * @param jsonString the json string
+	 * @param jsonSchema the json schema
+	 * @return true, if is valid json
+	 */
+	public static boolean isValidJSON(String jsonString, JsonNode jsonSchema) {
+		JsonNode data;
+
+		try {
+			data = JsonLoader.fromString(jsonString);
+		} catch (IOException e) {
+			Logger.error("isValidJSON exception:", e);
+			return false;
+		}
+
+		ProcessingReport report = JsonSchemaFactory.byDefault().getValidator().validateUnchecked(jsonSchema, data);
+
+		if (!report.isSuccess()) {
+			Logger.debug("incoming request: {}", jsonString);
+			Logger.debug("report: {}", report.toString());
+		}
+
+		return report.isSuccess();
 	}
 
 	@Override

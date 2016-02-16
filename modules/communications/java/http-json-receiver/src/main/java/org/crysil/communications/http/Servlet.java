@@ -3,6 +3,7 @@ package org.crysil.communications.http;
 import org.crysil.builders.PayloadBuilder;
 import org.crysil.builders.ResponseBuilder;
 import org.crysil.commons.OneToOneInterlink;
+import org.crysil.communications.json.JsonSerializerHelper;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
@@ -23,16 +24,16 @@ public class Servlet extends OneToOneInterlink {
 	public ResponseEntity<String> handleCommand(@RequestBody String rawRequest) {
 
 		if (WebAppInitializer.getConfiguration().isValidateSchema()
-				&& !JsonUtils.isValidJSON(rawRequest, WebAppInitializer.requestSchema)) {
+				&& !JsonSerializerHelper.isValidJSON(rawRequest, WebAppInitializer.requestSchema)) {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 
-		Request request = JsonUtils.fromJson(rawRequest, Request.class);
+		Request request = JsonSerializerHelper.fromJson(rawRequest, Request.class);
 		if (request == null) {
 			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 
-		Logger.info("Incoming request: {}", JsonUtils.toJson(request.getBlankedClone()));
+		Logger.info("Incoming request: {}", JsonSerializerHelper.toJson(request.getBlankedClone()));
 
 		Response response;
 		try {
@@ -41,11 +42,11 @@ public class Servlet extends OneToOneInterlink {
 			response = ResponseBuilder.build(request.getHeader(), PayloadBuilder.buildStatusResponse(e.getErrorCode()));
 		}
 
-		Logger.info("Created response: {}", JsonUtils.toJson(response.getBlankedClone()));
+		Logger.info("Created response: {}", JsonSerializerHelper.toJson(response.getBlankedClone()));
 
-		String rawResponse = JsonUtils.toJson(response);
+		String rawResponse = JsonSerializerHelper.toJson(response);
 		if (rawResponse.isEmpty() || (WebAppInitializer.getConfiguration().isValidateSchema()
-				&& !JsonUtils.isValidJSON(rawResponse, WebAppInitializer.responseSchema))) {
+				&& !JsonSerializerHelper.isValidJSON(rawResponse, WebAppInitializer.responseSchema))) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
