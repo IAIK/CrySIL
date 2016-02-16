@@ -2,13 +2,11 @@ package org.crysil.communications.http;
 
 import java.io.IOException;
 
-import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.header.StandardHeader;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -61,13 +59,5 @@ public class HttpJsonTransmitter implements Module {
 			Logger.error("could not find host {}", e.getMessage());
 		}
 		return null;
-	}
-
-	public static void main(String[] args) {
-		HttpJsonTransmitter DUT = new HttpJsonTransmitter();
-		DUT.setTargetURI("http://localhost:8080/http-json-receiver/json");
-
-		DUT.take(new Request(new StandardHeader(), PayloadBuilder.buildDiscoverKeysRequest("handle")));
-		System.out.println("done");
 	}
 }
