@@ -1,6 +1,6 @@
 # U2F Receiver
 
-This is a [U2F](https://www.yubico.com/applications/fido/) compliant receiver for CrySIL. It should be used with a matching actor to build a CrySIL U2F element, see [U2F Readme](./../../../../README-U2F.md).
+This is a [U2F](https://www.yubico.com/applications/fido/) compliant receiver for CrySIL. It should be used with a matching actor to build a CrySIL U2F element, see [U2F Readme](./../../../../samples/u2f/).
 
 ## U2F Compatibility
 

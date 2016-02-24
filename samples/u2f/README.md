@@ -4,9 +4,9 @@ This enables [U2F](https://www.yubico.com/applications/fido/) support for CrySIL
 
 Several projects are needed to enable compatibility:
 
-* [smcc actor](./modules/actors/java/smcc/)
-* [U2F communication](./modules/communications/java/u2f-commons)
-* [U2F HTTP receiver](./modules/communications/java/u2f-http-json-receiver)
+* [smcc actor](./../../modules/actors/java/smcc/)
+* [U2F communication](./../../modules/communications/java/u2f-commons/)
+* [U2F HTTP receiver](./../../modules/communications/java/u2f-http-json-receiver/)
 
 ## U2F Compatibility
 
@@ -16,7 +16,7 @@ In general, U2F relies on elliptic curve keys and a simple challenge-response pr
 
 CrySIL actors have implemented different ways to perform the cryptographic operations:
 
-* [smcc actor](./modules/actors/java/smcc/) performs the cryptographic operations on a signature card like the Austrian Citizen Card
+* [smcc actor](./../../modules/actors/java/smcc/) performs the cryptographic operations on a signature card like the Austrian Citizen Card
 
 The receivers expect one of two forms of requests:
 
