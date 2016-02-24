@@ -5,6 +5,8 @@ This enables [U2F](https://www.yubico.com/applications/fido/) support for CrySIL
 Several projects are needed to enable compatibility:
 
 * [smcc actor](./modules/actors/java/smcc/)
+* [U2F communication](./modules/communications/java/u2f-commons)
+* [U2F HTTP receiver](./modules/communications/java/u2f-http-json-receiver)
 
 ## U2F Compatibility
 
@@ -16,4 +18,7 @@ CrySIL actors have implemented different ways to perform the cryptographic opera
 
 * [smcc actor](./modules/actors/java/smcc/) performs the cryptographic operations on a signature card like the Austrian Citizen Card
 
+The receivers expect one of two forms of requests:
 
+* Proper U2F commands for registration and authentication, e.g. send directly by an U2F relying party
+* Messages containing proper CrySIL commands, e.g. when converted beforehand by an U2F client containing a CrySIL bridge (e.g. Windows credential provider or Chrome extension)

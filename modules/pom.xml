@@ -14,7 +14,9 @@
         <module>actors/java/staticKeyEncryption</module>
         <module>actors/java/smcc</module>
         <module>communications/java/json-commons</module>
+        <module>communications/java/u2f-commons</module>
         <module>communications/java/http-json-receiver</module>
+        <module>communications/java/u2f-http-json-receiver</module>
         <module>communications/java/http-json-transmitter</module>
     </modules>
 
