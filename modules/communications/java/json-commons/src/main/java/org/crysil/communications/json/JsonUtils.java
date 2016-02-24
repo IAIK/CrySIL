@@ -122,7 +122,11 @@ public class JsonUtils implements JsonDeserializer<PolymorphicStuff> {
 	public static <T> T fromJson(String jsonString, Class<T> objectType) {
 		if (null == instance)
 			instance = new JsonUtils();
-		return instance.getBuilder().create().fromJson(jsonString, objectType);
+		try {
+			return instance.getBuilder().create().fromJson(jsonString, objectType);
+		} catch (JsonParseException e) {
+			return null;
+		}
 	}
 
 	/**

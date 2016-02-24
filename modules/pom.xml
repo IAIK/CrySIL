@@ -12,6 +12,7 @@
     <modules>
         <module>commons/java</module>
         <module>actors/java/staticKeyEncryption</module>
+        <module>actors/java/smcc</module>
         <module>communications/java/json-commons</module>
         <module>communications/java/http-json-receiver</module>
         <module>communications/java/http-json-transmitter</module>
@@ -23,11 +24,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <crysil.version>2.0-1</crysil.version><!-- TODO: e.g. 1.3-1 -->
 
-        <!-- Logging -->
+        <!--- Dependencies -->
+        <mocca.version>1.3.22</mocca.version>
         <logback.version>1.1.2</logback.version>
 
         <!-- Testing -->
         <testng.version>6.8.21</testng.version>
+        <mockito.version>1.10.19</mockito.version>
+        <hamcrest.version>1.3</hamcrest.version>
  
         <!-- Maven plugins -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
