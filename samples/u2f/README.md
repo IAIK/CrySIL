@@ -5,6 +5,7 @@ This sample demonstrates [U2F](https://www.yubico.com/applications/fido/) (unive
 This sample combines several modules to enable compatibility between U2F and CrySIL:
 
 * [SMCC actor](./../../modules/actors/java/smcc/)
+* [PKCS#11 actor](./../../modules/actors/java/u2f-pkcs11/)
 * [U2F communication](./../../modules/communications/java/u2f-commons/)
 * [U2F HTTP receiver](./../../modules/communications/java/u2f-http-json-receiver/)
 

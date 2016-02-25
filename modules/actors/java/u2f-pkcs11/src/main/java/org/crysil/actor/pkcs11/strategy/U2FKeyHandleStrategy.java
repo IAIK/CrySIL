@@ -5,7 +5,7 @@ import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.WrappedKey;
 
 /**
- * Strategy design pattern. Handles generation and verification of an U2F key handle for signature cards.
+ * Strategy design pattern. Handles generation and verification of a U2F key handle for signature cards.
  * 
  * Contrary to U2F tokens from Yubico, we can not generate a new private key (and then export it in a key handle) to
  * calculate signatures for every registration request, since we can only use the one ECC key on the signature card.

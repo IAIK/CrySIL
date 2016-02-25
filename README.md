@@ -4,6 +4,7 @@ This is CrySIL, the cryptographic service interoperability layer.
 
 See the module documentation for further information:
 * [SMCC actor](./modules/actors/java/smcc/)
+* [PKCS#11 actor](./modules/actors/java/u2f-pkcs11/)
 * [U2F communication](./modules/communications/java/u2f-commons/)
 * [U2F HTTP receiver](./modules/communications/java/u2f-http-json-receiver/)
 
