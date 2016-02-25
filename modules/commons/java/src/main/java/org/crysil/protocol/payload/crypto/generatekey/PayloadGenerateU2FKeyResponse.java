@@ -82,7 +82,7 @@ public class PayloadGenerateU2FKeyResponse extends PayloadResponse {
 	 * @throws javax.security.cert.CertificateEncodingException
 	 */
 	public void setCertificate(X509Certificate cert) throws CertificateEncodingException {
-		this.encodedX509Certificate = BaseEncoding.base64().encode(cert.getEncoded());
+		this.encodedX509Certificate = cert != null ? BaseEncoding.base64().encode(cert.getEncoded()) : null;
 	}
 
 	@Override

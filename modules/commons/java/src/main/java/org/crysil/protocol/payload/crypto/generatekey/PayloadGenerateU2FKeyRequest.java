@@ -11,9 +11,6 @@ public class PayloadGenerateU2FKeyRequest extends PayloadRequest {
 	protected String clientParam;
 	protected String encodedRandom;
 
-	/** The key type. */
-	protected String keyType;
-
 	/** The certificate subject. */
 	protected String certificateSubject;
 
@@ -47,25 +44,6 @@ public class PayloadGenerateU2FKeyRequest extends PayloadRequest {
 	}
 
 	/**
-	 * Gets the key type.
-	 *
-	 * @return the key type
-	 */
-	public String getKeyType() {
-		return keyType;
-	}
-
-	/**
-	 * Sets the key type.
-	 *
-	 * @param keyType
-	 *            the new key type
-	 */
-	public void setKeyType(String keyType) {
-		this.keyType = keyType;
-	}
-
-	/**
 	 * Gets the certificate subject.
 	 *
 	 * @return the certificate subject
@@ -87,7 +65,6 @@ public class PayloadGenerateU2FKeyRequest extends PayloadRequest {
 	@Override
 	public PayloadRequest getBlankedClone() {
 		PayloadGenerateU2FKeyRequest result = new PayloadGenerateU2FKeyRequest();
-		result.keyType = Logger.isDebugEnabled() ? keyType : "*****";
 		result.certificateSubject = Logger.isDebugEnabled() ? certificateSubject : "*****";
 		result.appParam = Logger.isDebugEnabled() ? appParam : "*****";
 		result.clientParam = Logger.isDebugEnabled() ? clientParam : "*****";
@@ -99,7 +76,6 @@ public class PayloadGenerateU2FKeyRequest extends PayloadRequest {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((keyType == null) ? 0 : keyType.hashCode());
 		result = prime * result + ((certificateSubject == null) ? 0 : certificateSubject.hashCode());
 		result = prime * result + ((appParam == null) ? 0 : appParam.hashCode());
 		result = prime * result + ((clientParam == null) ? 0 : clientParam.hashCode());
@@ -120,11 +96,6 @@ public class PayloadGenerateU2FKeyRequest extends PayloadRequest {
 			if (other.certificateSubject != null)
 				return false;
 		} else if (!certificateSubject.equals(other.certificateSubject))
-			return false;
-		if (keyType == null) {
-			if (other.keyType != null)
-				return false;
-		} else if (!keyType.equals(other.keyType))
 			return false;
 		if (appParam == null) {
 			if (other.appParam != null)

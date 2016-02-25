@@ -6,7 +6,7 @@ public class U2FHeader extends StandardHeader {
 
 	@Override
 	public String getType() {
-		return "u2fSkyTrustHeader";
+		return "u2fHeader";
 	}
 
 	public int getCounter() {

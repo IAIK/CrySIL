@@ -36,6 +36,7 @@
                 { "$ref": "#/definitions/encryptCMSResponse" },
                 { "$ref": "#/definitions/exportWrappedKeyResponse" },
                 { "$ref": "#/definitions/generateWrappedKeyResponse" },
+                { "$ref": "#/definitions/generateU2FKeyResponse" },
                 { "$ref": "#/definitions/getKeyResponse" },
                 { "$ref": "#/definitions/signResponse" },
                 { "$ref": "#/definitions/status" }
@@ -183,6 +184,25 @@
                 }
             },
             "required": ["encodedWrappedKey", "encodedX509Certificate"],
+            "additionalProperties": false
+        },
+        "generateU2FKeyResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["generateU2FKeyResponse"]
+                },
+                "encodedWrappedKey": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "encodedRandom": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "encodedX509Certificate": {
+                    "$ref": "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedWrappedKey", "encodedRandom", "encodedX509Certificate"],
             "additionalProperties": false
         },
         "getKeyResponse": {

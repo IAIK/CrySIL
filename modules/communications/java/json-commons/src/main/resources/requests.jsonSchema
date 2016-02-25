@@ -7,9 +7,36 @@
         "header": {
             "description": "The world readable header",
             "type": "object",
-            "properties": {
+            "oneOf": [
+            	{ "$ref": "#/definitions/standardHeader" },
+            	{ "$ref": "#/definitions/u2fHeader" }
+            ]
+        },
+        "payload": {
+            "description": "The payload",
+            "type": "object",
+            "required": ["type"],
+            "oneOf": [
+                { "$ref": "#/definitions/authChallengeResponse" },
+                { "$ref": "#/definitions/decryptRequest" },
+                { "$ref": "#/definitions/decryptCMSRequest" },
+                { "$ref": "#/definitions/discoverKeysRequest" },
+                { "$ref": "#/definitions/encryptRequest" },
+                { "$ref": "#/definitions/exportWrappedKeyRequest"},
+                { "$ref": "#/definitions/generateWrappedKeyRequest"},
+                { "$ref": "#/definitions/getKeyRequest" },
+                { "$ref": "#/definitions/modifyWrappedKeyRequest"},
+                { "$ref": "#/definitions/signRequest" },
+                { "$ref": "#/definitions/generateU2FKeyRequest" }
+            ]
+        }
+    },
+    "required": ["header", "payload"],
+    "definitions": {
+    	"standardHeader": {
+    		"properties": {
                 "type": {
-                    "enum": ["standardHeader"]
+                    "enum": ["standardSkyTrustHeader","standardHeader"]
                 },
                 "protocolVersion" : {
                     "$ref" : "#/definitions/finiteLengthString"
@@ -28,27 +55,33 @@
                 }
             },
             "required" : ["type", "protocolVersion", "sessionId"]
-        },
-        "payload": {
-            "description": "The payload",
-            "type": "object",
-            "required": ["type"],
-            "oneOf": [
-                { "$ref": "#/definitions/authChallengeResponse" },
-                { "$ref": "#/definitions/decryptRequest" },
-                { "$ref": "#/definitions/decryptCMSRequest" },
-                { "$ref": "#/definitions/discoverKeysRequest" },
-                { "$ref": "#/definitions/encryptRequest" },
-                { "$ref": "#/definitions/exportWrappedKeyRequest"},
-                { "$ref": "#/definitions/generateWrappedKeyRequest"},
-                { "$ref": "#/definitions/getKeyRequest" },
-                { "$ref": "#/definitions/modifyWrappedKeyRequest"},
-                { "$ref": "#/definitions/signRequest" }
-            ]
-        }
-    },
-    "required": ["header", "payload"],
-    "definitions": {
+    	},
+    	"u2fHeader": {
+    		"properties": {
+                "type": {
+                    "enum": ["u2fHeader"]
+                },
+                "protocolVersion" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "commandId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "sessionId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "counter" : {
+                    "type" : "integer"
+                },
+                "path" : {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required" : ["type", "protocolVersion", "sessionId", "counter"]
+    	},
         "authChallengeResponse": {
             "properties": {
                 "type": {
@@ -230,6 +263,33 @@
                 }
             },
             "required": ["keyType", "certificateSubject", "encryptionKeys"],
+            "additionalProperties": false
+        },
+        "generateU2FKeyRequest": {
+            "properties": {
+                "type": {
+                    "enum": ["generateU2FKeyRequest"]
+                },
+                "appParam": {
+                    "$ref" : "#/definitions/base64string"
+                },
+                "clientParam": {
+                	"oneOf": [
+                    	{ "$ref" : "#/definitions/base64string" },
+                    	{ "type" : "null" }
+                    ]
+                },
+                "encodedRandom": {
+                    "oneOf": [
+                    	{ "$ref" : "#/definitions/base64string" },
+                    	{ "type" : "null" }
+                    ]
+                },
+                "certificateSubject": {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required": ["appParam", "certificateSubject"],
             "additionalProperties": false
         },
         "getKeyRequest": {

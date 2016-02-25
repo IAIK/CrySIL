@@ -11,7 +11,11 @@ public class OneToManyInterlink implements Interlink {
 	/**
 	 * The list of modules. This list is only accessible to implementing classes by its getter.
 	 */
-	private List<Module> modules = new ArrayList<>();
+	private List<Module> modules;
+	
+	public OneToManyInterlink() {
+		modules = new ArrayList<Module>();
+	}
 
 	/*
 	 * (non-Javadoc)
