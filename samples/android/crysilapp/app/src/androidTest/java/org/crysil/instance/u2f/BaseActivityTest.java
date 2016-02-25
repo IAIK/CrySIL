@@ -17,7 +17,7 @@ import java.security.Security;
 import java.util.Random;
 
 /**
- * Base class for espresso tests: Insert IAIK Security provider
+ * Base class for espresso tests: Insert security provider
  */
 @RunWith(AndroidJUnit4.class)
 @Ignore

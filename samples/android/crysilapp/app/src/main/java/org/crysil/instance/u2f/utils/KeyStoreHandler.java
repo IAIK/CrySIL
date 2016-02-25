@@ -6,6 +6,8 @@ import android.util.Log;
 import com.google.common.io.BaseEncoding;
 
 import org.crysil.communications.websocket.ssl.KeyStoreInterface;
+import org.crysil.instance.u2f.ErrorActivity;
+import org.crysil.instance.u2f.R;
 
 import java.io.ByteArrayInputStream;
 import java.security.Key;
@@ -20,9 +22,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import org.crysil.instance.u2f.ErrorActivity;
-import org.crysil.instance.u2f.R;
-
 /**
  * Singleton for handling access to the Android KeyStore, and for importing keys
  */
@@ -31,8 +30,6 @@ public class KeyStoreHandler implements KeyStoreInterface {
     private static final String TAG = KeyStoreHandler.class.getSimpleName();
     private static final String ANDROID_KEYSTORE = "AndroidKeyStore";
     private static final String ANDROID_PROVIDER = "AndroidOpenSSL";
-    private static final String IMPORT_KEYSTORE = "PKCS12";
-    private static final String IMPORT_KEYSTORE_PROVIDER = "IAIK";
 
     protected static KeyStoreHandler instance;
     private KeyStore keyStore;

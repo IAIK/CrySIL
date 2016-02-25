@@ -16,7 +16,7 @@ import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
 import com.google.common.io.BaseEncoding;
 
 /**
- * Signs data with an U2F Key
+ * Signs data with a U2F Key
  */
 public class Sign implements Command {
 

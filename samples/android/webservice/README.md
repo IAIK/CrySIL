@@ -2,7 +2,7 @@
 
 This webservice enables clients to use a CrySIL instance running on an Android device by providing a static URL. U2F support is given, since the webservice simply forwards any incoming requests to the CrySIL instance and does not modify them in any way.
 
-You have to register a [GCM application](https://developers.google.com/cloud-messaging/registration) with Google and enter your server key in the file [`./src/main/resources/application.properties`](./src/main/resources/application.properties).
+You have to register a [GCM application](https://developers.google.com/cloud-messaging/registration) with Google and enter your server key in the settings file [`application.properties`](./src/main/resources/application.properties).
 
 ### Features
 
@@ -15,7 +15,7 @@ You have to register a [GCM application](https://developers.google.com/cloud-mes
 
 ### Configuration
 
-The webservice is configured in the file [`./src/main/resources/application.properties`](./src/main/resources/application.properties)
+The webservice is configured in the file [`application.properties`](./src/main/resources/application.properties)
 ```INI
 # GCM communication
 gcmServerKey = TODOENTERYOURGCMKEY
@@ -47,37 +47,32 @@ server.ssl.trust-store-type = PKCS12
 ### Running the Webservice
 
 Compile the sources on the command line:
-```
+```shell
 mvn clean package
 ```
 
 This creates a `.jar` file in the folder `./target`, named `android-webservice-1.0-SNAPSHOT.jar` or similar.
 
 Run the file with plain Java using the default configuration:
-```
+```shell
 java -jar target/android-webservice-1.0-SNAPSHOT.jar
 ```
 
 ### Alternatives
 
-Execution of the tests can be skipped when creating the package:
-```
-mvn -Dmaven.test.skip=true clean package
-```
-
 Any configuration value can be overwritten when starting the webservice:
-```
+```shell
 java -jar target/android-webservice-1.0-SNAPSHOT.jar --keyFile=anotherstore.pkcs12
 ```
 
 The designated port of the server can be changed when passing an additional parameter on start-up:
-```
+```shell
 java -jar android-webservice-1.0.0-SNAPSHOT.jar --server.port=443
 ```
 Beware that starting a service on port 443 usually requires root privileges.
 
 The server can also be started directly from the project directory, without building a `.jar` file first:
-```
+```shell
 mvn spring-boot:run
 ```
 

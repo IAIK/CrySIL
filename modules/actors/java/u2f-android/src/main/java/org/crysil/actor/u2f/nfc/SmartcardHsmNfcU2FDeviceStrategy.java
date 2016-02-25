@@ -50,7 +50,7 @@ public class SmartcardHsmNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 	@Override
 	public byte[] registerPlain(byte[] clientParam, byte[] appParam, U2FDeviceHandler device) throws Exception {
 		byte[] eccCertBytes = readCertificate(device, ECC_CERT_ID);
-		CertificateFactory cf = CertificateFactory.getInstance("X.509", "IAIK");
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		X509Certificate eccCert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(eccCertBytes));
 
 		byte[] keyEncoded = eccCert.getPublicKey().getEncoded();
