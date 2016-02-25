@@ -7,6 +7,7 @@ This sample combines several modules to enable compatibility between U2F and Cry
 * [SMCC actor](./../../modules/actors/java/smcc/)
 * [U2F communication](./../../modules/communications/java/u2f-commons/)
 * [U2F HTTP receiver](./../../modules/communications/java/u2f-http-json-receiver/)
+* [Windows credential provider](./../../modules/others/windows-cp/)
 
 ## U2F Compatibility
 
