@@ -1,0 +1,911 @@
+From 2f7ad9934fa20682f45510e50e1d7240223f02c5 Mon Sep 17 00:00:00 2001
+From: Christian Kollmann <c.kollmann@gmail.com>
+Date: Tue, 8 Dec 2015 10:19:05 +0000
+Subject: [PATCH] CrySIL U2F: Modify cryptotoken extension
+
+---
+ .../resources/cryptotoken/cryptotokenbackground.js | 400 ++++++++++++++++++++-
+ .../resources/cryptotoken/delegatinghelper.js      | 182 ++++++++++
+ .../resources/cryptotoken/externalhelper.js        | 114 ++++++
+ chrome/browser/resources/cryptotoken/gnubbies.js   |   4 +-
+ .../resources/cryptotoken/helperwhitelist.js       |  87 +++++
+ chrome/browser/resources/cryptotoken/manifest.json |  10 +-
+ 25 files changed, 1696 insertions(+), 913 deletions(-)
+ create mode 100644 chrome/browser/resources/cryptotoken/delegatinghelper.js
+ create mode 100644 chrome/browser/resources/cryptotoken/externalhelper.js
+ create mode 100644 chrome/browser/resources/cryptotoken/helperwhitelist.js
+
+diff --git a/chrome/browser/resources/cryptotoken/cryptotokenbackground.js b/chrome/browser/resources/cryptotoken/cryptotokenbackground.js
+index 717c936..c36a1a2 100644
+--- a/chrome/browser/resources/cryptotoken/cryptotokenbackground.js
++++ b/chrome/browser/resources/cryptotoken/cryptotokenbackground.js
+@@ -2,11 +2,359 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
++'use strict';
+ /**
+- * @fileoverview CryptoToken background page
++ * @typedef {{
++     source: string,
++     appId: string,
++     sendMessage: Function,
++     defaultError: number
++ * }}
+  */
++var ExternalHelperConfig;
+ 
+-'use strict';
++/**
++ * @param {!HelperRequest} request The request to handle.
++ * @param {!ExternalHelperConfig} helperConfig How to reach the external helper.
++ * @constructor
++ * @implements {RequestHandler}
++ */
++function ExternalHandler(request, helperConfig) {
++  /** @private {!HelperRequest} */
++  this.request_ = request;
++  /** @private {!ExternalHelperConfig} */
++  this.helperConfig_ = helperConfig;
++}
++
++/**
++ * @param {RequestHandlerCallback} cb Called with the result of the request,
++ *     and an optional source for the result.
++ * @return {boolean} Whether this handler accepted the request.
++ */
++ExternalHandler.prototype.run = function(cb) {
++  var self = this;
++  this.helperConfig_.sendMessage(this.helperConfig_.appId, this.request_,
++      function(response) {
++        if (self.closed_) {
++          console.log(
++              UTIL_fmt('got a response from external helper after close'));
++          return;
++        }
++        if (!response || !response.type) {
++          // A missing or malformed response implies the helper's output
++          // can't be trusted: report the default error.
++          cb(self.makeDefaultErrorReply_(self.request_));
++          return;
++        }
++        console.log(UTIL_fmt('got a response from external helper'));
++        console.log(response);
++        cb(response, self.helperConfig_.source);
++      });
++  return true;
++};
++
++/** Closes this handler. */
++ExternalHandler.prototype.close = function() {
++  /** @private {boolean} */
++  this.closed_ = true;
++};
++
++
++/**
++ * Makes a default, generic error response to the given request.
++ * @param {HelperRequest} request The request.
++ * @return {HelperReply} The reply to the request.
++ * @private
++ */
++ExternalHandler.prototype.makeDefaultErrorReply_ = function(request) {
++  return makeHelperErrorResponse(request,
++      /** @type {DeviceStatusCodes} */ (this.helperConfig_.defaultError));
++};
++
++/**
++ * @param {!ExternalHelperConfig} helperConfig How to reach the external helper.
++ * @constructor
++ * @implements {RequestHelper}
++ */
++function ExternalHelper(helperConfig) {
++  /** @private {!ExternalHelperConfig} */
++  this.helperConfig_ = helperConfig;
++}
++
++/**
++ * Gets a handler for a request.
++ * @param {HelperRequest} request The request to handle.
++ * @return {RequestHandler} A handler for the request.
++ */
++ExternalHelper.prototype.getHandler = function(request) {
++  return new ExternalHandler(request, this.helperConfig_);
++};
++
++/**
++ * Gets the helper's app id.
++ * @return {string} The helper's app id.
++ */
++ExternalHelper.prototype.getHelperAppId = function() {
++  return this.helperConfig_.appId;
++};
++
++/**
++ * (Re)sets the helper's app id.
++ * @param {string} helperId
++ */
++ExternalHelper.prototype.setHelperAppId = function(helperId) {
++  this.helperConfig_.appId = helperId;
++};
++
++
++/**
++ * Implements a whitelist of external request helpers.
++ * @constructor
++ */
++function RequestHelperWhitelist() {
++  /**
++   * Maps extension id -> mnemonic
++   * @private {Object<string, string>}
++   */
++  this.allowedExtensionIds_ = {};
++  /**
++   * Maps b64(sha256(extension id)) -> mnemonic
++   * @private {Object<string, string>}
++   */
++  this.allowedBlindedExtensionIds_ = {};
++}
++
++/**
++ * @param {string} id Extension id.
++ * @return {boolean} Whether this extension is allowed by this whitelist.
++ */
++RequestHelperWhitelist.prototype.isExtensionAllowed = function(id) {
++  return this.getExtensionMnemonicOrEmptyString_(id) != null;
++};
++
++/**
++ * @param {string} id Extension id.
++ * @return {?string} The mnemonic for this extension id, or null if none was
++ *     set or this extension is not allowed.
++ */
++RequestHelperWhitelist.prototype.getExtensionMnemonic = function(id) {
++  var mnemonic = this.getExtensionMnemonicOrEmptyString_(id);
++  if (mnemonic == '') {
++    return null;
++  }
++  return mnemonic;
++};
++
++/**
++ * @param {string} id Extension id.
++ * @return {?string} The mnemonic for this extension id, which may be the empty
++ *     string if none was set, or null if this extension id is not allowed.
++ * @private
++ */
++RequestHelperWhitelist.prototype.getExtensionMnemonicOrEmptyString_ =
++    function(id) {
++  if (this.allowedExtensionIds_.hasOwnProperty(id)) {
++    return this.allowedExtensionIds_[id];
++  }
++  var blindedId = B64_encode(sha256HashOfString(id));
++  if (this.allowedBlindedExtensionIds_.hasOwnProperty(blindedId)) {
++    return this.allowedBlindedExtensionIds_[blindedId];
++  }
++  return null;
++};
++
++/**
++ * Adds the extension id to the whitelist.
++ * @param {string} id Extension id.
++ * @param {string=} opt_mnemonic Name by which to refer to this extension.
++ */
++RequestHelperWhitelist.prototype.addAllowedExtension =
++    function(id, opt_mnemonic) {
++  this.allowedExtensionIds_[id] = opt_mnemonic || '';
++};
++
++/**
++ * Adds the blinded extension id to the whitelist.
++ * @param {string} blindedId Blinded extension id, i.e. Base64-encoded SHA256
++ *     hash of the extension id.
++ * @param {string=} opt_mnemonic Name by which to refer to this extension.
++ */
++RequestHelperWhitelist.prototype.addAllowedBlindedExtension =
++    function(blindedId, opt_mnemonic) {
++  this.allowedBlindedExtensionIds_[blindedId] = opt_mnemonic || '';
++};
++
++/**
++ * @typedef {{
++ *   helper: !RequestHelper,
++ *   handler: RequestHandler,
++ *   complete: boolean
++ * }}
++ */
++var DelegatedHandlerTracker;
++
++/**
++ * @param {!HelperRequest} request Request to handle.
++ * @param {!Array<!RequestHelper>} helpers Helpers to delegate to.
++ * @constructor
++ * @implements {RequestHandler}
++ */
++function DelegatingRequestHandler(request, helpers) {
++  /** @private {!HelperRequest} */
++  this.request_ = request;
++  /** @private {!Array<!DelegatedHandlerTracker>} */
++  this.trackers_ = [];
++  for (var i = 0; i < helpers.length; i++) {
++    var tracker = {
++      helper: helpers[i],
++      handler: null,
++      done: false
++    };
++    this.trackers_.push(tracker);
++  }
++  /** @private {boolean} */
++  this.done_ = false;
++  /** @private {number} */
++  this.stillRunningHelpers_ = 0;
++}
++
++/**
++ * @param {RequestHandlerCallback} cb Called with the result of the request and
++ *     an optional source for the result.
++ * @return {boolean} Whether any of this helper's helpers accepted the request.
++ */
++DelegatingRequestHandler.prototype.run = function(cb) {
++  if (this.cb_) {
++    // Can only handle one request.
++    return false;
++  }
++  /** @private {RequestHandlerCallback} */
++  this.cb_ = cb;
++
++  var accepted = false;
++  for (var i = 0; i < this.trackers_.length; i++) {
++    var tracker = this.trackers_[i];
++    tracker.handler = tracker.helper.getHandler(this.request_);
++    if (tracker.handler) {
++      if (tracker.handler.run(this.helperComplete_.bind(this, tracker, i))) {
++        console.log(UTIL_fmt('helper ' + i + ' accepted request'));
++        accepted = true;
++        this.stillRunningHelpers_++;
++      }
++    }
++  }
++  return accepted;
++};
++
++/** Closes this helper. */
++DelegatingRequestHandler.prototype.close = function() {
++  this.done_ = true;
++  for (var i = 0; i < this.trackers_.length; i++) {
++    if (this.trackers_[i].handler) {
++      this.trackers_[i].handler.close();
++    }
++  }
++};
++
++/**
++ * Called by a helper upon completion.
++ * @param {DelegatedHandlerTracker} tracker The object tracking the helper.
++ * @param {number} index The index of the helper that completed.
++ * @param {HelperReply} reply The result of the sign request.
++ * @param {string=} opt_source The source of the sign result.
++ * @private
++ */
++DelegatingRequestHandler.prototype.helperComplete_ =
++    function(tracker, index, reply, opt_source) {
++  var logMsg = 'helper ' + index + ' completed ';
++  if (reply.code !== undefined) {
++    logMsg += 'with ' + reply.code.toString(16);
++  }
++  if (this.done_) {
++    logMsg += ' after completion, ignoring';
++    console.log(UTIL_fmt(logMsg));
++    return;
++  }
++  if (tracker.complete) {
++    logMsg += ' after helper completion, ignoring';
++    console.warn(UTIL_fmt(logMsg));
++    return;
++  }
++  console.log(UTIL_fmt(logMsg));
++  tracker.complete = true;
++  if (reply.code) {
++    if (!this.stillRunningHelpers_) {
++      console.error('Wtf? helperComplete has no helper left.');
++    } else if (!--this.stillRunningHelpers_) {
++      this.close();
++      console.log(UTIL_fmt('last delegated helper completed, returning ' +
++          reply.code.toString(16)));
++      this.cb_(reply, opt_source);
++    }
++  } else {
++    this.close();
++    this.cb_(reply, opt_source);
++  }
++};
++
++/**
++ * A helper that delegates to other helpers.
++ * @constructor
++ * @implements {RequestHelper}
++ */
++function DelegatingHelper() {
++  /** @private {!Array<!RequestHelper>} */
++  this.helpers_ = [];
++  /** @private {!Object<string, string>} */
++  this.externalHelperIds_ = {};
++}
++
++/**
++ * Adds a helper to this helper's helpers, if it's not already present.
++ * @param {!RequestHelper} helper Helper to add.
++ */
++DelegatingHelper.prototype.addHelper = function(helper) {
++  // The external helper is a little special, because it's dynamically
++  // created and registered in response to registration events, and could be
++  // registered more than once. (It sucks to have to do this, but without a
++  // pattern like Java's .equals(), I'm not sure what else to do.)
++  if (helper.constructor == ExternalHelper) {
++    if (!this.externalHelperIds_[helper.getHelperAppId()]) {
++      this.externalHelperIds_[helper.getHelperAppId()] =
++          helper.getHelperAppId();
++      this.helpers_.push(helper);
++    } else {
++      // Same app id already exists, but maybe it's gotten stale for whatever
++      // reason. Replace the existing helper with the one given.
++      var found = false;
++      for (var i = 0; i < this.helpers_.length; i++) {
++        if (this.helpers_[i].constructor == ExternalHelper &&
++            this.helpers_[i].getHelperAppId() == helper.getHelperAppId()) {
++          this.helpers_[i] = helper;
++          found = true;
++          break;
++        }
++      }
++      if (!found) {
++        // Inconsistent state, the app id was in this.externalHelperIds_ but
++        // not found in this.helpers_. Just add to this.helpers_.
++        this.helpers_.push(helper);
++      }
++    }
++  } else if (this.helpers_.indexOf(helper) == -1) {
++    this.helpers_.push(helper);
++  }
++};
++
++/**
++ * Gets a handler for a request.
++ * @param {HelperRequest} request The request to handle.
++ * @return {RequestHandler} A handler for the request.
++ */
++DelegatingHelper.prototype.getHandler = function(request) {
++  var handler = new DelegatingRequestHandler(request, this.helpers_);
++  return /** @type {RequestHandler} */ (handler);
++};
+ 
+ /** @const */
+ var BROWSER_SUPPORTS_TLS_CHANNEL_ID = true;
+@@ -22,6 +370,9 @@ var gnubbies = new Gnubbies();
+ HidGnubbyDevice.register(gnubbies);
+ UsbGnubbyDevice.register(gnubbies);
+ 
++var REQUEST_HELPER = new DelegatingHelper();
++REQUEST_HELPER.addHelper(new UsbHelper());
++
+ var FACTORY_REGISTRY = (function() {
+   var windowTimer = new WindowTimer();
+   var xhrTextFetcher = new XhrTextFetcher();
+@@ -30,7 +381,7 @@ var FACTORY_REGISTRY = (function() {
+       new CryptoTokenApprovedOrigin(),
+       new CountdownTimerFactory(windowTimer),
+       new CryptoTokenOriginChecker(),
+-      new UsbHelper(),
++      REQUEST_HELPER,
+       windowTimer,
+       xhrTextFetcher);
+ })();
+@@ -41,6 +392,33 @@ var DEVICE_FACTORY_REGISTRY = new DeviceFactoryRegistry(
+     new GoogleCorpIndividualAttestation());
+ 
+ /**
++ * Whitelist of allowed external request helpers.
++ * (This is currently empty, and is left here to document how you might insert
++ * your own helper.)
++ */
++var HELPER_WHITELIST = new RequestHelperWhitelist();
++HELPER_WHITELIST.addAllowedExtension('lpcfldnopnmfgipgpppfkgepoelhmhje');
++HELPER_WHITELIST.addAllowedExtension('jnfcapbalmnkkiinfekimijboapddali');
++
++/**
++ * Registers the given extension as an external helper.
++ * @param {string} id Extension id.
++ */
++function registerExternalHelper(id) {
++    var helperAppConfig = {
++        appId: id,
++        sendMessage: chrome.runtime.sendMessage,
++        defaultError: DeviceStatusCodes.TIMEOUT_STATUS
++    };
++    var source = HELPER_WHITELIST.getExtensionMnemonic(id);
++    if (source) {
++        helperAppConfig.source = source;
++    }
++    var externalHelper = new ExternalHelper(helperAppConfig);
++    REQUEST_HELPER.addHelper(externalHelper);
++}
++
++/**
+  * @param {*} request The received request
+  * @return {boolean} Whether the request is a register/enroll request.
+  */
+@@ -124,6 +502,13 @@ function messageHandlerExternal(request, sender, sendResponse) {
+   if (sender.id && sender.id === LOG_SAVER_EXTENSION_ID) {
+     return handleLogSaverMessage(request);
+   }
++    if (sender.id) {
++        if (request === sender.id &&
++            HELPER_WHITELIST.isExtensionAllowed(sender.id)) {
++            registerExternalHelper(sender.id);
++        }
++        return false;
++    }
+ 
+   messageHandler(request, sender, sendResponse);
+   return true;  // Tell Chrome not to destroy sendResponse yet
+@@ -138,6 +523,15 @@ chrome.runtime.onConnectExternal.addListener(function(port) {
+ 
+   var closeable;
+   port.onMessage.addListener(function(request) {
++    if (port.sender.id) {
++      // An external helper registers itself by sending its id as the message.
++      // Check whether it's a whitelisted helper.
++      if (request === port.sender.id &&
++        HELPER_WHITELIST.isExtensionAllowed(port.sender.id)) {
++        registerExternalHelper(port.sender.id);
++      }
++      return;
++    }
+     var sender = /** @type {!MessageSender} */ (port.sender);
+     closeable = messageHandler(request, sender, sendResponse);
+   });
+diff --git a/chrome/browser/resources/cryptotoken/delegatinghelper.js b/chrome/browser/resources/cryptotoken/delegatinghelper.js
+new file mode 100644
+index 0000000..ca2fe2a
+--- /dev/null
++++ b/chrome/browser/resources/cryptotoken/delegatinghelper.js
+@@ -0,0 +1,182 @@
++// Copyright 2014 Google Inc. All rights reserved
++//
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file or at
++// https://developers.google.com/open-source/licenses/bsd
++
++/**
++ * @fileoverview Implements a delegating helper, i.e. one that delegates its
++ * operations to other helpers.
++ */
++
++/**
++ * @typedef {{
++ *   helper: !RequestHelper,
++ *   handler: RequestHandler,
++ *   complete: boolean
++ * }}
++ */
++var DelegatedHandlerTracker;
++
++/**
++ * @param {!HelperRequest} request Request to handle.
++ * @param {!Array<!RequestHelper>} helpers Helpers to delegate to.
++ * @constructor
++ * @implements {RequestHandler}
++ */
++function DelegatingRequestHandler(request, helpers) {
++  /** @private {!HelperRequest} */
++  this.request_ = request;
++  /** @private {!Array<!DelegatedHandlerTracker>} */
++  this.trackers_ = [];
++  for (var i = 0; i < helpers.length; i++) {
++    var tracker = {
++      helper: helpers[i],
++      handler: null,
++      done: false
++    };
++    this.trackers_.push(tracker);
++  }
++  /** @private {boolean} */
++  this.done_ = false;
++  /** @private {number} */
++  this.stillRunningHelpers_ = 0;
++}
++
++/**
++ * @param {RequestHandlerCallback} cb Called with the result of the request and
++ *     an optional source for the result.
++ * @return {boolean} Whether any of this helper's helpers accepted the request.
++ */
++DelegatingRequestHandler.prototype.run = function(cb) {
++  if (this.cb_) {
++    // Can only handle one request.
++    return false;
++  }
++  /** @private {RequestHandlerCallback} */
++  this.cb_ = cb;
++
++  var accepted = false;
++  for (var i = 0; i < this.trackers_.length; i++) {
++    var tracker = this.trackers_[i];
++    tracker.handler = tracker.helper.getHandler(this.request_);
++    if (tracker.handler) {
++      if (tracker.handler.run(this.helperComplete_.bind(this, tracker, i))) {
++        console.log(UTIL_fmt('helper ' + i + ' accepted request'));
++        accepted = true;
++        this.stillRunningHelpers_++;
++      }
++    }
++  }
++  return accepted;
++};
++
++/** Closes this helper. */
++DelegatingRequestHandler.prototype.close = function() {
++  this.done_ = true;
++  for (var i = 0; i < this.trackers_.length; i++) {
++    if (this.trackers_[i].handler) {
++      this.trackers_[i].handler.close();
++    }
++  }
++};
++
++/**
++ * Called by a helper upon completion.
++ * @param {DelegatedHandlerTracker} tracker The object tracking the helper.
++ * @param {number} index The index of the helper that completed.
++ * @param {HelperReply} reply The result of the sign request.
++ * @param {string=} opt_source The source of the sign result.
++ * @private
++ */
++DelegatingRequestHandler.prototype.helperComplete_ =
++    function(tracker, index, reply, opt_source) {
++  var logMsg = 'helper ' + index + ' completed ';
++  if (reply.code !== undefined) {
++    logMsg += 'with ' + reply.code.toString(16);
++  }
++  if (this.done_) {
++    logMsg += ' after completion, ignoring';
++    console.log(UTIL_fmt(logMsg));
++    return;
++  }
++  if (tracker.complete) {
++    logMsg += ' after helper completion, ignoring';
++    console.warn(UTIL_fmt(logMsg));
++    return;
++  }
++  console.log(UTIL_fmt(logMsg));
++  tracker.complete = true;
++  if (reply.code) {
++    if (!this.stillRunningHelpers_) {
++      console.error('Wtf? helperComplete has no helper left.');
++    } else if (!--this.stillRunningHelpers_) {
++      this.close();
++      console.log(UTIL_fmt('last delegated helper completed, returning ' +
++          reply.code.toString(16)));
++      this.cb_(reply, opt_source);
++    }
++  } else {
++    this.close();
++    this.cb_(reply, opt_source);
++  }
++};
++
++/**
++ * A helper that delegates to other helpers.
++ * @constructor
++ * @implements {RequestHelper}
++ */
++function DelegatingHelper() {
++  /** @private {!Array<!RequestHelper>} */
++  this.helpers_ = [];
++  /** @private {!Object<string, string>} */
++  this.externalHelperIds_ = {};
++}
++
++/**
++ * Adds a helper to this helper's helpers, if it's not already present.
++ * @param {!RequestHelper} helper Helper to add.
++ */
++DelegatingHelper.prototype.addHelper = function(helper) {
++  // The external helper is a little special, because it's dynamically
++  // created and registered in response to registration events, and could be
++  // registered more than once. (It sucks to have to do this, but without a
++  // pattern like Java's .equals(), I'm not sure what else to do.)
++  if (helper.constructor == ExternalHelper) {
++    if (!this.externalHelperIds_[helper.getHelperAppId()]) {
++      this.externalHelperIds_[helper.getHelperAppId()] =
++          helper.getHelperAppId();
++      this.helpers_.push(helper);
++    } else {
++      // Same app id already exists, but maybe it's gotten stale for whatever
++      // reason. Replace the existing helper with the one given.
++      var found = false;
++      for (var i = 0; i < this.helpers_.length; i++) {
++        if (this.helpers_[i].constructor == ExternalHelper &&
++            this.helpers_[i].getHelperAppId() == helper.getHelperAppId()) {
++          this.helpers_[i] = helper;
++          found = true;
++          break;
++        }
++      }
++      if (!found) {
++        // Inconsistent state, the app id was in this.externalHelperIds_ but
++        // not found in this.helpers_. Just add to this.helpers_.
++        this.helpers_.push(helper);
++      }
++    }
++  } else if (this.helpers_.indexOf(helper) == -1) {
++    this.helpers_.push(helper);
++  }
++};
++
++/**
++ * Gets a handler for a request.
++ * @param {HelperRequest} request The request to handle.
++ * @return {RequestHandler} A handler for the request.
++ */
++DelegatingHelper.prototype.getHandler = function(request) {
++  var handler = new DelegatingRequestHandler(request, this.helpers_);
++  return /** @type {RequestHandler} */ (handler);
++};
+diff --git a/chrome/browser/resources/cryptotoken/externalhelper.js b/chrome/browser/resources/cryptotoken/externalhelper.js
+new file mode 100644
+index 0000000..93b679a
+--- /dev/null
++++ b/chrome/browser/resources/cryptotoken/externalhelper.js
+@@ -0,0 +1,114 @@
++// Copyright 2014 Google Inc. All rights reserved
++//
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file or at
++// https://developers.google.com/open-source/licenses/bsd
++
++/**
++ * @fileoverview Implements a helper that interacts with external (not in this
++ * browser/app) helpers.
++ */
++'use strict';
++
++/**
++ * @typedef {{
++     source: string,
++     appId: string,
++     sendMessage: Function,
++     defaultError: number
++ * }}
++ */
++var ExternalHelperConfig;
++
++/**
++ * @param {!HelperRequest} request The request to handle.
++ * @param {!ExternalHelperConfig} helperConfig How to reach the external helper.
++ * @constructor
++ * @implements {RequestHandler}
++ */
++function ExternalHandler(request, helperConfig) {
++  /** @private {!HelperRequest} */
++  this.request_ = request;
++  /** @private {!ExternalHelperConfig} */
++  this.helperConfig_ = helperConfig;
++}
++
++/**
++ * @param {RequestHandlerCallback} cb Called with the result of the request,
++ *     and an optional source for the result.
++ * @return {boolean} Whether this handler accepted the request.
++ */
++ExternalHandler.prototype.run = function(cb) {
++  var self = this;
++  this.helperConfig_.sendMessage(this.helperConfig_.appId, this.request_,
++      function(response) {
++        if (self.closed_) {
++          console.log(
++              UTIL_fmt('got a response from external helper after close'));
++          return;
++        }
++        if (!response || !response.type) {
++          // A missing or malformed response implies the helper's output
++          // can't be trusted: report the default error.
++          cb(self.makeDefaultErrorReply_(self.request_));
++          return;
++        }
++        console.log(UTIL_fmt('got a response from external helper'));
++        console.log(response);
++        cb(response, self.helperConfig_.source);
++      });
++  return true;
++};
++
++/** Closes this handler. */
++ExternalHandler.prototype.close = function() {
++  /** @private {boolean} */
++  this.closed_ = true;
++};
++
++
++/**
++ * Makes a default, generic error response to the given request.
++ * @param {HelperRequest} request The request.
++ * @return {HelperReply} The reply to the request.
++ * @private
++ */
++ExternalHandler.prototype.makeDefaultErrorReply_ = function(request) {
++  return makeHelperErrorResponse(request,
++      /** @type {DeviceStatusCodes} */ (this.helperConfig_.defaultError));
++};
++
++/**
++ * @param {!ExternalHelperConfig} helperConfig How to reach the external helper.
++ * @constructor
++ * @implements {RequestHelper}
++ */
++function ExternalHelper(helperConfig) {
++  /** @private {!ExternalHelperConfig} */
++  this.helperConfig_ = helperConfig;
++}
++
++/**
++ * Gets a handler for a request.
++ * @param {HelperRequest} request The request to handle.
++ * @return {RequestHandler} A handler for the request.
++ */
++ExternalHelper.prototype.getHandler = function(request) {
++  return new ExternalHandler(request, this.helperConfig_);
++};
++
++/**
++ * Gets the helper's app id.
++ * @return {string} The helper's app id.
++ */
++ExternalHelper.prototype.getHelperAppId = function() {
++  return this.helperConfig_.appId;
++};
++
++/**
++ * (Re)sets the helper's app id.
++ * @param {string} helperId
++ */
++ExternalHelper.prototype.setHelperAppId = function(helperId) {
++  this.helperConfig_.appId = helperId;
++};
+diff --git a/chrome/browser/resources/cryptotoken/gnubbies.js b/chrome/browser/resources/cryptotoken/gnubbies.js
+index 8cd2528..8966653 100644
+--- a/chrome/browser/resources/cryptotoken/gnubbies.js
++++ b/chrome/browser/resources/cryptotoken/gnubbies.js
+@@ -140,8 +140,8 @@ Gnubbies.prototype.enumerate = function(cb) {
+       devs = [];
+     }
+ 
+-    console.log(UTIL_fmt('Enumerated ' + devs.length + ' gnubbies'));
+-    console.log(devs);
++    //console.log(UTIL_fmt('Enumerated ' + devs.length + ' gnubbies'));
++    //console.log(devs);
+ 
+     var presentDevs = {};
+     var deviceIds = [];
+diff --git a/chrome/browser/resources/cryptotoken/helperwhitelist.js b/chrome/browser/resources/cryptotoken/helperwhitelist.js
+new file mode 100644
+index 0000000..ef1170b
+--- /dev/null
++++ b/chrome/browser/resources/cryptotoken/helperwhitelist.js
+@@ -0,0 +1,87 @@
++// Copyright 2014 Google Inc. All rights reserved
++//
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file or at
++// https://developers.google.com/open-source/licenses/bsd
++
++/**
++ * @fileoverview Implements a whitelist of external request helpers.
++ */
++'use strict';
++
++/**
++ * Implements a whitelist of external request helpers.
++ * @constructor
++ */
++function RequestHelperWhitelist() {
++  /**
++   * Maps extension id -> mnemonic
++   * @private {Object<string, string>}
++   */
++  this.allowedExtensionIds_ = {};
++  /**
++   * Maps b64(sha256(extension id)) -> mnemonic
++   * @private {Object<string, string>}
++   */
++  this.allowedBlindedExtensionIds_ = {};
++}
++
++/**
++ * @param {string} id Extension id.
++ * @return {boolean} Whether this extension is allowed by this whitelist.
++ */
++RequestHelperWhitelist.prototype.isExtensionAllowed = function(id) {
++  return this.getExtensionMnemonicOrEmptyString_(id) != null;
++};
++
++/**
++ * @param {string} id Extension id.
++ * @return {?string} The mnemonic for this extension id, or null if none was
++ *     set or this extension is not allowed.
++ */
++RequestHelperWhitelist.prototype.getExtensionMnemonic = function(id) {
++  var mnemonic = this.getExtensionMnemonicOrEmptyString_(id);
++  if (mnemonic == '') {
++    return null;
++  }
++  return mnemonic;
++};
++
++/**
++ * @param {string} id Extension id.
++ * @return {?string} The mnemonic for this extension id, which may be the empty
++ *     string if none was set, or null if this extension id is not allowed.
++ * @private
++ */
++RequestHelperWhitelist.prototype.getExtensionMnemonicOrEmptyString_ =
++    function(id) {
++  if (this.allowedExtensionIds_.hasOwnProperty(id)) {
++    return this.allowedExtensionIds_[id];
++  }
++  var blindedId = B64_encode(sha256HashOfString(id));
++  if (this.allowedBlindedExtensionIds_.hasOwnProperty(blindedId)) {
++    return this.allowedBlindedExtensionIds_[blindedId];
++  }
++  return null;
++};
++
++/**
++ * Adds the extension id to the whitelist.
++ * @param {string} id Extension id.
++ * @param {string=} opt_mnemonic Name by which to refer to this extension.
++ */
++RequestHelperWhitelist.prototype.addAllowedExtension =
++    function(id, opt_mnemonic) {
++  this.allowedExtensionIds_[id] = opt_mnemonic || '';
++};
++
++/**
++ * Adds the blinded extension id to the whitelist.
++ * @param {string} blindedId Blinded extension id, i.e. Base64-encoded SHA256
++ *     hash of the extension id.
++ * @param {string=} opt_mnemonic Name by which to refer to this extension.
++ */
++RequestHelperWhitelist.prototype.addAllowedBlindedExtension =
++    function(blindedId, opt_mnemonic) {
++  this.allowedBlindedExtensionIds_[blindedId] = opt_mnemonic || '';
++};
+diff --git a/chrome/browser/resources/cryptotoken/manifest.json b/chrome/browser/resources/cryptotoken/manifest.json
+index 0ba3a03..3700fa4 100644
+--- a/chrome/browser/resources/cryptotoken/manifest.json
++++ b/chrome/browser/resources/cryptotoken/manifest.json
+@@ -27,7 +27,9 @@
+       "<all_urls>"
+     ],
+     "ids": [
+-      "fjajfjhkeibgmiggdfehjplbhmfkialk"
++      "fjajfjhkeibgmiggdfehjplbhmfkialk",
++      "lpcfldnopnmfgipgpppfkgepoelhmhje",
++      "jnfcapbalmnkkiinfekimijboapddali"
+     ],
+     "accepts_tls_channel_id": true
+   },
+@@ -78,7 +80,11 @@
+       "usbsignhandler.js",
+       "usbgnubbyfactory.js",
+       "googlecorpindividualattest.js",
+-      "cryptotokenbackground.js"
++      "cryptotokenbackground.js",
++      "requesthelper.js",
++      "delegatinghelper.js",
++      "externalhelper.js",
++      "helperwhitelist.js"
+     ]
+   },
+   "incognito": "split"
+
