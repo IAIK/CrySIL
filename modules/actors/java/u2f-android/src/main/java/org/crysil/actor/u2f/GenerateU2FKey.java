@@ -22,20 +22,20 @@ import com.google.common.io.BaseEncoding;
 public class GenerateU2FKey implements Command {
 
 	@Override
-	public PayloadResponse perform(Request request, U2FKeyHandleStrategy strategy, Map<byte[], byte[]> cachedResponses,
+	public PayloadResponse perform(Request request, U2FKeyHandleStrategy strategy, Map<String, byte[]> cachedResponses,
 			U2FActivityHandler activityHandler) throws CrySILException {
 		PayloadGenerateU2FKeyRequest payload = (PayloadGenerateU2FKeyRequest) request.getPayload();
 
 		try {
 			if (payload.getClientParam() == null || payload.getClientParam().length == 0) {
-				Logger.debug(String.format("AndroidU2FActor.handleSign() returning fake keyHandle='%s'", BaseEncoding
-						.base64Url().encode(payload.getEncodedRandom())));
+				Logger.debug(String.format("GenerateU2FKey returning fake keyHandle='%s'", BaseEncoding.base64()
+						.encode(payload.getEncodedRandom())));
 				return buildGenerateWrappedKeyResponsePayload(payload.getEncodedRandom(), null);
 			} else {
 				byte[] appParam = payload.getAppParam();
 				byte[] clientParam = payload.getClientParam();
 
-				Logger.debug(String.format("AndroidU2FActor.handleSign() waiting for NFC"));
+				Logger.debug(String.format("GenerateU2FKey waiting for NFC"));
 				U2FDeviceHandler u2fHandler = activityHandler.activateNFC();
 				if (u2fHandler == null) {
 					Logger.error("No handler from Android");
@@ -51,9 +51,9 @@ public class GenerateU2FKey implements Command {
 				int certOff = keyOff + keyLen;
 				byte[] certificate = new byte[certLen];
 				System.arraycopy(u2fResponseBytes, certOff, certificate, 0, certLen);
-				cachedResponses.put(keyHandle, u2fResponseBytes);
-				Logger.debug(String.format("AndroidU2FActor.handleSign() returning keyHandle='%s', cert='%s'",
-						BaseEncoding.base64().encode(keyHandle), BaseEncoding.base64().encode(certificate)));
+				cachedResponses.put(BaseEncoding.base16().encode(keyHandle), u2fResponseBytes);
+				Logger.debug(String.format("GenerateU2FKey returning keyHandle='%s', cert='%s'", BaseEncoding.base64()
+						.encode(keyHandle), BaseEncoding.base64().encode(certificate)));
 				return buildGenerateWrappedKeyResponsePayload(keyHandle, X509Certificate.getInstance(certificate));
 			}
 		} catch (Exception e) {

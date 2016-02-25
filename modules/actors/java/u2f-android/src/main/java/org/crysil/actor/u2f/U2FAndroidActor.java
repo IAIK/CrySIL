@@ -23,13 +23,13 @@ public class U2FAndroidActor implements Module {
 	Map<Class<? extends PayloadRequest>, Command> commands = new HashMap<>();
 	// TODO: Strategy selection!
 	U2FKeyHandleStrategy strategy = new YubicoRandomKeyHandleStrategy();
-	Map<byte[], byte[]> cachedResponses;
+	Map<String, byte[]> cachedResponses;
 	U2FActivityHandler activityHandler;
 
 	public U2FAndroidActor(U2FActivityHandler u2fActivityHandler) {
 		commands.put(PayloadGenerateU2FKeyRequest.class, new GenerateU2FKey());
 		commands.put(PayloadSignRequest.class, new Sign());
-		cachedResponses = new HashMap<byte[], byte[]>();
+		cachedResponses = new HashMap<String, byte[]>();
 		activityHandler = u2fActivityHandler;
 	}
 

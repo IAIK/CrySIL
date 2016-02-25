@@ -23,7 +23,7 @@ public class Sign implements Command {
 	protected static final String SIG_ECDSA = "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256";
 
 	@Override
-	public PayloadResponse perform(Request request, U2FKeyHandleStrategy strategy, Map<byte[], byte[]> cachedResponses,
+	public PayloadResponse perform(Request request, U2FKeyHandleStrategy strategy, Map<String, byte[]> cachedResponses,
 			U2FActivityHandler activityHandler) throws CrySILException {
 		PayloadSignRequest payload = (PayloadSignRequest) request.getPayload();
 		PayloadSignResponse response = new PayloadSignResponse();
@@ -33,17 +33,18 @@ public class Sign implements Command {
 		byte[] appParam = new byte[32];
 		byte[] clientParam = new byte[32];
 		byte[] keyHandle = null;
+		String mapKey = BaseEncoding.base16().encode(wrappedKey);
 
-		if (cachedResponses.containsKey(wrappedKey)) {
+		if (cachedResponses.containsKey(mapKey)) {
 			// we are still registering, return response from before
-			byte[] u2fResponse = cachedResponses.get(wrappedKey);
-			cachedResponses.remove(wrappedKey);
+			byte[] u2fResponse = cachedResponses.get(mapKey);
+			cachedResponses.remove(mapKey);
 
 			System.arraycopy(inputData, 1, appParam, 0, 32);
 			System.arraycopy(inputData, 1 + 32, clientParam, 0, 32);
 
-			Logger.debug(String.format("AndroidU2FActor.handleSign() returning from Map response='%s'", BaseEncoding
-					.base16().encode(u2fResponse)));
+			Logger.debug(String.format("Sign returning from Map response='%s'",
+					BaseEncoding.base16().encode(u2fResponse)));
 			response.addSignedHash(u2fResponse);
 		} else {
 			// we are authenticating
@@ -58,7 +59,7 @@ public class Sign implements Command {
 			System.arraycopy(inputData, 5 + 32, clientParam, 0, 32);
 			keyHandle = wrappedKey;
 
-			Logger.debug(String.format("AndroidU2FActor.handleSign() waiting for NFC"));
+			Logger.debug(String.format("Sign waiting for NFC"));
 			U2FDeviceHandler u2fHandler = activityHandler.activateNFC();
 			if (u2fHandler == null) {
 				Logger.error("No handler from Android");
@@ -67,8 +68,8 @@ public class Sign implements Command {
 
 			try {
 				byte[] u2fResponse = u2fHandler.signPlain(keyHandle, clientParam, appParam, counter);
-				Logger.debug(String.format("AndroidU2FActor.handleSign() returning fresh response='%s'", BaseEncoding
-						.base16().encode(u2fResponse)));
+				Logger.debug(String.format("Sign returning fresh response='%s'",
+						BaseEncoding.base16().encode(u2fResponse)));
 				response.addSignedHash(u2fResponse);
 			} catch (Exception e) {
 				Logger.error("Error from Android", e);

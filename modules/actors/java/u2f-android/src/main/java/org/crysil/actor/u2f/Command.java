@@ -9,7 +9,8 @@ import org.crysil.protocol.payload.PayloadResponse;
 
 public interface Command {
 
-	public PayloadResponse perform(Request request, U2FKeyHandleStrategy strategy, Map<byte[], byte[]> cachedResponses,
+	// Note: Do not use byte[] as key in a HashMap, it won't give expected results
+	public PayloadResponse perform(Request request, U2FKeyHandleStrategy strategy, Map<String, byte[]> cachedResponses,
 			U2FActivityHandler activityHandler) throws CrySILException;
 
 }

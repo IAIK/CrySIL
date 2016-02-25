@@ -4,6 +4,8 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 import java.security.KeyStore;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToManyInterlink;
@@ -33,6 +35,7 @@ public class WebSocketReceiver extends OneToManyInterlink implements WebSocketLi
 
 	public WebSocketReceiver(KeyStore keyStore, char[] password, KeyStore trustStore, ActorChooser actorChooser,
 			CertificateCallback certificateCallback, U2FCounterStore counterStore) {
+		super();
 		this.keyStore = keyStore;
 		this.password = password;
 		this.trustStore = trustStore;
@@ -82,7 +85,11 @@ public class WebSocketReceiver extends OneToManyInterlink implements WebSocketLi
 	private Module getActor() {
 		final Module[] actor = new Module[1];
 		final ManualResetEvent sync = new ManualResetEvent(false);
-		actorChooser.chooseActor(getAttachedModules(), new ActionPerformedCallback() {
+		Map<String, Module> moduleMap = new HashMap<>();
+		for (Module module : getAttachedModules()) {
+			moduleMap.put(module.getClass().getSimpleName(), module);
+		}
+		actorChooser.chooseActor(moduleMap, new ActionPerformedCallback() {
 			@Override
 			public void actionPerformed(Module actorChosen) {
 				actor[0] = actorChosen;

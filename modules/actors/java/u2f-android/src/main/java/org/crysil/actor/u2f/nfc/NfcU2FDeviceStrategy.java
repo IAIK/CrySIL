@@ -9,9 +9,9 @@ import org.crysil.actor.u2f.U2FDeviceHandler;
  */
 public interface NfcU2FDeviceStrategy {
 
-	String registerPlain(byte[] clientParam, byte[] appParam, U2FDeviceHandler device) throws Exception;
+	byte[] registerPlain(byte[] clientParam, byte[] appParam, U2FDeviceHandler device) throws Exception;
 
-	String signPlain(byte[] keyHandle, byte[] clientParam, byte[] appParam, byte[] counter, U2FDeviceHandler device)
+	byte[] signPlain(byte[] keyHandle, byte[] clientParam, byte[] appParam, byte[] counter, U2FDeviceHandler device)
 			throws Exception;
 
 	String getVersion(U2FDeviceHandler device) throws Exception;

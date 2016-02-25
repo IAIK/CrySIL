@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.security.Key;
 
 import org.crysil.actor.u2f.U2FDeviceHandler;
-import org.crysil.actor.u2f.U2FUtil;
 
 /**
  * Talks to a YubiKey NEO from Yubico to execute U2F commands
@@ -25,7 +24,8 @@ public class YubikeyNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 		return new String(device.send(GET_VERSION_COMMAND), Charset.forName("ASCII"));
 	}
 
-	public String registerPlain(byte[] clientParam, byte[] appParam, U2FDeviceHandler device) throws Exception {
+	@Override
+	public byte[] registerPlain(byte[] clientParam, byte[] appParam, U2FDeviceHandler device) throws Exception {
 		byte[] apdu = new byte[5 + 32 + 32 + 1];
 		apdu[1] = 0x01; // ins = ENROLL
 		apdu[2] = 0x03; // p1
@@ -35,10 +35,11 @@ public class YubikeyNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 		System.arraycopy(appParam, 0, apdu, 5 + 32, 32);
 
 		byte[] resp = device.send(apdu);
-		return U2FUtil.encodeBase64Url(resp);
+		return resp;
 	}
 
-	public String signPlain(byte[] keyHandle, byte[] clientParam, byte[] appParam, byte[] counter,
+	@Override
+	public byte[] signPlain(byte[] keyHandle, byte[] clientParam, byte[] appParam, byte[] counter,
 			U2FDeviceHandler device) throws Exception {
 		byte[] apdu = new byte[5 + 32 + 32 + 1 + keyHandle.length + 1];
 		apdu[1] = 0x02; // ins = SIGN
@@ -50,7 +51,7 @@ public class YubikeyNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 		apdu[5 + 64] = (byte) keyHandle.length;
 		System.arraycopy(keyHandle, 0, apdu, 5 + 64 + 1, keyHandle.length);
 		byte[] resp = device.send(apdu);
-		return U2FUtil.encodeBase64Url(resp);
+		return resp;
 	}
 
 	@Override

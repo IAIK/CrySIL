@@ -48,7 +48,7 @@ public class SmartcardHsmNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 	}
 
 	@Override
-	public String registerPlain(byte[] clientParam, byte[] appParam, U2FDeviceHandler device) throws Exception {
+	public byte[] registerPlain(byte[] clientParam, byte[] appParam, U2FDeviceHandler device) throws Exception {
 		byte[] eccCertBytes = readCertificate(device, ECC_CERT_ID);
 		CertificateFactory cf = CertificateFactory.getInstance("X.509", "IAIK");
 		X509Certificate eccCert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(eccCertBytes));
@@ -68,7 +68,7 @@ public class SmartcardHsmNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 		byte[] resp = Bytes.concat(new byte[] { 0x05 }, keyEncoded, new byte[] { (byte) keyHandleBytes.length },
 				keyHandleBytes, attCertBytes, attSignature);
 
-		return U2FUtil.encodeBase64Url(resp);
+		return resp;
 	}
 
 	private byte[] readCertificate(U2FDeviceHandler device, byte[] certId) throws IOException, APDUError {
@@ -144,7 +144,7 @@ public class SmartcardHsmNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 	}
 
 	@Override
-	public String signPlain(byte[] keyHandle, byte[] clientParam, byte[] appParam, byte[] counterB,
+	public byte[] signPlain(byte[] keyHandle, byte[] clientParam, byte[] appParam, byte[] counterB,
 			U2FDeviceHandler device) throws Exception {
 		if (!strategy.verifyKeyHandle(keyHandle, appParam, clientParam, device, this)) {
 			throw new IOException("Invalid KeyHandle given");
@@ -156,7 +156,7 @@ public class SmartcardHsmNfcU2FDeviceStrategy implements NfcU2FDeviceStrategy {
 		md.update(signatureBytes);
 		byte[] digest = md.digest();
 		byte[] resp = executeSign(digest, ECC_KEY_ID, device);
-		return U2FUtil.encodeBase64Url(resp);
+		return resp;
 	}
 
 	/**
