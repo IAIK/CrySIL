@@ -7,6 +7,7 @@ import java.security.Signature;
 
 import javax.security.cert.CertificateException;
 
+import org.crysil.actor.smcc.strategy.SimpleSignedKeyHandleStrategy;
 import org.crysil.commons.Module;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
@@ -27,7 +28,7 @@ import com.google.common.primitives.Bytes;
  * Tests require a smcc-compliant card connected to this machine and the correct PIN in {@link SmccPinConfiguration}
  */
 @Test(enabled = false)
-public class SmccActorTest {
+public class SmccActorSignedTest {
 
 	private Module module;
 	private PayloadGenerateU2FKeyResponse generateKeyResponsePayload;
@@ -35,7 +36,7 @@ public class SmccActorTest {
 
 	@BeforeMethod
 	public void before() {
-		module = new SmccActor();
+		module = new SmccActor(new SimpleSignedKeyHandleStrategy());
 		appId = calculateDigest("https://localhost");
 	}
 

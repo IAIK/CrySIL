@@ -4,4 +4,4 @@ This is a [U2F](https://www.yubico.com/applications/fido/) compliant actor for C
 
 This actor uses SMCC from [MOCCA](https://joinup.ec.europa.eu/site/mocca/) to forward commands to a compatible signature card like the Austrian Citizen Card. It supports the commands necessary for U2F handling, e.g. generating wrapped ECC keys and signing data. Nevertheless, the sign operations are always executed with the same ECC key from the smartcard. Thus the generated key handle is only used to verify authenticity of it, using the RSA key from the smartcard. 
 
-PIN verification for the smartcard is handled through a fixed class. This needs to be modified, once authentication is implemented in CrySIL.
+PIN verification for the smartcard is handled through a fixed class, where you need to configure your PIN: [`SmccPinConfiguration`](./src/main/java/org/crysil/actor/smcc/SmccPinConfiguration.java). This needs to be modified, once authentication is implemented in CrySIL.

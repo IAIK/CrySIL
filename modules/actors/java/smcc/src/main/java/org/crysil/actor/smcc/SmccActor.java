@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.crysil.actor.smcc.strategy.U2FKeyHandleStrategy;
-import org.crysil.actor.smcc.strategy.YubicoRandomKeyHandleStrategy;
 import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
 import org.crysil.errorhandling.CrySILException;
@@ -23,14 +22,14 @@ import at.gv.egiz.smcc.pin.gui.PINGUI;
 public class SmccActor implements Module {
 
 	Map<Class<? extends PayloadRequest>, Command> commands = new HashMap<>();
-	// TODO: Strategy selection!
-	U2FKeyHandleStrategy strategy = new YubicoRandomKeyHandleStrategy();
+	U2FKeyHandleStrategy strategy;
 	// TODO: Authentication!
 	PINGUI pinGUI = SmccPinConfiguration.getInstance();
 
-	public SmccActor() {
+	public SmccActor(U2FKeyHandleStrategy strategy) {
 		commands.put(PayloadGenerateU2FKeyRequest.class, new GenerateU2FKey());
 		commands.put(PayloadSignRequest.class, new Sign());
+		this.strategy = strategy;
 	}
 
 	@Override
