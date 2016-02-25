@@ -1,0 +1,66 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "org.crysil.instance.android.u2f"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 10
+        versionName "1.0"
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    dexOptions {
+        incremental false
+        preDexLibraries false
+        javaMaxHeapSize "2g"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/ASL-2.0.txt'
+        exclude 'META-INF/LGPL-3.0.txt'
+        exclude 'META-INF/spring.handlers'
+        exclude 'META-INF/spring.schemas'
+        exclude 'META-INF/spring.tooling'
+        exclude 'META-INF/JCESIGN.DSA'
+        exclude 'META-INF/JCESIGN.SF'
+        exclude 'draftv3/schema'
+        exclude 'draftv4/schema'
+        exclude 'LICENSE.txt'
+    }
+}
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // Force the use of 3.0.0 because the app requires that version in json-schema-validator transitively.
+    androidTestCompile 'com.google.code.findbugs:jsr305:3.0.0'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    compile 'org.crysil.instance:private-u2f-server:1.0-SNAPSHOT'
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
+    compile 'com.android.support:support-v4:23.0.1'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.madgag.spongycastle:core:1.54.0.0'
+    compile 'com.madgag.spongycastle:prov:1.54.0.0'
+    compile 'com.madgag.spongycastle:pkix:1.54.0.0'
+}
