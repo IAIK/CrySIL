@@ -11,14 +11,14 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.security.ProviderInstaller;
 
 import org.crysil.instance.CrySILElementFactory;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
-
 import org.crysil.instance.u2f.push.PushHelper;
 import org.crysil.instance.u2f.push.RegistrationIntentService;
 import org.crysil.instance.u2f.utils.ApplicationContextProvider;
+import org.crysil.instance.u2f.utils.CertificateUtils;
 import org.crysil.instance.u2f.utils.KeyStoreHandler;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Security;
 
 /**
  * Shows webservices (as a fragment), handles NFC communication (as a fragment)
@@ -60,10 +60,14 @@ public class MainActivity extends AbstractActivity {
 
         new Thread(new Runnable() {
             public void run() {
-                Security.addProvider(new BouncyCastleProvider());
+                Security.insertProviderAt(new BouncyCastleProvider(), Security.getProviders().length + 1);
+                String alias = "defaultSigningKey";
+                if (KeyStoreHandler.getInstance().getKey(alias) == null) {
+                    CertificateUtils.createKeyAndCert(alias, "CrySIL U2F on Android", "u2f@example.com");
+                }
                 CrySILElementFactory.initialize(KeyStoreHandler.getInstance().getKeyStore(),
-                        KeyStoreHandler.getInstance().getKeyStore(), KeyStoreHandler.getInstance().getProvider(),
-                        KeyStoreHandler.getInstance().getType(), nfcListener, actorChooser, certificateCallback);
+                        KeyStoreHandler.getInstance().getKeyStore(), alias, nfcListener, actorChooser,
+                        certificateCallback);
             }
         }).start();
 

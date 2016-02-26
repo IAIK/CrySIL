@@ -11,7 +11,6 @@ import org.crysil.commons.Module;
 import org.crysil.commons.OneToManyInterlink;
 import org.crysil.communications.u2f.U2FReceiverHandler;
 import org.crysil.communications.u2f.U2FReceiverInterface;
-import org.crysil.communications.u2f.counter.U2FCounterStore;
 import org.crysil.communications.websocket.interfaces.ActionPerformedCallback;
 import org.crysil.communications.websocket.interfaces.ActorChooser;
 import org.crysil.communications.websocket.interfaces.CertificateCallback;
@@ -23,6 +22,7 @@ import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
+import org.crysil.u2f.U2FCounterStore;
 
 public class WebSocketReceiver extends OneToManyInterlink implements WebSocketListener, U2FReceiverInterface {
 

@@ -106,7 +106,7 @@ public class CertificateUtil {
 				Date notBefore = gregorianCalendar.getTime();
 				gregorianCalendar.add(Calendar.MONTH, 6);
 				Date notAfter = gregorianCalendar.getTime();
-				org.bouncycastle.cert.X509v3CertificateBuilder certGen = new org.bouncycastle.cert.X509v3CertificateBuilder(
+				X509v3CertificateBuilder certGen = new X509v3CertificateBuilder(
 						certIssuer, getSerialNumber(), notBefore, notAfter, certIssuer,
 						SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded()));
 				AlgorithmIdentifier sigAlgId = new DefaultSignatureAlgorithmIdentifierFinder()

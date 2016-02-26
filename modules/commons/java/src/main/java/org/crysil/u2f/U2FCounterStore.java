@@ -1,4 +1,4 @@
-package org.crysil.communications.u2f.counter;
+package org.crysil.u2f;
 
 public interface U2FCounterStore {
 

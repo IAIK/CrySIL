@@ -1,0 +1,5 @@
+# Spongy Castle U2F Actor
+
+This is a [U2F](https://www.yubico.com/applications/fido/) compliant actor for CrySIL. It should be used with a matching receiver to build a CrySIL U2F element, see the [U2F readme](./../../../../samples/u2f/) and the [Android readme](./../../../../samples/android/) for details.
+
+This actor uses [Spongy Castle](https://rtyley.github.io/spongycastle/) (a repackage of [Bouncy Castle](https://www.bouncycastle.org/java.html) for Android) and the [Android KeyStore](https://developer.android.com/training/articles/keystore.html) to emulate an U2F authenticator using an Android device. Conforming to the U2F standard, a fresh ECC key will be created for each registration command. A small random value is exported to the U2F relying party as the key handle. U2F receivers for CrySIL will get an encrypted and signed CMS container containing the ECC key pair as response to a `generateU2FKey` request. This container can be passed in the `sign` request as `wrappedKey` and will be used accordingly.

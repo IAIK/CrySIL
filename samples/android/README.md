@@ -1,6 +1,6 @@
 # CrySIL U2F on Android
 
-This project implements a CrySIL server compatible to U2F commands on Android. The app can be installed on any Android device running Android 4.0 or later. Any cryptographic commands are execute on a smart card connected over NFC. CrySIL/U2F clients connect to a webservice which forwards the request to the registered CrySIL server. See the documentation of [the webservice](./webservice/) and of [the Android app](./crysilapp/) for details.
+This project implements a CrySIL server compatible to U2F commands on Android. The app can be installed on any Android device running Android 4.0 or later. Any cryptographic commands are execute on a smart card connected over NFC or using the Android KeyStore. CrySIL/U2F clients connect to a webservice which forwards the request to the registered CrySIL server. See the documentation of [the webservice](./webservice/), [the instance](./instance/) and of [the Android app](./crysilapp/) for details.
 
 Process to start from scratch:
 * Install the CrySIL server on an Android device

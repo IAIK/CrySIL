@@ -29,6 +29,12 @@
 			<version>${crysil.version}</version>
 		</dependency>
 
+        <dependency>
+			<groupId>org.crysil.actor</groupId>
+			<artifactId>u2f-spongycastle</artifactId>
+			<version>${crysil.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.crysil.communications</groupId>
 			<artifactId>u2f-commons</artifactId>
