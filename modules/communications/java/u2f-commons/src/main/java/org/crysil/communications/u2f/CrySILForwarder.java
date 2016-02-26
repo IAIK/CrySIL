@@ -10,7 +10,7 @@ import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 
 public class CrySILForwarder {
 
-	private static final String CERT_SUBJECT = "CN=SkyTrust";
+	private static final String CERT_SUBJECT = "CN=CrySIL";
 	private static final String SIGNATURE_ALG = "SHA256withECDSA";
 
 	public Response executeGenerateWrappedKey(byte[] clientParam, byte[] appParam, byte[] encodedRandom, Module actor,

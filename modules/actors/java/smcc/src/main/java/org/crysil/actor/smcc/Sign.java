@@ -23,7 +23,7 @@ import at.gv.egiz.smcc.pin.gui.PINGUI;
 import at.gv.egiz.smcc.util.SMCCHelper;
 
 /**
- * Signs data with an U2F Key
+ * Signs data with a U2F Key
  */
 public class Sign implements Command {
 

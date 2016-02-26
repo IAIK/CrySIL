@@ -16,10 +16,10 @@ import static org.crysil.communications.u2f.U2FUtil.*;
 
 public class RegisterInternalHandler implements Handler {
 
-	private final CrySILForwarder skytrustHandler;
+	private final CrySILForwarder crysilForwarder;
 
-	public RegisterInternalHandler(CrySILForwarder skytrustHandler) {
-		this.skytrustHandler = skytrustHandler;
+	public RegisterInternalHandler(CrySILForwarder crysilForwarder) {
+		this.crysilForwarder = crysilForwarder;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class RegisterInternalHandler implements Handler {
 			byte[] challengeParam = u2fInternalRegisterRequest.getChallengeHash();
 			byte[] appParam = u2fInternalRegisterRequest.getAppIdHash();
 
-			Response responseGenKey = skytrustHandler.executeGenerateWrappedKey(
+			Response responseGenKey = crysilForwarder.executeGenerateWrappedKey(
 					u2fInternalRegisterRequest.getChallengeHash(), u2fInternalRegisterRequest.getAppIdHash(), null,
 					actor, receiver);
 			if (responseGenKey == null || responseGenKey.getPayload() == null) {
@@ -61,7 +61,7 @@ public class RegisterInternalHandler implements Handler {
 			keyHandleBytes = payloadGenKey.getEncodedRandom();
 
 			byte[] signatureData = buildSignatureBytes(appParam, challengeParam, keyHandleBytes, keyEncoded);
-			Response responseSign = skytrustHandler.executeSignatureRequest(payloadGenKey.getEncodedWrappedKey(),
+			Response responseSign = crysilForwarder.executeSignatureRequest(payloadGenKey.getEncodedWrappedKey(),
 					signatureData, actor, receiver);
 			if (responseSign == null || responseSign.getPayload() == null) {
 				Logger.error("No response for sign");

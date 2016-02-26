@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.*;
 
 import static org.hamcrest.Matchers.*;
 
-public class U2FSkytrustHandlerTest extends AbstractU2FTest {
+public class CrySILForwarderTest extends AbstractU2FTest {
 
 	CrySILForwarder handler;
 
@@ -42,7 +42,7 @@ public class U2FSkytrustHandlerTest extends AbstractU2FTest {
 
 		assertThat(request.getPayload(), instanceOf(PayloadGenerateU2FKeyRequest.class));
 		PayloadGenerateU2FKeyRequest payload = (PayloadGenerateU2FKeyRequest) request.getPayload();
-		assertThat(payload.getCertificateSubject(), containsString("CN=SkyTrust"));
+		assertThat(payload.getCertificateSubject(), containsString("CN=CrySIL"));
 		assertThat(payload.getAppParam(), equalTo(appParam));
 		assertThat(payload.getClientParam(), equalTo(clientParam));
 		assertThat(payload.getEncodedRandom(), equalTo(encodedRandom));

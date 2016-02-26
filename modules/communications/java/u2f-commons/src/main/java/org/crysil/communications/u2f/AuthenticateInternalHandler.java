@@ -15,10 +15,10 @@ import com.fasterxml.jackson.core.util.ByteArrayBuilder;
 public class AuthenticateInternalHandler implements Handler {
 
 	private final U2FCounterStore counterStore;
-	private final CrySILForwarder skytrustHandler;
+	private final CrySILForwarder crysilForwarder;
 
-	public AuthenticateInternalHandler(CrySILForwarder skytrustHandler, U2FCounterStore counterStore) {
-		this.skytrustHandler = skytrustHandler;
+	public AuthenticateInternalHandler(CrySILForwarder crysilForwarder, U2FCounterStore counterStore) {
+		this.crysilForwarder = crysilForwarder;
 		this.counterStore = counterStore;
 	}
 
@@ -30,7 +30,7 @@ public class AuthenticateInternalHandler implements Handler {
 		Logger.debug("Incoming request: " + JsonUtils.toJson(u2fInternalAuthRequest));
 
 		byte[] encodedRandom = u2fInternalAuthRequest.getKeyHandle();
-		Response responseGenKey = skytrustHandler.executeGenerateWrappedKey(null,
+		Response responseGenKey = crysilForwarder.executeGenerateWrappedKey(null,
 				u2fInternalAuthRequest.getAppIdHash(), encodedRandom, actor, receiver);
 		byte[] wrappedKey = ((PayloadGenerateU2FKeyResponse) responseGenKey.getPayload()).getEncodedWrappedKey();
 
@@ -41,7 +41,7 @@ public class AuthenticateInternalHandler implements Handler {
 			byte[] bytesToSign = buildSignatureBytes(applicationBytes, challengeParameter,
 					counterStore.incrementCounter());
 
-			Response responseSign = skytrustHandler.executeSignatureRequest(wrappedKey, bytesToSign, actor, receiver);
+			Response responseSign = crysilForwarder.executeSignatureRequest(wrappedKey, bytesToSign, actor, receiver);
 			if (responseSign == null || responseSign.getPayload() == null) {
 				Logger.error("No response for generate wrapped key");
 				return null;

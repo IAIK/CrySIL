@@ -31,13 +31,13 @@ import static org.hamcrest.MatcherAssert.*;
 
 import static org.hamcrest.Matchers.*;
 
-public class U2FRegisterHandlerTest extends AbstractU2FTest {
+public class RegisterHandlerTest extends AbstractU2FTest {
 
-	CrySILForwarder skytrustHandler;
+	CrySILForwarder crysilForwarder;
 
 	@BeforeMethod
 	public void before() {
-		skytrustHandler = spy(CrySILForwarder.class);
+		crysilForwarder = spy(CrySILForwarder.class);
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class U2FRegisterHandlerTest extends AbstractU2FTest {
 
 		String u2fRawRequest = randomString(16);
 
-		Assert.assertNull(new RegisterExternalHandler(new RegisterInternalHandler(skytrustHandler)).handle(
+		Assert.assertNull(new RegisterExternalHandler(new RegisterInternalHandler(crysilForwarder)).handle(
 				u2fRawRequest, actor, receiver));
 	}
 
@@ -89,11 +89,12 @@ public class U2FRegisterHandlerTest extends AbstractU2FTest {
 				createSignResponse(signedHash));
 
 		RegisterResponse response = JsonUtils.fromJson(new RegisterExternalHandler(new RegisterInternalHandler(
-				skytrustHandler)).handle(u2fRawRequest, actor, receiver), RegisterResponse.class);
+				crysilForwarder)).handle(u2fRawRequest, actor, receiver), RegisterResponse.class);
 
-		verify(skytrustHandler).executeGenerateWrappedKey(aryEq(clientParam), aryEq(appParam), isNull(byte[].class),
+		verify(crysilForwarder).executeGenerateWrappedKey(aryEq(clientParam), aryEq(appParam), isNull(byte[].class),
 				eq(actor), eq(receiver));
-		verify(skytrustHandler).executeSignatureRequest(aryEq(encodedKey), aryEq(hashToBeSigned), eq(actor), eq(receiver));
+		verify(crysilForwarder).executeSignatureRequest(aryEq(encodedKey), aryEq(hashToBeSigned), eq(actor),
+				eq(receiver));
 
 		assertThat(response.getClientData(), is(clientData));
 		assertThat(response.getRegistrationData(), is(registrationData));
@@ -106,7 +107,7 @@ public class U2FRegisterHandlerTest extends AbstractU2FTest {
 
 		String u2fRawRequest = randomString(16);
 
-		Assert.assertNull(new RegisterInternalHandler(skytrustHandler).handle(u2fRawRequest, actor, receiver));
+		Assert.assertNull(new RegisterInternalHandler(crysilForwarder).handle(u2fRawRequest, actor, receiver));
 	}
 
 	@Test
@@ -142,12 +143,12 @@ public class U2FRegisterHandlerTest extends AbstractU2FTest {
 				createSignResponse(signedHash));
 
 		RegisterInternalResponse response = JsonUtils.fromJson(
-				new RegisterInternalHandler(skytrustHandler).handle(u2fRawRequest, actor, receiver),
+				new RegisterInternalHandler(crysilForwarder).handle(u2fRawRequest, actor, receiver),
 				RegisterInternalResponse.class);
 
-		verify(skytrustHandler).executeGenerateWrappedKey(eq(clientParam), eq(appParam), isNull(byte[].class),
+		verify(crysilForwarder).executeGenerateWrappedKey(eq(clientParam), eq(appParam), isNull(byte[].class),
 				eq(actor), eq(receiver));
-		verify(skytrustHandler).executeSignatureRequest(eq(encodedKey), eq(hashToBeSigned), eq(actor), eq(receiver));
+		verify(crysilForwarder).executeSignatureRequest(eq(encodedKey), eq(hashToBeSigned), eq(actor), eq(receiver));
 
 		assertThat(response.getRegistrationData(), is(registrationData));
 	}

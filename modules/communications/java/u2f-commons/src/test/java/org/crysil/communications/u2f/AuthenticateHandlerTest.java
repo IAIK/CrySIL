@@ -7,6 +7,7 @@ import javax.security.cert.X509Certificate;
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
 import org.crysil.communications.u2f.counter.DefaultU2FCounterStore;
+import org.crysil.communications.u2f.counter.U2FCounterStore;
 import org.crysil.communications.u2f.data.AuthInternalRequest;
 import org.crysil.communications.u2f.data.AuthInternalResponse;
 import org.crysil.communications.u2f.data.AuthRequest;
@@ -32,14 +33,14 @@ import static org.hamcrest.MatcherAssert.*;
 
 import static org.hamcrest.Matchers.*;
 
-public class U2FAuthenticateHandlerTest extends AbstractU2FTest {
+public class AuthenticateHandlerTest extends AbstractU2FTest {
 
-	private CrySILForwarder skytrustHandler;
-	private org.crysil.communications.u2f.counter.U2FCounterStore counterStore;
+	private CrySILForwarder crysilForwarder;
+	private U2FCounterStore counterStore;
 
 	@BeforeMethod
 	public void before() {
-		skytrustHandler = spy(CrySILForwarder.class);
+		crysilForwarder = spy(CrySILForwarder.class);
 		counterStore = new DefaultU2FCounterStore();
 	}
 
@@ -51,7 +52,7 @@ public class U2FAuthenticateHandlerTest extends AbstractU2FTest {
 		String u2fRawRequest = randomString(16);
 
 		Assert.assertNull(new AuthenticateExternalHandler(
-				new AuthenticateInternalHandler(skytrustHandler, counterStore)).handle(u2fRawRequest, actor, receiver));
+				new AuthenticateInternalHandler(crysilForwarder, counterStore)).handle(u2fRawRequest, actor, receiver));
 	}
 
 	@Test
@@ -92,9 +93,9 @@ public class U2FAuthenticateHandlerTest extends AbstractU2FTest {
 				createSignResponse(signedHash));
 
 		AuthResponse response = JsonUtils.fromJson(new AuthenticateExternalHandler(new AuthenticateInternalHandler(
-				skytrustHandler, counterStore)).handle(u2fRawRequest, actor, receiver), AuthResponse.class);
+				crysilForwarder, counterStore)).handle(u2fRawRequest, actor, receiver), AuthResponse.class);
 
-		verify(skytrustHandler).executeSignatureRequest(aryEq(encodedKey), aryEq(hashToBeSigned), eq(actor),
+		verify(crysilForwarder).executeSignatureRequest(aryEq(encodedKey), aryEq(hashToBeSigned), eq(actor),
 				eq(receiver));
 
 		assertThat(response.getClientData(), is(clientData));
@@ -110,7 +111,7 @@ public class U2FAuthenticateHandlerTest extends AbstractU2FTest {
 
 		String u2fRawRequest = randomString(16);
 
-		Assert.assertNull(new AuthenticateInternalHandler(skytrustHandler, counterStore).handle(u2fRawRequest, actor,
+		Assert.assertNull(new AuthenticateInternalHandler(crysilForwarder, counterStore).handle(u2fRawRequest, actor,
 				receiver));
 	}
 
@@ -148,10 +149,10 @@ public class U2FAuthenticateHandlerTest extends AbstractU2FTest {
 		when(receiver.forwardRequest(argThat(new PayloadMatcher(PayloadSignRequest.class)), eq(actor))).thenReturn(
 				createSignResponse(signedHash));
 
-		AuthInternalResponse response = JsonUtils.fromJson(new AuthenticateInternalHandler(skytrustHandler,
+		AuthInternalResponse response = JsonUtils.fromJson(new AuthenticateInternalHandler(crysilForwarder,
 				counterStore).handle(u2fRawRequest, actor, receiver), AuthInternalResponse.class);
 
-		verify(skytrustHandler).executeSignatureRequest(eq(encodedKey), eq(hashToBeSigned), eq(actor), eq(receiver));
+		verify(crysilForwarder).executeSignatureRequest(eq(encodedKey), eq(hashToBeSigned), eq(actor), eq(receiver));
 
 		assertThat(response.getSignatureData(), is(signatureData));
 	}
