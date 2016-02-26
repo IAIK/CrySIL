@@ -13,7 +13,7 @@ console.log("Background is registering with U2F extension");
 chrome.runtime.sendMessage(EXTENSION_ID, chrome.runtime.id);
 
 /**
- * Handles conversion of an U2F message from the crypto token extension to CrySIL commands
+ * Handles conversion of a U2F message from the crypto token extension to CrySIL commands
  * @param {string} msg
  * @param {string} url
  * @param {function} callback
