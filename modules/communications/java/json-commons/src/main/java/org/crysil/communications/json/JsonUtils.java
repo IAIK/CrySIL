@@ -75,7 +75,7 @@ public class JsonUtils implements JsonDeserializer<PolymorphicStuff> {
 		lut.put("wrappedKey", org.crysil.protocol.payload.crypto.key.WrappedKey.class);
 		lut.put("externalCertificate", org.crysil.protocol.payload.crypto.key.ExternalCertificate.class);
 		lut.put("internalCertificate", org.crysil.protocol.payload.crypto.key.InternalCertificate.class);
-		lut.put("keyHandle", org.crysil.protocol.payload.crypto.key.KeyHandle.class);
+		lut.put("handle", org.crysil.protocol.payload.crypto.key.KeyHandle.class);
 		lut.put("modifyWrappedKeyRequest",
 				org.crysil.protocol.payload.crypto.modifyWrappedKey.PayloadModifyWrappedKeyRequest.class);
 		lut.put("modifyWrappedKeyResponse",
