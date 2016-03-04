@@ -3,21 +3,46 @@ package org.crysil.communications.http;
 import org.crysil.commons.Module;
 
 /**
- * Create your own implementation and name it {@code ConfigurationImpl}.
+ * The configuration bean to be filled by spring.
  */
-public interface Configuration {
+public class Configuration {
+
+	private Module attachedModule;
+	private boolean isValidateSchema;
 
 	/**
 	 * Returns the attached module. Might be a router or an actor or something else.
 	 * 
 	 * @return the attached module.
 	 */
-	public Module getAttachedModule();
+	public Module getAttachedModule() {
+		return attachedModule;
+	}
 
 	/**
-	 * knows whether the schema should be validated or not
+	 * Setter for the attached CrySIL node.
+	 * 
+	 * @param newModule the entry module to the CrySIL node.
+	 */
+	public void setAttachedModule(Module newModule) {
+		attachedModule = newModule;
+	}
+
+	/**
+	 * knows whether the JSON data should be validated against the schema or not
 	 * 
 	 * @return if the JSON schema is to be validated
 	 */
-	public boolean isValidateSchema();
+	public boolean isValidateSchema() {
+		return isValidateSchema;
+	}
+
+	/**
+	 * sets whether the JSON data should be validated against the schema or not
+	 * 
+	 * @param isValidateSchema true if validation should be performed
+	 */
+	public void setValidateSchema(boolean isValidateSchema) {
+		this.isValidateSchema = isValidateSchema;
+	}
 }
