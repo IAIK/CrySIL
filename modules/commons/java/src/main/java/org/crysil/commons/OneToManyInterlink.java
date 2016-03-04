@@ -1,5 +1,6 @@
 package org.crysil.commons;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ public class OneToManyInterlink implements Interlink {
 	/**
 	 * The list of modules. This list is only accessible to implementing classes by its getter.
 	 */
-	private List<Module> modules;
+	private List<Module> modules = new ArrayList<>();
 
 	/*
 	 * (non-Javadoc)
