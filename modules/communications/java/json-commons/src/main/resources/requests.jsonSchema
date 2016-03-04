@@ -9,7 +9,7 @@
             "type": "object",
             "properties": {
                 "type": {
-                    "enum": ["standardSkyTrustHeader"]
+                    "enum": ["standardHeader"]
                 },
                 "protocolVersion" : {
                     "$ref" : "#/definitions/finiteLengthString"
