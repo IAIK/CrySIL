@@ -53,7 +53,7 @@ public class KeyHandle extends Key {
 
 	@Override
 	public String getType() {
-		return "keyHandle";
+		return "handle";
 	}
 
 	@Override
