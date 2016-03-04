@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
+import org.crysil.errorhandling.NotAcceptableException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
@@ -26,6 +27,9 @@ public class HttpJsonTransmitter implements Module {
 	/** The target uri. */
 	private String targetURI;
 
+	/** validate the response against the schema? */
+	private boolean isValidateSchema = true;
+
 	/**
 	 * Instantiates a new http forwarder.
 	 */
@@ -41,6 +45,15 @@ public class HttpJsonTransmitter implements Module {
 		this.targetURI = targetURI;
 	}
 
+	/**
+	 * Sets whether to validate the response against the schema or not.
+	 * 
+	 * @param validate
+	 */
+	public void setValidateSchema(boolean validate) {
+		isValidateSchema = validate;
+	}
+
 	/* (non-Javadoc)
 	 * @see at.iaik.skytrust.element.actors.Actor#take(at.iaik.skytrust.element.skytrustprotocol.SRequest)
 	 */
@@ -54,9 +67,15 @@ public class HttpJsonTransmitter implements Module {
 			com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).post(body).build();
 			com.squareup.okhttp.Response response = client.newCall(request).execute();
 
-			return JsonUtils.fromJson(response.body().string(), Response.class);
+			String responsestring = response.body().string();
+			if (isValidateSchema && !JsonUtils.isValidJSONResponse(responsestring))
+				throw new NotAcceptableException();
+
+			return JsonUtils.fromJson(responsestring, Response.class);
 		} catch (IOException e) {
 			Logger.error("could not find host {}", e.getMessage());
+		} catch (NotAcceptableException e) {
+			Logger.error("malformed response", e);
 		}
 		return null;
 	}
