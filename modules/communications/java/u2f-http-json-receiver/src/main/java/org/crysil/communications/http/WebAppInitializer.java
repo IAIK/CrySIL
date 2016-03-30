@@ -4,6 +4,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -25,11 +26,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
 		dispatcher.setLoadOnStartup(1);
 		dispatcher.addMapping("/*");
 
-		try {
-			configuration = (Configuration) Class.forName(Configuration.class.getName().concat("Impl")).newInstance();
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			throw new ServletException(e);
-		}
+		configuration = new ClassPathXmlApplicationContext("configuration.xml").getBean("configuration",
+				Configuration.class);
 	}
 
 	public static Configuration getConfiguration() {

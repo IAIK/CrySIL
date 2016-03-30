@@ -16,7 +16,7 @@ In general, U2F relies on elliptic curve keys and a simple challenge-response pr
 
 CrySIL actors have implemented different ways to perform the cryptographic operations:
 
-* [smcc actor](./../../modules/actors/java/smcc/) uses the ECC key on a signature card like the Austrian Citizen Card
+* [SMCC actor](./../../modules/actors/java/smcc/) uses the ECC key on a signature card like the Austrian Citizen Card
 
 The receivers expect one of two forms of requests:
 
