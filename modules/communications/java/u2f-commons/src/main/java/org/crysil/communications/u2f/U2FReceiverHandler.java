@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
-import org.crysil.communications.u2f.counter.U2FCounterStore;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.header.StandardHeader;
@@ -13,6 +12,7 @@ import org.crysil.protocol.header.U2FHeader;
 import org.crysil.protocol.payload.auth.PayloadAuthResponse;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
+import org.crysil.u2f.U2FCounterStore;
 
 public class U2FReceiverHandler {
 

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:visibility="visible">
+
+    <TextView
+        android:id="@+id/tvWebservice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_text_webservice_address"
+        android:textAppearance="@android:style/TextAppearance.Medium"/>
+
+    <Spinner
+        android:id="@+id/spWebservice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <Button
+            android:id="@+id/btResume"
+            style="@style/boldButtonBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="@string/main_button_resume"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/btPause"
+            style="@style/boldButtonRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/button_background_red"
+            android:text="@string/main_button_pause"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/btRegister"
+            style="@style/boldButtonBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/main_button_register"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/btUnregister"
+            style="@style/boldButtonRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/main_button_unregister"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/bt_main_manage_webservices"
+        style="@style/boldButtonBlack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/main_btmanage_webservices"/>
+
+    <TextView
+        android:id="@+id/tvWebserviceMessage"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        android:ellipsize="none"
+        android:inputType="none"
+        android:maxLines="12"
+        android:scrollbars="vertical"
+        android:singleLine="false"
+        android:visibility="visible"/>
+
+</LinearLayout>

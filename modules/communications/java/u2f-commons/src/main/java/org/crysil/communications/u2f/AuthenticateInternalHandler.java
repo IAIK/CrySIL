@@ -2,13 +2,13 @@ package org.crysil.communications.u2f;
 
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
-import org.crysil.communications.u2f.counter.U2FCounterStore;
 import org.crysil.communications.u2f.data.AuthInternalRequest;
 import org.crysil.communications.u2f.data.AuthInternalResponse;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyResponse;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
+import org.crysil.u2f.U2FCounterStore;
 
 import com.fasterxml.jackson.core.util.ByteArrayBuilder;
 
