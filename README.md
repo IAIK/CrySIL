@@ -11,6 +11,7 @@ See the module documentation for further information:
 * [U2F HTTP receiver](./modules/communications/java/u2f-http-json-receiver/)
 * [U2F Websocket receiver](./modules/communications/java/u2f-websocket-receiver/)
 * [Chromium Extension](./modules/others/chromium/)
+* [Windows Credential Provider](./modules/others/windows-cp/)
 
 Be sure to check out the samples too:
 * [U2F sample](./samples/u2f/)
