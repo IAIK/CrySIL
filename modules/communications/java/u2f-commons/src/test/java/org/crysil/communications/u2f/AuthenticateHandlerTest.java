@@ -6,8 +6,6 @@ import javax.security.cert.X509Certificate;
 
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
-import org.crysil.communications.u2f.counter.DefaultU2FCounterStore;
-import org.crysil.communications.u2f.counter.U2FCounterStore;
 import org.crysil.communications.u2f.data.AuthInternalRequest;
 import org.crysil.communications.u2f.data.AuthInternalResponse;
 import org.crysil.communications.u2f.data.AuthRequest;
@@ -18,6 +16,8 @@ import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyReque
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyResponse;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
+import org.crysil.u2f.DefaultU2FCounterStore;
+import org.crysil.u2f.U2FCounterStore;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

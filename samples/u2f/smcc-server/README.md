@@ -1,4 +1,4 @@
-# U2F Server
+# U2F SMCC Server
 
 This is a [U2F](https://www.yubico.com/applications/fido/) compliant CrySIL element. It is configured to use the [U2F HTTP receiver](./../../../modules/communications/java/u2f-http-json-receiver/) and the [SMCC actor](./../../../modules/actors/java/smcc/). Please connect a card reader to the machine running the instance and insert a compatible card, e.g. an Austrian citizen card.
 

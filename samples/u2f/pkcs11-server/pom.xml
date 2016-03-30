@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.crysil.samples.u2f</groupId>
-	<artifactId>server</artifactId>
+	<artifactId>pkcs11-server</artifactId>
 	<version>2.0-1</version>
 	<packaging>war</packaging>
-	<name>CrySIL U2F Server</name>
+	<name>CrySIL U2F PKCS#11 Server</name>
 
 	<properties>
 		<!-- General -->
@@ -28,7 +28,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.crysil.actor</groupId>
-			<artifactId>smcc</artifactId>
+			<artifactId>u2f-pkcs11</artifactId>
 			<version>${crysil.version}</version>
 		</dependency>
 

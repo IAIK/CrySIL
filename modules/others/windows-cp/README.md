@@ -14,12 +14,13 @@ Procedure to run the whole project:
 * Build and run [Control U2F Keys](./ControlU2FKeys/) to configure the CrySIL server connection
 * Use the same program to register a U2F Key
 * Run [Install.bat](./Install.bat) with elevated rights (e.g. as Administrator) to build and install the credential provider
-* On next login select the "CrySIL U2F" tile and enter your password as always
+* On next login select the “CrySIL U2F” tile and enter your password as always
 * The credential provider will try to verify your registered key by sending a U2F authentication request to the CrySIL instance
+* If this request or the verification of the response fails, the credential provider will deny access to the system
 
 ## Control U2F Keys
 
-This application is required to configure the server connection and register a U2F Key to use for login. It requires elevated rights to store the configuration options in the registry (`HKEY_LOCAL_MACHINE\Software\CrySIL\U2F`). There, a key is created using the UserSID. Storing this data in the user-writeable section of the registry (`HKEY_CURRENT_USER`) is not an option, since this hive is not loaded prior to login and therefore can't be accessed by the credential provider.
+This application is required to configure the server connection and register a U2F Key to use for login. It requires elevated rights to store the configuration options in the registry (`HKEY_LOCAL_MACHINE\Software\CrySIL\U2F`). There, a key is created using the UserSID of the Windows account. Storing this data in the user-writeable section of the registry (`HKEY_CURRENT_USER`) is not an option, since this registry hive is not loaded prior to login and therefore can't be accessed by the credential provider.
 
 ![Control U2F Keys Screenshot](./ControlU2FKeys/screenshot.png)
 
@@ -27,12 +28,12 @@ This application is required to configure the server connection and register a U
 
 The code for the [Credential Provider](./CredentialProvider/) is based on [sample code from Microsoft](https://github.com/Microsoft/Windows-classic-samples/tree/master/Samples/CredentialProvider/).
 
-The credential provider can be selected on log in by selecting the appropriate tile under "Sign-in options". It performs a U2F authentication if the user selected has a key handle stored in the registry. It may prompt for a secret value authentication by showing a dialog, if requested by CrySIL. A log file printing error messages is written to `C:\logfile.txt`.
+The credential provider can be selected on login by selecting the appropriate tile under “Sign-in options”. It performs a U2F authentication if the user selected has a key handle stored in the registry. It may prompt for a secret value authentication by showing a dialog, if requested by the CrySIL instance. The credential provider logs error messages to the file `C:\logfile.txt`.
 
 ![Credential Provider Screenshot](./CredentialProvider/screenshot.png)
 
 ## Test Console
 
-This program reads the values saved in the registry and uses the code of the credential provider to perform a U2F authentication. It may prompt for a secret value authentication if requested by CrySIL.
+This program reads the values saved in the registry and uses the code of the credential provider to perform a U2F authentication. It may prompt for a secret value authentication on the console if requested by CrySIL.
 
 ![Test Console Screenshot](./Test-Console/screenshot.png)

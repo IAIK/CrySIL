@@ -74,7 +74,6 @@ chrome.runtime.onMessageExternal.addListener(function(request, sender, sendRespo
         U2FReceiverHandler(toSend, url, (response) => {
             var resp = JSON.parse(response);
             var index;
-            var sentOne = false;
             var r;
             // first try to return response with code 0
             for (index = 0; index < resp.responses.length; index++) {

@@ -1,13 +1,12 @@
 # U2F Support
 
-This sample demonstrates [U2F](https://www.yubico.com/applications/fido/) (universal second factor authentication) support for CrySIL. Any U2F client can use a CrySIL instance just like an ordinary U2F token. With this, we combine remote crypto with secure second factor authentication.
+This sample demonstrates [U2F](https://www.yubico.com/applications/fido/) (Universal Second Factor authentication) support for CrySIL. With this implementation, any U2F client can use any CrySIL instance as a U2F token. So we combine remote crypto with secure second factor authentication.
 
-This sample combines several modules to enable compatibility between U2F and CrySIL:
+First, start an instance:
+* [SMCC instance](./smcc-server/)
+* [PKCS#11 instance](./pkcs11-server/)
 
-* [SMCC actor](./../../modules/actors/java/smcc/)
-* [PKCS#11 actor](./../../modules/actors/java/u2f-pkcs11/)
-* [U2F communication](./../../modules/communications/java/u2f-commons/)
-* [U2F HTTP receiver](./../../modules/communications/java/u2f-http-json-receiver/)
+Second, run a U2F client:
 * [Chromium extension](./../../modules/others/chromium/)
 * [Windows credential provider](./../../modules/others/windows-cp/)
 
@@ -20,6 +19,9 @@ In general, U2F relies on elliptic curve keys and a simple challenge-response pr
 CrySIL actors have implemented different ways to perform the cryptographic operations:
 
 * [SMCC actor](./../../modules/actors/java/smcc/) uses the ECC key on a signature card like the Austrian Citizen Card
+* [PKCS#11 actor](./../../modules/actors/java/u2f-pkcs11/) uses an ECC key on a smart card
+* [U2F Android actor](./../../modules/actors/java/u2f-android/) forwards all operations to an NFC device
+* [U2F Spongy Castle actor](./../../modules/actors/java/u2f-spongycastle/) uses the Android key store
 
 The receivers expect one of two forms of requests:
 
