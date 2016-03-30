@@ -7,6 +7,7 @@ This sample combines several modules to enable compatibility between U2F and Cry
 * [SMCC actor](./../../modules/actors/java/smcc/)
 * [U2F communication](./../../modules/communications/java/u2f-commons/)
 * [U2F HTTP receiver](./../../modules/communications/java/u2f-http-json-receiver/)
+* [Chromium extension](./../../modules/others/chromium/)
 
 ## U2F Compatibility
 

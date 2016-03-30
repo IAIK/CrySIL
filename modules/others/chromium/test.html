@@ -1,0 +1,20 @@
+<html>
+    <script>
+     var editorExtensionId = "jnfcapbalmnkkiinfekimijboapddali";
+     chrome.runtime.sendMessage(editorExtensionId, {"type":"enroll_helper_request","enrollChallenges":[{"version":"U2F_V2","challengeHash":"ZQAUZcy-vQPiDsLn-Lk-6K_lMe_tNr1vPpXLeKavsxQ","appIdHash":"VWc7UTjMkNO38yv9rWo4qO3Xs1W3erl5IZbxBtFsoxI"}],"signData":[],"timeout":28.8,"timeoutSeconds":28.8},
+                                function(response) {
+                                    console.log(JSON.stringify(response));
+                                });
+     // key handle for ecard
+     chrome.runtime.sendMessage(editorExtensionId, {"type":"sign_helper_request","signData":[{"challengeHash":"yaDNXu7V_CV3hwOii9L7n8KJCmd91rLjShnYp0YpGUQ","appIdHash":"VWc7UTjMkNO38yv9rWo4qO3Xs1W3erl5IZbxBtFsoxI","keyHandle":"DG4alHPa58Okg6l5j3VayOugRaoGvU4I76LpJva5N35PQvjmzsXSNeV6p2yqJ32p7W2J_XquPUusWjTHcwjznA","version":"U2F_V2"}],"timeout":28.5,"timeoutSeconds":28.5},
+                                function(response) {
+                                    console.log(JSON.stringify(response));
+                                });
+     // key handle for smartphone
+     chrome.runtime.sendMessage(editorExtensionId, {"type":"sign_helper_request","signData":[{"challengeHash":"yaDNXu7V_CV3hwOii9L7n8KJCmd91rLjShnYp0YpGUQ","appIdHash":"VWc7UTjMkNO38yv9rWo4qO3Xs1W3erl5IZbxBtFsoxI","keyHandle":"tXW1guHS-ISgFtf6u7DUshgAg-ZfNVKA9ew0gtkZmgszViGMvBGyu_sSTAYWSMUyezJe1wOwZRPCwfz46LG62w","version":"U2F_V2"}],"timeout":28.5,"timeoutSeconds":28.5},
+                                function(response) {
+                                    console.log(JSON.stringify(response));
+                                });
+
+    </script>
+</html>
