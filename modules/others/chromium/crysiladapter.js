@@ -265,7 +265,7 @@ class CrySilForwarder {
                     return;
                 }
             }
-            callback("");
+            callback();
             return;
         };      
         xhr.send(JSON.stringify(request));
@@ -329,6 +329,8 @@ class CrySilForwarder {
                     callback(responseStr);
                 }
             }
+        } else if (payload["type"] == "status") {
+            callback();
         } else {
             callback(responseStr);
         }
@@ -366,8 +368,10 @@ class RegisterExternalHandler extends Handler {
             "version" : version
         };
         this.handler.handle(JSON.stringify(innerRequest), (crysilResponse) => {
-            if (typeof crysilResponse == 'undefined')
+            if (typeof crysilResponse == 'undefined') {
+                callback();
                 return;
+            }
             var internalResponse = JSON.parse(crysilResponse);
             var response = {
                 "clientData" : CryptoAdapter.encodeBase64UrlSafe(new TextEncoder().encode(clientDataString)),
@@ -394,8 +398,10 @@ class RegisterInternalHandler extends Handler {
         var challengeParam = CryptoAdapter.decodeBase64(u2fRequest["challengeHash"]);
         var appParam = CryptoAdapter.decodeBase64(u2fRequest["appIdHash"]);
         this.crySilForwarder.executeGenerateWrappedKey(u2fRequest["challengeHash"], u2fRequest["appIdHash"], null, (crysilResponse) => {
-            if (typeof crysilResponse == 'undefined')
+            if (typeof crysilResponse == 'undefined') {
+                callback();
                 return;
+            }
             var responseGenKey = JSON.parse(crysilResponse);
             var payloadGenKey = responseGenKey["payload"];
             var keyEncoded = CryptoAdapter.getPublicKeyEncoded(payloadGenKey["encodedX509Certificate"]);
@@ -403,8 +409,10 @@ class RegisterInternalHandler extends Handler {
             var keyHandleBytes = CryptoAdapter.decodeBase64(payloadGenKey["encodedRandom"]);
             var signatureBytes = U2FUtil.arrayBufferConcat(new Uint8Array([0]), appParam, challengeParam, keyHandleBytes, keyEncoded);
             this.crySilForwarder.executeSignatureRequest(payloadGenKey["encodedWrappedKey"], CryptoAdapter.encodeBase64(signatureBytes), false, (responseStr) => {
-                if (typeof responseStr == 'undefined')
+                if (typeof responseStr == 'undefined') {
+                    callback();
                     return;
+                }
                 var responseSign = JSON.parse(responseStr);
                 var payloadSign = responseSign["payload"];
                 var signature = CryptoAdapter.decodeBase64(payloadSign["signedHashes"][0]);
@@ -438,16 +446,16 @@ class RegisterMultipleHandler extends Handler {
         var callbacksRemaining = u2fRequest["enrollChallenges"].length;
         u2fRequest["enrollChallenges"].forEach((request) => {
             this.handler.handle(JSON.stringify(request), (responseStr) => {
-                if (typeof responseStr == 'undefined')
-                    return;
-                var registerResponse = JSON.parse(responseStr);
                 --callbacksRemaining;
-                responseData.push({
-                    "type" : "enroll_helper_reply",
-                    "code" : 0,
-                    "version" : "U2F_V2",
-                    "enrollData" : registerResponse["registrationData"]
-                });
+                if (typeof responseStr !== 'undefined') {
+                    var registerResponse = JSON.parse(responseStr);
+                    responseData.push({
+                        "type" : "enroll_helper_reply",
+                        "code" : 0,
+                        "version" : "U2F_V2",
+                        "enrollData" : registerResponse["registrationData"]
+                    });
+                }
                 if (callbacksRemaining === 0) {
                     var response = { "responses" : responseData };
                     callback(JSON.stringify(response));
@@ -490,8 +498,10 @@ class AuthenticateExternalHandler extends Handler {
             "version" : version
         };
         this.handler.handle(JSON.stringify(innerRequest), (crysilResponse) => {
-            if (typeof crysilResponse == 'undefined')
+            if (typeof crysilResponse == 'undefined') {
+                callback();
                 return;
+            }
             var internalResponse = JSON.parse(crysilResponse);
             var response = {
                 "challenge" : challenge,
@@ -519,8 +529,10 @@ class AuthenticateInternalHandler extends Handler {
         var u2fRequest = JSON.parse(msg);
         var encodedRandom = U2FUtil.deUrlSafe(u2fRequest["keyHandle"]);
         this.crySilForwarder.executeGenerateWrappedKey(null, u2fRequest["appIdHash"], encodedRandom, (crysilResponse) => {
-            if (typeof crysilResponse == 'undefined')
+            if (typeof crysilResponse == 'undefined') {
+                callback();
                 return;
+            }
             var responseGenKey = JSON.parse(crysilResponse);
             var payloadGenKey = responseGenKey["payload"];
             var wrappedKey = payloadGenKey["encodedWrappedKey"];
@@ -529,8 +541,10 @@ class AuthenticateInternalHandler extends Handler {
             var counterArray = new Uint8Array([0,0,0,0]);
             var bytesToSign = U2FUtil.arrayBufferConcat(applicationBytes, new Uint8Array([1]), counterArray, challengeParam);
             this.crySilForwarder.executeSignatureRequest(wrappedKey, CryptoAdapter.encodeBase64(bytesToSign), true, (responseStr) => {
-                if (typeof responseStr == 'undefined')
+                if (typeof responseStr == 'undefined') {
+                    callback();
                     return;
+                }
                 var responseSign = JSON.parse(responseStr);
                 var payloadSign = responseSign["payload"];
                 var headerSign = responseSign["header"];
