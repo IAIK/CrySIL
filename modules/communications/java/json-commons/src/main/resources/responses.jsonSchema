@@ -7,21 +7,10 @@
         "header": {
             "description": "The world readable header",
             "type": "object",
-            "properties": {
-                "type": {
-                    "enum": ["standardHeader"]
-                },
-                "protocolVersion" : {
-                    "$ref" : "#/definitions/finiteLengthString"
-                },
-                "commandId" : {
-                    "$ref" : "#/definitions/finiteLengthString"
-                },
-                "sessionId" : {
-                    "$ref" : "#/definitions/finiteLengthString"
-                }
-            },
-            "required" : ["type", "protocolVersion", "sessionId"]
+            "oneOf": [
+            	{ "$ref": "#/definitions/standardHeader" },
+            	{ "$ref": "#/definitions/u2fHeader" }
+            ]
         },
         "payload": {
             "description": "The payload",
@@ -45,6 +34,49 @@
     },
     "required": ["header", "payload"],
     "definitions": {
+    	"standardHeader": {
+    		"properties": {
+                "type": {
+                    "enum": ["standardSkyTrustHeader","standardHeader"]
+                },
+                "protocolVersion" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "commandId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "sessionId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required" : ["type", "protocolVersion", "sessionId"]
+    	},
+    	"u2fHeader": {
+    		"properties": {
+                "type": {
+                    "enum": ["u2fHeader"]
+                },
+                "protocolVersion" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "commandId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "sessionId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "counter" : {
+                    "type" : "integer"
+                },
+                "path" : {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required" : ["type", "protocolVersion", "sessionId", "counter"]
+    	},
         "authChallengeRequest": {
             "type": "object",
             "properties": {
