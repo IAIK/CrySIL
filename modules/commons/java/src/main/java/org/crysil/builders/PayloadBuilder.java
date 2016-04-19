@@ -19,7 +19,7 @@ public class PayloadBuilder {
 		return tmp;
 	}
 
-	public static Object buildEncryptRequest(String algorithm, String string, Key key) {
+	public static PayloadEncryptRequest buildEncryptRequest(String algorithm, String string, Key key) {
 		PayloadEncryptRequest tmp = new PayloadEncryptRequest();
 		tmp.setAlgorithm(algorithm);
 		tmp.addPlainData(string.getBytes());
