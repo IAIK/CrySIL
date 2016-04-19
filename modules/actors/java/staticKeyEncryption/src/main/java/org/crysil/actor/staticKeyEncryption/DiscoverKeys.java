@@ -28,6 +28,8 @@ public class DiscoverKeys implements Command {
 		PayloadDiscoverKeysRequest request = (PayloadDiscoverKeysRequest) input;
 
 		List<Key> keys = new ArrayList<>();
+		if (null == request.getRepresentation())
+			request.setRepresentation("");
 
 		switch (request.getRepresentation()) {
 		case "handle":
