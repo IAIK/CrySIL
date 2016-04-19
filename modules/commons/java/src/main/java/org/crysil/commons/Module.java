@@ -17,5 +17,5 @@ public interface Module {
 	 * @param object
 	 * @throws UnsupportedRequestException 
 	 */
-	public Response take(Request request) throws UnsupportedRequestException;
+	public Response take(Request request);
 }

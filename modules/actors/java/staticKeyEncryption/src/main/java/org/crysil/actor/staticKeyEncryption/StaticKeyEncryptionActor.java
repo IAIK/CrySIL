@@ -27,20 +27,20 @@ public class StaticKeyEncryptionActor implements Module {
 	}
 
 	@Override
-	public Response take(Request request) throws UnsupportedRequestException {
+	public Response take(Request request) {
 		// see if we have someone capable of handling the request
 		Command command = commands.get(request.getPayload().getClass());
-
-		// if not, do tell
-		if (null == command)
-			throw new UnsupportedRequestException();
 
 		// prepare the response
 		Response response = new Response();
 		response.setHeader(request.getHeader());
 
-		// let someone else do the actual work
 		try {
+			// if not, do tell
+			if (null == command)
+				throw new UnsupportedRequestException();
+
+			// let someone else do the actual work
 			response.setPayload(command.perform(request.getPayload()));
 		} catch (CrySILException e) {
 			response.setPayload(PayloadBuilder.buildStatusResponse(e.getErrorCode()));
