@@ -90,6 +90,7 @@ public class JsonUtils implements JsonDeserializer<PolymorphicStuff> {
 				org.crysil.protocol.payload.crypto.exportWrappedKey.PayloadExportWrappedKeyResponse.class);
 		lut.put("exportWrappedKeyRequest",
 				org.crysil.protocol.payload.crypto.exportWrappedKey.PayloadExportWrappedKeyRequest.class);
+		lut.put("sessionHeader", org.crysil.protocol.header.SessionHeader.class);
 	}
 
 	/**

@@ -8,13 +8,10 @@ import org.crysil.logging.Logger;
 /**
  * The most basic header one can use. Contains various fields that popped up during the CrySIL project up until now.
  */
-public class StandardHeader extends Header {
+public class StandardHeader extends SessionHeader {
 
 	/** The command id. */
 	protected String commandId = "";
-
-	/** The session id. */
-	protected String sessionId = "";
 
 	/** The path. */
 	protected List<String> path = new ArrayList<String>();
@@ -60,25 +57,6 @@ public class StandardHeader extends Header {
 	 */
 	public void setCommandId(String commandId) {
 		this.commandId = commandId;
-	}
-
-	/**
-	 * Gets the session id.
-	 *
-	 * @return the session id
-	 */
-	public String getSessionId() {
-		return sessionId;
-	}
-
-	/**
-	 * Sets the session id.
-	 *
-	 * @param sessionId
-	 *            the new session id
-	 */
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
 	}
 
 	@Override
