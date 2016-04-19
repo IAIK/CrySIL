@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.crypto.PayloadWithKey;
 import org.crysil.protocol.payload.crypto.key.Key;
 
 import com.google.common.io.BaseEncoding;
 
-public class PayloadDecryptRequest extends PayloadRequest {
+public class PayloadDecryptRequest extends PayloadRequest implements PayloadWithKey {
 
 	/** The decryption key. */
 	protected Key decryptionKey;
@@ -103,6 +104,13 @@ public class PayloadDecryptRequest extends PayloadRequest {
 	 */
 	public void setDecryptionKey(Key decryptionKey) {
 		this.decryptionKey = decryptionKey;
+	}
+
+	@Override
+	public List<Key> getKeys() {
+		List<Key> result = new ArrayList<>();
+		result.add(getDecryptionKey());
+		return result;
 	}
 
 	@Override
