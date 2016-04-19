@@ -1,10 +1,7 @@
 package org.crysil.communications.http;
 
-import org.crysil.builders.PayloadBuilder;
-import org.crysil.builders.ResponseBuilder;
 import org.crysil.commons.OneToOneInterlink;
 import org.crysil.communications.json.JsonUtils;
-import org.crysil.errorhandling.CrySILException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
@@ -35,12 +32,7 @@ public class Servlet extends OneToOneInterlink {
 
 		Logger.info("Incoming request: {}", JsonUtils.toJson(request.getBlankedClone()));
 
-		Response response;
-		try {
-			response = WebAppInitializer.getConfiguration().getAttachedModule().take(request);
-		} catch (CrySILException e) {
-			response = ResponseBuilder.build(request.getHeader(), PayloadBuilder.buildStatusResponse(e.getErrorCode()));
-		}
+		Response response = WebAppInitializer.getConfiguration().getAttachedModule().take(request);
 
 		Logger.info("Created response: {}", JsonUtils.toJson(response.getBlankedClone()));
 
