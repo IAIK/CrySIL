@@ -11,10 +11,15 @@
 
     <modules>
         <module>commons/java</module>
+        <module>gatekeeper/java</module>
+        <module>cms/java</module>
         <module>actors/java/staticKeyEncryption</module>
         <module>communications/java/json-commons</module>
         <module>communications/java/http-json-receiver</module>
         <module>communications/java/http-json-transmitter</module>
+        <module>interceptor-authentication/java</module>
+        <module>auth/java/auth-basic</module>
+        <module>auth/java/auth-challenge-response</module>
     </modules>
 
     <properties>

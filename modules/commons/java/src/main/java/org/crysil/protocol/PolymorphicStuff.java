@@ -21,4 +21,5 @@ public abstract class PolymorphicStuff {
 	 * Returns the appropriate type of a certain data block.
 	 */
 	public abstract String getType();
+
 }

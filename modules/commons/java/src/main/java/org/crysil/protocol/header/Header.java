@@ -1,5 +1,8 @@
 package org.crysil.protocol.header;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.crysil.protocol.PolymorphicStuff;
 
 /**
@@ -9,6 +12,9 @@ public abstract class Header extends PolymorphicStuff {
 
 	/** The protocol version. Not static because it would require additional code to serialize/deserialize to JSON.*/
 	protected final String protocolVersion = "2.0";
+  private String commandId;
+  /** The path. */
+  protected List<String> path = new ArrayList<String>();
 
 	/**
 	 * Gets the protocol version.
@@ -25,7 +31,7 @@ public abstract class Header extends PolymorphicStuff {
 	 * @param protocolVersion
 	 *            the new protocol version
 	 */
-	public void setProtocolVersion(String protocolVersion) {
+	public void setProtocolVersion(final String protocolVersion) {
 		// the protocol version is static
 	}
 
@@ -35,4 +41,42 @@ public abstract class Header extends PolymorphicStuff {
 	 * @return the blanked clone
 	 */
 	public abstract Header getBlankedClone();
+
+  /**
+   * Gets the command id.
+   *
+   * @return the command id
+   */
+  public String getCommandId() {
+  	return commandId;
+  }
+
+  /**
+   * Sets the command id.
+   *
+   * @param commandId
+   *            the new command id
+   */
+  public void setCommandId(final String commandId) {
+  	this.commandId = commandId;
+  }
+
+  /**
+   * Gets the path.
+   *
+   * @return the path
+   */
+  public List<String> getPath() {
+  	return path;
+  }
+
+  /**
+   * Sets the path.
+   *
+   * @param path
+   *            the new path
+   */
+  public void setPath(List<String> path) {
+  	this.path = path;
+  }
 }

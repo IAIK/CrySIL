@@ -13,7 +13,7 @@
 
   <dependencies>
   	<dependency>
-  		<groupId>org.crysil.commons</groupId>
+  		<groupId>org.crysil</groupId>
   		<artifactId>commons</artifactId>
   		<version>${crysil.version}</version>
   	</dependency>

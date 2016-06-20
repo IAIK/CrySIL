@@ -1,5 +1,5 @@
 /*
- * SkyTrust Core
+ * crysil Core
  * This file is subject to the license defined in the directory “license” at the top level of this package.
  */
 

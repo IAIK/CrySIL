@@ -1,13 +1,15 @@
 package org.crysil.protocol;
 
+import java.io.Serializable;
+
 import org.crysil.protocol.header.Header;
 import org.crysil.protocol.payload.PayloadResponse;
 
 /**
  * The basic response structure. Holds a header and a payload.
  */
-public class Response {
 
+public class Response implements Serializable{
 	/** The header. */
 	protected Header header;
 
@@ -29,7 +31,7 @@ public class Response {
 	 * @param header
 	 *            the new header
 	 */
-	public void setHeader(Header header) {
+	public void setHeader(final Header header) {
 		this.header = header;
 	}
 
@@ -48,7 +50,7 @@ public class Response {
 	 * @param payload
 	 *            the new payload
 	 */
-	public void setPayload(PayloadResponse payload) {
+	public void setPayload(final PayloadResponse payload) {
 		this.payload = payload;
 	}
 
@@ -58,7 +60,7 @@ public class Response {
 	 * @return the blanked clone
 	 */
 	public Response getBlankedClone() {
-		Response result = new Response();
+		final Response result = new Response();
 		result.header = header.getBlankedClone();
 		result.payload = payload.getBlankedClone();
 

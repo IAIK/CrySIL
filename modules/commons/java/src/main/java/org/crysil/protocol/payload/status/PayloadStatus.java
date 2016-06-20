@@ -26,14 +26,16 @@ public class PayloadStatus extends PayloadResponse {
 	 *
 	 * @param code
 	 *            the new code
+	 * @return
 	 */
-	public void setCode(int code) {
+	public PayloadStatus setCode(final int code) {
 		this.code = code;
+		return this;
 	}
 
 	@Override
 	public PayloadResponse getBlankedClone() {
-		PayloadStatus result = new PayloadStatus();
+		final PayloadStatus result = new PayloadStatus();
 		result.code = code;
 
 		return result;
@@ -48,16 +50,20 @@ public class PayloadStatus extends PayloadResponse {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PayloadStatus other = (PayloadStatus) obj;
-		if (code != other.code)
-			return false;
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+      return true;
+    }
+		if (obj == null) {
+      return false;
+    }
+		if (getClass() != obj.getClass()) {
+      return false;
+    }
+		final PayloadStatus other = (PayloadStatus) obj;
+		if (code != other.code) {
+      return false;
+    }
 		return true;
 	}
 }

@@ -26,6 +26,7 @@ public class StandardHeader extends SessionHeader {
 	 *
 	 * @return the path
 	 */
+	@Override
 	public List<String> getPath() {
 		return path;
 	}
@@ -36,6 +37,7 @@ public class StandardHeader extends SessionHeader {
 	 * @param path
 	 *            the new path
 	 */
+	@Override
 	public void setPath(List<String> path) {
 		this.path = path;
 	}
@@ -45,6 +47,7 @@ public class StandardHeader extends SessionHeader {
 	 *
 	 * @return the command id
 	 */
+	@Override
 	public String getCommandId() {
 		return commandId;
 	}
@@ -55,6 +58,7 @@ public class StandardHeader extends SessionHeader {
 	 * @param commandId
 	 *            the new command id
 	 */
+	@Override
 	public void setCommandId(String commandId) {
 		this.commandId = commandId;
 	}
