@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
-import org.crysil.errorhandling.UnsupportedRequestException;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
@@ -34,7 +34,7 @@ public class Gatekeeper extends OneToOneInterlink implements Module {
   }
 
   @Override
-  public Response take(final Request request) throws UnsupportedRequestException {
+	public Response take(final Request request) throws CrySILException {
     String commandId = request.getHeader().getCommandId();
     if (commandId == null) {
       commandId = UUID.randomUUID().toString();

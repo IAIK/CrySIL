@@ -13,6 +13,7 @@ import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthenticationSelector;
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
@@ -33,7 +34,7 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
   }
 
   @Override
-  public Response take(final Request request) throws UnsupportedRequestException {
+	public Response take(final Request request) throws CrySILException {
     final Response resp = this.getAttachedModule().take(request);
 
     if (resp.getPayload() instanceof PayloadAuthResponse) {
@@ -47,7 +48,7 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
     return resp;
   }
 
-  public Response intercept(final Response crysilResponse) throws ResponseInterceptorException {
+	public Response intercept(final Response crysilResponse) throws CrySILException {
     Logger.debug("Intercepting {}", crysilResponse.getBlankedClone());
     final List<AuthenticationPlugin> myAuthPlugins = new ArrayList<>();
 

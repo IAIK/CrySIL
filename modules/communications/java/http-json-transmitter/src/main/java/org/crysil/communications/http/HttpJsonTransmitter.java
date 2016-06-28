@@ -4,10 +4,12 @@ import java.io.IOException;
 
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.NotAcceptableException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
+import org.crysil.protocol.payload.status.PayloadStatus;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -58,7 +60,7 @@ public class HttpJsonTransmitter implements Module {
 	 * @see at.iaik.skytrust.element.actors.Actor#take(at.iaik.skytrust.element.skytrustprotocol.SRequest)
 	 */
 	@Override
-	public Response take(Request crysilRequest) {
+	public Response take(Request crysilRequest) throws CrySILException {
 		String url = targetURI;
 
 		try {
@@ -71,7 +73,12 @@ public class HttpJsonTransmitter implements Module {
 			if (isValidateSchema && !JsonUtils.isValidJSONResponse(responsestring))
 				throw new NotAcceptableException();
 
-			return JsonUtils.fromJson(responsestring, Response.class);
+			Response result = JsonUtils.fromJson(responsestring, Response.class);
+
+			if("status".equals(result.getPayload().getType())) {
+				throw CrySILException.fromErrorCode(((PayloadStatus) result.getPayload()).getCode());
+			}
+
 		} catch (IOException e) {
 			Logger.error("could not find host {}", e.getMessage());
 		} catch (NotAcceptableException e) {

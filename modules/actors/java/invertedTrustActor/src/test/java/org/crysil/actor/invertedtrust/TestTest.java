@@ -16,6 +16,7 @@ import org.crysil.cms.CmsEnvelopedInputStream;
 import org.crysil.cms.CmsEnvelopedOutputStream;
 import org.crysil.commons.KeyType;
 import org.crysil.commons.Module;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
@@ -31,7 +32,7 @@ import org.testng.annotations.Test;
 public class TestTest {
 
   @Test
-  public void testGenerate() throws UnsupportedRequestException, KeyStoreUnavailableException {
+	public void testGenerate() throws CrySILException, KeyStoreUnavailableException {
 
     final Module DUT = new InvertedTrustActor(new File("keyStore.uber"),"foo".toCharArray());
     final Request request = new Request();

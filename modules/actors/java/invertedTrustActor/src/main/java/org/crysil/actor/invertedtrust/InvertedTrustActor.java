@@ -151,7 +151,7 @@ public class InvertedTrustActor implements Module {
           final PayloadDecryptResponse unwrapped = (PayloadDecryptResponse) unwrapResponse.getPayload();
           final byte[] secretKey = unwrapped.getPlainData().get(0);
           return new SecretKeySpec(secretKey, contentEncryptionAlgorithm.getAlgorithm().getId());
-        } catch (IOException | UnsupportedRequestException e) {
+        } catch (IOException | CrySILException e) {
           throw new CryptoException(e.getLocalizedMessage(), e);
         }
       }

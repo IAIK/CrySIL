@@ -2,8 +2,8 @@ package org.crysil.modules.decentral;
 
 import org.crysil.commons.Module;
 import org.crysil.decentral.DecentralNodeActor;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.NotAcceptableException;
-import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.header.Header;
@@ -33,7 +33,7 @@ public class CrysilConnectionModule implements DecentralNodeActor<Response, Requ
     if ((payload instanceof PayloadAuthRequest) || (payload instanceof PayloadDecryptRequest)) {
       try {
         return actor.take(sRequest);
-      } catch (final UnsupportedRequestException e) {
+			} catch (final CrySILException e) {
 
         e.printStackTrace();
         final Response response = new Response();

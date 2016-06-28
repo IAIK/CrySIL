@@ -3,7 +3,6 @@ package org.crysil.actor.staticKeyEncryption;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnsupportedRequestException;
@@ -27,7 +26,7 @@ public class StaticKeyEncryptionActor implements Module {
 	}
 
 	@Override
-	public Response take(Request request) throws UnsupportedRequestException {
+	public Response take(Request request) throws CrySILException {
 		// see if we have someone capable of handling the request
 		Command command = commands.get(request.getPayload().getClass());
 
@@ -39,12 +38,8 @@ public class StaticKeyEncryptionActor implements Module {
 		if (null == command)
 			throw new UnsupportedRequestException();
 
-		try {
-			// let someone else do the actual work
-			response.setPayload(command.perform(request.getPayload()));
-		} catch (CrySILException e) {
-			response.setPayload(PayloadBuilder.buildStatusResponse(e.getErrorCode()));
-		}
+		// let someone else do the actual work
+		response.setPayload(command.perform(request.getPayload()));
 
 		return response;
 	}

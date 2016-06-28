@@ -8,12 +8,9 @@ import org.crysil.decentral.DecentralNode;
 import org.crysil.decentral.comm.CommunicationBehavior;
 import org.crysil.decentral.exceptions.irrecoverable.IrrecoverableDecentralException;
 import org.crysil.decentral.exceptions.recoverable.RecoverableDecentralException;
-import org.crysil.errorhandling.UnsupportedRequestException;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.header.Header;
-import org.crysil.protocol.header.StandardHeader;
-import org.crysil.protocol.payload.status.PayloadStatus;
 
 public class DecentralCrysilNode implements Module {
   public static final String                                        DST_LOCAL = "****LOCAL****";
@@ -47,26 +44,12 @@ public class DecentralCrysilNode implements Module {
   }
 
   @Override
-  public Response take(final Request crysilRequest) {
+	public Response take(final Request crysilRequest) throws CrySILException {
     if (destinationNode == null) {
       System.err.println("No Destination set!");
     }
     if (DST_LOCAL.equals(destinationNode)) {
-      Response response;
-      try {
-        response = localActor.take(crysilRequest);
-      } catch (final UnsupportedRequestException e) {
-        e.printStackTrace();
-        response = new Response();
-
-        final Header header = new StandardHeader();
-        header.setCommandId(crysilRequest.getHeader().getCommandId());
-        response.setHeader(header);
-        final PayloadStatus responsePayload = new PayloadStatus();
-        responsePayload.setCode(e.getErrorCode());
-        response.setPayload(responsePayload);
-      }
-      return response;
+			return localActor.take(crysilRequest);
     }
 
     try {
