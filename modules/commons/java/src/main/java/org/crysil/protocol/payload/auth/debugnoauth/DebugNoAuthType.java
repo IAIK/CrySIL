@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.debugnoauth;
 
+import java.util.Arrays;
+
 import org.crysil.protocol.payload.auth.AuthType;
 
 public class DebugNoAuthType extends AuthType {
@@ -14,6 +16,11 @@ public class DebugNoAuthType extends AuthType {
   @Override
   public String getType() {
     return TYPE_ID;
+  }
+
+  @Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type});
   }
 
 }

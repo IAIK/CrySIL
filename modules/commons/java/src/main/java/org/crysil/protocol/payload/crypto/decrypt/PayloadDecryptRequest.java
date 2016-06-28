@@ -1,6 +1,7 @@
 package org.crysil.protocol.payload.crypto.decrypt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.crysil.logging.Logger;
@@ -126,12 +127,7 @@ public class PayloadDecryptRequest extends PayloadRequest implements PayloadWith
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((algorithm == null) ? 0 : algorithm.hashCode());
-		result = prime * result + ((decryptionKey == null) ? 0 : decryptionKey.hashCode());
-		result = prime * result + ((encryptedData == null) ? 0 : encryptedData.hashCode());
-		return result;
+		return Arrays.hashCode(new Object[] { type, decryptionKey, algorithm, encryptedData });
 	}
 
 	@Override

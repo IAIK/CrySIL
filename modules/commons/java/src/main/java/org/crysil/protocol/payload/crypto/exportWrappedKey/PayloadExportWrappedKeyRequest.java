@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.crypto.exportWrappedKey;
 
+import java.util.Arrays;
+
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.PayloadRequest;
 import org.crysil.protocol.payload.crypto.key.Key;
@@ -69,4 +71,9 @@ public class PayloadExportWrappedKeyRequest extends PayloadRequest {
 
 		return result;
 	}
+
+  @Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{getType(),decryptionKey,encodedWrappedKey});
+  }
 }

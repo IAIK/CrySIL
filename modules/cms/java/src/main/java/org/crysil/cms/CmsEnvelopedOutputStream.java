@@ -9,10 +9,12 @@ import org.bouncycastle.cms.CMSException;
 
 public class CmsEnvelopedOutputStream extends OutputStream {
   private final OutputStream out;
+  private final OutputStream originalOutputStream;
 
   public CmsEnvelopedOutputStream(final OutputStream out, final ASN1ObjectIdentifier encryptionAlgorithm,
       final X509Certificate... recipientCertificates) throws CMSException {
     this.out = CMS.wrapOutputStreamforEncryption(out, encryptionAlgorithm, recipientCertificates);
+    this.originalOutputStream = out;
   }
 
   @Override
@@ -47,8 +49,8 @@ public class CmsEnvelopedOutputStream extends OutputStream {
 
   @Override
   public void close() throws IOException {
-//    flush();
     out.close();
+    originalOutputStream.close();
   }
 
   @Override

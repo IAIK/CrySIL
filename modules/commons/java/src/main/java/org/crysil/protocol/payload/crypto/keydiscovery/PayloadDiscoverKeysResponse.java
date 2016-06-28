@@ -1,6 +1,7 @@
 package org.crysil.protocol.payload.crypto.keydiscovery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.crysil.protocol.payload.PayloadResponse;
@@ -34,11 +35,12 @@ public class PayloadDiscoverKeysResponse extends PayloadResponse {
 	 * @param key
 	 *            the new keys
 	 */
-	public void setKey(List<Key> key) {
+	public void setKey(final List<Key> key) {
 		clearKeys();
 
-		for (Key current : key)
-			addKey(current);
+		for (final Key current : key) {
+      addKey(current);
+    }
 	}
 
 	/**
@@ -50,21 +52,26 @@ public class PayloadDiscoverKeysResponse extends PayloadResponse {
 
 	/**
 	 * add single key to the list
-	 * 
+	 *
 	 * @param key
 	 */
-	public void addKey(Key key) {
+	public void addKey(final Key key) {
 		this.key.add(key);
 	}
 
 	@Override
 	public PayloadResponse getBlankedClone() {
-		PayloadDiscoverKeysResponse result = new PayloadDiscoverKeysResponse();
-		List<Key> keys = new ArrayList<>();
-		for (Key current : key)
-			keys.add(current.getBlankedClone());
+		final PayloadDiscoverKeysResponse result = new PayloadDiscoverKeysResponse();
+		final List<Key> keys = new ArrayList<>();
+		for (final Key current : key) {
+      keys.add(current.getBlankedClone());
+    }
 		result.key = keys;
 
 		return result;
 	}
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,key});
+  }
 }

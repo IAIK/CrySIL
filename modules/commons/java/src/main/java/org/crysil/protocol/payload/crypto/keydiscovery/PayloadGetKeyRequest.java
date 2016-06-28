@@ -1,6 +1,7 @@
 package org.crysil.protocol.payload.crypto.keydiscovery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.crysil.logging.Logger;
@@ -39,7 +40,7 @@ public class PayloadGetKeyRequest extends PayloadRequest implements PayloadWithK
 	 * @param representation
 	 *            the new representation
 	 */
-	public void setRepresentation(String representation) {
+	public void setRepresentation(final String representation) {
 		this.representation = representation;
 	}
 
@@ -58,23 +59,28 @@ public class PayloadGetKeyRequest extends PayloadRequest implements PayloadWithK
 	 * @param key
 	 *            the new key
 	 */
-	public void setKey(Key key) {
+	public void setKey(final Key key) {
 		this.key = key;
 	}
 
 	@Override
 	public List<Key> getKeys() {
-		List<Key> result = new ArrayList<>();
+		final List<Key> result = new ArrayList<>();
 		result.add(getKey());
 		return result;
 	}
 
 	@Override
 	public PayloadRequest getBlankedClone() {
-		PayloadGetKeyRequest result = new PayloadGetKeyRequest();
+		final PayloadGetKeyRequest result = new PayloadGetKeyRequest();
 		result.representation = Logger.isDebugEnabled() ? representation : "*****";
 		result.key = key;
 		return result;
 	}
+
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,key,representation});
+  }
 
 }

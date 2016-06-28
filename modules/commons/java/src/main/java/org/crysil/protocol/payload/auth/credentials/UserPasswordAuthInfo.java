@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.credentials;
 
+import java.util.Arrays;
+
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.auth.AuthInfo;
 
@@ -34,7 +36,7 @@ public class UserPasswordAuthInfo extends AuthInfo {
 	 * @param userName
 	 *            the username
 	 */
-	public void setUserName(String userName) {
+	public void setUserName(final String userName) {
 		this.userName = userName;
 	}
 
@@ -53,16 +55,21 @@ public class UserPasswordAuthInfo extends AuthInfo {
 	 * @param passWord
 	 *            the password
 	 */
-	public void setPassWord(String passWord) {
+	public void setPassWord(final String passWord) {
 		this.passWord = passWord;
 	}
 
 	@Override
 	public AuthInfo getBlankedClone() {
-		UserPasswordAuthInfo result = new UserPasswordAuthInfo();
+		final UserPasswordAuthInfo result = new UserPasswordAuthInfo();
 		result.userName = Logger.isTraceEnabled() ? userName : "*****";
 		result.passWord = Logger.isTraceEnabled() ? passWord : "*****";
 
 		return result;
 	}
+
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,userName,passWord});
+  }
 }

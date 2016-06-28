@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.challengeresponse;
 
+import java.util.Arrays;
+
 import org.crysil.protocol.payload.auth.AuthType;
 
 public class ChallengeResponseAuthType extends AuthType {
@@ -24,6 +26,11 @@ public class ChallengeResponseAuthType extends AuthType {
 
   public void setChallenge(final String challenge) {
     this.challenge = challenge;
+  }
+
+  @Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,challenge});
   }
 
 }

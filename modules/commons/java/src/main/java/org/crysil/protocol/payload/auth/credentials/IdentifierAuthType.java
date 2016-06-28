@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.credentials;
 
+import java.util.Arrays;
+
 import org.crysil.protocol.payload.auth.AuthType;
 
 /**
@@ -16,4 +18,8 @@ public class IdentifierAuthType extends AuthType {
 	public AuthType getBlankedClone() {
 		return new IdentifierAuthType();
 	}
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type});
+  }
 }

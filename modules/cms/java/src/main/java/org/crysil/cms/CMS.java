@@ -68,6 +68,7 @@ abstract class CMS {
     }
 
     try {
+
       return edGen.open(out,
           new JceCMSContentEncryptorBuilder(encryptionAlgorithm).setProvider("BC").build());
     } catch (final IOException e) {

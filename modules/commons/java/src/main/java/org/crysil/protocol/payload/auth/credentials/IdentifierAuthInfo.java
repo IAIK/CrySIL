@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.credentials;
 
+import java.util.Arrays;
+
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.auth.AuthInfo;
 
@@ -31,15 +33,20 @@ public class IdentifierAuthInfo extends AuthInfo {
 	 * @param identifier
 	 *            the new identifier
 	 */
-	public void setIdentifier(String identifier) {
+	public void setIdentifier(final String identifier) {
 		this.identifier = identifier;
 	}
 
 	@Override
 	public AuthInfo getBlankedClone() {
-		IdentifierAuthInfo result = new IdentifierAuthInfo();
+		final IdentifierAuthInfo result = new IdentifierAuthInfo();
 		result.identifier = Logger.isTraceEnabled() ? identifier : "*****";
 
 		return result;
 	}
+
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,identifier});
+  }
 }

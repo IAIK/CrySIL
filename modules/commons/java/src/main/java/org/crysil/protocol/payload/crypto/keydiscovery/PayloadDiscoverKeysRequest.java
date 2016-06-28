@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.crypto.keydiscovery;
 
+import java.util.Arrays;
+
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.PayloadRequest;
 
@@ -31,15 +33,19 @@ public class PayloadDiscoverKeysRequest extends PayloadRequest {
 	 * @param representation
 	 *            the new representation
 	 */
-	public void setRepresentation(String representation) {
+	public void setRepresentation(final String representation) {
 		this.representation = representation;
 	}
 
 	@Override
 	public PayloadRequest getBlankedClone() {
-		PayloadDiscoverKeysRequest result = new PayloadDiscoverKeysRequest();
+		final PayloadDiscoverKeysRequest result = new PayloadDiscoverKeysRequest();
 		result.representation = Logger.isDebugEnabled() ? representation : "*****";
 		return result;
 	}
 
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,representation});
+  }
 }

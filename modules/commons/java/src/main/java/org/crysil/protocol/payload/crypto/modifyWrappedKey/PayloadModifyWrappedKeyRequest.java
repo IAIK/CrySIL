@@ -1,6 +1,7 @@
 package org.crysil.protocol.payload.crypto.modifyWrappedKey;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.crysil.logging.Logger;
@@ -40,7 +41,7 @@ public class PayloadModifyWrappedKeyRequest extends PayloadRequest implements Pa
 	 * @param encryptionKeys
 	 *            the new encryption keys
 	 */
-	public void setEncryptionKeys(List<Key> encryptionKeys) {
+	public void setEncryptionKeys(final List<Key> encryptionKeys) {
 		this.encryptionKeys = encryptionKeys;
 	}
 
@@ -59,7 +60,7 @@ public class PayloadModifyWrappedKeyRequest extends PayloadRequest implements Pa
 	 * @param signingKey
 	 *            the new signing key
 	 */
-	public void setSigningKey(Key signingKey) {
+	public void setSigningKey(final Key signingKey) {
 		this.signingKey = signingKey;
 	}
 
@@ -78,7 +79,7 @@ public class PayloadModifyWrappedKeyRequest extends PayloadRequest implements Pa
 	 * @param encodedWrappedKey
 	 *            the new encoded wrapped key
 	 */
-	public void setEncodedWrappedKey(String encodedWrappedKey) {
+	public void setEncodedWrappedKey(final String encodedWrappedKey) {
 		this.encodedWrappedKey = encodedWrappedKey;
 	}
 
@@ -97,7 +98,7 @@ public class PayloadModifyWrappedKeyRequest extends PayloadRequest implements Pa
 	 * @param decryptionKey
 	 *            the new decryption key
 	 */
-	public void setDecryptionKey(Key decryptionKey) {
+	public void setDecryptionKey(final Key decryptionKey) {
 		this.decryptionKey = decryptionKey;
 	}
 
@@ -113,22 +114,30 @@ public class PayloadModifyWrappedKeyRequest extends PayloadRequest implements Pa
 
 	@Override
 	public PayloadRequest getBlankedClone() {
-		PayloadModifyWrappedKeyRequest result = new PayloadModifyWrappedKeyRequest();
+		final PayloadModifyWrappedKeyRequest result = new PayloadModifyWrappedKeyRequest();
 
-		List<Key> keys = new ArrayList<>();
-		for (Key current : encryptionKeys)
-			keys.add(current.getBlankedClone());
+		final List<Key> keys = new ArrayList<>();
+		for (final Key current : encryptionKeys) {
+      keys.add(current.getBlankedClone());
+    }
 		result.encryptionKeys = keys;
-		if (null != signingKey)
-			result.signingKey = signingKey.getBlankedClone();
-		else
-			result.signingKey = null;
+		if (null != signingKey) {
+      result.signingKey = signingKey.getBlankedClone();
+    } else {
+      result.signingKey = null;
+    }
 		result.encodedWrappedKey = Logger.isDebugEnabled() ? encodedWrappedKey : "*****";
-		if (null != decryptionKey)
-			result.decryptionKey = decryptionKey.getBlankedClone();
-		else
-			result.decryptionKey = null;
+		if (null != decryptionKey) {
+      result.decryptionKey = decryptionKey.getBlankedClone();
+    } else {
+      result.decryptionKey = null;
+    }
 
 		return result;
 	}
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(new Object[]{getType(),decryptionKey,encodedWrappedKey,encryptionKeys,signingKey});
+  }
 }

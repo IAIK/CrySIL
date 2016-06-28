@@ -89,13 +89,13 @@ public class CMSTest {
     cmsSignedOutputStream.write(input);
     cmsSignedOutputStream.close();
     final String base64Signed = Base64.toBase64String(sign.toByteArray());
-    final CmsSignedDataInputSteam cmsSignedInputStream = new CmsSignedDataInputSteam(
+    final CmsSignedDataInputStream cmsSignedInputStream = new CmsSignedDataInputStream(
         new ByteArrayInputStream(Base64.decode(base64Signed)));
     final ByteArrayOutputStream verify = new ByteArrayOutputStream();
     IOUtils.copy(cmsSignedInputStream, verify);
     cmsSignedInputStream.close();
     Assert.assertEquals(verify.toByteArray(), ref);
-    Assert.assertTrue(cmsSignedInputStream.verifySignatures());
+    Assert.assertTrue(cmsSignedInputStream.isValid());
 
   }
 
@@ -104,7 +104,7 @@ public class CMSTest {
     final Random rnd = new Random(System.currentTimeMillis());
     final Object[][] data = new Object[5][1];
     for (int i = 0; i < data.length; ++i) {
-      final byte[] bytes = new byte[rnd.nextInt(512 /** 1024*/)];
+      final byte[] bytes = new byte[rnd.nextInt(512 * 7031)];
       rnd.nextBytes(bytes);
       data[i][0] = bytes;
     }

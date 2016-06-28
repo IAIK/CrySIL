@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth;
 
+import java.util.Arrays;
+
 import org.crysil.protocol.payload.PayloadRequest;
 
 /**
@@ -30,16 +32,20 @@ public class PayloadAuthRequest extends PayloadRequest {
 	 * @param authInfo
 	 *            the authentication data
 	 */
-	public void setAuthInfo(AuthInfo authInfo) {
+	public void setAuthInfo(final AuthInfo authInfo) {
 		this.authInfo = authInfo;
 	}
 
 	@Override
 	public PayloadRequest getBlankedClone() {
-		PayloadAuthRequest result = new PayloadAuthRequest();
+		final PayloadAuthRequest result = new PayloadAuthRequest();
 		result.authInfo = authInfo.getBlankedClone();
 
 		return result;
 	}
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,authInfo});
+  }
 
 }

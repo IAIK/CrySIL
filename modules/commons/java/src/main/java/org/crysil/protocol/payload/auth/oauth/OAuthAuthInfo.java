@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.oauth;
 
+import java.util.Arrays;
+
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.auth.AuthInfo;
 
@@ -31,16 +33,19 @@ public class OAuthAuthInfo extends AuthInfo {
 	 * @param accessToken
 	 *            the new authorization code
 	 */
-	public void setAuthorizationCode(String accessToken) {
+	public void setAuthorizationCode(final String accessToken) {
 		this.authorizationCode = accessToken;
 	}
 
 	@Override
 	public AuthInfo getBlankedClone() {
-		OAuthAuthInfo result = new OAuthAuthInfo();
+		final OAuthAuthInfo result = new OAuthAuthInfo();
 		result.authorizationCode = Logger.isTraceEnabled() ? authorizationCode : "*****";
 
 		return result;
 	}
-
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,authorizationCode});
+  }
 }

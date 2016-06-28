@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.oauth;
 
+import java.util.Arrays;
+
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.auth.AuthType;
 
@@ -31,15 +33,19 @@ public class OAuthAuthType extends AuthType {
 	 * @param url
 	 *            the new url
 	 */
-	public void setUrl(String url) {
+	public void setUrl(final String url) {
 		this.url = url;
 	}
 
 	@Override
 	public AuthType getBlankedClone() {
-		OAuthAuthType result = new OAuthAuthType();
+		final OAuthAuthType result = new OAuthAuthType();
 		result.url = Logger.isDebugEnabled() ? url : "*****";
 
 		return result;
 	}
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,url});
+  }
 }

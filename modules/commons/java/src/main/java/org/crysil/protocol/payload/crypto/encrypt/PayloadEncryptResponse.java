@@ -1,6 +1,7 @@
 package org.crysil.protocol.payload.crypto.encrypt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.crysil.logging.Logger;
@@ -24,11 +25,12 @@ public class PayloadEncryptResponse extends PayloadResponse {
 	 * @return the encrypted data
 	 */
 	public List<List<byte[]>> getEncryptedData() {
-		List<List<byte[]>> result = new ArrayList<>();
-		for (List<String> currentKey : encryptedData) {
-			List<byte[]> tmp = new ArrayList<>();
-			for (String currentData : currentKey)
-				tmp.add(BaseEncoding.base64().decode(currentData));
+		final List<List<byte[]>> result = new ArrayList<>();
+		for (final List<String> currentKey : encryptedData) {
+			final List<byte[]> tmp = new ArrayList<>();
+			for (final String currentData : currentKey) {
+        tmp.add(BaseEncoding.base64().decode(currentData));
+      }
 			result.add(tmp);
 		}
 
@@ -41,13 +43,14 @@ public class PayloadEncryptResponse extends PayloadResponse {
 	 * @param encryptedData
 	 *            the new encrypted data
 	 */
-	public void setEncryptedData(List<List<byte[]>> data) {
+	public void setEncryptedData(final List<List<byte[]>> data) {
 		clearEncryptedData();
 
-		for (List<byte[]> currentKey : data) {
-			List<String> tmp = new ArrayList<>();
-			for (byte[] currentData : currentKey)
-				tmp.add(BaseEncoding.base64().encode(currentData));
+		for (final List<byte[]> currentKey : data) {
+			final List<String> tmp = new ArrayList<>();
+			for (final byte[] currentData : currentKey) {
+        tmp.add(BaseEncoding.base64().encode(currentData));
+      }
 			encryptedData.add(tmp);
 		}
 	}
@@ -61,30 +64,37 @@ public class PayloadEncryptResponse extends PayloadResponse {
 
 	/**
 	 * add plain data to the list
-	 * 
+	 *
 	 * @param plainData
 	 */
-	public void addEncryptedDataPerKey(List<byte[]> data) {
-		List<String> tmp = new ArrayList<>();
+	public void addEncryptedDataPerKey(final List<byte[]> data) {
+		final List<String> tmp = new ArrayList<>();
 
-		for (byte[] current : data)
-			tmp.add(BaseEncoding.base64().encode(current));
+		for (final byte[] current : data) {
+      tmp.add(BaseEncoding.base64().encode(current));
+    }
 
 		encryptedData.add(tmp);
 	}
 
 	@Override
 	public PayloadResponse getBlankedClone() {
-		PayloadEncryptResponse result = new PayloadEncryptResponse();
+		final PayloadEncryptResponse result = new PayloadEncryptResponse();
 
-		List<List<String>> data = new ArrayList<>();
-		for (List<String> current : encryptedData) {
-			List<String> dataa = new ArrayList<>();
-			for (String currenter : current)
-				dataa.add(Logger.isDebugEnabled() ? currenter : "*****");
+		final List<List<String>> data = new ArrayList<>();
+		for (final List<String> current : encryptedData) {
+			final List<String> dataa = new ArrayList<>();
+			for (final String currenter : current) {
+        dataa.add(Logger.isDebugEnabled() ? currenter : "*****");
+      }
 			data.add(dataa);
 		}
 		result.encryptedData = data;
 		return result;
 	}
+
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,encryptedData});
+  }
 }

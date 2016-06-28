@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.auth.debugnoauth;
 
+import java.util.Arrays;
+
 import org.crysil.protocol.payload.auth.AuthInfo;
 
 /**
@@ -17,5 +19,9 @@ public class DebugNoAuthInfo extends AuthInfo {
     final DebugNoAuthInfo result = new DebugNoAuthInfo();
 
     return result;
+  }
+  @Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type});
   }
 }

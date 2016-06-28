@@ -13,10 +13,16 @@
         <module>commons/java</module>
         <module>gatekeeper/java</module>
         <module>cms/java</module>
+        <module>actors/java/invertedTrustActor</module>
         <module>actors/java/staticKeyEncryption</module>
         <module>communications/java/json-commons</module>
         <module>communications/java/http-json-receiver</module>
         <module>communications/java/http-json-transmitter</module>
+        <module>actors/java/actor-decentral</module>
+        <module>lib-gridh/java</module>
+        <module>lib-decentral/java</module>
+        <module>lib-tor/java</module>
+        <module>lib-gridh-tor/java</module>
         <module>interceptor-authentication/java</module>
         <module>auth/java/auth-basic</module>
         <module>auth/java/auth-challenge-response</module>

@@ -1,6 +1,7 @@
 package org.crysil.protocol.payload.crypto.encryptCMS;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.crysil.logging.Logger;
@@ -24,9 +25,10 @@ public class PayloadEncryptCMSResponse extends PayloadResponse {
 	 * @return the encrypted data
 	 */
 	public List<byte[]> getEncryptedCMSData() {
-		List<byte[]> tmp = new ArrayList<>();
-		for (String current : encryptedCMSData)
-			tmp.add(BaseEncoding.base64().decode(current));
+		final List<byte[]> tmp = new ArrayList<>();
+		for (final String current : encryptedCMSData) {
+      tmp.add(BaseEncoding.base64().decode(current));
+    }
 
 		return tmp;
 	}
@@ -37,11 +39,12 @@ public class PayloadEncryptCMSResponse extends PayloadResponse {
 	 * @param encryptedCMSData
 	 *            the new encrypted data
 	 */
-	public void setEncryptedCMSData(List<byte[]> data) {
+	public void setEncryptedCMSData(final List<byte[]> data) {
 		clearEncryptedData();
 
-		for (byte[] current : data)
-			addEncryptedData(current);
+		for (final byte[] current : data) {
+      addEncryptedData(current);
+    }
 	}
 
 	/**
@@ -53,20 +56,26 @@ public class PayloadEncryptCMSResponse extends PayloadResponse {
 
 	/**
 	 * add encrypted data to set
-	 * 
+	 *
 	 * @param encryptedData
 	 */
-	public void addEncryptedData(byte[] data) {
+	public void addEncryptedData(final byte[] data) {
 		this.encryptedCMSData.add(BaseEncoding.base64().encode(data));
 	}
 
 	@Override
 	public PayloadResponse getBlankedClone() {
-		PayloadEncryptCMSResponse result = new PayloadEncryptCMSResponse();
-		List<String> data = new ArrayList<>();
-		for (String current : encryptedCMSData)
-			data.add(Logger.isDebugEnabled() ? current : "*****");
+		final PayloadEncryptCMSResponse result = new PayloadEncryptCMSResponse();
+		final List<String> data = new ArrayList<>();
+		for (final String current : encryptedCMSData) {
+      data.add(Logger.isDebugEnabled() ? current : "*****");
+    }
 		result.encryptedCMSData = data;
 		return result;
 	}
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(new Object[]{getType(),encryptedCMSData});
+  }
 }

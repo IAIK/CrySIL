@@ -1,8 +1,10 @@
 package org.crysil.builders;
 
-import javax.security.cert.CertificateEncodingException;
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
+import java.io.ByteArrayInputStream;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
 import org.crysil.protocol.payload.crypto.key.InternalCertificate;
@@ -13,26 +15,30 @@ import com.google.common.io.BaseEncoding;
 
 public class KeyBuilder {
 
-	public static KeyHandle buildKeyHandle(String id, String subId) {
-		KeyHandle tmp = new KeyHandle();
-		tmp.setId(id);
-		tmp.setSubId(subId);
-		return tmp;
-	}
+  public static KeyHandle buildKeyHandle(final String id, final String subId) {
+    final KeyHandle tmp = new KeyHandle();
+    tmp.setId(id);
+    tmp.setSubId(subId);
+    return tmp;
+  }
 
-	public static InternalCertificate buildInternalCertificate(String id, String subId, String encodedCertificate)
-			throws CertificateEncodingException, CertificateException {
-		InternalCertificate tmp = new InternalCertificate();
-		tmp.setId(id);
-		tmp.setSubId(subId);
-		tmp.setCertificate(X509Certificate.getInstance(BaseEncoding.base64().decode(encodedCertificate)));
-		return tmp;
-	}
+  public static InternalCertificate buildInternalCertificate(final String id, final String subId,
+      final String encodedCertificate) throws CertificateEncodingException, CertificateException {
+    final InternalCertificate tmp = new InternalCertificate();
+    tmp.setId(id);
+    tmp.setSubId(subId);
+    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+    tmp.setCertificate((X509Certificate) cf
+        .generateCertificate(new ByteArrayInputStream(BaseEncoding.base64().decode(encodedCertificate))));
+    return tmp;
+  }
 
-	public static Key buildExternalCertificate(String base64X509Certificate)
-			throws CertificateEncodingException, CertificateException {
-		ExternalCertificate tmp = new ExternalCertificate();
-		tmp.setCertificate(X509Certificate.getInstance(BaseEncoding.base64().decode(base64X509Certificate)));
-		return tmp;
-	}
+  public static Key buildExternalCertificate(final String base64X509Certificate)
+      throws CertificateEncodingException, CertificateException {
+    final ExternalCertificate tmp = new ExternalCertificate();
+    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+    tmp.setCertificate((X509Certificate) cf
+        .generateCertificate(new ByteArrayInputStream(BaseEncoding.base64().decode(base64X509Certificate))));
+    return tmp;
+  }
 }

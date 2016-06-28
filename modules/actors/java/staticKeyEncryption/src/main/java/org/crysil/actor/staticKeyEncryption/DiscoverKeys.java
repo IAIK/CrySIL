@@ -1,9 +1,8 @@
 package org.crysil.actor.staticKeyEncryption;
 
+import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.security.cert.CertificateEncodingException;
 
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.InvalidCertificateException;
@@ -24,8 +23,8 @@ import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRespon
 public class DiscoverKeys implements Command {
 
 	@Override
-	public PayloadResponse perform(PayloadRequest input) throws CrySILException {
-		PayloadDiscoverKeysRequest request = (PayloadDiscoverKeysRequest) input;
+	public PayloadResponse perform(final PayloadRequest input) throws CrySILException {
+		final PayloadDiscoverKeysRequest request = (PayloadDiscoverKeysRequest) input;
 
 		List<Key> keys = new ArrayList<>();
 		if (null == request.getRepresentation())
@@ -33,17 +32,17 @@ public class DiscoverKeys implements Command {
 
 		switch (request.getRepresentation()) {
 		case "handle":
-			KeyHandle keyhandle = new KeyHandle();
+			final KeyHandle keyhandle = new KeyHandle();
 			keyhandle.setId("testkey");
 			keyhandle.setSubId("1");
 			keys.add(keyhandle);
 			break;
 		case "certificate":
-			InternalCertificate internalcertificate = new InternalCertificate();
+			final InternalCertificate internalcertificate = new InternalCertificate();
 			internalcertificate.setId("testkey");
 			internalcertificate.setSubId("1");
 			try {
-				SimpleKeyStore keystore = SimpleKeyStore.getInstance();
+				final SimpleKeyStore keystore = SimpleKeyStore.getInstance();
 				internalcertificate.setCertificate(keystore.getX509Certificate(new KeyHandle()));
 				keys.add(internalcertificate);
 			} catch (KeyStoreUnavailableException | CertificateEncodingException | InvalidCertificateException
@@ -56,7 +55,7 @@ public class DiscoverKeys implements Command {
 			throw new UnsupportedRequestException();
 		}
 
-		PayloadDiscoverKeysResponse response = new PayloadDiscoverKeysResponse();
+		final PayloadDiscoverKeysResponse response = new PayloadDiscoverKeysResponse();
 		response.setKey(keys);
 
 		return response;

@@ -1,13 +1,15 @@
 package org.crysil.actor.staticKeyEncryption;
 
+import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
@@ -41,13 +43,14 @@ public class SimpleKeyStore {
 
 	/**
 	 * get the single instance
-	 * 
+	 *
 	 * @return the singleton instance of SimpleKeyStore
 	 * @throws KeyStoreUnavailableException
 	 */
 	public static SimpleKeyStore getInstance() throws KeyStoreUnavailableException {
-		if (null == instance)
-			instance = new SimpleKeyStore();
+		if (null == instance) {
+      instance = new SimpleKeyStore();
+    }
 		return instance;
 	}
 
@@ -55,73 +58,77 @@ public class SimpleKeyStore {
 		try {
 
 			// create java representation of the raw key data
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(BaseEncoding.base64().decode(rawPublicKey));
+			final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			final X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(BaseEncoding.base64().decode(rawPublicKey));
 			pubKey = keyFactory.generatePublic(pubKeySpec);
 
-			PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(rawPrivateKey));
+			final PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(rawPrivateKey));
 			privKey = keyFactory.generatePrivate(privKeySpec);
-
-			cert = X509Certificate.getInstance(BaseEncoding.base64().decode(rawCert));
-		} catch (Exception e) {
+			final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(BaseEncoding.base64().decode(rawCert)));
+		} catch (final Exception e) {
+		  e.printStackTrace();
 			throw new KeyStoreUnavailableException();
 		}
 	}
 
 	/**
 	 * returns the public key of the specified key in JCE-readable form
-	 * 
+	 *
 	 * @param current the CrySIL key representation
 	 * @return the public key
 	 * @throws InvalidCertificateException
 	 * @throws KeyNotFoundException
 	 */
-	public PublicKey getJCEPublicKey(Key current) throws InvalidCertificateException, KeyNotFoundException {
+	public PublicKey getJCEPublicKey(final Key current) throws InvalidCertificateException, KeyNotFoundException {
 		if (current instanceof KeyHandle || current instanceof InternalCertificate) {
 			return pubKey;
 		} else if (current instanceof ExternalCertificate) {
 			try {
 				return ((ExternalCertificate) current).getCertificate().getPublicKey();
-			} catch (CertificateException e) {
+			} catch (final CertificateException e) {
 				throw new InvalidCertificateException();
 			}
-		} else
-			throw new KeyNotFoundException();
+		} else {
+      throw new KeyNotFoundException();
+    }
 	}
 
 	/**
 	 * returns the private key of the specified key in JCE-readable form
-	 * 
+	 *
 	 * @param current the CrySIL key representation
 	 * @return the private key
 	 * @throws KeyNotFoundException
 	 */
-	public PrivateKey getJCEPrivateKey(Key current) throws KeyNotFoundException {
+	public PrivateKey getJCEPrivateKey(final Key current) throws KeyNotFoundException {
 		if (current instanceof KeyHandle || current instanceof InternalCertificate) {
 			return privKey;
-		} else
-			throw new KeyNotFoundException();
+		} else {
+      throw new KeyNotFoundException();
+    }
 	}
 
 	/**
 	 * returns the certificate of the specified key in JCE-readable form
-	 * 
+	 *
 	 * @param current the CrySIL key representation
 	 * @return the certificate
 	 * @throws InvalidCertificateException
 	 * @throws KeyNotFoundException
 	 */
-	public X509Certificate getX509Certificate(Key current) throws InvalidCertificateException, KeyNotFoundException {
+	public X509Certificate getX509Certificate(final Key current) throws InvalidCertificateException, KeyNotFoundException {
 		if (current instanceof KeyHandle || current instanceof InternalCertificate) {
 			return cert;
 		} else if (current instanceof ExternalCertificate) {
 			try {
 				return ((ExternalCertificate) current).getCertificate();
-			} catch (CertificateException e) {
+			} catch (final CertificateException e) {
 				throw new InvalidCertificateException();
 			}
-		} else
-			throw new KeyNotFoundException();
+		} else {
+      throw new KeyNotFoundException();
+    }
 	}
 
 	// /**

@@ -1,7 +1,7 @@
 package org.crysil.actor.staticKeyEncryption;
 
-import javax.security.cert.CertificateEncodingException;
-import javax.security.cert.CertificateException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 
 import org.crysil.builders.KeyBuilder;
 import org.crysil.builders.PayloadBuilder;
@@ -40,18 +40,18 @@ public class TestTest {
 	}
 
 	@Test(dataProvider = "discoverKeyFixtures")
-	public void discoverKeyTest(String keytype, boolean expectError, Object expected) throws Exception {
-		Module DUT = new StaticKeyEncryptionActor();
+	public void discoverKeyTest(final String keytype, final boolean expectError, final Object expected) throws Exception {
+		final Module DUT = new StaticKeyEncryptionActor();
 
-		Request request = new Request();
-		PayloadDiscoverKeysRequest payload = new PayloadDiscoverKeysRequest();
+		final Request request = new Request();
+		final PayloadDiscoverKeysRequest payload = new PayloadDiscoverKeysRequest();
 		payload.setRepresentation(keytype);
 		request.setPayload(payload);
 
-		Response response = DUT.take(request);
-		if (expectError)
-			Assert.assertEquals(response.getPayload(), expected);
-		else {
+		final Response response = DUT.take(request);
+		if (expectError) {
+      Assert.assertEquals(response.getPayload(), expected);
+    } else {
 			Assert.assertEquals(((PayloadDiscoverKeysResponse) response.getPayload()).getKey().size(), 1);
 			Assert.assertEquals(((PayloadDiscoverKeysResponse) response.getPayload()).getKey().get(0), expected);
 		}
@@ -61,7 +61,7 @@ public class TestTest {
 	public void keyStoreTest() throws KeyNotFoundException, KeyStoreUnavailableException, InvalidCertificateException,
 			CertificateEncodingException {
 
-		SimpleKeyStore DUT = SimpleKeyStore.getInstance();
+		final SimpleKeyStore DUT = SimpleKeyStore.getInstance();
 		Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPublicKey(new KeyHandle()).getEncoded()),
 				rawPublicKey, "public key value does not match");
 		Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPrivateKey(new KeyHandle()).getEncoded()),
@@ -82,25 +82,25 @@ public class TestTest {
 	}
 
 	@Test(dataProvider = "encryptFixtures")
-	public void encryptTest(PayloadRequest payload) throws Exception {
-		Module DUT = new StaticKeyEncryptionActor();
+	public void encryptTest(final PayloadRequest payload) throws Exception {
+		final Module DUT = new StaticKeyEncryptionActor();
 
-		Request request = new Request(null, payload);
+		final Request request = new Request(null, payload);
 
-		Response response = DUT.take(request);
+		final Response response = DUT.take(request);
 		Assert.assertTrue(response.getPayload() instanceof PayloadEncryptResponse);
 	}
 
 	@Test
 	public void decryptionTest() throws UnsupportedRequestException {
-		PayloadRequest payload = PayloadBuilder.buildDecryptRequest(new KeyHandle(),
+		final PayloadRequest payload = PayloadBuilder.buildDecryptRequest(new KeyHandle(),
 				"UgKSFG8R0meUoR3VbewR20MwrEJI3Nx2Qvdb2/htnPmTnTqx6+qacplg5jtMB6h8W4YaQZ1L3IEGJeLqI/fkPrvxoh95pIacpEJQzz3zyg1YGqtDo6NZARfMAYIj0COmpY2E1BcJmVbtUYW95DcqYt7Brsyse+lqZBkIo5WObpqBIhGkDcmw+5goRcY92/kpwV8YL8g8nMbqOJpq85vZfbmtR1rtoo1kWt+erUN4ThkQw7jaFvJmjSFAMpKql4OzdKb4NYrb28WA66VIKGqiHzcUDAJC5KGtp3a4UYKcAEW4mm+8vcMAjLwxbUGU7CPvRwyk3TQ+GCaVw5EA8ZopYw==");
 
-		Module DUT = new StaticKeyEncryptionActor();
+		final Module DUT = new StaticKeyEncryptionActor();
 
-		Request request = new Request(new StandardHeader(), payload);
+		final Request request = new Request(new StandardHeader(), payload);
 
-		Response response = DUT.take(request);
+		final Response response = DUT.take(request);
 		Assert.assertTrue(response.getPayload() instanceof PayloadDecryptResponse);
 		Assert.assertEquals(response.getPayload(), PayloadBuilder.buildDecryptResponse("data"));
 	}

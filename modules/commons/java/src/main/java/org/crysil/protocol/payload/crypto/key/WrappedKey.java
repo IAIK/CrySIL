@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.crypto.key;
 
+import java.util.Arrays;
+
 import org.crysil.logging.Logger;
 
 import com.google.common.io.BaseEncoding;
@@ -28,7 +30,7 @@ public class WrappedKey extends Key {
 	 * @param encodedWrappedKey
 	 *            the new encoded wrapped key
 	 */
-	public void setEncodedWrappedKey(byte[] encodedWrappedKey) {
+	public void setEncodedWrappedKey(final byte[] encodedWrappedKey) {
 		this.encodedWrappedKey = BaseEncoding.base64().encode(encodedWrappedKey);
 	}
 
@@ -39,9 +41,13 @@ public class WrappedKey extends Key {
 
 	@Override
 	public Key getBlankedClone() {
-		WrappedKey result = new WrappedKey();
+		final WrappedKey result = new WrappedKey();
 		result.encodedWrappedKey = Logger.isInfoEnabled() ? encodedWrappedKey : "*****";
 
 		return result;
 	}
+	@Override
+  public int hashCode() {
+   return Arrays.hashCode(new Object[]{type,encodedWrappedKey});
+  }
 }

@@ -5,21 +5,25 @@ package org.crysil.protocol;
  * GSon to serialize and deserialize into and given JSON.
  */
 public abstract class PolymorphicStuff {
-	/**
-	 * This is the all-important type field. Based on this very field, we can recreate the POJO type.
-	 */
-	protected final String type;
+  /**
+   * This is the all-important type field. Based on this very field, we can
+   * recreate the POJO type.
+   */
+  protected final String type;
 
-	/**
-	 * enforce setting the type in subclasses
-	 */
-	public PolymorphicStuff() {
-		type = getType();
-	}
+  /**
+   * enforce setting the type in subclasses
+   */
+  public PolymorphicStuff() {
+    type = getType();
+  }
 
-	/**
-	 * Returns the appropriate type of a certain data block.
-	 */
-	public abstract String getType();
+  /**
+   * Returns the appropriate type of a certain data block.
+   */
+  public abstract String getType();
+
+  @Override
+  public abstract int hashCode() ;
 
 }

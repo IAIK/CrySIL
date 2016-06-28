@@ -10,10 +10,12 @@ import org.bouncycastle.cms.CMSException;
 public class CmsSignedDataOutputStream extends OutputStream {
 
   private final OutputStream out;
+  private final OutputStream       originalOutputStream;
 
   public CmsSignedDataOutputStream(final OutputStream out, final X509Certificate signingCert,
       final PrivateKey signingKey, final String signAlg) throws CMSException {
     this.out = CMS.wrapOutputStreamForSigning(out, signingCert, signingKey, signAlg);
+    this.originalOutputStream = out;
   }
 
   @Override
@@ -48,8 +50,8 @@ public class CmsSignedDataOutputStream extends OutputStream {
 
   @Override
   public void close() throws IOException {
-    out.flush();
     out.close();
+    originalOutputStream.close();
   }
 
   @Override

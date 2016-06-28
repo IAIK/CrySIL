@@ -1,5 +1,7 @@
 package org.crysil.protocol.payload.crypto.modifyWrappedKey;
 
+import java.util.Arrays;
+
 import javax.security.cert.CertificateEncodingException;
 import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
@@ -40,13 +42,13 @@ public class PayloadModifyWrappedKeyResponse extends PayloadResponse {
 	 * @param encodedWrappedKey
 	 *            the new encoded wrapped key
 	 */
-	public void setEncodedWrappedKey(String encodedWrappedKey) {
+	public void setEncodedWrappedKey(final String encodedWrappedKey) {
 		this.encodedWrappedKey = encodedWrappedKey;
 	}
 
 	/**
 	 * get the certificate
-	 * 
+	 *
 	 * @return
 	 * @throws CertificateException
 	 */
@@ -59,19 +61,24 @@ public class PayloadModifyWrappedKeyResponse extends PayloadResponse {
 	 *
 	 * @param encodedCertificate
 	 *            the new encoded certificate
-	 * @throws CertificateEncodingException 
-	 * @throws javax.security.cert.CertificateEncodingException 
+	 * @throws CertificateEncodingException
+	 * @throws javax.security.cert.CertificateEncodingException
 	 */
-	public void setCertificate(X509Certificate cert) throws CertificateEncodingException {
+	public void setCertificate(final X509Certificate cert) throws CertificateEncodingException {
 		this.encodedX509Certificate = BaseEncoding.base64().encode(cert.getEncoded());
 	}
 
 	@Override
 	public PayloadResponse getBlankedClone() {
-		PayloadModifyWrappedKeyResponse result = new PayloadModifyWrappedKeyResponse();
+		final PayloadModifyWrappedKeyResponse result = new PayloadModifyWrappedKeyResponse();
 		result.encodedWrappedKey = Logger.isDebugEnabled() ? encodedWrappedKey : "*****";
 		result.encodedX509Certificate = Logger.isDebugEnabled() ? encodedX509Certificate : "*****";
 
 		return result;
 	}
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(new Object[]{getType(),encodedWrappedKey,encodedX509Certificate});
+  }
 }
