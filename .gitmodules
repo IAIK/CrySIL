@@ -1,0 +1,3 @@
+[submodule "modules/lib-tor/java/jtorproxy"]
+	path = modules/lib-tor/java/jtorproxy
+	url = git@github.com:ManfredKarrer/jtorproxy.git
