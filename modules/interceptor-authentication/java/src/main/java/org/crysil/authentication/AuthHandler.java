@@ -2,8 +2,8 @@ package org.crysil.authentication;
 
 import org.crysil.protocol.Request;
 
-public interface AuthenticationPlugin {
-  Request authenticate() throws AuthenticationPluginException;
+public interface AuthHandler {
+  Request authenticate() throws AuthException;
 
   public String getFriendlyName();
 

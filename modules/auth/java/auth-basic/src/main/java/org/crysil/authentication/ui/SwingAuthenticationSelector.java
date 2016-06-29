@@ -11,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
-import org.crysil.authentication.AuthenticationPlugin;
+import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthenticationSelector;
 
@@ -70,10 +70,10 @@ public class SwingAuthenticationSelector extends JFrame implements IAuthenticati
   }
 
   @Override
-  public void setAuthenticationPlugins(final Collection<AuthenticationPlugin> authPlugins) {
+  public void setAuthenticationPlugins(final Collection<AuthHandler> authPlugins) {
     cmbAuthenticationMethods.removeAllItems();
 
-    for (final AuthenticationPlugin plugin : authPlugins) {
+    for (final AuthHandler plugin : authPlugins) {
       cmbAuthenticationMethods.addItem(new ComboBoxItem(plugin));
     }
 
@@ -83,7 +83,7 @@ public class SwingAuthenticationSelector extends JFrame implements IAuthenticati
   }
 
   @Override
-  public AuthenticationPlugin getSelectedAuthenticationPlugin() {
+  public AuthHandler getSelectedAuthenticationPlugin() {
     return ((ComboBoxItem) cmbAuthenticationMethods.getSelectedItem()).authPlugin;
   }
 
@@ -97,9 +97,9 @@ public class SwingAuthenticationSelector extends JFrame implements IAuthenticati
   }
 
   public static class ComboBoxItem {
-    public AuthenticationPlugin authPlugin;
+    public AuthHandler authPlugin;
 
-    public ComboBoxItem(final AuthenticationPlugin authPlugin) {
+    public ComboBoxItem(final AuthHandler authPlugin) {
       this.authPlugin = authPlugin;
     }
 

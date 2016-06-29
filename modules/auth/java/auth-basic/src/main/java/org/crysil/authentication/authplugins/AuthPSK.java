@@ -4,9 +4,9 @@ import java.awt.EventQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.crysil.authentication.AuthenticationPlugin;
-import org.crysil.authentication.AuthenticationPluginException;
-import org.crysil.authentication.AuthenticationPluginFactory;
+import org.crysil.authentication.AuthHandler;
+import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthUI;
 import org.crysil.protocol.Request;
@@ -18,14 +18,14 @@ import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.credentials.SecretAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.SecretAuthType;
 
-public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthenticationPlugin {
+public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
 
   private final Response crysilResponse;
   private final AuthType authType;
   private final Class<T> dialogType;
 
   public static class Factory<T extends IAuthUI<char[], Void>>
-      implements AuthenticationPluginFactory<char[], Void, T> {
+      implements AuthHandlerFactory<char[], Void, T> {
 
     private final Class<T> dialogType;
 
@@ -34,10 +34,10 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthenticationP
     }
 
     @Override
-    public AuthenticationPlugin createInstance(final Response crysilResponse, final AuthType authType,
-        final Class<T> dialogType) throws AuthenticationPluginException {
+    public AuthHandler createInstance(final Response crysilResponse, final AuthType authType,
+        final Class<T> dialogType) throws AuthException {
       if (!canTake(crysilResponse, authType)) {
-        throw new AuthenticationPluginException("Invalid authType");
+        throw new AuthException("Invalid authType");
       }
 
       return new AuthPSK<T>(crysilResponse, authType, dialogType);
@@ -45,7 +45,7 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthenticationP
 
     @Override
     public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthenticationPluginException {
+        throws AuthException {
       return (authType instanceof SecretAuthType);
     }
 
@@ -62,7 +62,7 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthenticationP
   }
 
   @Override
-  public Request authenticate() throws AuthenticationPluginException {
+  public Request authenticate() throws AuthException {
     final CountDownLatch sync = new CountDownLatch(1);
     final AtomicReference<String> psk = new AtomicReference<>();
 
@@ -93,7 +93,7 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthenticationP
     try {
       sync.await();
     } catch (final InterruptedException e) {
-      throw new AuthenticationPluginException("Error waiting for secret dialog", e);
+      throw new AuthException("Error waiting for secret dialog", e);
     }
 
     final Request authRequest = new Request();

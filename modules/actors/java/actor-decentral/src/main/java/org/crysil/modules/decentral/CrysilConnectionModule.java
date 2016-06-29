@@ -37,9 +37,8 @@ public class CrysilConnectionModule implements DecentralNodeActor<Response, Requ
 
         final Response response = new Response();
 
-        final Header header = new StandardHeader();
-        header.setCommandId(sRequest.getHeader().getCommandId());
-        response.setHeader(header);
+
+        response.setHeader(sRequest.getHeader());
         final PayloadStatus responsePayload = new PayloadStatus();
         responsePayload.setCode(e.getErrorCode());
         response.setPayload(responsePayload);

@@ -14,9 +14,18 @@ public abstract class Header extends PolymorphicStuff {
 	protected final String protocolVersion = "2.0";
 	protected String commandId;
 	/** The path. */
-	protected List<String> path = new ArrayList<String>();
+	protected List<String> requestPath = new ArrayList<>();
+	protected List<String> responsePath = new ArrayList<>();
 
-	/**
+	public List<String> getResponsePath() {
+    return responsePath;
+  }
+
+  public void setResponsePath(final List<String> responsePath) {
+    this.responsePath = responsePath;
+  }
+
+  /**
 	 * Gets the protocol version.
 	 *
 	 * @return the protocol version
@@ -66,8 +75,8 @@ public abstract class Header extends PolymorphicStuff {
 	 *
 	 * @return the path
 	 */
-	public List<String> getPath() {
-		return path;
+	public List<String> getRequestPath() {
+		return requestPath;
 	}
 
 	/**
@@ -76,7 +85,7 @@ public abstract class Header extends PolymorphicStuff {
 	 * @param path
 	 *            the new path
 	 */
-	public void setPath(List<String> path) {
-		this.path = path;
+	public void setRequestPath(final List<String> path) {
+		this.requestPath = path;
 	}
 }

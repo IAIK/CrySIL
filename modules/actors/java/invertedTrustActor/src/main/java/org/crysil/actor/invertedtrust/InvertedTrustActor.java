@@ -149,7 +149,7 @@ public class InvertedTrustActor implements Module {
           unwrapRequest.setHeader(new StandardHeader());
           final ArrayList<String> path = new ArrayList<>(1);
           path.add(destination);
-          unwrapRequest.getHeader().setPath(path);
+          unwrapRequest.getHeader().setRequestPath(path);
           final PayloadDecryptRequest decrypt = new PayloadDecryptRequest();
           decrypt.setDecryptionKey(decryptionKey);
           decrypt.addEncryptedData(
@@ -172,7 +172,6 @@ public class InvertedTrustActor implements Module {
           final byte[] secretKey = unwrapped.getPlainData().get(0);
           return new SecretKeySpec(secretKey, contentEncryptionAlgorithm.getAlgorithm().getId());
         } catch (IOException | CrySILException e) {
-          e.printStackTrace();
           throw new CryptoException(e.getLocalizedMessage(), e);
         }
       }

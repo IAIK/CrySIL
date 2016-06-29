@@ -7,20 +7,18 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.crysil.authentication.AuthenticationPlugin;
-import org.crysil.authentication.AuthenticationPluginException;
-import org.crysil.authentication.AuthenticationPluginFactory;
+import org.crysil.authentication.AuthHandler;
+import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthUI;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.header.Header;
-import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.auth.AuthType;
 import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.challengeresponse.ChallengeResponseAuthInfo;
 import org.crysil.protocol.payload.auth.challengeresponse.ChallengeResponseAuthType;
-public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> implements AuthenticationPlugin {
+public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> implements AuthHandler {
 
   private final Response     crysilResponse;
   private final AuthType     authType;
@@ -30,7 +28,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
   public static final String K_ISQUESTION = "question";
 
   public static class Factory<T extends IAuthUI<String, Serializable>>
-      implements AuthenticationPluginFactory<String, Serializable, T> {
+      implements AuthHandlerFactory<String, Serializable, T> {
 
     private final Class<T> dialogType;
 
@@ -39,10 +37,10 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
     }
 
     @Override
-    public AuthenticationPlugin createInstance(final Response crysilResponse, final AuthType authType,
-        final Class<T> dialogType) throws AuthenticationPluginException {
+    public AuthHandler createInstance(final Response crysilResponse, final AuthType authType,
+        final Class<T> dialogType) throws AuthException {
       if (!canTake(crysilResponse, authType)) {
-        throw new AuthenticationPluginException("Invalid authType");
+        throw new AuthException("Invalid authType");
       }
 
       return new AuthChallengeResponse<>(crysilResponse, authType, dialogType);
@@ -50,7 +48,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
 
     @Override
     public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthenticationPluginException {
+        throws AuthException {
       return (authType instanceof ChallengeResponseAuthType);
     }
 
@@ -68,7 +66,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
   }
 
   @Override
-  public Request authenticate() throws AuthenticationPluginException {
+  public Request authenticate() throws AuthException {
     final CountDownLatch sync = new CountDownLatch(1);
     final AtomicReference<String> result = new AtomicReference<>();
 
@@ -105,14 +103,13 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
     try {
       sync.await();
     } catch (final InterruptedException e) {
-      throw new AuthenticationPluginException("Error waiting for automated prose dialog", e);
+      throw new AuthException("Error waiting for automated prose dialog", e);
     }
 
     final Request authRequest = new Request();
 
-    final Header header = new StandardHeader();
-    header.setCommandId(crysilResponse.getHeader().getCommandId());
-    authRequest.setHeader(header);
+
+    authRequest.setHeader(crysilResponse.getHeader());
 
     final ChallengeResponseAuthInfo authInfo = new ChallengeResponseAuthInfo();
     authInfo.setResponseString(result.get());

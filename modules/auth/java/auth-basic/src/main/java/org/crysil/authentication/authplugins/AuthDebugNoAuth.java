@@ -1,8 +1,8 @@
 package org.crysil.authentication.authplugins;
 
-import org.crysil.authentication.AuthenticationPlugin;
-import org.crysil.authentication.AuthenticationPluginException;
-import org.crysil.authentication.AuthenticationPluginFactory;
+import org.crysil.authentication.AuthHandler;
+import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.IAuthUI;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
@@ -13,11 +13,11 @@ import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.debugnoauth.DebugNoAuthInfo;
 import org.crysil.protocol.payload.auth.debugnoauth.DebugNoAuthType;
 
-public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements AuthenticationPlugin {
+public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements AuthHandler {
   private final Response crysilResponse;
 
   public static class Factory<T extends IAuthUI<Void, Void>>
-      implements AuthenticationPluginFactory<Void, Void, T> {
+      implements AuthHandlerFactory<Void, Void, T> {
 
     private final Class<T> dialogType;
 
@@ -26,10 +26,10 @@ public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements Authentic
     }
 
     @Override
-    public AuthenticationPlugin createInstance(final Response crysilResponse, final AuthType authType,
-        final Class<T> dialogType) throws AuthenticationPluginException {
+    public AuthHandler createInstance(final Response crysilResponse, final AuthType authType,
+        final Class<T> dialogType) throws AuthException {
       if (!canTake(crysilResponse, authType)) {
-        throw new AuthenticationPluginException("Invalid authType");
+        throw new AuthException("Invalid authType");
       }
 
       return new AuthDebugNoAuth<>(crysilResponse, authType, dialogType);
@@ -37,7 +37,7 @@ public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements Authentic
 
     @Override
     public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthenticationPluginException {
+        throws AuthException {
       return (authType instanceof DebugNoAuthType);
     }
 
@@ -52,7 +52,7 @@ public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements Authentic
   }
 
   @Override
-  public Request authenticate() throws AuthenticationPluginException {
+  public Request authenticate() throws AuthException {
 
     final Request authRequest = new Request();
 

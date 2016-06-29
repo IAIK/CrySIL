@@ -6,7 +6,6 @@ import java.util.List;
 import org.crysil.gatekeeper.AuthPlugin;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.auth.AuthType;
 import org.crysil.protocol.payload.auth.PayloadAuthRequest;
@@ -39,9 +38,8 @@ public class ChallengeResponseAuthPlugin
   @Override
   public Response generateAuthChallenge(final Request request) {
     final Response resp = new Response();
-    final StandardHeader header = new StandardHeader();
-    header.setCommandId(request.getHeader().getCommandId());
-    resp.setHeader(header);
+
+    resp.setHeader(request.getHeader());
     final PayloadAuthResponse payload = new PayloadAuthResponse();
     final List<AuthType> auth = new LinkedList<>();
     auth.add(authTypeWithChallenge);

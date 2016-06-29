@@ -29,20 +29,21 @@ public class DecentralCrysilNode implements Module {
 
   @Override
   public Response take(final Request crysilRequest) throws CrySILException {
-    final List<String> destination = crysilRequest.getHeader().getPath();
+    final List<String> destination = crysilRequest.getHeader().getRequestPath();
     if (destination.isEmpty()) {
       return localActor.take(crysilRequest);
     }
 
     final String rcpt = destination.get(0);
     destination.remove(0);
+    final List<String> responsePath = crysilRequest.getHeader().getResponsePath();
+    responsePath.add(0, rcpt);
     Response response;
     try {
       response = comm.sendBlocking(rcpt, crysilRequest);
       return response;
     } catch (RecoverableDecentralException | IrrecoverableDecentralException e) {
       Throwable t = e;
-      e.printStackTrace();
       do {
         if (t instanceof CrySILException) {
           throw (CrySILException) t;

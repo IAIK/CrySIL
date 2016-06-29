@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.crysil.authentication.AuthenticationPlugin;
-import org.crysil.authentication.AuthenticationPluginException;
-import org.crysil.authentication.AuthenticationPluginFactory;
+import org.crysil.authentication.AuthHandler;
+import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthenticationSelector;
 import org.crysil.commons.Module;
@@ -22,14 +22,14 @@ import org.crysil.protocol.payload.auth.AuthType;
 import org.crysil.protocol.payload.auth.PayloadAuthResponse;
 
 public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOneInterlink implements Module {
-  private List<AuthenticationPluginFactory<?, ?, ?>> authPluginFactories = new ArrayList<>();
+  private List<AuthHandlerFactory<?, ?, ?>> authPluginFactories = new ArrayList<>();
   private final Class<T>                             selectorType;
 
   public InterceptorAuth(final Class<T> selectorType) {
     this.selectorType = selectorType;
   }
 
-  public void setAuthenticationPlugins(final List<AuthenticationPluginFactory<?, ?, ?>> authPluginFactories) {
+  public void setAuthenticationPlugins(final List<AuthHandlerFactory<?, ?, ?>> authPluginFactories) {
     this.authPluginFactories = authPluginFactories;
   }
 
@@ -50,19 +50,19 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
 
 	public Response intercept(final Response crysilResponse) throws CrySILException {
     Logger.debug("Intercepting {}", crysilResponse.getBlankedClone());
-    final List<AuthenticationPlugin> myAuthPlugins = new ArrayList<>();
+    final List<AuthHandler> myAuthPlugins = new ArrayList<>();
 
     for (final AuthType authType : ((PayloadAuthResponse) crysilResponse.getPayload()).getAuthTypes()) {
-      for (final AuthenticationPluginFactory factory : authPluginFactories) {
+      for (final AuthHandlerFactory factory : authPluginFactories) {
 
         try {
           if (factory.canTake(crysilResponse, authType)) {
-            final AuthenticationPlugin authPlugin = factory.createInstance(crysilResponse, authType,
+            final AuthHandler authPlugin = factory.createInstance(crysilResponse, authType,
                 factory.getDialogType());
 
             myAuthPlugins.add(authPlugin);
           }
-        } catch (final AuthenticationPluginException e) {
+        } catch (final AuthException e) {
           throw new ResponseInterceptorException("Error forwarding request");
         }
 
@@ -76,18 +76,21 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
 
     try {
 
-      final Request authChalengeReply = showAuthenticationSelector(myAuthPlugins).authenticate();
-      return getAttachedModule().take(authChalengeReply);
+      final Request authChallengeReply = presentSelector(myAuthPlugins).authenticate();
+      authChallengeReply.getHeader().getRequestPath().clear();
+      authChallengeReply.getHeader().getResponsePath().clear();
+      authChallengeReply.getHeader().getRequestPath().addAll(crysilResponse.getHeader().getResponsePath());
+      return getAttachedModule().take(authChallengeReply);
 
-    } catch (InterruptedException | AuthenticationPluginException | UnsupportedRequestException e) {
+    } catch (InterruptedException | AuthException | UnsupportedRequestException e) {
       throw new ResponseInterceptorException("Error selecting authentication plugin");
     }
   }
 
-  private AuthenticationPlugin showAuthenticationSelector(final List<AuthenticationPlugin> authPlugins)
+  private AuthHandler presentSelector(final List<AuthHandler> authPlugins)
       throws InterruptedException {
 
-    final AtomicReference<AuthenticationPlugin> authPlugin = new AtomicReference<>();
+    final AtomicReference<AuthHandler> authPlugin = new AtomicReference<>();
 
     if (authPlugins.size() == 1 && authPlugins.get(0).authenticatesAuthomatically()) {
       return authPlugins.get(0);

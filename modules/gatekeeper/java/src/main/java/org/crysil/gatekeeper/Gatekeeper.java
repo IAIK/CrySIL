@@ -58,7 +58,7 @@ public class Gatekeeper extends OneToOneInterlink implements Module {
               return getAttachedModule().take(authProcess.getOriginalRequest());
             }
             final AuthPlugin nextStep = authProcess.getStep();
-            Logger.debug("Generatign auth challenge");
+            Logger.debug("Generating auth challenge");
             return nextStep.generateAuthChallenge(authProcess.getOriginalRequest());
           } catch (final AuthenticationFailedException e) {
             e.printStackTrace();

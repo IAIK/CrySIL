@@ -1,8 +1,8 @@
 package org.crysil.authentication.authplugins;
 
-import org.crysil.authentication.AuthenticationPlugin;
-import org.crysil.authentication.AuthenticationPluginException;
-import org.crysil.authentication.AuthenticationPluginFactory;
+import org.crysil.authentication.AuthHandler;
+import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.header.Header;
@@ -12,7 +12,7 @@ import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.credentials.IdentifierAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.IdentifierAuthType;
 
-public class AuthConstantIdentifier implements AuthenticationPlugin {
+public class AuthConstantIdentifier implements AuthHandler {
   private final Response crysilResponse;
   public static String   identifier = "";
 
@@ -21,12 +21,12 @@ public class AuthConstantIdentifier implements AuthenticationPlugin {
   }
 
   @SuppressWarnings("rawtypes")
-  public static class Factory implements AuthenticationPluginFactory {
+  public static class Factory implements AuthHandlerFactory {
     @Override
-    public AuthenticationPlugin createInstance(final Response crysilResponse, final AuthType authType,
-        final Class ignoreMe) throws AuthenticationPluginException {
+    public AuthHandler createInstance(final Response crysilResponse, final AuthType authType,
+        final Class ignoreMe) throws AuthException {
       if (!canTake(crysilResponse, authType)) {
-        throw new AuthenticationPluginException("Invalid authType");
+        throw new AuthException("Invalid authType");
       }
 
       return new AuthConstantIdentifier(crysilResponse, authType);
@@ -34,7 +34,7 @@ public class AuthConstantIdentifier implements AuthenticationPlugin {
 
     @Override
     public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthenticationPluginException {
+        throws AuthException {
       return (authType instanceof IdentifierAuthType);
     }
 
@@ -45,7 +45,7 @@ public class AuthConstantIdentifier implements AuthenticationPlugin {
   }
 
   @Override
-  public Request authenticate() throws AuthenticationPluginException {
+  public Request authenticate() throws AuthException {
     final Request authRequest = new Request();
 
     final Header header = new StandardHeader();
