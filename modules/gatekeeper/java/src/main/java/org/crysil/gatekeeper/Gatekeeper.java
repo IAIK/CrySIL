@@ -75,7 +75,7 @@ public class Gatekeeper extends OneToOneInterlink implements Module {
       }
 
       try {
-        Logger.debug("creating new auth process for reqeust {}", request);
+        Logger.debug("creating new auth process for request {}", request);
         final AuthProcess authProcess = conf.getAuthProcess(request, this);
         if (!authProcess.hasNextStep()) {
           Logger.debug("No auth is needed!");

@@ -172,6 +172,7 @@ public class InvertedTrustActor implements Module {
           final byte[] secretKey = unwrapped.getPlainData().get(0);
           return new SecretKeySpec(secretKey, contentEncryptionAlgorithm.getAlgorithm().getId());
         } catch (IOException | CrySILException e) {
+          e.printStackTrace();
           throw new CryptoException(e.getLocalizedMessage(), e);
         }
       }

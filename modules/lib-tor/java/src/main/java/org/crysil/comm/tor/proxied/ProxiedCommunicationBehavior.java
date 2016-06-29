@@ -8,7 +8,6 @@ import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
 
 import org.crysil.comm.tor.TorCommunicationBehavior;
-import org.crysil.communications.json.JsonUtils;
 import org.crysil.decentral.DecentralNodeActor;
 import org.crysil.decentral.concurrent.ExecutorService;
 import org.crysil.decentral.exceptions.irrecoverable.IrrecoverableDecentralException;
@@ -51,9 +50,9 @@ public class ProxiedCommunicationBehavior extends TorCommunicationBehavior {
 
       try (final SocksSocket ssock = new SocksSocket(proxy, addrString[0], Integer.parseInt(addrString[1]))) {
 
-        final String resp = send(ssock.getOutputStream(), ssock.getInputStream(), JsonUtils.toJson(content));
+        final Response resp = send(ssock.getOutputStream(), ssock.getInputStream(), (content));
         ssock.close();
-        return JsonUtils.fromJson(resp, Response.class);
+        return resp;
       } catch (final UnknownHostException exx) {
         try {
           Logger.debug("Try {} connecting to {} failed, retrying...", i + 1, rcpt);

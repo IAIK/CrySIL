@@ -13,7 +13,6 @@ import org.crysil.actor.invertedtrust.InvertedTrustActor;
 import org.crysil.authentication.interceptor.InterceptorAuth;
 import org.crysil.commons.Module;
 import org.crysil.decentral.DecentralNode;
-import org.crysil.decentral.NodeState;
 import org.crysil.decentral.NodeStateListener;
 import org.crysil.decentral.concurrent.ExecutorService;
 import org.crysil.gatekeeper.Gatekeeper;
@@ -44,14 +43,14 @@ public abstract class GridhNode {
   private final Set<NodeStateListener> changeListeners;
   private final CryptoPipe             cryptoPipe;
 
-  protected final DecentralCrysilNode  crysilNode;
+  protected final InterceptorAuth<?>   crysilNode;
   private final GridhAPI               api;
   private ProgressListener<Float>      cryptoProgressListener;
   private ProgressListener<Float>      storageProgressListener;
   private final GridhResponseListener  responseListener;
   private final InvertedTrustActor     actor;
 
-  public GridhNode(final DecentralCrysilNode crysilNode, final GridhResponseListener responseListener,
+  public GridhNode(final InterceptorAuth<?> crysilNode, final GridhResponseListener responseListener,
       final InvertedTrustActor actor) {
     this.responseListener = responseListener;
     this.changeListeners = new HashSet<>();
@@ -63,15 +62,15 @@ public abstract class GridhNode {
   }
 
   @SuppressWarnings("rawtypes")
-  protected static DecentralCrysilNode setupCrysilNode(final DecentralNode node, final Module localActor,
+  protected static InterceptorAuth<?> setupCrysilNode(final DecentralNode node, final Module localActor,
       final InterceptorAuth interceptor) {
 
     final Gatekeeper cerberus = new Gatekeeper(new ChallengeResponseConfiguration());
     cerberus.attach(localActor);
-    interceptor.attach(cerberus);
 
-    final DecentralCrysilNode decentralcrysilNode = new DecentralCrysilNode(node, interceptor);
-    return decentralcrysilNode;
+    final DecentralCrysilNode decentralcrysilNode = new DecentralCrysilNode(node, cerberus);
+    interceptor.attach(decentralcrysilNode);
+    return interceptor;
   }
 
   public void setCryptoProgressListener(final ProgressListener<Float> listener) {
@@ -82,30 +81,8 @@ public abstract class GridhNode {
     this.storageProgressListener = listener;
   }
 
-  public void shutdown() {
-    crysilNode.getNode().shutdown();
-  }
-
   public String getName() {
-    return crysilNode.getNode().getName();
-  }
-
-  public boolean isRunning() {
-    return crysilNode.getNode().getState() != NodeState.OFFLINE;
-  }
-
-  public NodeState getNetworkState() {
-    return crysilNode.getNode().getState();
-  }
-
-  public void addChangeListener(final NodeStateListener l) {
-    crysilNode.getNode().addChangeListener(l);
-    changeListeners.add(l);
-  }
-
-  public void removeChangeListener(final NodeStateListener l) {
-    crysilNode.getNode().removeChangeListener(l);
-    changeListeners.remove(l);
+    return ((DecentralCrysilNode) crysilNode.getAttachedModule()).getNode().getName();
   }
 
   /**

@@ -13,8 +13,6 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 
 public class DecentralCrysilNode implements Module {
-  public static final String                                        DST_LOCAL = "****LOCAL****";
-
   private final DecentralNode<?, String, Response, Request, ?>      node;
   private final CommunicationBehavior<?, String, Response, Request> comm;
   private final Module                                              localActor;
@@ -44,6 +42,7 @@ public class DecentralCrysilNode implements Module {
       return response;
     } catch (RecoverableDecentralException | IrrecoverableDecentralException e) {
       Throwable t = e;
+      e.printStackTrace();
       do {
         if (t instanceof CrySILException) {
           throw (CrySILException) t;

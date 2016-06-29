@@ -6,7 +6,6 @@ import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
 
 import org.crysil.comm.tor.TorCommunicationBehavior;
-import org.crysil.communications.json.JsonUtils;
 import org.crysil.decentral.DecentralNodeActor;
 import org.crysil.decentral.concurrent.ExecutorService;
 import org.crysil.decentral.exceptions.irrecoverable.IrrecoverableDecentralException;
@@ -44,8 +43,7 @@ public class ThaliCommunicationBehavior extends TorCommunicationBehavior {
 
       try {
         final Socket sock = torNode.connectToHiddenService(addrString[0], Integer.parseInt(addrString[1]));
-        final Response resp = JsonUtils.fromJson(
-            send(sock.getOutputStream(), sock.getInputStream(), JsonUtils.toJson(content)), Response.class);
+        final Response resp = send(sock.getOutputStream(), sock.getInputStream(), content);
         sock.close();
         return resp;
       } catch (final UnknownHostException exx) {

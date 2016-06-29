@@ -6,18 +6,18 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.crypto.CryptoException;
 import org.crysil.actor.invertedtrust.InvertedTrustActor;
 import org.crysil.cms.CmsEnvelopedInputStream;
+import org.crysil.commons.Module;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.gridh.exceptions.irrecoverable.IrrecoverableGridhException;
-import org.crysil.modules.decentral.DecentralCrysilNode;
 import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.crypto.key.WrappedKey;
 
 public class GridhAPI {
 
-  private final DecentralCrysilNode node;
+  private final Module node;
   private final InvertedTrustActor  actor;
 
-  public GridhAPI(final DecentralCrysilNode node, final InvertedTrustActor actor) {
+  public GridhAPI(final Module node, final InvertedTrustActor actor) {
     this.actor = actor;
     this.node = node;
   }
