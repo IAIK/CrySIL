@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
+import org.crysil.errorhandling.AuthenticationFailedException;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
@@ -61,7 +62,7 @@ public class Gatekeeper extends OneToOneInterlink implements Module {
             return nextStep.generateAuthChallenge(authProcess.getOriginalRequest());
           } catch (final AuthenticationFailedException e) {
             e.printStackTrace();
-            return fail(request, "AUHT failed");
+            return fail(request, "AUTH failed");
           }
         }
         // this is bad!

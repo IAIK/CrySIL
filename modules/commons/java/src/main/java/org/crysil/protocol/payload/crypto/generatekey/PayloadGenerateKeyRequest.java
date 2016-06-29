@@ -87,7 +87,7 @@ public class PayloadGenerateKeyRequest extends PayloadRequest {
   public PayloadRequest getBlankedClone() {
     return new PayloadGenerateKeyRequest((Logger.isDebugEnabled() ? getKeyType() : null),
         (Logger.isDebugEnabled() ? params : new HashMap<String, Object>()), getRepresentation(),
-        stickyPolicy);
+        stickyPolicy.getBlankedClone());
   }
 
   @Override

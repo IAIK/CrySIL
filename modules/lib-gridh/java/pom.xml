@@ -51,21 +51,11 @@
       <artifactId>commons-compress</artifactId>
       <version>1.9</version>
     </dependency>
-    <!-- <dependency> -->
-    <!-- <groupId>at.iaik.crysil.element</groupId> -->
-    <!-- <artifactId>actor-jce</artifactId> -->
-    <!-- <version>${crysil.version}</version> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!-- <groupId>at.iaik.crysil.element</groupId> -->
-    <!-- <artifactId>gatekeeper</artifactId> -->
-    <!-- <version>${crysil.version}</version> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!-- <groupId>at.iaik.crysil.element</groupId> -->
-    <!-- <artifactId>receiver-jce</artifactId> -->
-    <!-- <version>${crysil.version}</version> -->
-    <!-- </dependency> -->
+    <dependency>
+      <groupId>org.crysil</groupId>
+      <artifactId>auth-challenge-response</artifactId>
+      <version>${crysil.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.beust</groupId>
       <artifactId>jcommander</artifactId>
@@ -81,8 +71,6 @@
       <artifactId>actor-decentral</artifactId>
       <version>${crysil.version}</version>
     </dependency>
-   
-
     <dependency>
       <groupId>org.crysil.communications</groupId>
       <artifactId>json-commons</artifactId>
@@ -95,7 +83,7 @@
     </dependency>
     <dependency>
       <groupId>org.crysil.actor</groupId>
-      <artifactId>invertdTrustActor</artifactId>
+      <artifactId>invertedtrust</artifactId>
       <version>${crysil.version}</version>
     </dependency>
   </dependencies>

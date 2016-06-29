@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.security.AlgorithmParameters;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,13 +34,17 @@ import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
+import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateKeyRequest;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateKeyResponse;
 import org.crysil.protocol.payload.crypto.key.KeyRepresentation;
 import org.crysil.protocol.payload.crypto.key.WrappedKey;
+import org.crysil.protocol.payload.crypto.stickypolicy.PayloadExtractStickyPolicyRequest;
+import org.crysil.protocol.payload.status.PayloadStatus;
 
 /**
  * Has one static key available and can use this very key to encrypt and decrypt
@@ -47,12 +52,14 @@ import org.crysil.protocol.payload.crypto.key.WrappedKey;
  */
 public class InvertedTrustActor implements Module {
   private final Map<Class<? extends PayloadRequest>, Command> commands = new HashMap<>();
-  private final SingleKeyStore keyStore;
+  private final SingleKeyStore                                keyStore;
 
-  public InvertedTrustActor(final File keyStoreLocation, final char[] password) throws KeyStoreUnavailableException {
-    keyStore= new SingleKeyStore(keyStoreLocation, password);
+  public InvertedTrustActor(final File keyStoreLocation, final char[] password)
+      throws KeyStoreUnavailableException {
+    keyStore = new SingleKeyStore(keyStoreLocation, password);
     commands.put(PayloadDecryptRequest.class, new Decrypt(keyStore));
     commands.put(PayloadGenerateKeyRequest.class, new GenerateKey(keyStore));
+    commands.put(PayloadExtractStickyPolicyRequest.class, new ExtractStickyPolicy(keyStore));
   }
 
   @Override
@@ -80,18 +87,23 @@ public class InvertedTrustActor implements Module {
     return response;
   }
 
-  public WrappedKey genWrappedKey() throws UnsupportedRequestException {
+  public WrappedKey genWrappedKey(final AuthInfo authInfo) throws UnsupportedRequestException {
     final Request request = new Request();
     final Map<String, Object> params = new HashMap<>();
     params.put("keySize", 4096);
     final PayloadGenerateKeyRequest payload = new PayloadGenerateKeyRequest(KeyType.RSA, params,
-        KeyRepresentation.WRAPPED, null);
+        KeyRepresentation.WRAPPED, authInfo);
     request.setPayload(payload);
     final Response resp = take(request);
     return (WrappedKey) ((PayloadGenerateKeyResponse) resp.getPayload()).getKey();
+
   }
 
-  public  CmsEnvelopedOutputStream genCmsOutputStream(final OutputStream out, final WrappedKey key)
+  public WrappedKey genWrappedKey() throws UnsupportedRequestException {
+    return genWrappedKey(null);
+  }
+
+  public CmsEnvelopedOutputStream genCmsOutputStream(final OutputStream out, final WrappedKey key)
       throws CMSException {
     try {
       final KeyPairContainer keyPair = (KeyPairContainer) keyStore.extractKey(key);
@@ -105,7 +117,7 @@ public class InvertedTrustActor implements Module {
   }
 
   public static CmsEnvelopedInputStream genCMSInputStream(final InputStream in, final Module remote,
-      final WrappedKey decryptionKey) throws CMSException {
+      final WrappedKey decryptionKey, final String destination) throws CMSException {
 
     return new CmsEnvelopedInputStream(in, new ContentEncryptionKeyManualDecryptor() {
 
@@ -133,7 +145,11 @@ public class InvertedTrustActor implements Module {
         }
 
         try {
-          final Request unrwapRequest = new Request();
+          final Request unwrapRequest = new Request();
+          unwrapRequest.setHeader(new StandardHeader());
+          final ArrayList<String> path = new ArrayList<>(1);
+          path.add(destination);
+          unwrapRequest.getHeader().setPath(path);
           final PayloadDecryptRequest decrypt = new PayloadDecryptRequest();
           decrypt.setDecryptionKey(decryptionKey);
           decrypt.addEncryptedData(
@@ -142,9 +158,13 @@ public class InvertedTrustActor implements Module {
               Cipher.UNWRAP_MODE });
           decrypt.addEncryptedData(encryptedKey);
           decrypt.setAlgorithm(algorithm.getId());
-          unrwapRequest.setPayload(decrypt);
-          final Response unwrapResponse = remote.take(unrwapRequest);
-
+          unwrapRequest.setPayload(decrypt);
+          final Response unwrapResponse = remote.take(unwrapRequest);
+          if (unwrapResponse.getPayload().getType().equals("status")) {
+            final CrySILException crysilException = CrySILException
+                .fromErrorCode(((PayloadStatus) unwrapResponse.getPayload()).getCode());
+            throw new CryptoException(crysilException.getLocalizedMessage(), crysilException);
+          }
           if (!unwrapResponse.getPayload().getType().equals("decryptResponse")) {
             throw new CryptoException(unwrapResponse.getPayload().getType() + " is not supported!");
           }

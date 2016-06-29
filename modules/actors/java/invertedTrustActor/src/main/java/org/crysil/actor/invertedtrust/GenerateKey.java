@@ -77,6 +77,10 @@ public class GenerateKey implements Command {
           keyStore.getPrivateKey(), SingleKeyStore.SIGALG)) {
         try (ObjectOutputStream containerOut = new ObjectOutputStream(signOut)) {
           containerOut.writeObject(container);
+          if (request.getStickyPolicy() != null) {
+            containerOut.writeObject(request.getStickyPolicy());
+          }
+
           containerOut.close();
 
         }

@@ -24,7 +24,7 @@ import org.crysil.authentication.authplugins.challengeresponse.AuthChallengeResp
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthUI;
 
-public class AuthAutomatedProseSheet extends Sheet implements IAuthUI<String, Serializable> {
+public class AuthChallengeResponseSheet extends Sheet implements IAuthUI<String, Serializable> {
 
   private ActionPerformedCallback callAuthenticate;
   private final TextArea          txtChallenge;
@@ -33,7 +33,7 @@ public class AuthAutomatedProseSheet extends Sheet implements IAuthUI<String, Se
   private final Border            scrollBorder;
   private String                  authValue;
 
-  public AuthAutomatedProseSheet() {
+  public AuthChallengeResponseSheet() {
     super();
 
     final Border border = new Border();
@@ -83,6 +83,7 @@ public class AuthAutomatedProseSheet extends Sheet implements IAuthUI<String, Se
 
     box.add(btnSubmit);
     btnSubmit.getButtonPressListeners().add(new ButtonPressListener() {
+      @Override
       public void buttonPressed(final Button button) {
         close(true);
       }
@@ -93,30 +94,38 @@ public class AuthAutomatedProseSheet extends Sheet implements IAuthUI<String, Se
     setContent(pane);
   }
 
+  @Override
   public void init(final Map<String, Serializable> values) {
     final String challenge = (String) values.get(AuthChallengeResponse.K_CHALLENGE);
-    Form.setLabel(scrollBorder, "Task");
-    Form.setLabel(txtResponse, "Result");
+    final boolean isQuestion = (Boolean) (values.get(AuthChallengeResponse.K_ISQUESTION));
+    Form.setLabel(scrollBorder, isQuestion ? "Question" : "Task");
+    Form.setLabel(txtResponse, isQuestion ? "Answer" : "Result");
     txtChallenge.setText(challenge);
   }
 
+  @Override
   public ActionPerformedCallback getCallbackAuthenticate() {
     return callAuthenticate;
   }
 
+  @Override
   public void setCallbackAuthenticate(final ActionPerformedCallback callbackAuthenticate) {
     this.callAuthenticate = callbackAuthenticate;
   }
 
+  @Override
   public void dismiss() {
   }
 
+  @Override
   public String getAuthValue() {
     return authValue;
   }
 
+  @Override
   public void present() {
     this.open(AutomaticAuthSelector.getMainWindow(), new SheetCloseListener() {
+      @Override
       public void sheetClosed(final Sheet sheet) {
         authValue = sheet.getResult() ? txtResponse.getText() : null;
         callAuthenticate.actionPerformed();

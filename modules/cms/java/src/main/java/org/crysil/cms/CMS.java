@@ -154,8 +154,7 @@ abstract class CMS {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
             | InvalidAlgorithmParameterException | NoSuchMethodException | InvocationTargetException
             | CryptoException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          throw new CMSException(e.getMessage(), e);
         }
 
       } catch (NoSuchFieldException | SecurityException | IllegalArgumentException

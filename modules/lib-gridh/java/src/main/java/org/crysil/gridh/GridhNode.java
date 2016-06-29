@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.io.FileUtils;
 import org.crysil.actor.invertedtrust.InvertedTrustActor;
 import org.crysil.authentication.interceptor.InterceptorAuth;
 import org.crysil.commons.Module;
@@ -15,6 +16,8 @@ import org.crysil.decentral.DecentralNode;
 import org.crysil.decentral.NodeState;
 import org.crysil.decentral.NodeStateListener;
 import org.crysil.decentral.concurrent.ExecutorService;
+import org.crysil.gatekeeper.Gatekeeper;
+import org.crysil.gatekeeper.challengeresponse.ChallengeResponseConfiguration;
 import org.crysil.gridh.exceptions.irrecoverable.IrrecoverableGridhException;
 import org.crysil.gridh.io.container.CryptContainerInputStream;
 import org.crysil.gridh.io.container.CryptContainerOutputStream;
@@ -46,24 +49,28 @@ public abstract class GridhNode {
   private ProgressListener<Float>      cryptoProgressListener;
   private ProgressListener<Float>      storageProgressListener;
   private final GridhResponseListener  responseListener;
-  private final InvertedTrustActor actor;
+  private final InvertedTrustActor     actor;
 
-  public GridhNode(final DecentralCrysilNode crysilNode, final GridhResponseListener responseListener, final InvertedTrustActor actor) {
+  public GridhNode(final DecentralCrysilNode crysilNode, final GridhResponseListener responseListener,
+      final InvertedTrustActor actor) {
     this.responseListener = responseListener;
     this.changeListeners = new HashSet<>();
     this.crysilNode = crysilNode;
-    this.actor=actor;
+    this.actor = actor;
     cryptoPipe = new CryptoPipe();
 
-    api = new GridhAPI(crysilNode,actor);
+    api = new GridhAPI(crysilNode, actor);
   }
 
   @SuppressWarnings("rawtypes")
   protected static DecentralCrysilNode setupCrysilNode(final DecentralNode node, final Module localActor,
       final InterceptorAuth interceptor) {
 
-    final DecentralCrysilNode decentralcrysilNode = new DecentralCrysilNode(node, localActor);
-    interceptor.attach(decentralcrysilNode);
+    final Gatekeeper cerberus = new Gatekeeper(new ChallengeResponseConfiguration());
+    cerberus.attach(localActor);
+    interceptor.attach(cerberus);
+
+    final DecentralCrysilNode decentralcrysilNode = new DecentralCrysilNode(node, interceptor);
     return decentralcrysilNode;
   }
 
@@ -220,7 +227,7 @@ public abstract class GridhNode {
         Logger.info("Decrypted: {}", f.getName());
       }
       if (needTemp) {
-        tempDir.delete();
+        FileUtils.deleteDirectory(tempDir);
       }
 
     }
@@ -233,12 +240,11 @@ public abstract class GridhNode {
       final WrappedKey wrappedKey = api.generateWrappedKey(authInfo);
       if (storageProgressListener != null) {
         dropOut.addProgressListener(storageProgressListener);
-//      } else {
+        // } else {
         dropOut.addProgressListener(this);
       }
       final CryptContainerOutputStream ccOut = new CryptContainerOutputStream(wrappedKey, dropOut);
-      final CMSEncryptionOutputStream cmsOut = new CMSEncryptionOutputStream(ccOut,
-          wrappedKey,actor);
+      final CMSEncryptionOutputStream cmsOut = new CMSEncryptionOutputStream(ccOut, wrappedKey, actor);
       if (cryptoProgressListener != null) {
         cmsOut.addProgressListener(cryptoProgressListener);
       }

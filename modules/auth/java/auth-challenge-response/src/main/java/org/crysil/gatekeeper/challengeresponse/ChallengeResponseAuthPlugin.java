@@ -18,10 +18,10 @@ import org.crysil.protocol.payload.auth.challengeresponse.ChallengeResponseAuthT
 public class ChallengeResponseAuthPlugin
     extends AuthPlugin<ChallengeResponseAuthType, ChallengeResponseAuthResult> {
   private final ChallengeResponseAuthType authTypeWithChallenge;
-  private final String                    expectedResult;
+  private final ChallengeResponseAuthInfo expectedResult;
 
   public ChallengeResponseAuthPlugin(final ChallengeResponseAuthType authTypeWhithChallenge,
-      final String expectedResult) {
+      final ChallengeResponseAuthInfo expectedResult) {
     this.authTypeWithChallenge = authTypeWhithChallenge;
     this.expectedResult = expectedResult;
   }
@@ -33,7 +33,7 @@ public class ChallengeResponseAuthPlugin
 
   @Override
   protected boolean isValid(final ChallengeResponseAuthResult result) {
-    return expectedResult.equals(result.getResult());
+    return expectedResult.getResponseString().equals(result.getResult());
   }
 
   @Override

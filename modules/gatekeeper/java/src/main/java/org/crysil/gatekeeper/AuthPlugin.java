@@ -1,5 +1,6 @@
 package org.crysil.gatekeeper;
 
+import org.crysil.errorhandling.AuthenticationFailedException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.auth.AuthType;

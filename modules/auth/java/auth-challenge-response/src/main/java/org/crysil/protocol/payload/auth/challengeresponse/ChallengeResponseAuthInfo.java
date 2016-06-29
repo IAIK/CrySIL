@@ -9,9 +9,10 @@ import org.crysil.protocol.payload.auth.AuthInfo;
  */
 public class ChallengeResponseAuthInfo extends AuthInfo {
 
-  private String responseString;
-  private long   expiryDate;
-  private String challengeString;
+  private String  responseString;
+  private boolean question;
+  private long    expiryDate;
+  private String  challengeString;
 
   public String getResponseString() {
     return responseString;
@@ -19,7 +20,7 @@ public class ChallengeResponseAuthInfo extends AuthInfo {
 
   @Override
   public String getType() {
-    return "ChallengeRepsonse";
+    return "challengeRepsonse";
   }
 
   @Override
@@ -54,5 +55,13 @@ public class ChallengeResponseAuthInfo extends AuthInfo {
 
   public String getChallengeString() {
     return challengeString;
+  }
+
+  public boolean isQuestion() {
+    return question;
+  }
+
+  public void setQuestion(final boolean question) {
+    this.question = question;
   }
 }

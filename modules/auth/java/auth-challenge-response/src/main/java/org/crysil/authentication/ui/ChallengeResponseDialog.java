@@ -53,6 +53,7 @@ public class ChallengeResponseDialog extends JFrame implements IAuthUI<String, S
   public ChallengeResponseDialog(final String challenge, final boolean isQuestion) {
     final Map<String, Serializable> values = new HashMap<>();
     values.put(AuthChallengeResponse.K_CHALLENGE, challenge);
+    values.put(AuthChallengeResponse.K_ISQUESTION, isQuestion);
     init(values);
   }
 

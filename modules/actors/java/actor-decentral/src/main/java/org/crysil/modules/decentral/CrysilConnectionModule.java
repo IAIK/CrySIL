@@ -33,9 +33,8 @@ public class CrysilConnectionModule implements DecentralNodeActor<Response, Requ
     if ((payload instanceof PayloadAuthRequest) || (payload instanceof PayloadDecryptRequest)) {
       try {
         return actor.take(sRequest);
-			} catch (final CrySILException e) {
+      } catch (final CrySILException e) {
 
-        e.printStackTrace();
         final Response response = new Response();
 
         final Header header = new StandardHeader();

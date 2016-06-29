@@ -1,7 +1,7 @@
 package org.crysil.gatekeeper.debugnoauth;
 
+import org.crysil.errorhandling.AuthenticationFailedException;
 import org.crysil.gatekeeper.AuthProcess;
-import org.crysil.gatekeeper.AuthenticationFailedException;
 import org.crysil.gatekeeper.Configuration;
 import org.crysil.gatekeeper.Gatekeeper;
 import org.crysil.protocol.Request;

@@ -7,10 +7,10 @@ import org.crysil.protocol.PolymorphicStuff;
  */
 public abstract class AuthInfo extends PolymorphicStuff {
 
-	/**
-	 * Gets the blanked clone.
-	 *
-	 * @return the blanked clone
-	 */
-	public abstract AuthInfo getBlankedClone();
+  /**
+   * Gets the blanked clone.
+   *
+   * @return the blanked clone
+   */
+  public abstract AuthInfo getBlankedClone();
 }

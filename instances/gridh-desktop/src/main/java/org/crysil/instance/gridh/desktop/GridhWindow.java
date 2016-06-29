@@ -223,8 +223,8 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
 
   private boolean             busy;
   private final String        FORMAT_TIME   = "%02d";
-  private Properties          skynetProps;
-  private GridhNode           skyNet;
+  private Properties          gridhProps;
+  private GridhNode           gridh;
   private InvertedTrustActor  actor;
   private UIProgressListener  cryptoProgressListener, storageProgressListener;
 
@@ -305,16 +305,16 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
     lstExpiryMinute.setSelectedIndex(0);
 
     try {
-      this.skynetProps = readProperties();
-      cbUseNativeTor.setSelected(Boolean.parseBoolean(skynetProps
+      this.gridhProps = readProperties();
+      cbUseNativeTor.setSelected(Boolean.parseBoolean(gridhProps
           .getProperty(DesktopConstants.CONF_TOR_NATIVE, DesktopConstants.CONF_TOR_NATIVE_DEFAULT)));
       txtHSPort
-          .setText(skynetProps.getProperty(DesktopConstants.CONF_PORT, DesktopConstants.CONF_PORT_DEFAULT));
+          .setText(gridhProps.getProperty(DesktopConstants.CONF_PORT, DesktopConstants.CONF_PORT_DEFAULT));
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
           try {
-            writeProperties(skynetProps);
+            writeProperties(gridhProps);
           } catch (final IOException e) {
           }
         }
@@ -325,7 +325,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
   }
 
   private List<Integer> genRange(final int start, final int end, final int step) {
-    final List<Integer> minutes = new ArrayList<Integer>();
+    final List<Integer> minutes = new ArrayList<>();
     for (int i = start; i < end; i += step) {
       minutes.add(i);
     }
@@ -334,7 +334,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
 
   @SuppressWarnings("unchecked")
   protected void encrypt() {
-    final Set<File> files = new HashSet<File>(fileList.getList());
+    final Set<File> files = new HashSet<>(fileList.getList());
     final boolean q = lstProseType.getSelectedItem().equals("Question");
     final String challenge = txtChallenge.getText();
     final String response = txtResponse.getText();
@@ -360,10 +360,10 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
       cal.set(Calendar.HOUR_OF_DAY, (Integer) lstExpiryHour.getSelectedItem());
       cal.set(Calendar.MINUTE, (Integer) lstExpiryMinute.getSelectedItem());
       auth.setExpiryDate(cal.getTimeInMillis());
-
+      auth.setQuestion(q);
       auth.setChallengeString(challenge);
       auth.setResponseString(response);
-      skyNet.submitEncryptRequest(files, out, auth);
+      gridh.submitEncryptRequest(files, out, auth);
       encryptSheet.close();
       setBusy(true, "Encrypting…");
     } catch (final IOException e) {
@@ -386,7 +386,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
   private void setLocalContainerDestination() {
     final FileDialog fd = new FileDialog(new Frame(), "Choose Container File", FileDialog.SAVE);
     fd.setDirectory(
-        skynetProps.getProperty(DesktopConstants.CONF_LAST_DIR, DesktopConstants.CONF_LAST_DIR_DEFAULT));
+        gridhProps.getProperty(DesktopConstants.CONF_LAST_DIR, DesktopConstants.CONF_LAST_DIR_DEFAULT));
     fd.setVisible(true);
     final String f = fd.getFile();
     if (f == null || fd.getDirectory() == null) {
@@ -398,7 +398,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
   private void openLocalContainer() {
     final FileDialog fd = new FileDialog(new Frame(), "Open Container File", FileDialog.LOAD);
     fd.setDirectory(
-        skynetProps.getProperty(DesktopConstants.CONF_LAST_DIR, DesktopConstants.CONF_LAST_DIR_DEFAULT));
+        gridhProps.getProperty(DesktopConstants.CONF_LAST_DIR, DesktopConstants.CONF_LAST_DIR_DEFAULT));
     fd.setVisible(true);
     final String f = fd.getFile();
 
@@ -421,7 +421,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
     final FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
     fd.setMultipleMode(true);
     fd.setDirectory(
-        skynetProps.getProperty(DesktopConstants.CONF_LAST_DIR, DesktopConstants.CONF_LAST_DIR_DEFAULT));
+        gridhProps.getProperty(DesktopConstants.CONF_LAST_DIR, DesktopConstants.CONF_LAST_DIR_DEFAULT));
     fd.setVisible(true);
 
     final File[] files = fd.getFiles();
@@ -434,7 +434,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
       fileList.add(f);
     }
     if (fd.getDirectory() != null) {
-      skynetProps.setProperty(DesktopConstants.CONF_LAST_DIR, fd.getDirectory());
+      gridhProps.setProperty(DesktopConstants.CONF_LAST_DIR, fd.getDirectory());
     }
     if (err) {
       Prompt.prompt(MessageType.WARNING,
@@ -503,19 +503,16 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
     out.close();
   }
 
-  private void setupSkynet() {
+  private void setupGridh() {
     ExecutorService.submitLongRunning(new Callable<Void>() {
       @Override
       public Void call() {
-        final Set<NodeStateListener> listeners = new HashSet<NodeStateListener>();
+        final Set<NodeStateListener> listeners = new HashSet<>();
         listeners.add(GridhWindow.this);
         final int port = Integer.parseInt(
-            skynetProps.getProperty(DesktopConstants.CONF_PORT, DesktopConstants.CONF_PORT_DEFAULT));
+            gridhProps.getProperty(DesktopConstants.CONF_PORT, DesktopConstants.CONF_PORT_DEFAULT));
         try {
           Logger.debug("Trying to setup Tor");
-          // if (Boolean.parseBoolean(
-          // skynetProps.getProperty(DesktopConstants.CONF_TOR_NATIVE,
-          // Boolean.toString(true)))) {
           try {
             setBusy(true, "Setting-up Tor");
             final TorNode<JavaOnionProxyManager, JavaOnionProxyContext> tor = new JavaTorNode(
@@ -537,7 +534,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
                   }
                 });
             Logger.info("Tor Hidden Service running on port {}", hiddenService.getLocalPort());
-            skyNet = new TorGridhNode(hiddenService, tor, listeners, actor, GridhWindow.this,
+            gridh = new TorGridhNode(hiddenService, tor, listeners, actor, GridhWindow.this,
                 AuthSetup.setupInterceptor());
             EventQueue.invokeLater(new Runnable() {
               @Override
@@ -553,22 +550,8 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
             e.printStackTrace();
             throw new NodeSetupException(e);
           }
-          // } else {
-          // skyNet = new SilverTunnelSkynetNode(port, new
-          // File(DesktopConstants.DIR_HIDDEN), listeners, actor,
-          // SkyNetWindow.this, AuthSetup.setupInterceptor());
-          // EventQueue.invokeLater(new Runnable() {
-          // public void run() {
-          // paneEncrypt_lblHSInfo.setText(skyNet.getName());
-          // paneEncrypt_lblHSStatus.getStyles().put("color", "#00c000");
-          // paneEncrypt_lblHSStatus.setVisible(true);
-          // paneEncrypt_lblHSStatus.repaint();
-          // paneEncrypt_lblHSInfo.repaint();
-          // }
-          // });
-          // }
-          skyNet.setCryptoProgressListener(cryptoProgressListener);
-          skyNet.setStorageProgressListener(storageProgressListener);
+          gridh.setCryptoProgressListener(cryptoProgressListener);
+          gridh.setStorageProgressListener(storageProgressListener);
           setBusy(false);
         } catch (final NodeSetupException e) {
           displayFatalError("Grið Setup Error", e, ErrorCode.SETUP_FATAL);
@@ -659,7 +642,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
           txtStatusChallenge.setText(auth.getChallengeString());
           txtStatusResponse.setText(auth.getResponseString());
           txtStatusUri.setText(encResp.getUri().toString());
-          final Map<String, String> res = new HashMap<String, String>();
+          final Map<String, String> res = new HashMap<>();
           final Calendar cal = GregorianCalendar.getInstance();
           res.put("time", cal.getTime().toString());
           res.put("uri", encResp.getUri().getStorageFileURI().toString());
@@ -686,6 +669,9 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
         public void run() {
           Throwable cause = errResp.getCause();
           while (!(cause instanceof CrySILException)) {
+            if(cause==null) {
+              break;
+            }
             cause = cause.getCause();
           }
           if (!(cause instanceof CrySILException)) {
@@ -743,11 +729,11 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
   }
 
   private void saveSettings() {
-    skynetProps.put(DesktopConstants.CONF_PORT, txtHSPort.getText());
-    skynetProps.put(DesktopConstants.CONF_TOR_NATIVE, Boolean.toString(cbUseNativeTor.isSelected()));
+    gridhProps.put(DesktopConstants.CONF_PORT, txtHSPort.getText());
+    gridhProps.put(DesktopConstants.CONF_TOR_NATIVE, Boolean.toString(cbUseNativeTor.isSelected()));
     settingsSheet.close();
     try {
-      writeProperties(skynetProps);
+      writeProperties(gridhProps);
     } catch (final IOException e) {
     }
   }
@@ -844,7 +830,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
 
           GridhURI uri;
           try {
-            uri = new GridhURI(StorageURI.createFromUri(row.get("uri")), skyNet.getName());
+            uri = new GridhURI(StorageURI.createFromUri(row.get("uri")), gridh.getName());
             txtStatusUri.setText(uri.toString());
             encryptionStatusSheet.open(GridhWindow.this.getDisplay(), GridhWindow.this);
             btnEnclyptionStatus.requestFocus();
@@ -889,7 +875,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
           outputDirectory.mkdirs();
           final File tempDir = new File(outputDirectory + File.separator + "tempDL");
           tempDir.mkdirs();
-          skyNet.submitDecryptRequest(uri.createInputStream(), destination, outputDirectory, tempDir);
+          gridh.submitDecryptRequest(uri.createInputStream(), destination, outputDirectory, tempDir);
           setBusy(true, "Decrypting…");
 
         } catch (final IOException e) {
@@ -976,7 +962,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
     public void tryOpenKeystore() {
       try {
         actor = setupActor();
-        setupSkynet();
+        setupGridh();
       } catch (final Throwable e) {
         e.printStackTrace();
         setBusy(false);
@@ -1201,31 +1187,4 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
       return fileDropTarget;
     }
   }
-
-  // @SuppressWarnings("rawtypes")
-  // private static DecentralNode setupNode(final int port, final File
-  // hiddenserviceDir,
-  // final Set<NodeStateListener> initialListeners) throws NodeSetupException {
-  //
-  // try {
-  // return new SilvertunnelNode(SilverTunnelUtils.genHiddenSercive(port,
-  // hiddenserviceDir),
-  // initialListeners);
-  // } catch (final IrrecoverableDecentralException e) {
-  // throw new NodeSetupException(e);
-  // }
-  // }
-
-  // private class SilverTunnelSkynetNode extends SkyNetNode {
-  // @SuppressWarnings("rawtypes")
-  // public SilverTunnelSkynetNode(final int port, final File hiddenSerciveDir,
-  // final Set<NodeStateListener> initialListeners, final Actor localActor,
-  // final SkyNetResponseListener responseListener, final InterceptorAuth
-  // interceptor)
-  // throws NodeSetupException {
-  // super(setupCrySILNode(setupNode(port, hiddenSerciveDir,
-  // initialListeners), localActor, interceptor),
-  // responseListener);
-  // }
-  // }
 }

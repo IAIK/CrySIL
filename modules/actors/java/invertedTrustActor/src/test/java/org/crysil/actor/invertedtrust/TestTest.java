@@ -72,7 +72,7 @@ public class TestTest {
         "BULK:\n" + ASN1Dump.dumpAsString(new ASN1InputStream(encrypted.toByteArray()).readObject(), true));
     final ByteArrayInputStream cmsIn = new ByteArrayInputStream(encrypted.toByteArray());
     final CmsEnvelopedInputStream genCMSInputStream = InvertedTrustActor.genCMSInputStream(cmsIn, actor,
-        encryptionKey);
+        encryptionKey, null);
     final ByteArrayOutputStream decrypted = new ByteArrayOutputStream();
     IOUtils.copy(genCMSInputStream, decrypted);
     genCMSInputStream.close();

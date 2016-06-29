@@ -22,7 +22,7 @@ public abstract class AuthSetup {
     // AuthAutomatedProse.Factory<AutomatedProseChallengeDialog>(AutomatedProseChallengeDialog.class));
     authPluginFactories.add(new AuthPSK.Factory<PSKDialog>(PSKDialog.class));
     authPluginFactories
-        .add(new AuthChallengeResponse.Factory<AuthAutomatedProseSheet>(AuthAutomatedProseSheet.class));
+        .add(new AuthChallengeResponse.Factory<AuthChallengeResponseSheet>(AuthChallengeResponseSheet.class));
     final InterceptorAuth<AutomaticAuthSelector> interceptor = new InterceptorAuth<AutomaticAuthSelector>(
         AutomaticAuthSelector.class);
     interceptor.setAuthenticationPlugins(authPluginFactories);

@@ -9,6 +9,7 @@ public class ChallengeResponseAuthType extends AuthType {
   public static final String TYPE_ID = "challenge-response";
 
   private String             challenge;
+  private boolean            question;
 
   @Override
   public AuthType getBlankedClone() {
@@ -30,7 +31,17 @@ public class ChallengeResponseAuthType extends AuthType {
 
   @Override
   public int hashCode() {
-   return Arrays.hashCode(new Object[]{type,challenge});
+    return Arrays.hashCode(new Object[] {
+        type,
+        challenge });
+  }
+
+  public boolean isQuestion() {
+    return question;
+  }
+
+  public void setQuestion(final boolean question) {
+    this.question = question;
   }
 
 }

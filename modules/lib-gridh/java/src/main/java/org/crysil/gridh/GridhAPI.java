@@ -1,7 +1,9 @@
 package org.crysil.gridh;
 
 import java.io.InputStream;
+
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.crypto.CryptoException;
 import org.crysil.actor.invertedtrust.InvertedTrustActor;
 import org.crysil.cms.CmsEnvelopedInputStream;
 import org.crysil.errorhandling.UnsupportedRequestException;
@@ -10,7 +12,7 @@ import org.crysil.modules.decentral.DecentralCrysilNode;
 import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.crypto.key.WrappedKey;
 
-public class GridhAPI{
+public class GridhAPI {
 
   private final DecentralCrysilNode node;
   private final InvertedTrustActor  actor;
@@ -21,9 +23,8 @@ public class GridhAPI{
   }
 
   public WrappedKey generateWrappedKey(final AuthInfo authInfo) throws IrrecoverableGridhException {
-    node.setDestinationNode(DecentralCrysilNode.DST_LOCAL);
     try {
-      return actor.genWrappedKey();
+      return actor.genWrappedKey(authInfo);
     } catch (final UnsupportedRequestException e) {
       throw new IrrecoverableGridhException(e);
     }
@@ -32,14 +33,18 @@ public class GridhAPI{
   public InputStream setupDecryptionStream(final InputStream in, final String destination,
       final WrappedKey wrappedKey) throws IrrecoverableGridhException {
 
-    node.setDestinationNode(destination);
     CmsEnvelopedInputStream cmsIn;
     try {
-      cmsIn = InvertedTrustActor.genCMSInputStream(in, node, wrappedKey);
+      cmsIn = InvertedTrustActor.genCMSInputStream(in, node, wrappedKey, destination);
     } catch (final CMSException e) {
+      Throwable t = e;
+      do {
+        if (t instanceof CryptoException) {
+          throw new IrrecoverableGridhException(t);
+        }
+      } while ((t = e.getCause()) != null);
       throw new IrrecoverableGridhException(e);
     }
-    node.releaseDestinationNode();
     return cmsIn;
 
   }

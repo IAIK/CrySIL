@@ -55,7 +55,7 @@ public class SingleKeyStore {
 
   private static final Map<UUID, CryptoContainer> storage    = new HashMap<>();
 
-  final static String                             SIGALG     = "SHA256WithRSA";
+  final static String                             SIGALG     = "SHA256withRSA";
 
   private static final String                     ALIAS_CERT = "cert";
 
@@ -91,9 +91,9 @@ public class SingleKeyStore {
       ks.setCertificateEntry(ALIAS_CERT, cert);
       ks.setKeyEntry(ALIAS_KEY, privKey, password, new X509Certificate[] {
           cert });
-      final FileOutputStream stream = new FileOutputStream(keyStoreFile);
-      ks.store(stream, password);
-      stream.close();
+      try (final FileOutputStream stream = new FileOutputStream(keyStoreFile)) {
+        ks.store(stream, password);
+      }
     } catch (final CrySILException | CryptoException | NoSuchProviderException | NoSuchAlgorithmException
         | CertificateException | IOException e) {
       throw new KeyStoreException(e);
@@ -104,12 +104,12 @@ public class SingleKeyStore {
     KeyStore ks;
     try {
       ks = KeyStore.getInstance("UBER", "BC");
-      final FileInputStream stream = new FileInputStream(keyStoreFile);
-      ks.load(stream, password);
-      cert = (X509Certificate) ks.getCertificate(ALIAS_CERT);
-      pubKey = cert.getPublicKey();
-      privKey = (PrivateKey) ks.getKey(ALIAS_KEY, password);
-      stream.close();
+      try (final FileInputStream stream = new FileInputStream(keyStoreFile)) {
+        ks.load(stream, password);
+        cert = (X509Certificate) ks.getCertificate(ALIAS_CERT);
+        pubKey = cert.getPublicKey();
+        privKey = (PrivateKey) ks.getKey(ALIAS_KEY, password);
+      }
     } catch (NoSuchProviderException | NoSuchAlgorithmException | CertificateException | IOException
         | UnrecoverableKeyException e) {
       throw new KeyStoreException(e);
@@ -125,7 +125,7 @@ public class SingleKeyStore {
    * @throws InvalidCertificateException
    * @throws KeyNotFoundException
    */
-  public PublicKey getJCEPublicKey() {
+  public PublicKey getPublicKey() {
     return pubKey;
 
   }
@@ -166,6 +166,7 @@ public class SingleKeyStore {
     return storage.get(id);
   }
 
+  @SuppressWarnings("resource")
   CryptoContainer extractKey(final Key decryptionKey) throws IOException, ClassNotFoundException,
       CMSException, InvalidWrappedKeyException, UnsupportedRequestException, KeyStoreUnavailableException {
     CryptoContainer container;
@@ -195,16 +196,12 @@ public class SingleKeyStore {
 
   static X509Certificate genSelfSignedCertFromKeyPair(final KeyPair keyPair, final UUID keyID)
       throws CryptoException {
-
-    // build a certificate generator
-
     final X509v3CertificateBuilder bld = new JcaX509v3CertificateBuilder(new X500Name("cn=crysil"),
         new BigInteger(keyID.toString().getBytes()), new Date(0), new Date(Long.MAX_VALUE),
         new X500Name("cn=InvertedTrustActor"), keyPair.getPublic());
     X509CertificateHolder certHldr;
     try {
-      certHldr = bld.build(
-          new JcaContentSignerBuilder(SIGALG).setProvider("BC").build(keyPair.getPrivate()));
+      certHldr = bld.build(new JcaContentSignerBuilder(SIGALG).setProvider("BC").build(keyPair.getPrivate()));
       return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certHldr);
     } catch (OperatorCreationException | CertificateException e) {
       throw new CryptoException(e.getLocalizedMessage(), e);

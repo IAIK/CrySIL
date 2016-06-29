@@ -27,6 +27,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
   private final Class<T>     dialogType;
 
   public static final String K_CHALLENGE = "challenge";
+  public static final String K_ISQUESTION = "question";
 
   public static class Factory<T extends IAuthUI<String, Serializable>>
       implements AuthenticationPluginFactory<String, Serializable, T> {
@@ -79,6 +80,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
           final T authUi = dialogType.newInstance();
           final Map<String, Serializable> values = new HashMap<>();
           values.put(K_CHALLENGE, ((ChallengeResponseAuthType) authType).getChallenge());
+          values.put(K_ISQUESTION, ((ChallengeResponseAuthType) authType).isQuestion());
           authUi.init(values);
 
           authUi.setCallbackAuthenticate(new ActionPerformedCallback() {

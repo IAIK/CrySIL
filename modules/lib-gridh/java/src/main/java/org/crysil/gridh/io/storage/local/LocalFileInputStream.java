@@ -11,20 +11,22 @@ import org.crysil.gridh.io.storage.StorageInputStream;
 
 public class LocalFileInputStream extends StorageInputStream<LocalFileURI> {
 
-  private FileInputStream in;
-  private long            totalSize, transferred;
+  private final FileInputStream in;
+  private final long            totalSize;
+  private long transferred;
 
-  public LocalFileInputStream(LocalFileURI uri) throws IOException {
+  public LocalFileInputStream(final LocalFileURI uri) throws IOException {
     super(uri);
 
     File f;
     try {
       f = new File(new URI(uri.getSchemeURI()));
-    } catch (URISyntaxException e) {
+    } catch (final URISyntaxException e) {
       throw new IOException(e);
     }
-    if (!f.exists())
+    if (!f.exists()) {
       throw new FileNotFoundException("File " + uri.getSchemeURI() + " does not exists!");
+    }
     totalSize = f.length();
     transferred = 0;
     in = new FileInputStream(f);
@@ -44,7 +46,7 @@ public class LocalFileInputStream extends StorageInputStream<LocalFileURI> {
   }
 
   @Override
-  public int read(byte[] b) throws IOException {
+  public int read(final byte[] b) throws IOException {
     final int read = in.read(b);
     transferred += read;
     fireProgressUpdate(((float) transferred) / ((float) totalSize));
@@ -52,17 +54,19 @@ public class LocalFileInputStream extends StorageInputStream<LocalFileURI> {
   }
 
   @Override
-  public int read(byte[] b, int off, int len) throws IOException {
+  public int read(final byte[] b, final int off, final int len) throws IOException {
     final int read = in.read(b, off, len);
     transferred += read;
     fireProgressUpdate(((float) transferred) / ((float) totalSize));
     return read;
   }
 
-  public void fireProgressUpdate(float f) {
+  @Override
+  public void fireProgressUpdate(final float f) {
     super.fireProgressUpdate(f);
-    if (f == 1)
+    if (f == 1) {
       fireProgressFinished();
+    }
   }
 
 }
