@@ -9,12 +9,9 @@ import org.crysil.authentication.AuthException;
 import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthUI;
-import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.header.Header;
-import org.crysil.protocol.header.StandardHeader;
+import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.auth.AuthType;
-import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.credentials.SecretAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.SecretAuthType;
 
@@ -40,7 +37,7 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
         throw new AuthException("Invalid authType");
       }
 
-      return new AuthPSK<T>(crysilResponse, authType, dialogType);
+      return new AuthPSK<>(crysilResponse, authType, dialogType);
     }
 
     @Override
@@ -62,7 +59,7 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
   }
 
   @Override
-  public Request authenticate() throws AuthException {
+  public AuthInfo authenticate() throws AuthException {
     final CountDownLatch sync = new CountDownLatch(1);
     final AtomicReference<String> psk = new AtomicReference<>();
 
@@ -96,19 +93,10 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
       throw new AuthException("Error waiting for secret dialog", e);
     }
 
-    final Request authRequest = new Request();
-
-    final Header header = new StandardHeader();
-    header.setCommandId(crysilResponse.getHeader().getCommandId());
-    authRequest.setHeader(header);
-
     final SecretAuthInfo authInfo = new SecretAuthInfo();
     authInfo.setSecret(psk.get());
-    final PayloadAuthRequest authRequestPayload = new PayloadAuthRequest();
-    authRequestPayload.setAuthInfo(authInfo);
-    authRequest.setPayload(authRequestPayload);
 
-    return (authRequest);
+    return authInfo;
   }
 
   @Override

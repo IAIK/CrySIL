@@ -15,6 +15,13 @@ public class Response implements Serializable{
 
 	/** The payload. */
 	protected PayloadResponse payload;
+  public Response() {
+  }
+
+  public Response(final Header header, final PayloadResponse payload) {
+    this.header = header;
+    this.payload = payload;
+  }
 
 	/**
 	 * Gets the header.

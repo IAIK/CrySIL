@@ -26,12 +26,9 @@ public class Gatekeeper extends OneToOneInterlink implements Module {
 
   private Response fail(final Request request, final String reason) {
     Logger.error(reason);
-    final Response authFailed = new Response();
-    authFailed.setHeader(request.getHeader());
     final PayloadStatus payloadStatus = new PayloadStatus();
     payloadStatus.setCode(new AuthenticationFailedException().getErrorCode());
-    authFailed.setPayload(payloadStatus);
-    return authFailed;
+    return new Response(request.getHeader().clone(), payloadStatus);
   }
 
   @Override

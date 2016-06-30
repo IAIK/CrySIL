@@ -8,7 +8,7 @@ import org.crysil.protocol.PolymorphicStuff;
 /**
  * The basic header part of the message. Contains the protocol version only.
  */
-public abstract class Header extends PolymorphicStuff {
+public abstract class Header extends PolymorphicStuff implements Cloneable {
 
 	/** The protocol version. Not static because it would require additional code to serialize/deserialize to JSON.*/
 	protected final String protocolVersion = "2.0";
@@ -88,4 +88,26 @@ public abstract class Header extends PolymorphicStuff {
 	public void setRequestPath(final List<String> path) {
 		this.requestPath = path;
 	}
+
+	public void responseToRequestPath(){
+	  getRequestPath().clear();
+    getRequestPath().addAll(getResponsePath());
+    getResponsePath().clear();
+	}
+
+	public void requestToResponsePath(){
+	  getResponsePath().clear();
+	  getResponsePath().addAll(getRequestPath());
+	  getRequestPath().clear();
+	}
+
+	public void addToRequestPath(final String element){
+	  requestPath.add(element);
+	}
+	public void addToResponsePath(final String element){
+	  responsePath.add(0,element);
+	}
+
+	@Override
+  public abstract Header clone();
 }

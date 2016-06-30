@@ -3,12 +3,9 @@ package org.crysil.authentication.authplugins;
 import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthException;
 import org.crysil.authentication.AuthHandlerFactory;
-import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.header.Header;
-import org.crysil.protocol.header.StandardHeader;
+import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.auth.AuthType;
-import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.credentials.IdentifierAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.IdentifierAuthType;
 
@@ -45,20 +42,10 @@ public class AuthConstantIdentifier implements AuthHandler {
   }
 
   @Override
-  public Request authenticate() throws AuthException {
-    final Request authRequest = new Request();
-
-    final Header header = new StandardHeader();
-    header.setCommandId(crysilResponse.getHeader().getCommandId());
-    authRequest.setHeader(header);
-
+  public AuthInfo authenticate() throws AuthException {
     final IdentifierAuthInfo authInfo = new IdentifierAuthInfo();
     authInfo.setIdentifier(identifier);
-    final PayloadAuthRequest authRequestPayload = new PayloadAuthRequest();
-    authRequestPayload.setAuthInfo(authInfo);
-    authRequest.setPayload(authRequestPayload);
-
-    return (authRequest);
+    return authInfo;
   }
 
   @Override

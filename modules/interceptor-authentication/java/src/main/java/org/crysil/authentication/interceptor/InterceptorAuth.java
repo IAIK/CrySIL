@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthenticationSelector;
@@ -19,11 +19,12 @@ import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.auth.AuthType;
+import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.PayloadAuthResponse;
 
 public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOneInterlink implements Module {
   private List<AuthHandlerFactory<?, ?, ?>> authPluginFactories = new ArrayList<>();
-  private final Class<T>                             selectorType;
+  private final Class<T>                    selectorType;
 
   public InterceptorAuth(final Class<T> selectorType) {
     this.selectorType = selectorType;
@@ -34,7 +35,7 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
   }
 
   @Override
-	public Response take(final Request request) throws CrySILException {
+  public Response take(final Request request) throws CrySILException {
     final Response resp = this.getAttachedModule().take(request);
 
     if (resp.getPayload() instanceof PayloadAuthResponse) {
@@ -48,7 +49,7 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
     return resp;
   }
 
-	public Response intercept(final Response crysilResponse) throws CrySILException {
+  public Response intercept(final Response crysilResponse) throws CrySILException {
     Logger.debug("Intercepting {}", crysilResponse.getBlankedClone());
     final List<AuthHandler> myAuthPlugins = new ArrayList<>();
 
@@ -76,19 +77,18 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
 
     try {
 
-      final Request authChallengeReply = presentSelector(myAuthPlugins).authenticate();
-      authChallengeReply.getHeader().getRequestPath().clear();
-      authChallengeReply.getHeader().getResponsePath().clear();
-      authChallengeReply.getHeader().getRequestPath().addAll(crysilResponse.getHeader().getResponsePath());
-      return getAttachedModule().take(authChallengeReply);
+      final PayloadAuthRequest authRequestPayload = new PayloadAuthRequest();
+      authRequestPayload.setAuthInfo(presentSelector(myAuthPlugins).authenticate());
+      final Request request = new Request(crysilResponse.getHeader().clone(), authRequestPayload);
+      request.getHeader().responseToRequestPath();
+      return getAttachedModule().take(request);
 
     } catch (InterruptedException | AuthException | UnsupportedRequestException e) {
       throw new ResponseInterceptorException("Error selecting authentication plugin");
     }
   }
 
-  private AuthHandler presentSelector(final List<AuthHandler> authPlugins)
-      throws InterruptedException {
+  private AuthHandler presentSelector(final List<AuthHandler> authPlugins) throws InterruptedException {
 
     final AtomicReference<AuthHandler> authPlugin = new AtomicReference<>();
 

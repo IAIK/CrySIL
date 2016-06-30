@@ -37,15 +37,11 @@ public class ChallengeResponseAuthPlugin
 
   @Override
   public Response generateAuthChallenge(final Request request) {
-    final Response resp = new Response();
-
-    resp.setHeader(request.getHeader());
     final PayloadAuthResponse payload = new PayloadAuthResponse();
     final List<AuthType> auth = new LinkedList<>();
     auth.add(authTypeWithChallenge);
     payload.setAuthTypes(auth);
-    resp.setPayload(payload);
-    return resp;
+    return new Response(request.getHeader().clone(), payload);
   }
 
   @Override

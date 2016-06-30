@@ -6,8 +6,6 @@ import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.NotAcceptableException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.header.Header;
-import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.PayloadRequest;
 import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
@@ -35,24 +33,14 @@ public class CrysilConnectionModule implements DecentralNodeActor<Response, Requ
         return actor.take(sRequest);
       } catch (final CrySILException e) {
 
-        final Response response = new Response();
-
-
-        response.setHeader(sRequest.getHeader());
         final PayloadStatus responsePayload = new PayloadStatus();
         responsePayload.setCode(e.getErrorCode());
-        response.setPayload(responsePayload);
-        return response;
+        return new Response(sRequest.getHeader().clone(), responsePayload);
       }
     }
-    final Response response = new Response();
-    final Header header = new StandardHeader();
-    header.setCommandId(sRequest.getHeader().getCommandId());
-    response.setHeader(header);
     final PayloadStatus responsePayload = new PayloadStatus();
     responsePayload.setCode(new NotAcceptableException().getErrorCode());
-    response.setPayload(responsePayload);
-    return response;
+    return new Response(sRequest.getHeader().clone(), responsePayload);
   }
 
 }

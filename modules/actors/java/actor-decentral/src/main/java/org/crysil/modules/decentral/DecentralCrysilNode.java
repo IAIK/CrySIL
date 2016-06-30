@@ -36,8 +36,8 @@ public class DecentralCrysilNode implements Module {
 
     final String rcpt = destination.get(0);
     destination.remove(0);
-    final List<String> responsePath = crysilRequest.getHeader().getResponsePath();
-    responsePath.add(0, rcpt);
+
+    crysilRequest.getHeader().addToResponsePath(rcpt);
     Response response;
     try {
       response = comm.sendBlocking(rcpt, crysilRequest);

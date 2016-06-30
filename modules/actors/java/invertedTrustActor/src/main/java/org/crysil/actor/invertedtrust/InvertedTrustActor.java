@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.security.AlgorithmParameters;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +35,7 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
@@ -73,27 +73,24 @@ public class InvertedTrustActor implements Module {
     }
 
     // prepare the response
-    final Response response = new Response();
-    response.setHeader(request.getHeader());
-
+    PayloadResponse payload;
     // let someone else do the actual work
     try {
-      response.setPayload(command.perform(request.getPayload()));
+      payload = command.perform(request.getPayload());
     } catch (final CrySILException e) {
-      e.printStackTrace();
-      response.setPayload(PayloadBuilder.buildStatusResponse(e.getErrorCode()));
+      payload = PayloadBuilder.buildStatusResponse(e.getErrorCode());
     }
+    final Response response = new Response(request.getHeader().clone(),payload);
 
     return response;
   }
 
   public WrappedKey genWrappedKey(final AuthInfo authInfo) throws UnsupportedRequestException {
-    final Request request = new Request();
     final Map<String, Object> params = new HashMap<>();
     params.put("keySize", 4096);
     final PayloadGenerateKeyRequest payload = new PayloadGenerateKeyRequest(KeyType.RSA, params,
         KeyRepresentation.WRAPPED, authInfo);
-    request.setPayload(payload);
+    final Request request = new Request(new StandardHeader(),payload);
     final Response resp = take(request);
     return (WrappedKey) ((PayloadGenerateKeyResponse) resp.getPayload()).getKey();
 
@@ -145,11 +142,6 @@ public class InvertedTrustActor implements Module {
         }
 
         try {
-          final Request unwrapRequest = new Request();
-          unwrapRequest.setHeader(new StandardHeader());
-          final ArrayList<String> path = new ArrayList<>(1);
-          path.add(destination);
-          unwrapRequest.getHeader().setRequestPath(path);
           final PayloadDecryptRequest decrypt = new PayloadDecryptRequest();
           decrypt.setDecryptionKey(decryptionKey);
           decrypt.addEncryptedData(
@@ -158,7 +150,8 @@ public class InvertedTrustActor implements Module {
               Cipher.UNWRAP_MODE });
           decrypt.addEncryptedData(encryptedKey);
           decrypt.setAlgorithm(algorithm.getId());
-          unwrapRequest.setPayload(decrypt);
+          final Request unwrapRequest = new Request(new StandardHeader(), decrypt);
+          unwrapRequest.getHeader().addToRequestPath(destination);
           final Response unwrapResponse = remote.take(unwrapRequest);
           if (unwrapResponse.getPayload().getType().equals("status")) {
             final CrySILException crysilException = CrySILException

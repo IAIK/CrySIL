@@ -129,8 +129,9 @@ public class DropFileOutputStream extends StorageOutputStream<DropfileURI> {
         HttpResponse response;
         try {
           response = httpClient.execute(httppost);
+          Logger.debug("upload uri: {}", httppost.getURI());
           final String jsString = EntityUtils.toString(response.getEntity());
-
+          Logger.debug(jsString);
           final JsonObject obj = jsParser.parse(jsString).getAsJsonObject();
           if (obj.get("status").getAsInt() != 0) {
             throw new IOException("Upload Failed");

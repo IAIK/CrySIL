@@ -4,26 +4,22 @@ import org.crysil.gatekeeper.AuthPlugin;
 import org.crysil.gatekeeper.AuthResult;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
-import org.crysil.protocol.payload.auth.AuthType;
 import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.PayloadAuthResponse;
 import org.crysil.protocol.payload.auth.debugnoauth.DebugNoAuthType;
 
-public class DebugNoAuthPlugin extends AuthPlugin {
+public class DebugNoAuthPlugin extends AuthPlugin<DebugNoAuthType, AuthResult> {
 
   @Override
-  public AuthType getAuthType() {
+  public DebugNoAuthType getAuthType() {
     return new DebugNoAuthType();
   }
 
   @Override
   public Response generateAuthChallenge(final Request request) {
-    final Response noAuthResp = new Response();
-    noAuthResp.setHeader(request.getHeader());
     final PayloadAuthResponse payloadAuthResponse = new PayloadAuthResponse();
     payloadAuthResponse.addAuthType(new DebugNoAuthType());
-    noAuthResp.setPayload(payloadAuthResponse);
-    return noAuthResp;
+    return new Response(request.getHeader().clone(), payloadAuthResponse);
   }
 
   @Override

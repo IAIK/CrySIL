@@ -12,19 +12,19 @@ import org.crysil.authentication.AuthException;
 import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthUI;
-import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
+import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.auth.AuthType;
-import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.challengeresponse.ChallengeResponseAuthInfo;
 import org.crysil.protocol.payload.auth.challengeresponse.ChallengeResponseAuthType;
+
 public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> implements AuthHandler {
 
   private final Response     crysilResponse;
   private final AuthType     authType;
   private final Class<T>     dialogType;
 
-  public static final String K_CHALLENGE = "challenge";
+  public static final String K_CHALLENGE  = "challenge";
   public static final String K_ISQUESTION = "question";
 
   public static class Factory<T extends IAuthUI<String, Serializable>>
@@ -47,8 +47,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
     }
 
     @Override
-    public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthException {
+    public boolean canTake(final Response crysilResponse, final AuthType authType) throws AuthException {
       return (authType instanceof ChallengeResponseAuthType);
     }
 
@@ -66,7 +65,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
   }
 
   @Override
-  public Request authenticate() throws AuthException {
+  public AuthInfo authenticate() throws AuthException {
     final CountDownLatch sync = new CountDownLatch(1);
     final AtomicReference<String> result = new AtomicReference<>();
 
@@ -106,18 +105,9 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
       throw new AuthException("Error waiting for automated prose dialog", e);
     }
 
-    final Request authRequest = new Request();
-
-
-    authRequest.setHeader(crysilResponse.getHeader());
-
     final ChallengeResponseAuthInfo authInfo = new ChallengeResponseAuthInfo();
     authInfo.setResponseString(result.get());
-    final PayloadAuthRequest authRequestPayload = new PayloadAuthRequest();
-    authRequestPayload.setAuthInfo(authInfo);
-    authRequest.setPayload(authRequestPayload);
-
-    return authRequest;
+    return authInfo;
   }
 
   @Override
