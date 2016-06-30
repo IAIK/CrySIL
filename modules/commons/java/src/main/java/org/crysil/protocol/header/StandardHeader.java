@@ -10,6 +10,8 @@ import org.crysil.logging.Logger;
  */
 public class StandardHeader extends SessionHeader {
 
+  private static final long serialVersionUID = -5580144094493017899L;
+
   @Override
   public String getType() {
     return "standardHeader";

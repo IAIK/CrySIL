@@ -10,7 +10,8 @@ import org.crysil.protocol.PolymorphicStuff;
  */
 public abstract class Header extends PolymorphicStuff implements Cloneable {
 
-	/** The protocol version. Not static because it would require additional code to serialize/deserialize to JSON.*/
+  private static final long serialVersionUID = -4263291227912265497L;
+  /** The protocol version. Not static because it would require additional code to serialize/deserialize to JSON.*/
 	protected final String protocolVersion = "2.0";
 	protected String commandId;
 	/** The path. */

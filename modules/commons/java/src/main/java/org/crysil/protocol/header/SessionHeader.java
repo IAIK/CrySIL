@@ -2,7 +2,8 @@ package org.crysil.protocol.header;
 
 public abstract class SessionHeader extends Header {
 
-	/**
+  private static final long serialVersionUID = 3512833320267450375L;
+  /**
 	 * session id
 	 */
 	protected String sessionId = null;
@@ -15,7 +16,7 @@ public abstract class SessionHeader extends Header {
 	/**
 	 * Set the session id.
 	 */
-	public void setSessionId(String sessionId) {
+	public void setSessionId(final String sessionId) {
 		this.sessionId = sessionId;
 	}
 
