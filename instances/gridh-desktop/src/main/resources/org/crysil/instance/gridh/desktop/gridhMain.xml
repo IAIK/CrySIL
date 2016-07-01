@@ -57,7 +57,7 @@
           <Border styles="{padding:'8'}">
             <Form>
               <Form.Section heading="Network Settings">
-                <Checkbox Form.label="Use Native Tor" bxml:id="cbUseNativeTor">
+                <Checkbox Form.label="Use Native Tor" bxml:id="cbUseNativeTor" enabled="false">
                 </Checkbox>
                 <TextInput Form.label="Hidden Service Port" bxml:id="txtHSPort" preferredWidth="250"
                   maximumWidth="250" prompt="The port the hidden service is started on">
