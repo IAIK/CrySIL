@@ -21,16 +21,15 @@ public class DropFileInputStream extends StorageInputStream<DropfileURI> {
 
   private static final String BASE_URL = "https://d1.dropfile.to";
 
-  private final HttpClient httpClient;
+  private final HttpClient    httpClient;
 
-  private final InputStream in;
+  private final InputStream   in;
 
-  private long totalSize, transferred;
+  private long                totalSize, transferred;
 
   public DropFileInputStream(final DropfileURI uri) throws IOException {
     super(uri);
-    // TODO remove
-    httpClient = InsecureHTTPClientFactory.createHTTPClient();
+    httpClient = DropfileURI.createHttpClient();
     transferred = 0;
     try {
       in = setupStream();
@@ -56,7 +55,8 @@ public class DropFileInputStream extends StorageInputStream<DropfileURI> {
       final HttpGet get = new HttpGet(BASE_URL + location);
       resp = httpClient.execute(get);
       if (resp.getStatusLine().getStatusCode() != 200) {
-        throw new IOException("Cannot get Data for Identifier " + uri + ": " + resp.getStatusLine().getStatusCode());
+        throw new IOException(
+            "Cannot get Data for Identifier " + uri + ": " + resp.getStatusLine().getStatusCode());
       }
       try {
         totalSize = Long.parseLong(resp.getHeaders(HttpHeaders.CONTENT_LENGTH)[0].getValue());
@@ -78,7 +78,8 @@ public class DropFileInputStream extends StorageInputStream<DropfileURI> {
       }
       return resp.getEntity().getContent();
     }
-    throw new IOException("Cannot get Data for Identifier " + uri + ": " + resp.getStatusLine().getStatusCode());
+    throw new IOException(
+        "Cannot get Data for Identifier " + uri + ": " + resp.getStatusLine().getStatusCode());
   }
 
   private void printHeaders(final HttpResponse resp) {

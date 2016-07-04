@@ -52,8 +52,7 @@ public class DropFileOutputStream extends StorageOutputStream<DropfileURI> {
         Integer.toString(rnd.nextInt(), Character.MAX_RADIX));
     out = new FileOutputStream(tmpFile);
     jsParser = new JsonParser();
-    // TODO remove
-    httpClient = InsecureHTTPClientFactory.createHTTPClient();
+    httpClient = DropfileURI.createHttpClient();
     upload();
   }
 
