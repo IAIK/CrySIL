@@ -4,6 +4,8 @@ import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.FileDialog;
 import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +32,7 @@ import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.io.FileList;
 import org.apache.pivot.util.CalendarDate;
 import org.apache.pivot.util.Resources;
+import org.apache.pivot.util.Vote;
 import org.apache.pivot.wtk.Accordion;
 import org.apache.pivot.wtk.AccordionSelectionListener;
 import org.apache.pivot.wtk.ActivityIndicator;
@@ -91,8 +94,8 @@ import org.crysil.gridh.io.util.ProgressListener;
 import org.crysil.gridh.ipc.DecryptResponse;
 import org.crysil.gridh.ipc.EncryptResponse;
 import org.crysil.gridh.ipc.ErrorResponse;
-import org.crysil.gridh.ipc.GridhResponseListener;
 import org.crysil.gridh.ipc.GridhResponse;
+import org.crysil.gridh.ipc.GridhResponseListener;
 import org.crysil.instance.gridh.desktop.DesktopConstants.ErrorCode;
 import org.crysil.instance.gridh.desktop.UIHelpers.ProgressIndicator;
 import org.crysil.instance.gridh.desktop.auth.AuthSetup;
@@ -193,7 +196,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
   @BXML
   private TextArea            txtStatusUri;
   @BXML
-  private PushButton          btnEnclyptionStatus;
+  private PushButton          btnEncryptionStatus;
 
   @BXML
   private Sheet               operationSheet;
@@ -232,6 +235,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
 
   @Override
   public void initialize(final Map<String, Object> namespace, final URL arg1, final Resources arg2) {
+    paneEncrypt_fileStackPane.add(paneEncrypt_fileDropBorder);
     try {
       StorageURI.register(DropfileURI.class);
       StorageURI.register(LocalFileURI.class);
@@ -263,6 +267,8 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
     paneEncrypt_btnChooseOutputFile.getButtonPressListeners().add(listeners.new OutputFileChoiceListener());
     paneEncrypt_btnChooseOutputFile.setDataRenderer(UIHelpers.setupLocationRenderer());
 
+    paneEncrypt_btnEncrypt.getButtonPressListeners().add(listeners.new ShowEncryptionListener());
+
     paneEncrypt_fileTable.setTableData(fileList);
     final DNDUtil dndUtil = new DNDUtil();
     dndUtil.addDropTarget(paneEncrypt_fileStackPane);
@@ -274,9 +280,14 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
 
     btnSaveSettings.getButtonPressListeners().add(listeners.new SaveSettingsListener());
 
+    btnSaveSettings.getButtonPressListeners().add(listeners.new ShowSettingsListener());
+
+    txtHSPort.getTextInputContentListeners().add(listeners.new HSPortListener());
+
     paneEncrypt_btnAddFiles.getButtonPressListeners().add(listeners.new AddFilesButtonListener());
     paneEncrypt_btnEncrypt.getButtonPressListeners().add(listeners.new EncryptListener());
     btnStartEncryption.getButtonPressListeners().add(listeners.new StartEncryptionListener());
+    btnEncryptionStatus.getButtonPressListeners().add(listeners.new EncryptionStatusListener());
 
     btnMasterKeyOK.getButtonPressListeners().add(listeners.new MasterKeyOKListener());
     final Listeners.URIContentListener uriContentListener = listeners.new URIContentListener();
@@ -306,8 +317,8 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
 
     try {
       this.gridhProps = readProperties();
-      cbUseNativeTor.setSelected(Boolean.parseBoolean(gridhProps
-          .getProperty(DesktopConstants.CONF_TOR_NATIVE, DesktopConstants.CONF_TOR_NATIVE_DEFAULT)));
+      cbUseNativeTor.setSelected(Boolean.parseBoolean(gridhProps.getProperty(DesktopConstants.CONF_TOR_NATIVE,
+          DesktopConstants.CONF_TOR_NATIVE_DEFAULT)));
       txtHSPort
           .setText(gridhProps.getProperty(DesktopConstants.CONF_PORT, DesktopConstants.CONF_PORT_DEFAULT));
       Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -509,8 +520,8 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
       public Void call() {
         final Set<NodeStateListener> listeners = new HashSet<>();
         listeners.add(GridhWindow.this);
-        final int port = Integer.parseInt(
-            gridhProps.getProperty(DesktopConstants.CONF_PORT, DesktopConstants.CONF_PORT_DEFAULT));
+        final int port = Integer
+            .parseInt(gridhProps.getProperty(DesktopConstants.CONF_PORT, DesktopConstants.CONF_PORT_DEFAULT));
         try {
           Logger.debug("Trying to setup Tor");
           try {
@@ -656,7 +667,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
           tableData.add(res);
           txtStatusExpiry.setText(cal.getTime().toString());
           encryptionStatusSheet.open(GridhWindow.this.getDisplay(), GridhWindow.this);
-          btnEnclyptionStatus.requestFocus();
+          btnEncryptionStatus.requestFocus();
         }
       });
 
@@ -669,7 +680,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
         public void run() {
           Throwable cause = errResp.getCause();
           while (!(cause instanceof CrySILException)) {
-            if(cause==null) {
+            if (cause == null) {
               break;
             }
             cause = cause.getCause();
@@ -739,10 +750,66 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
   }
 
   private InvertedTrustActor setupActor() throws KeyStoreException, IOException, CrySILException {
-    return new InvertedTrustActor(new File(DesktopConstants.FILE_KEYSTORE), txtMasterKey.getText().toCharArray());
+    return new InvertedTrustActor(new File(DesktopConstants.FILE_KEYSTORE),
+        txtMasterKey.getText().toCharArray());
   }
 
   private class Listeners {
+
+    public class ShowEncryptionListener implements ButtonPressListener {
+
+      @Override
+      public void buttonPressed(final Button button) {
+        encryptSheet.open(button.getWindow().getDisplay(), button.getWindow());
+      }
+
+    }
+
+    public class EncryptionStatusListener implements ButtonPressListener {
+
+      @Override
+      public void buttonPressed(final Button button) {
+        Toolkit.getDefaultToolkit().getSystemClipboard()
+            .setContents(new StringSelection(txtStatusUri.getText()), null);
+        encryptionStatusSheet.close();
+      }
+
+    }
+
+    public class HSPortListener implements TextInputContentListener {
+
+      @Override
+      public Vote previewInsertText(final TextInput textInput, final CharSequence text, final int index) {
+        return Vote.DEFER;
+      }
+
+      @Override
+      public void insertTextVetoed(final TextInput textInput, final Vote reason) {
+      }
+
+      @Override
+      public void textInserted(final TextInput textInput, final int index, final int count) {
+      }
+
+      @Override
+      public Vote previewRemoveText(final TextInput textInput, final int index, final int count) {
+        return Vote.DEFER;
+      }
+
+      @Override
+      public void removeTextVetoed(final TextInput textInput, final Vote reason) {
+      }
+
+      @Override
+      public void textRemoved(final TextInput textInput, final int index, final int count) {
+      }
+
+      @Override
+      public void textChanged(final TextInput textInput) {
+        btnSaveSettings.setEnabled(textInput.isTextValid());
+      }
+
+    }
 
     private class MasterKeySheetListener implements SheetCloseListener {
       @Override
@@ -763,6 +830,13 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
       @Override
       public void buttonPressed(final Button button) {
         saveSettings();
+      }
+    }
+
+    private class ShowSettingsListener implements ButtonPressListener {
+      @Override
+      public void buttonPressed(final Button button) {
+        settingsSheet.open(getDisplay());
       }
     }
 
@@ -833,7 +907,7 @@ public class GridhWindow extends Window implements Bindable, GridhResponseListen
             uri = new GridhURI(StorageURI.createFromUri(row.get("uri")), gridh.getName());
             txtStatusUri.setText(uri.toString());
             encryptionStatusSheet.open(GridhWindow.this.getDisplay(), GridhWindow.this);
-            btnEnclyptionStatus.requestFocus();
+            btnEncryptionStatus.requestFocus();
           } catch (final Exception e) {
             displayFatalError("Internal Error!", e, ErrorCode.ERR_INTERNAL);
             e.printStackTrace();

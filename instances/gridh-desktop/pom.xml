@@ -34,11 +34,11 @@
       <artifactId>auth-challenge-response</artifactId>
       <version>${crysil.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.mozilla</groupId>
-      <artifactId>rhino</artifactId>
-      <version>1.7.7</version>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>org.mozilla</groupId> -->
+<!--       <artifactId>rhino</artifactId> -->
+<!--       <version>1.7.7</version> -->
+<!--     </dependency> -->
     <dependency>
       <groupId>org.apache.bsf</groupId>
       <artifactId>bsf-all</artifactId>

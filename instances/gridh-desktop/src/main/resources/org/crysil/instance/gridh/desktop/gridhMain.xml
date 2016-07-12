@@ -30,11 +30,6 @@
                   <content:ButtonDataRenderer iconWidth="20" iconHeight="20" fillIcon="true" />
                 </dataRenderer>
                 <content:ButtonData icon="@gear-settings.svg" />
-                <buttonPressListeners>
-                  function buttonPressed(button) {
-                  settingsSheet.open(button.getWindow());
-                  }
-                </buttonPressListeners>
               </PushButton>
               <GridPane.Filler />
               <PushButton buttonData="Unlock" bxml:id="btnMasterKeyOK"
@@ -64,11 +59,6 @@
                   <validator>
                     <IntRangeValidator xmlns="org.apache.pivot.wtk.validation" minimum="1024" maximum="65535" />
                   </validator>
-                  <textInputContentListeners>
-                    function textChanged(textInput) {
-                    btnSaveSettings.setEnabled(textInput.isTextValid());
-                    }
-                  </textInputContentListeners>
                 </TextInput>
               </Form.Section>
             </Form>
@@ -172,17 +162,8 @@
         </TablePane.Row>
         <TablePane.Row height="-1">
           <BoxPane styles="{horizontalAlignment:'right'}">
-            <PushButton bxml:id="btnEnclyptionStatus" buttonData="Close'n'Copy"
+            <PushButton bxml:id="btnEncryptionStatus" buttonData="Close'n'Copy"
               styles="{backgroundColor:17, color:4, font:'sans bold 11', padding:'5'}">
-              <buttonPressListeners>
-                importClass(java.awt.Toolkit);
-                importClass(java.awt.datatransfer.StringSelection);
-                function buttonPressed(button) {
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new
-                StringSelection(txtStatusUri.getText()),null);
-                encryptionStatusSheet.close();
-                }
-              </buttonPressListeners>
             </PushButton>
           </BoxPane>
         </TablePane.Row>
@@ -289,12 +270,6 @@
               <Label bxml:id="paneEncrypt_lblOutputInfo" text="DropFile uploads are limited to 1GiB!" styles="{verticalAlignment: 'center'}" />
               <PushButton bxml:id="paneEncrypt_btnEncrypt" buttonData="Encrypt" enabled="false"
                 styles="{backgroundColor:17, color:4, font:'sans bold 11', padding:'5'}">
-                <buttonPressListeners>
-                  importPackage(org.apache.pivot.wtk);
-                  function buttonPressed(button) {
-                  encryptSheet.open(button.getWindow().getDisplay(), button.getWindow());
-                  }
-                </buttonPressListeners>
               </PushButton>
             </TablePane.Row>
           </TablePane>
@@ -365,9 +340,4 @@
       </FillPane>
     </TabPane>
   </StackPane>
-
-  <bxml:script>
-    importPackage(org.apache.pivot.wtk);
-    paneEncrypt_fileStackPane.add(paneEncrypt_fileDropBorder);
-  </bxml:script>
 </skynet:GridhWindow>
