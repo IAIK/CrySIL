@@ -17,8 +17,6 @@ import org.crysil.protocol.payload.auth.credentials.UserPasswordAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.UserPasswordAuthType;
 
 public class AuthUsernameAndPassword<T extends IAuthUI<char[][], Void>> implements AuthHandler {
-  private final Response crysilResponse;
-  private final AuthType authType;
   private final Class<T> dialogType;
 
   public static class Factory<T extends IAuthUI<char[][], Void>>
@@ -37,12 +35,11 @@ public class AuthUsernameAndPassword<T extends IAuthUI<char[][], Void>> implemen
         throw new AuthException("Invalid authType");
       }
 
-      return new AuthUsernameAndPassword<>(crysilResponse, authType, dialogType);
+      return new AuthUsernameAndPassword<>(dialogType);
     }
 
     @Override
-    public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthException {
+    public boolean canTake(final Response crysilResponse, final AuthType authType) throws AuthException {
       return (authType instanceof UserPasswordAuthType);
     }
 
@@ -52,10 +49,7 @@ public class AuthUsernameAndPassword<T extends IAuthUI<char[][], Void>> implemen
     }
   }
 
-  public AuthUsernameAndPassword(final Response crysilResponse, final AuthType authType,
-      final Class<T> dialogType) {
-    this.crysilResponse = crysilResponse;
-    this.authType = authType;
+  public AuthUsernameAndPassword(final Class<T> dialogType) {
     this.dialogType = dialogType;
   }
 

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.authentication.ui.IAuthUI;
@@ -20,7 +20,6 @@ import org.crysil.protocol.payload.auth.challengeresponse.ChallengeResponseAuthT
 
 public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> implements AuthHandler {
 
-  private final Response     crysilResponse;
   private final AuthType     authType;
   private final Class<T>     dialogType;
 
@@ -43,7 +42,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
         throw new AuthException("Invalid authType");
       }
 
-      return new AuthChallengeResponse<>(crysilResponse, authType, dialogType);
+      return new AuthChallengeResponse<>(authType, dialogType);
     }
 
     @Override
@@ -57,9 +56,7 @@ public class AuthChallengeResponse<T extends IAuthUI<String, Serializable>> impl
     }
   }
 
-  public AuthChallengeResponse(final Response crysilResponse, final AuthType authType,
-      final Class<T> dialogType) {
-    this.crysilResponse = crysilResponse;
+  public AuthChallengeResponse(final AuthType authType, final Class<T> dialogType) {
     this.authType = authType;
     this.dialogType = dialogType;
   }

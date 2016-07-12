@@ -57,7 +57,7 @@ public class HttpJsonTransmitter implements Module {
 	}
 
 	/* (non-Javadoc)
-	 * @see at.iaik.skytrust.element.actors.Actor#take(at.iaik.skytrust.element.skytrustprotocol.SRequest)
+	 * @see at.iaik.crysil.element.actors.Actor#take(at.iaik.crysil.element.crysilprotocol.SRequest)
 	 */
 	@Override
 	public Response take(Request crysilRequest) throws CrySILException {

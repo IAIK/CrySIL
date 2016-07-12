@@ -26,6 +26,7 @@
         <module>interceptor-authentication/java</module>
         <module>auth/java/auth-basic</module>
         <module>auth/java/auth-challenge-response</module>
+        <module>auth/java/auth-oauth</module>
     </modules>
 
     <properties>

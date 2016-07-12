@@ -1,7 +1,7 @@
 package org.crysil.authentication.authplugins;
 
-import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.auth.AuthInfo;
@@ -10,11 +10,9 @@ import org.crysil.protocol.payload.auth.credentials.IdentifierAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.IdentifierAuthType;
 
 public class AuthConstantIdentifier implements AuthHandler {
-  private final Response crysilResponse;
-  public static String   identifier = "";
+  public static String identifier = "";
 
-  public AuthConstantIdentifier(final Response crysilResponse, final AuthType authType) {
-    this.crysilResponse = crysilResponse;
+  public AuthConstantIdentifier() {
   }
 
   @SuppressWarnings("rawtypes")
@@ -26,12 +24,11 @@ public class AuthConstantIdentifier implements AuthHandler {
         throw new AuthException("Invalid authType");
       }
 
-      return new AuthConstantIdentifier(crysilResponse, authType);
+      return new AuthConstantIdentifier();
     }
 
     @Override
-    public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthException {
+    public boolean canTake(final Response crysilResponse, final AuthType authType) throws AuthException {
       return (authType instanceof IdentifierAuthType);
     }
 

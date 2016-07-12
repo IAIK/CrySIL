@@ -1,6 +1,8 @@
-package org.crysil.authentication.authplugins;
+package org.crysil.authplugins.oauth;
 
 import java.awt.EventQueue;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -12,15 +14,18 @@ import org.crysil.authentication.ui.IAuthUI;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.auth.AuthType;
-import org.crysil.protocol.payload.auth.credentials.SecretAuthInfo;
-import org.crysil.protocol.payload.auth.credentials.SecretAuthType;
+import org.crysil.protocol.payload.auth.oauth.OAuthAuthInfo;
+import org.crysil.protocol.payload.auth.oauth.OAuthAuthType;
 
-public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
+public class AuthOAuth<T extends IAuthUI<String, String>> implements AuthHandler {
+  public static final String K_URL = "url";
 
-  private final Class<T> dialogType;
+  private final AuthType     authType;
 
-  public static class Factory<T extends IAuthUI<char[], Void>>
-      implements AuthHandlerFactory<char[], Void, T> {
+  private final Class<T>     dialogType;
+
+  public static class Factory<T extends IAuthUI<String, String>>
+      implements AuthHandlerFactory<String, String, T> {
 
     private final Class<T> dialogType;
 
@@ -35,12 +40,12 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
         throw new AuthException("Invalid authType");
       }
 
-      return new AuthPSK<>(dialogType);
+      return new AuthOAuth<>(authType, dialogType);
     }
 
     @Override
     public boolean canTake(final Response crysilResponse, final AuthType authType) throws AuthException {
-      return (authType instanceof SecretAuthType);
+      return (authType instanceof OAuthAuthType);
     }
 
     @Override
@@ -49,24 +54,28 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
     }
   }
 
-  public AuthPSK(final Class<T> dialogType) {
+  public AuthOAuth(final AuthType authType, final Class<T> dialogType) {
+    this.authType = authType;
     this.dialogType = dialogType;
   }
 
   @Override
   public AuthInfo authenticate() throws AuthException {
     final CountDownLatch sync = new CountDownLatch(1);
-    final AtomicReference<String> psk = new AtomicReference<>();
-
+    final AtomicReference<String> token = new AtomicReference<>();
     EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
         try {
+
           final T authUi = dialogType.newInstance();
+          final Map<String, String> values = new HashMap<>();
+          values.put(K_URL, ((OAuthAuthType) authType).getUrl());
+          authUi.init(values);
           authUi.setCallbackAuthenticate(new ActionPerformedCallback() {
             @Override
             public void actionPerformed() {
-              psk.set(new String(authUi.getAuthValue()));
+              token.set(authUi.getAuthValue());
               authUi.dismiss();
               sync.countDown();
             }
@@ -79,24 +88,25 @@ public class AuthPSK<T extends IAuthUI<char[], Void>> implements AuthHandler {
           sync.countDown();
           e.printStackTrace();
         }
+
       }
     });
 
     try {
       sync.await();
     } catch (final InterruptedException e) {
-      throw new AuthException("Error waiting for secret dialog", e);
+      throw new AuthException("Error while waiting for oauth dialog", e);
     }
 
-    final SecretAuthInfo authInfo = new SecretAuthInfo();
-    authInfo.setSecret(psk.get());
+    final OAuthAuthInfo info = new OAuthAuthInfo();
+    info.setAuthorizationCode(token.get());
 
-    return authInfo;
+    return info;
   }
 
   @Override
   public String getFriendlyName() {
-    return "Pre-Shared Secret";
+    return "OAuth";
   }
 
   @Override

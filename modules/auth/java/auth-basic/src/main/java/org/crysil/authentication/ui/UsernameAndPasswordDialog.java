@@ -14,10 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import org.crysil.authentication.ui.ActionPerformedCallback;
-import org.crysil.authentication.ui.IAuthUI;
 
 public class UsernameAndPasswordDialog extends JFrame implements IAuthUI<char[][], Void> {
   private static final long       serialVersionUID     = 1L;
@@ -52,7 +50,7 @@ public class UsernameAndPasswordDialog extends JFrame implements IAuthUI<char[][
     setResizable(false);
     setTitle("Username and Password Authentication");
     setType(Type.NORMAL);
-    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     setBounds(100, 100, 351, 199);
     setLocationRelativeTo(null);
     contentPane = new JPanel();
@@ -83,27 +81,21 @@ public class UsernameAndPasswordDialog extends JFrame implements IAuthUI<char[][
     });
 
     final GroupLayout gl_contentPane = new GroupLayout(contentPane);
-    gl_contentPane
-        .setHorizontalGroup(gl_contentPane
-            .createParallelGroup(
-                Alignment.LEADING)
-            .addGroup(
-                gl_contentPane.createSequentialGroup().addGap(21)
-                    .addGroup(
-                        gl_contentPane.createParallelGroup(Alignment.TRAILING)
-                            .addGroup(gl_contentPane.createSequentialGroup()
-                                .addComponent(lblPassword, GroupLayout.PREFERRED_SIZE, 83,
-                                    GroupLayout.PREFERRED_SIZE)
-                                .addGap(37).addComponent(textPassword, GroupLayout.PREFERRED_SIZE, 171,
-                                    GroupLayout.PREFERRED_SIZE))
-                            .addGroup(gl_contentPane.createSequentialGroup()
-                                .addComponent(lblUsername, GroupLayout.PREFERRED_SIZE, 83,
-                                    GroupLayout.PREFERRED_SIZE)
-                                .addGap(37).addComponent(textUsername, GroupLayout.PREFERRED_SIZE, 171,
-                                    GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap(13, Short.MAX_VALUE))
-            .addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-                .addContainerGap(111, Short.MAX_VALUE).addComponent(btnAuthenticate).addGap(105)));
+    gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+        .addGroup(gl_contentPane
+            .createSequentialGroup().addGap(21).addGroup(gl_contentPane
+                .createParallelGroup(Alignment.TRAILING)
+                .addGroup(gl_contentPane.createSequentialGroup()
+                    .addComponent(lblPassword, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
+                    .addGap(37)
+                    .addComponent(textPassword, GroupLayout.PREFERRED_SIZE, 171, GroupLayout.PREFERRED_SIZE))
+                .addGroup(gl_contentPane.createSequentialGroup()
+                    .addComponent(lblUsername, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
+                    .addGap(37)
+                    .addComponent(textUsername, GroupLayout.PREFERRED_SIZE, 171, GroupLayout.PREFERRED_SIZE)))
+            .addContainerGap(13, Short.MAX_VALUE))
+        .addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+            .addContainerGap(111, Short.MAX_VALUE).addComponent(btnAuthenticate).addGap(105)));
     gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
         .addGroup(gl_contentPane.createSequentialGroup().addGap(21)
             .addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE).addComponent(lblUsername)

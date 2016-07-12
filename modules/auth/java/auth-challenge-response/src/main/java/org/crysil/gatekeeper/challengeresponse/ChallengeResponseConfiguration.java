@@ -25,7 +25,7 @@ public class ChallengeResponseConfiguration implements Configuration {
       if (req.getDecryptionKey().getType().equals("wrappedKey")) {
         final PayloadExtractStickyPolicyRequest policy = new PayloadExtractStickyPolicyRequest();
         policy.setWrappedKey((WrappedKey) req.getDecryptionKey());
-        final Request policyRequest = new Request(request.getHeader().clone(),policy);
+        final Request policyRequest = new Request(request.getHeader().clone(), policy);
         Response extractedPolicy;
         try {
           extractedPolicy = gatekeeper.getAttachedModule().take(policyRequest);

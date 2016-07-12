@@ -1,7 +1,7 @@
 package org.crysil.authentication.authplugins;
 
-import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthException;
+import org.crysil.authentication.AuthHandler;
 import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.ui.IAuthUI;
 import org.crysil.protocol.Response;
@@ -11,10 +11,8 @@ import org.crysil.protocol.payload.auth.debugnoauth.DebugNoAuthInfo;
 import org.crysil.protocol.payload.auth.debugnoauth.DebugNoAuthType;
 
 public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements AuthHandler {
-  private final Response crysilResponse;
 
-  public static class Factory<T extends IAuthUI<Void, Void>>
-      implements AuthHandlerFactory<Void, Void, T> {
+  public static class Factory<T extends IAuthUI<Void, Void>> implements AuthHandlerFactory<Void, Void, T> {
 
     private final Class<T> dialogType;
 
@@ -29,12 +27,11 @@ public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements AuthHandl
         throw new AuthException("Invalid authType");
       }
 
-      return new AuthDebugNoAuth<>(crysilResponse, authType, dialogType);
+      return new AuthDebugNoAuth<>();
     }
 
     @Override
-    public boolean canTake(final Response crysilResponse, final AuthType authType)
-        throws AuthException {
+    public boolean canTake(final Response crysilResponse, final AuthType authType) throws AuthException {
       return (authType instanceof DebugNoAuthType);
     }
 
@@ -44,13 +41,12 @@ public class AuthDebugNoAuth<T extends IAuthUI<Void, Void>> implements AuthHandl
     }
   }
 
-  public AuthDebugNoAuth(final Response crysilResponse, final AuthType authType, final Class<T> dialogType) {
-    this.crysilResponse = crysilResponse;
+  public AuthDebugNoAuth() {
   }
 
   @Override
   public AuthInfo authenticate() throws AuthException {
-    return  new DebugNoAuthInfo();
+    return new DebugNoAuthInfo();
   }
 
   @Override

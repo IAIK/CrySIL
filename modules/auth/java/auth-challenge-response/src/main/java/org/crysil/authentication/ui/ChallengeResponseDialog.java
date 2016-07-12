@@ -18,6 +18,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.crysil.authentication.authplugins.challengeresponse.AuthChallengeResponse;
@@ -62,7 +63,7 @@ public class ChallengeResponseDialog extends JFrame implements IAuthUI<String, S
     setResizable(false);
     setTitle("Challenge-Response Authentication");
     setType(Type.NORMAL);
-    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     setBounds(100, 100, 351, 199);
     setLocationRelativeTo(null);
     contentPane = new JPanel();
@@ -97,20 +98,17 @@ public class ChallengeResponseDialog extends JFrame implements IAuthUI<String, S
     gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
         .addGroup(gl_contentPane.createSequentialGroup().addContainerGap(119, Short.MAX_VALUE)
             .addComponent(btnAuthenticate).addGap(105))
-        .addGroup(Alignment.LEADING,
-            gl_contentPane.createSequentialGroup().addGap(21)
-                .addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-                    .addComponent(labelProseChallenge, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE,
-                        GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-                        .addGroup(gl_contentPane.createSequentialGroup()
-                            .addComponent(lblResult, GroupLayout.PREFERRED_SIZE, 83,
-                                GroupLayout.PREFERRED_SIZE)
-                            .addGap(37).addComponent(textResult, GroupLayout.PREFERRED_SIZE, 171,
-                                GroupLayout.PREFERRED_SIZE))
-                        .addComponent(lblUsername, GroupLayout.PREFERRED_SIZE, 291,
-                            GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE)));
+        .addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup().addGap(21).addGroup(gl_contentPane
+            .createParallelGroup(Alignment.LEADING)
+            .addComponent(labelProseChallenge, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+                .addGroup(gl_contentPane.createSequentialGroup()
+                    .addComponent(lblResult, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
+                    .addGap(37)
+                    .addComponent(textResult, GroupLayout.PREFERRED_SIZE, 171, GroupLayout.PREFERRED_SIZE))
+                .addComponent(lblUsername, GroupLayout.PREFERRED_SIZE, 291, GroupLayout.PREFERRED_SIZE)))
+            .addContainerGap(27, Short.MAX_VALUE)));
     gl_contentPane
         .setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(Alignment.TRAILING,
             gl_contentPane.createSequentialGroup().addGap(21).addComponent(lblUsername)

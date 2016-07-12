@@ -12,8 +12,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
 import org.crysil.authentication.AuthHandler;
-import org.crysil.authentication.ui.ActionPerformedCallback;
-import org.crysil.authentication.ui.IAuthenticationSelector;
 
 public class SwingAuthenticationSelector extends JFrame implements IAuthenticationSelector {
 
@@ -40,8 +38,7 @@ public class SwingAuthenticationSelector extends JFrame implements IAuthenticati
     setBounds(100, 100, 465, 247);
     setLocationRelativeTo(null);
 
-
-    cmbAuthenticationMethods = new JComboBox<ComboBoxItem>();
+    cmbAuthenticationMethods = new JComboBox<>();
     cmbAuthenticationMethods.setFont(new Font("Tahoma", Font.PLAIN, 16));
     final JButton btnAuthenticate = new JButton("Authenticate");
     btnAuthenticate.setFont(new Font("Tahoma", Font.PLAIN, 20));

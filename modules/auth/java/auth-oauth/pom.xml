@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>main</artifactId>
+    <groupId>org.crysil</groupId>
+    <version>2.0-1</version>
+    <relativePath>../../..</relativePath>
+  </parent>
+  <artifactId>auth-oauth</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.crysil</groupId>
+      <artifactId>interceptor-authentication</artifactId>
+      <version>${crysil.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.crysil</groupId>
+      <artifactId>gatekeeper</artifactId>
+      <version>${crysil.version}</version>
+    </dependency>
+  </dependencies>
+   <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
