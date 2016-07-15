@@ -32,15 +32,15 @@ public class PayloadGenerateKeyRequest extends PayloadRequest {
     this.keyType = keyType == null ? null : keyType.name();
     this.params = new HashMap<>(params);
     this.stickyPolicy = stickyPolicy;
-    this.representation = representation.name();
+    this.representation = representation.getProtocolCompliantString();
   }
 
   public KeyRepresentation getRepresentation() {
-    return KeyRepresentation.valueOf(representation);
+    return KeyRepresentation.value(representation);
   }
 
   public void setRepresentation(final KeyRepresentation representation) {
-    this.representation = representation.name();
+    this.representation = representation.getProtocolCompliantString();
   }
 
   public AuthInfo getStickyPolicy() {

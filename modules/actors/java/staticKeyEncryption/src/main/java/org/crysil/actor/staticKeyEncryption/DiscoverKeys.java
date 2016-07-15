@@ -14,6 +14,7 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.key.InternalCertificate;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
+import org.crysil.protocol.payload.crypto.key.KeyRepresentation;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysResponse;
 
@@ -26,18 +27,19 @@ public class DiscoverKeys implements Command {
 	public PayloadResponse perform(final PayloadRequest input) throws CrySILException {
 		final PayloadDiscoverKeysRequest request = (PayloadDiscoverKeysRequest) input;
 
-		List<Key> keys = new ArrayList<>();
-		if (null == request.getRepresentation())
-			request.setRepresentation("");
+		final List<Key> keys = new ArrayList<>();
+		if (null == request.getRepresentation()) {
+      request.setRepresentation(KeyRepresentation.UNKNOWN);
+    }
 
 		switch (request.getRepresentation()) {
-		case "handle":
+		case HANDLE:
 			final KeyHandle keyhandle = new KeyHandle();
 			keyhandle.setId("testkey");
 			keyhandle.setSubId("1");
 			keys.add(keyhandle);
 			break;
-		case "certificate":
+		case CERTIFICATE:
 			final InternalCertificate internalcertificate = new InternalCertificate();
 			internalcertificate.setId("testkey");
 			internalcertificate.setSubId("1");
