@@ -78,6 +78,8 @@ public class HttpJsonTransmitter implements Module {
 			if("status".equals(result.getPayload().getType())) {
 				throw CrySILException.fromErrorCode(((PayloadStatus) result.getPayload()).getCode());
 			}
+			
+			return result;
 
 		} catch (IOException e) {
 			Logger.error("could not find host {}", e.getMessage());
