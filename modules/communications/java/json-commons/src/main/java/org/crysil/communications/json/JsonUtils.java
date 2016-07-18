@@ -72,6 +72,8 @@ public class JsonUtils implements JsonDeserializer<PolymorphicStuff> {
 		lut.put("signRequest", org.crysil.protocol.payload.crypto.sign.PayloadSignRequest.class);
 		lut.put("signResponse", org.crysil.protocol.payload.crypto.sign.PayloadSignResponse.class);
 		lut.put("standardHeader", org.crysil.protocol.header.StandardHeader.class);
+		lut.put("standardSkyTrustHeader", org.crysil.protocol.header.StandardHeader.class);
+		lut.put("u2fHeader", org.crysil.protocol.header.U2FHeader.class);
 		lut.put("wrappedKey", org.crysil.protocol.payload.crypto.key.WrappedKey.class);
 		lut.put("externalCertificate", org.crysil.protocol.payload.crypto.key.ExternalCertificate.class);
 		lut.put("internalCertificate", org.crysil.protocol.payload.crypto.key.InternalCertificate.class);
@@ -86,6 +88,10 @@ public class JsonUtils implements JsonDeserializer<PolymorphicStuff> {
 				org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateWrappedKeyRequest.class);
 		lut.put("generateWrappedKeyResponse",
 				org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateWrappedKeyResponse.class);
+		lut.put("generateU2FKeyRequest",
+				org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest.class);
+		lut.put("generateU2FKeyResponse",
+				org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyResponse.class);
 		lut.put("exportWrappedKeyResponse",
 				org.crysil.protocol.payload.crypto.exportWrappedKey.PayloadExportWrappedKeyResponse.class);
 		lut.put("exportWrappedKeyRequest",
@@ -122,7 +128,11 @@ public class JsonUtils implements JsonDeserializer<PolymorphicStuff> {
 	public static <T> T fromJson(String jsonString, Class<T> objectType) {
 		if (null == instance)
 			instance = new JsonUtils();
-		return instance.getBuilder().create().fromJson(jsonString, objectType);
+		try {
+			return instance.getBuilder().create().fromJson(jsonString, objectType);
+		} catch (JsonParseException e) {
+			return null;
+		}
 	}
 
 	/**

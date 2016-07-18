@@ -4,6 +4,7 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
+import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.status.PayloadStatus;
@@ -15,7 +16,6 @@ public class PayloadBuilder {
 	public static PayloadDiscoverKeysRequest buildDiscoverKeysRequest(String representation) {
 		PayloadDiscoverKeysRequest tmp = new PayloadDiscoverKeysRequest();
 		tmp.setRepresentation(representation);
-
 		return tmp;
 	}
 
@@ -24,14 +24,22 @@ public class PayloadBuilder {
 		tmp.setAlgorithm(algorithm);
 		tmp.addPlainData(string.getBytes());
 		tmp.addEncryptionKey(key);
+		return tmp;
+	}
 
+	public static PayloadGenerateU2FKeyRequest buildGenerateU2FKeyRequest(byte[] appParam, String certificateSubject, byte[] clientParam,
+			byte[] encodedRandom) {
+		PayloadGenerateU2FKeyRequest tmp = new PayloadGenerateU2FKeyRequest();
+		tmp.setAppParam(appParam);
+		tmp.setCertificateSubject(certificateSubject);
+		tmp.setClientParam(clientParam);
+		tmp.setEncodedRandom(encodedRandom);
 		return tmp;
 	}
 
 	public static PayloadResponse buildStatusResponse(int errorCode) {
 		PayloadStatus tmp = new PayloadStatus();
 		tmp.setCode(errorCode);
-
 		return tmp;
 	}
 
@@ -39,14 +47,12 @@ public class PayloadBuilder {
 		PayloadDecryptRequest tmp = new PayloadDecryptRequest();
 		tmp.setDecryptionKey(decryptionKey);
 		tmp.addEncryptedData(BaseEncoding.base64().decode(plaintext));
-
 		return tmp;
 	}
 
 	public static PayloadDecryptResponse buildDecryptResponse(String plaintext) {
 		PayloadDecryptResponse tmp = new PayloadDecryptResponse();
 		tmp.addPlainData(plaintext.getBytes());
-
 		return tmp;
 	}
 }

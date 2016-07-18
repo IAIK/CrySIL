@@ -7,21 +7,10 @@
         "header": {
             "description": "The world readable header",
             "type": "object",
-            "properties": {
-                "type": {
-                    "enum": ["standardHeader"]
-                },
-                "protocolVersion" : {
-                    "$ref" : "#/definitions/finiteLengthString"
-                },
-                "commandId" : {
-                    "$ref" : "#/definitions/finiteLengthString"
-                },
-                "sessionId" : {
-                    "$ref" : "#/definitions/finiteLengthString"
-                }
-            },
-            "required" : ["type", "protocolVersion", "sessionId"]
+            "oneOf": [
+            	{ "$ref": "#/definitions/standardHeader" },
+            	{ "$ref": "#/definitions/u2fHeader" }
+            ]
         },
         "payload": {
             "description": "The payload",
@@ -36,6 +25,7 @@
                 { "$ref": "#/definitions/encryptCMSResponse" },
                 { "$ref": "#/definitions/exportWrappedKeyResponse" },
                 { "$ref": "#/definitions/generateWrappedKeyResponse" },
+                { "$ref": "#/definitions/generateU2FKeyResponse" },
                 { "$ref": "#/definitions/getKeyResponse" },
                 { "$ref": "#/definitions/signResponse" },
                 { "$ref": "#/definitions/status" }
@@ -44,6 +34,49 @@
     },
     "required": ["header", "payload"],
     "definitions": {
+    	"standardHeader": {
+    		"properties": {
+                "type": {
+                    "enum": ["standardSkyTrustHeader","standardHeader"]
+                },
+                "protocolVersion" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "commandId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "sessionId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                }
+            },
+            "required" : ["type", "protocolVersion", "sessionId"]
+    	},
+    	"u2fHeader": {
+    		"properties": {
+                "type": {
+                    "enum": ["u2fHeader"]
+                },
+                "protocolVersion" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "commandId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "sessionId" : {
+                    "$ref" : "#/definitions/finiteLengthString"
+                },
+                "counter" : {
+                    "type" : "integer"
+                },
+                "path" : {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required" : ["type", "protocolVersion", "sessionId", "counter"]
+    	},
         "authChallengeRequest": {
             "type": "object",
             "properties": {
@@ -183,6 +216,25 @@
                 }
             },
             "required": ["encodedWrappedKey", "encodedX509Certificate"],
+            "additionalProperties": false
+        },
+        "generateU2FKeyResponse": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": ["generateU2FKeyResponse"]
+                },
+                "encodedWrappedKey": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "encodedRandom": {
+                    "$ref": "#/definitions/base64string"
+                },
+                "encodedX509Certificate": {
+                    "$ref": "#/definitions/base64string"
+                }
+            },
+            "required": ["encodedWrappedKey", "encodedRandom", "encodedX509Certificate"],
             "additionalProperties": false
         },
         "getKeyResponse": {
