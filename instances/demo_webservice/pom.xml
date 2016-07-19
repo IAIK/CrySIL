@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.crysil.instance</groupId>
+    <artifactId>demo_webservice</artifactId>
+    <packaging>war</packaging>
+
+
+    <properties>
+      	<!-- General -->
+        <java.version>1.7</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Logging -->
+        <logback.version>1.1.2</logback.version>
+
+        <!-- Testing -->
+        <testng.version>6.8.21</testng.version>
+ 
+        <!-- Maven plugins -->
+        <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
+        
+    	<spring.version>4.1.6.RELEASE</spring.version>
+    	<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+    	<jstl.version>1.2</jstl.version>
+    	<maven-war-plugin.version>2.6</maven-war-plugin.version>
+        <jackson.version>2.5.1</jackson.version>
+    </properties>
+
+    <dependencies>
+    
+        <!-- CrySIL -->
+        
+        <dependency>
+	        <groupId>org.crysil.communications</groupId>
+	        <artifactId>json-commons</artifactId>
+	        <version>2.0-1</version>
+        </dependency>
+        
+        <dependency>
+	        <groupId>org.crysil.actor</groupId>
+	        <artifactId>staticKeyEncryption</artifactId>
+	        <version>2.0-1</version>
+        </dependency>
+	    
+    	<!-- JSON/XML -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Other -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+    </dependencies>
+    
+	 <build>
+	 	<finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven-war-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <version>0.0.1</version>
+</project>
