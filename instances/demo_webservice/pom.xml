@@ -94,15 +94,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven-war-plugin.version}</version>
-                <configuration>
-                    <webXml>web/WEB-INF/web.xml</webXml>
-                    <webResources>
-		            <resource>
-		              <!-- this is relative to the pom.xml directory -->
-		              <directory>web/static</directory>
-		            </resource>
-		          </webResources>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
