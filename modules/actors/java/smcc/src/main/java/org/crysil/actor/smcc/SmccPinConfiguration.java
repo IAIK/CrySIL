@@ -17,7 +17,7 @@ public class SmccPinConfiguration implements PINGUI {
 	}
 
 	/**
-	 * Singleton pattern to provide access to the PINs the user has entered as the SkyTrust authorization
+	 * Singleton pattern to provide access to the PINs the user has entered as the CrySIL authorization
 	 */
 	public static SmccPinConfiguration getInstance() {
 		if (instance == null) {

@@ -17,7 +17,7 @@
 		<!-- Dependencies -->
 		<crysil.version>2.0-1</crysil.version>
 		<testng.version>6.8.21</testng.version>
-		
+
 		<!-- Maven plugins -->
 		<cargo-maven2-plugin.version>1.4.19</cargo-maven2-plugin.version>
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
@@ -42,6 +42,7 @@
 			<groupId>org.crysil.communications</groupId>
 			<artifactId>u2f-http-json-receiver</artifactId>
 			<version>${crysil.version}</version>
+			<type>war</type>
 		</dependency>
 
 		<!-- Test -->
@@ -51,7 +52,7 @@
 	        <version>${crysil.version}</version>
 	        <scope>test</scope>
         </dependency>
-        
+
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
