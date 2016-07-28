@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.crysil.samples.u2f</groupId>
+	<artifactId>software-server</artifactId>
+	<version>2.0-1</version>
+	<packaging>war</packaging>
+	<name>CrySIL U2F Software Server</name>
+
+	<properties>
+		<!-- General -->
+		<java.version>1.7</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Dependencies -->
+		<crysil.version>2.0-1</crysil.version>
+		<testng.version>6.9.10</testng.version>
+
+		<!-- Maven plugins -->
+		<cargo-maven2-plugin.version>1.5.0</cargo-maven2-plugin.version>
+		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+		<maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
+		<maven-war-plugin.version>2.6</maven-war-plugin.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.crysil.actor</groupId>
+			<artifactId>staticKeyEncryption</artifactId>
+			<version>${crysil.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.crysil.communications</groupId>
+			<artifactId>u2f-commons</artifactId>
+			<version>${crysil.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.crysil.communications</groupId>
+			<artifactId>u2f-http-json-receiver</artifactId>
+			<version>${crysil.version}</version>
+			<type>war</type>
+		</dependency>
+
+		<!-- Test -->
+		<dependency>
+	        <groupId>org.crysil.communcations</groupId>
+	        <artifactId>http-json-transmitter</artifactId>
+	        <version>${crysil.version}</version>
+	        <scope>test</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${maven-war-plugin.version}</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>webapp</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

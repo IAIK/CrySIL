@@ -4,6 +4,7 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
+import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyRepresentation;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
@@ -16,7 +17,6 @@ public class PayloadBuilder {
 	public static PayloadDiscoverKeysRequest buildDiscoverKeysRequest(final KeyRepresentation representation) {
 		final PayloadDiscoverKeysRequest tmp = new PayloadDiscoverKeysRequest();
 		tmp.setRepresentation(representation);
-
 		return tmp;
 	}
 
@@ -25,14 +25,22 @@ public class PayloadBuilder {
 		tmp.setAlgorithm(algorithm);
 		tmp.addPlainData(string.getBytes());
 		tmp.addEncryptionKey(key);
+		return tmp;
+	}
 
+	public static PayloadGenerateU2FKeyRequest buildGenerateU2FKeyRequest(byte[] appParam, String certificateSubject, byte[] clientParam,
+			byte[] encodedRandom) {
+		PayloadGenerateU2FKeyRequest tmp = new PayloadGenerateU2FKeyRequest();
+		tmp.setAppParam(appParam);
+		tmp.setCertificateSubject(certificateSubject);
+		tmp.setClientParam(clientParam);
+		tmp.setEncodedRandom(encodedRandom);
 		return tmp;
 	}
 
 	public static PayloadResponse buildStatusResponse(final int errorCode) {
 		final PayloadStatus tmp = new PayloadStatus();
 		tmp.setCode(errorCode);
-
 		return tmp;
 	}
 
@@ -40,14 +48,12 @@ public class PayloadBuilder {
 		final PayloadDecryptRequest tmp = new PayloadDecryptRequest();
 		tmp.setDecryptionKey(decryptionKey);
 		tmp.addEncryptedData(BaseEncoding.base64().decode(plaintext));
-
 		return tmp;
 	}
 
 	public static PayloadDecryptResponse buildDecryptResponse(final String plaintext) {
 		final PayloadDecryptResponse tmp = new PayloadDecryptResponse();
 		tmp.addPlainData(plaintext.getBytes());
-
 		return tmp;
 	}
 }

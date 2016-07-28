@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CrySIL <b>U2F</b> on Android</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_webservice_list">Webservice List</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="main_text_webservice_address">Select a webservice</string>
+    <string name="main_button_pause">Pause</string>
+    <string name="main_button_resume">Resume</string>
+    <string name="main_button_register">Register</string>
+    <string name="main_button_unregister">Unregister</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="webservicelist_delete_confirm">Delete selected webservice entry? This will also try to
+        unregister this device on the webservice.</string>
+    <string name="webservicelist_edit_confirm">Only change the address if you are sure that the server will still
+        recognize your device under the new address</string>
+    <string name="main_btmanage_webservices">Manage Webservices</string>
+    <string name="webservicelist_create_error">Title or address empty!</string>
+    <string name="dialog_webservice_title">Add new Webservice</string>
+    <string name="dialog_webservice_edit_title">Edit Webservice</string>
+    <string name="webservice_delete_error">Couldn\'t unregister from webservice, deleting anyway</string>
+    <string name="title_activity_error">Error</string>
+    <string name="error_keystore">We are sorry, but we can\'t continue executing CrySIL on Android: Your system does
+        not support the Android KeyStore. This is absolutely necessary to run CrySIL on Android. See the details
+        of the error message:</string>
+    <string name="error_gcm">We are sorry, but we can\'t continue executing CrySIL on Android: Your system does
+        not have the Google Play Services installed. This is absolutely necessary to run CrySIL on Android.</string>
+    <string name="error_nfc">We are sorry, but we can\'t continue executing CrySIL on Android: Your system does
+        not have an NFC adapter present. This is absolutely necessary to run CrySIL on Android.</string>
+    <string name="warn_webservices_empty">There are no webservices defined, you may want to add one</string>
+    <string name="warn_webservices_error">Can\'t connect to the webservice</string>
+    <string name="error_gcm_id">No GCM id known, can\'t continue</string>
+    <string name="error_nfc_null">No NFC adapter present to execute operation</string>
+    <string name="nfc_swipe">Swipe your NFC tag now!</string>
+    <string name="nfc_disabled">NFC is disabled, please enable it on your system</string>
+    <string name="crysil_actor_choose_auth">Choose Actor to Handle Request</string>
+    <string name="cert_trust_negative">No</string>
+    <string name="cert_trust_once">Once</string>
+    <string name="cert_trust_always">Always</string>
+    <string name="cert_trust_title">Trust this certificate?</string>
+</resources>

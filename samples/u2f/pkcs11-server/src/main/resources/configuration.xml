@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ SkyTrust Core
+  ~ This file is subject to the license defined in the directory “license” at the top level of this package.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="configuration" class="org.crysil.communications.http.Configuration" >
+    	<property name="validateSchema" value="true" />
+    	<property name="attachedModule">
+    		<bean class="org.crysil.communications.http.ElementBuilder" factory-method="build" />
+    	</property>
+    </bean>
+</beans>

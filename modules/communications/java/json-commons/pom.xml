@@ -11,11 +11,6 @@
   	<relativePath>../../..</relativePath>
   </parent>
   
-    <properties>
-        <gson.version>2.6.1</gson.version>
-        <json-schema-validator.version>2.2.6</json-schema-validator.version>
-    </properties>
-  
     <dependencies>
         <dependency>
             <groupId>org.crysil</groupId>
@@ -35,5 +30,13 @@
             <artifactId>json-schema-validator</artifactId>
             <version>${json-schema-validator.version}</version>
         </dependency>
+        
+		<!-- Test -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
 </project>

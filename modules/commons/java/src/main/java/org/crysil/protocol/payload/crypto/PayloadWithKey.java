@@ -5,9 +5,9 @@
 
 package org.crysil.protocol.payload.crypto;
 
-import java.util.List;
-
 import org.crysil.protocol.payload.crypto.key.Key;
+
+import java.util.List;
 
 /**
  * Indicates that a payload has some key material that might be relevant for

@@ -1,7 +1,8 @@
 package org.crysil.communications.http;
 
-import java.io.IOException;
-
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.RequestBody;
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
 import org.crysil.errorhandling.CrySILException;
@@ -11,9 +12,7 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.status.PayloadStatus;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.RequestBody;
+import java.io.IOException;
 
 /**
  * The Class HttpForwarder.
@@ -49,7 +48,7 @@ public class HttpJsonTransmitter implements Module {
 
 	/**
 	 * Sets whether to validate the response against the schema or not.
-	 * 
+	 *
 	 * @param validate
 	 */
 	public void setValidateSchema(boolean validate) {
@@ -78,7 +77,7 @@ public class HttpJsonTransmitter implements Module {
 			if("status".equals(result.getPayload().getType())) {
 				throw CrySILException.fromErrorCode(((PayloadStatus) result.getPayload()).getCode());
 			}
-			
+
 			return result;
 
 		} catch (IOException e) {

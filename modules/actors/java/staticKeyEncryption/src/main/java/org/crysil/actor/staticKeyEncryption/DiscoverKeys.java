@@ -1,15 +1,7 @@
 package org.crysil.actor.staticKeyEncryption;
 
-import java.security.cert.CertificateEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.crysil.errorhandling.CrySILException;
-import org.crysil.errorhandling.InvalidCertificateException;
-import org.crysil.errorhandling.KeyNotFoundException;
-import org.crysil.errorhandling.KeyStoreUnavailableException;
-import org.crysil.errorhandling.UnsupportedRequestException;
-import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.errorhandling.*;
+import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.key.InternalCertificate;
 import org.crysil.protocol.payload.crypto.key.Key;
@@ -18,14 +10,18 @@ import org.crysil.protocol.payload.crypto.key.KeyRepresentation;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysResponse;
 
+import javax.security.cert.CertificateEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * can handle discover key requests.
  */
 public class DiscoverKeys implements Command {
 
 	@Override
-	public PayloadResponse perform(final PayloadRequest input) throws CrySILException {
-		final PayloadDiscoverKeysRequest request = (PayloadDiscoverKeysRequest) input;
+	public PayloadResponse perform(Request input) throws CrySILException {
+		PayloadDiscoverKeysRequest request = (PayloadDiscoverKeysRequest) input.getPayload();
 
 		final List<Key> keys = new ArrayList<>();
 		if (null == request.getRepresentation()) {
