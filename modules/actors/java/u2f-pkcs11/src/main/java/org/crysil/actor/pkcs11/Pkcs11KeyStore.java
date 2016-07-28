@@ -4,22 +4,24 @@ import iaik.pkcs.pkcs11.provider.Constants;
 import iaik.pkcs.pkcs11.provider.IAIKPkcs11;
 import iaik.security.ec.provider.ECCelerate;
 import iaik.security.provider.IAIK;
-
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 import org.crysil.actor.pkcs11.model.KeyAndCertificate;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.logging.Logger;
+
+import java.io.ByteArrayInputStream;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 public class Pkcs11KeyStore {
 
@@ -31,7 +33,7 @@ public class Pkcs11KeyStore {
 
 	public Pkcs11KeyStore(String hsmLibFile, String password) {
 		this.password = password;
-		
+
 		IAIK.addAsProvider();
 		ECCelerate.addAsProvider();
 
@@ -52,6 +54,7 @@ public class Pkcs11KeyStore {
 
 		loadedKeys = new ArrayList<>();
 		try {
+			final CertificateFactory cf = CertificateFactory.getInstance("X.509");
 			keystore = KeyStore.getInstance(KEYSTORE_TYPE);
 			keystore.load(null, null);
 
@@ -65,7 +68,7 @@ public class Pkcs11KeyStore {
 
 				String alias = keyAlias.contains("/") ? keyAlias.substring(0, keyAlias.indexOf("/")) : keyAlias;
 				KeyAndCertificate newKey = new KeyAndCertificate((PrivateKey) privateKey,
-						javax.security.cert.X509Certificate.getInstance(certificate.getEncoded()), alias);
+						(X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certificate.getEncoded())), alias);
 				loadedKeys.add(newKey);
 			}
 		} catch (Exception e) {

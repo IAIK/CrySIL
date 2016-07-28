@@ -1,6 +1,8 @@
 package org.crysil.actor.pkcs11;
 
-import javax.security.cert.X509Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import org.crysil.actor.pkcs11.strategy.Tuple;
 import org.crysil.actor.pkcs11.strategy.U2FKeyHandleStrategy;

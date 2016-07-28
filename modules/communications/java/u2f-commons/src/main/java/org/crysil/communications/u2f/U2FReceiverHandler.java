@@ -1,8 +1,5 @@
 package org.crysil.communications.u2f;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
 import org.crysil.protocol.Request;
@@ -13,6 +10,9 @@ import org.crysil.protocol.payload.auth.PayloadAuthResponse;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
 import org.crysil.u2f.U2FCounterStore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class U2FReceiverHandler {
 
@@ -99,7 +99,6 @@ public class U2FReceiverHandler {
 		U2FHeader result = new U2FHeader();
 		result.setCommandId(header.getCommandId());
 		result.setCounter(increment ? counterStore.incrementCounter() : counterStore.getCounter());
-		result.setPath(header.getPath());
 		result.setProtocolVersion(header.getProtocolVersion());
 		result.setSessionId(header.getSessionId());
 		return result;

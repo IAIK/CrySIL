@@ -1,10 +1,6 @@
 package org.crysil.actor.u2f;
 
-import java.util.Map;
-
-import javax.security.cert.CertificateEncodingException;
-import javax.security.cert.X509Certificate;
-
+import com.google.common.io.BaseEncoding;
 import org.crysil.actor.u2f.strategy.U2FKeyHandleStrategy;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
@@ -14,7 +10,11 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyResponse;
 
-import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Map;
 
 /**
  * Can generate U2F Keys
@@ -54,7 +54,8 @@ public class GenerateU2FKey implements Command {
 				cachedResponses.put(BaseEncoding.base16().encode(keyHandle), u2fResponseBytes);
 				Logger.debug(String.format("GenerateU2FKey returning keyHandle='%s', cert='%s'", BaseEncoding.base64()
 						.encode(keyHandle), BaseEncoding.base64().encode(certificate)));
-				return buildGenerateWrappedKeyResponsePayload(keyHandle, X509Certificate.getInstance(certificate));
+				final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+				return buildGenerateWrappedKeyResponsePayload(keyHandle, (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certificate)));
 			}
 		} catch (Exception e) {
 			Logger.error("Exception caught", e);

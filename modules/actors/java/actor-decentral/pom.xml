@@ -10,7 +10,6 @@
     <relativePath>../../..</relativePath>
   </parent>
   <artifactId>actor-decentral</artifactId>
-  <version>${crysil.version}</version>
   <name>Decentral Actor</name>
   <dependencies>
     <dependency>

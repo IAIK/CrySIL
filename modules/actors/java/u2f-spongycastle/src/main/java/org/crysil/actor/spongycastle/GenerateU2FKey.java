@@ -1,25 +1,8 @@
 package org.crysil.actor.spongycastle;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.SecureRandom;
-import java.security.Signature;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.util.Arrays;
-import java.util.Date;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.security.cert.CertificateEncodingException;
-import javax.security.cert.X509Certificate;
-
+import com.google.common.io.BaseEncoding;
+import com.google.common.primitives.Bytes;
+import com.google.gson.Gson;
 import org.crysil.actor.spongycastle.model.KeyAndCertificate;
 import org.crysil.actor.spongycastle.model.KeyPairRepresentation;
 import org.crysil.errorhandling.CrySILException;
@@ -33,14 +16,7 @@ import org.spongycastle.asn1.x500.X500Name;
 import org.spongycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.spongycastle.cert.X509CertificateHolder;
 import org.spongycastle.cert.X509v3CertificateBuilder;
-import org.spongycastle.cms.CMSAlgorithm;
-import org.spongycastle.cms.CMSEnvelopedData;
-import org.spongycastle.cms.CMSEnvelopedDataGenerator;
-import org.spongycastle.cms.CMSException;
-import org.spongycastle.cms.CMSProcessableByteArray;
-import org.spongycastle.cms.CMSSignedData;
-import org.spongycastle.cms.CMSSignedDataGenerator;
-import org.spongycastle.cms.CMSTypedData;
+import org.spongycastle.cms.*;
 import org.spongycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.spongycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
 import org.spongycastle.cms.jcajce.JceKeyTransRecipientInfoGenerator;
@@ -54,9 +30,16 @@ import org.spongycastle.operator.ContentSigner;
 import org.spongycastle.operator.OperatorCreationException;
 import org.spongycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
-import com.google.common.io.BaseEncoding;
-import com.google.common.primitives.Bytes;
-import com.google.gson.Gson;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.security.cert.*;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Can generate U2F Keys
@@ -154,7 +137,8 @@ public class GenerateU2FKey extends Command {
 
 			PayloadGenerateU2FKeyResponse generateWrappedKeyResponse = new PayloadGenerateU2FKeyResponse();
 			generateWrappedKeyResponse.setEncodedWrappedKey(encryptedAndSignedWrappedKey);
-			generateWrappedKeyResponse.setCertificate(X509Certificate.getInstance(wrappedKeyCertificate.getEncoded()));
+			final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			generateWrappedKeyResponse.setCertificate((X509Certificate) cf.generateCertificate(new ByteArrayInputStream(wrappedKeyCertificate.getEncoded())));
 			generateWrappedKeyResponse.setEncodedRandom(keyHandle);
 
 			return generateWrappedKeyResponse;
@@ -193,8 +177,7 @@ public class GenerateU2FKey extends Command {
 			CMSEnvelopedData ed = generator.generate(msg, new JceCMSContentEncryptorBuilder(CMSAlgorithm.AES128_CBC)
 					.setProvider(PROVIDER).build());
 			return ed.getEncoded();
-		} catch (CertificateException | CMSException | NoSuchProviderException | CertificateEncodingException
-				| IOException e) {
+		} catch (CertificateException | CMSException | NoSuchProviderException | IOException e) {
 			Logger.error("CMS encryption error", e);
 			throw new UnknownErrorException();
 		}

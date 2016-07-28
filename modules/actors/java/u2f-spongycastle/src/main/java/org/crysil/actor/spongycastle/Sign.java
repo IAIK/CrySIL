@@ -1,20 +1,7 @@
 package org.crysil.actor.spongycastle;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.security.cert.X509Certificate;
-
+import com.google.common.io.BaseEncoding;
+import com.google.gson.Gson;
 import org.crysil.actor.spongycastle.model.KeyAndCertificate;
 import org.crysil.actor.spongycastle.model.KeyPairRepresentation;
 import org.crysil.errorhandling.CrySILException;
@@ -28,20 +15,21 @@ import org.crysil.protocol.payload.crypto.key.WrappedKey;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
 import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cms.CMSEnvelopedData;
-import org.spongycastle.cms.CMSException;
-import org.spongycastle.cms.CMSSignedData;
-import org.spongycastle.cms.CMSTypedData;
-import org.spongycastle.cms.RecipientInformation;
-import org.spongycastle.cms.RecipientInformationStore;
-import org.spongycastle.cms.SignerInformation;
-import org.spongycastle.cms.SignerInformationStore;
+import org.spongycastle.cms.*;
 import org.spongycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.spongycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.spongycastle.operator.OperatorException;
 
-import com.google.common.io.BaseEncoding;
-import com.google.gson.Gson;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Signs data with a U2F Key
@@ -94,14 +82,15 @@ public class Sign extends Command {
 			KeyPairRepresentation keyPairRepresentation = new Gson().fromJson(new String(unwrappedKeybytes),
 					KeyPairRepresentation.class);
 
-			X509Certificate certificate = X509Certificate.getInstance(BaseEncoding.base64().decode(
-					keyPairRepresentation.getEncodedX509Certificate()));
+			final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(
+					BaseEncoding.base64().decode(keyPairRepresentation.getEncodedX509Certificate())));
 			KeyFactory kf = KeyFactory.getInstance(EC);
 			PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(
 					keyPairRepresentation.getEncodedKey()));
 			PrivateKey privateKey = kf.generatePrivate(ks);
 			return new KeyAndCertificate(privateKey, certificate, "u2f");
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException | javax.security.cert.CertificateException e) {
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException | CertificateException e) {
 			Logger.error("Exception while parsing wrapped key", e);
 			throw new UnknownErrorException();
 		}
@@ -118,7 +107,7 @@ public class Sign extends Command {
 			}
 			CMSTypedData signedContent = signedData.getSignedContent();
 			return (byte[]) signedContent.getContent();
-		} catch (IOException | javax.security.cert.CertificateException | CMSException | OperatorException
+		} catch (IOException | CMSException | OperatorException
 				| GeneralSecurityException e) {
 			Logger.error("Failed to parse signed CMS!", e);
 		}

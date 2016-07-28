@@ -1,13 +1,14 @@
 package org.crysil.protocol.payload.crypto.generatekey;
 
-import javax.security.cert.CertificateEncodingException;
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
-
+import com.google.common.io.BaseEncoding;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.PayloadResponse;
 
-import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 /**
  * Holds an encrypted (wrapped) key. Only the service which can decrypt the key container can use the key.
@@ -46,12 +47,13 @@ public class PayloadGenerateWrappedKeyResponse extends PayloadResponse {
 
 	/**
 	 * get the certificate
-	 * 
+	 *
 	 * @return
 	 * @throws CertificateException
 	 */
 	public X509Certificate getCertificate() throws CertificateException {
-		return X509Certificate.getInstance(BaseEncoding.base64().decode(encodedX509Certificate));
+		final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(BaseEncoding.base64().decode(encodedX509Certificate)));
 	}
 
 	/**
@@ -59,8 +61,8 @@ public class PayloadGenerateWrappedKeyResponse extends PayloadResponse {
 	 *
 	 * @param encodedCertificate
 	 *            the new encoded certificate
-	 * @throws CertificateEncodingException 
-	 * @throws javax.security.cert.CertificateEncodingException 
+	 * @throws CertificateEncodingException
+	 * @throws java.security.cert.CertificateEncodingException
 	 */
 	public void setCertificate(X509Certificate cert) throws CertificateEncodingException {
 		this.encodedX509Certificate = BaseEncoding.base64().encode(cert.getEncoded());

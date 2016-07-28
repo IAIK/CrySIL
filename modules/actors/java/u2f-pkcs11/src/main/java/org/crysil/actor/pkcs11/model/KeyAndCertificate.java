@@ -3,7 +3,7 @@ package org.crysil.actor.pkcs11.model;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import javax.security.cert.X509Certificate;
+import java.security.cert.X509Certificate;
 
 public class KeyAndCertificate {
 

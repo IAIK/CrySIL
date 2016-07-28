@@ -9,7 +9,7 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyResponse;
 
-import javax.security.cert.X509Certificate;
+import java.security.cert.X509Certificate;
 
 /**
  * Can generate U2F Keys

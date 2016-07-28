@@ -8,14 +8,15 @@ import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
 import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.security.cert.X509Certificate;
 
 /**
  * holds exactly one hardcoded key for demonstration purposes.
@@ -60,7 +61,7 @@ public class SimpleKeyStore {
 			X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(BaseEncoding.base64().decode(rawPublicKey));
 			pubKey = keyFactory.generatePublic(pubKeySpec);
 
-			final PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(rawPrivateKey));
+			PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(rawPrivateKey));
 			privKey = keyFactory.generatePrivate(privKeySpec);
 
       final CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -73,7 +74,7 @@ public class SimpleKeyStore {
 			privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(rawPrivateKeyECDSA));
 			privKeyECDSA = keyFactory.generatePrivate(privKeySpec);
 
-			certEC = X509Certificate.getInstance(BaseEncoding.base64().decode(rawCertEC));
+			certEC = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(BaseEncoding.base64().decode(rawCertEC)));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new KeyStoreUnavailableException();

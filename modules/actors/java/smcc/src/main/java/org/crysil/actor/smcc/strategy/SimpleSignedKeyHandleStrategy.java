@@ -1,13 +1,13 @@
 package org.crysil.actor.smcc.strategy;
 
-import java.io.ByteArrayInputStream;
-import java.security.Signature;
-
-import javax.security.cert.X509Certificate;
-
 import at.gv.egiz.smcc.SignatureCard;
 import at.gv.egiz.smcc.SignatureCard.KeyboxName;
 import at.gv.egiz.smcc.pin.gui.PINGUI;
+
+import java.io.ByteArrayInputStream;
+import java.security.Signature;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 /**
  * This implements a simple key handle strategy: We only sign the app Param with the RSA key from the card. This has the
@@ -22,8 +22,9 @@ public class SimpleSignedKeyHandleStrategy extends U2FKeyHandleStrategy {
 	protected boolean verifyKeyHandle(byte[] keyHandle, byte[] appParam, byte[] clientParam, SignatureCard card,
 			PINGUI pinGUI) {
 		try {
-			X509Certificate certificate = X509Certificate.getInstance(card.getCertificate(KeyboxName.CERTIFIED_KEYPAIR,
-					pinGUI));
+			final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(
+					card.getCertificate(KeyboxName.CERTIFIED_KEYPAIR, pinGUI)));
 			Signature signature = Signature.getInstance(SIG_RSA);
 			signature.initVerify(certificate.getPublicKey());
 			signature.update(appParam);

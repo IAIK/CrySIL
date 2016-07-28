@@ -1,15 +1,15 @@
 package org.crysil.protocol.payload.crypto.modifyWrappedKey;
 
-import java.util.Arrays;
-
-import javax.security.cert.CertificateEncodingException;
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
-
+import com.google.common.io.BaseEncoding;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.payload.PayloadResponse;
 
-import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 /**
  * Holds the modified version of the initial wrapped key.
@@ -53,7 +53,8 @@ public class PayloadModifyWrappedKeyResponse extends PayloadResponse {
 	 * @throws CertificateException
 	 */
 	public X509Certificate getCertificate() throws CertificateException {
-		return X509Certificate.getInstance(BaseEncoding.base64().decode(encodedX509Certificate));
+		final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(BaseEncoding.base64().decode(encodedX509Certificate)));
 	}
 
 	/**
@@ -62,7 +63,7 @@ public class PayloadModifyWrappedKeyResponse extends PayloadResponse {
 	 * @param encodedCertificate
 	 *            the new encoded certificate
 	 * @throws CertificateEncodingException
-	 * @throws javax.security.cert.CertificateEncodingException
+	 * @throws java.security.cert.CertificateEncodingException
 	 */
 	public void setCertificate(final X509Certificate cert) throws CertificateEncodingException {
 		this.encodedX509Certificate = BaseEncoding.base64().encode(cert.getEncoded());

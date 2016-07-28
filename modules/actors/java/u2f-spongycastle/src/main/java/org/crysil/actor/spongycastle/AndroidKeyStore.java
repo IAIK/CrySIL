@@ -1,18 +1,21 @@
 package org.crysil.actor.spongycastle;
 
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.crysil.actor.spongycastle.model.KeyAndCertificate;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.logging.Logger;
+
+import java.io.ByteArrayInputStream;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class AndroidKeyStore {
 
@@ -33,6 +36,7 @@ public class AndroidKeyStore {
 		}
 		loadedKeys = new ArrayList<>();
 		try {
+			final CertificateFactory cf = CertificateFactory.getInstance("X.509");
 			keystore = KeyStore.getInstance(KEYSTORE_TYPE);
 			keystore.load(null, null);
 
@@ -46,7 +50,7 @@ public class AndroidKeyStore {
 
 				String alias = keyAlias.contains("/") ? keyAlias.substring(0, keyAlias.indexOf("/")) : keyAlias;
 				KeyAndCertificate newKey = new KeyAndCertificate((PrivateKey) privateKey,
-						javax.security.cert.X509Certificate.getInstance(certificate.getEncoded()), alias);
+						(X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certificate.getEncoded())), alias);
 				loadedKeys.add(newKey);
 			}
 		} catch (Exception e) {

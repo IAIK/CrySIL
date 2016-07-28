@@ -10,7 +10,7 @@ import org.crysil.protocol.payload.crypto.key.KeyRepresentation;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysResponse;
 
-import javax.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 

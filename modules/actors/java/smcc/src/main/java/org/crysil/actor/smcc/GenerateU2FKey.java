@@ -1,10 +1,10 @@
 package org.crysil.actor.smcc;
 
-import java.util.Locale;
-
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
-
+import at.gv.egiz.smcc.SignatureCard;
+import at.gv.egiz.smcc.SignatureCard.KeyboxName;
+import at.gv.egiz.smcc.SignatureCardException;
+import at.gv.egiz.smcc.pin.gui.PINGUI;
+import at.gv.egiz.smcc.util.SMCCHelper;
 import org.crysil.actor.smcc.strategy.Tuple;
 import org.crysil.actor.smcc.strategy.U2FKeyHandleStrategy;
 import org.crysil.errorhandling.CrySILException;
@@ -15,11 +15,11 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyResponse;
 
-import at.gv.egiz.smcc.SignatureCard;
-import at.gv.egiz.smcc.SignatureCard.KeyboxName;
-import at.gv.egiz.smcc.SignatureCardException;
-import at.gv.egiz.smcc.pin.gui.PINGUI;
-import at.gv.egiz.smcc.util.SMCCHelper;
+import java.io.ByteArrayInputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Locale;
 
 /**
  * Can generate U2F Keys
@@ -34,10 +34,11 @@ public class GenerateU2FKey implements Command {
 		SMCCHelper smccHelper = new SMCCHelper();
 		SignatureCard card = smccHelper.getSignatureCard(Locale.getDefault());
 
-		javax.security.cert.X509Certificate signingCertificate;
+		X509Certificate signingCertificate;
 		try {
-			signingCertificate = X509Certificate.getInstance(card.getCertificate(KeyboxName.SECURE_SIGNATURE_KEYPAIR,
-					pinGUI));
+			final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			signingCertificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(
+					card.getCertificate(KeyboxName.SECURE_SIGNATURE_KEYPAIR, pinGUI)));
 		} catch (SignatureCardException | InterruptedException | CertificateException e) {
 			throw new InvalidCertificateException();
 		}

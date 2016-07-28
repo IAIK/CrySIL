@@ -24,27 +24,27 @@
     </properties>
 
     <dependencies>
-    
+
         <!-- CrySIL -->
         <dependency>
-	        <groupId>org.crysil.commons</groupId>
+	        <groupId>org.crysil</groupId>
 	        <artifactId>commons</artifactId>
 	        <version>${crysil.version}</version>
         </dependency>
-        
+
         <dependency>
 	        <groupId>org.crysil.communications</groupId>
 	        <artifactId>u2f-commons</artifactId>
 	        <version>${crysil.version}</version>
         </dependency>
-        
+
         <dependency>
 	        <groupId>org.crysil.actor</groupId>
 	        <artifactId>smcc</artifactId>
 	        <version>${crysil.version}</version>
 	        <scope>test</scope>
         </dependency>
-	    
+
     	<!-- JSON/XML -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

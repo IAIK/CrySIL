@@ -14,11 +14,11 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.crysil.commons</groupId>
+			<groupId>org.crysil</groupId>
 			<artifactId>commons</artifactId>
 			<version>${crysil.version}</version>
 		</dependency>
-        
+
       	<dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -30,13 +30,13 @@
 			<artifactId>core</artifactId>
 			<version>${spongycastle.version}</version>
 		</dependency>
-        
+
 		<dependency>
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>prov</artifactId>
 			<version>${spongycastle.version}</version>
 		</dependency>
-        
+
 		<dependency>
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>pkix</artifactId>

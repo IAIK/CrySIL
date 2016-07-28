@@ -11,8 +11,7 @@
     <relativePath>../..</relativePath>
   </parent>
   <artifactId>gatekeeper</artifactId>
-  <version>${crysil.version}</version>
-  <name>CrySIL Tor Lib</name>
+  <name>CrySIL Gatekeeper</name>
   <dependencies>
     <dependency>
       <groupId>org.crysil</groupId>

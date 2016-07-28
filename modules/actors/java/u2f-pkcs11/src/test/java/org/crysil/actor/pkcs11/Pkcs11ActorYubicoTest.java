@@ -1,15 +1,9 @@
 package org.crysil.actor.pkcs11;
 
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.PublicKey;
-import java.security.Signature;
-
-import javax.security.cert.CertificateException;
-
+import com.google.common.primitives.Bytes;
 import org.crysil.actor.pkcs11.strategy.YubicoRandomKeyHandleStrategy;
 import org.crysil.commons.Module;
-import org.crysil.errorhandling.UnsupportedRequestException;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.header.StandardHeader;
@@ -22,7 +16,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.primitives.Bytes;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.cert.CertificateException;
 
 /**
  * Tests require a smart card connected to this machine and the correct PIN in {@link Pkcs11Actor}
@@ -41,7 +39,7 @@ public class Pkcs11ActorYubicoTest {
 	}
 
 	@Test(enabled = false)
-	public void testGenerateU2FKey() throws UnsupportedRequestException, CertificateException {
+	public void testGenerateU2FKey() throws CrySILException, CertificateException {
 		PayloadGenerateU2FKeyRequest generatePayload = new PayloadGenerateU2FKeyRequest();
 		generatePayload.setAppParam(appId);
 		generatePayload.setCertificateSubject("CN=Test");
@@ -80,7 +78,7 @@ public class Pkcs11ActorYubicoTest {
 	}
 
 	@Test(dependsOnMethods = "testGenerateU2FKey", enabled = false)
-	public void testSign() throws UnsupportedRequestException, CertificateException, GeneralSecurityException {
+	public void testSign() throws CrySILException, CertificateException, GeneralSecurityException {
 		PayloadSignRequest signPayload = new PayloadSignRequest();
 		signPayload.setAlgorithm("SHA256withECDSA");
 		byte[] hashToBeSigned = buildSignatureBytes(appId, calculateDigest("bar"), 1);

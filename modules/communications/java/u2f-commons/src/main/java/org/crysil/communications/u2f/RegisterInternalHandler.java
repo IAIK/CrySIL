@@ -1,5 +1,7 @@
 package org.crysil.communications.u2f;
 
+import com.fasterxml.jackson.core.util.ByteArrayBuilder;
+import com.google.common.primitives.Bytes;
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
 import org.crysil.communications.u2f.data.RegisterInternalRequest;
@@ -9,10 +11,9 @@ import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyResponse;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
 
-import com.fasterxml.jackson.core.util.ByteArrayBuilder;
-import com.google.common.primitives.Bytes;
+import java.security.cert.X509Certificate;
 
-import static org.crysil.communications.u2f.U2FUtil.*;
+import static org.crysil.communications.u2f.U2FUtil.stripMetaData;
 
 public class RegisterInternalHandler implements Handler {
 
@@ -52,7 +53,7 @@ public class RegisterInternalHandler implements Handler {
 
 			PayloadGenerateU2FKeyResponse payloadGenKey = (PayloadGenerateU2FKeyResponse) responseGenKey.getPayload();
 
-			javax.security.cert.X509Certificate cert = payloadGenKey.getCertificate();
+			X509Certificate cert = payloadGenKey.getCertificate();
 			keyEncoded = cert.getPublicKey().getEncoded();
 			if (keyEncoded.length > 65) {
 				keyEncoded = stripMetaData(keyEncoded);

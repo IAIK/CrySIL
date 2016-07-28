@@ -12,7 +12,6 @@
   </parent>
 
   <artifactId>lib-decentral</artifactId>
-  <version>${crysil.version}</version>
   <name>Interfaces for Decentralised CrySIL</name>
   <dependencies>
   </dependencies>

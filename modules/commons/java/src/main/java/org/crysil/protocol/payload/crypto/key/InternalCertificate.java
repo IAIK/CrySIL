@@ -37,7 +37,7 @@ public class InternalCertificate extends KeyHandle {
    * @param encodedCertificate
    *          the new encoded certificate
    * @throws CertificateEncodingException
-   * @throws javax.security.cert.CertificateEncodingException
+   * @throws java.security.cert.CertificateEncodingException
    */
   public void setCertificate(final X509Certificate cert) throws CertificateEncodingException {
     this.encodedCertificate = BaseEncoding.base64().encode(cert.getEncoded());
