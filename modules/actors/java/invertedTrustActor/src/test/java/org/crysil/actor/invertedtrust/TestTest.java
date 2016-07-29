@@ -21,6 +21,7 @@ import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
+import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateKeyRequest;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateKeyResponse;
 import org.crysil.protocol.payload.crypto.key.KeyRepresentation;
@@ -34,13 +35,14 @@ public class TestTest {
   @Test
 	public void testGenerate() throws CrySILException, KeyStoreUnavailableException {
 
-    final Module DUT = new InvertedTrustActor(new File("keyStore.uber"),"foo".toCharArray());
+    final Module DUT = new InvertedTrustActor(new File("testStore.uber"),"foo".toCharArray());
     final Request request = new Request();
     final Map<String, Object> params = new HashMap<>();
     params.put("keySize", 128);
     PayloadGenerateKeyRequest payload = new PayloadGenerateKeyRequest(KeyType.AES, params,
         KeyRepresentation.WRAPPED, null);
     request.setPayload(payload);
+    request.setHeader(new StandardHeader());
     Response resp = DUT.take(request);
 
     Assert.assertEquals(resp.getPayload().getType(), "generateKeyResponse");
@@ -58,7 +60,7 @@ public class TestTest {
 
   @Test()
   public void testEncryptDecrypt() throws UnsupportedRequestException, CMSException, IOException, KeyStoreUnavailableException {
-    final InvertedTrustActor actor = new InvertedTrustActor(new File("keyStore.uber"),"foo".toCharArray());
+    final InvertedTrustActor actor = new InvertedTrustActor(new File("testStore.uber"),"foo".toCharArray());
     final WrappedKey encryptionKey = actor.genWrappedKey();
     final ByteArrayOutputStream encrypted = new ByteArrayOutputStream();
     final CmsEnvelopedOutputStream cmsOut = actor.genCmsOutputStream(encrypted, encryptionKey);
