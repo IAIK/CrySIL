@@ -517,7 +517,7 @@ public class CrysilAPI extends OneToOneInterlink{
             wrappedKey.setWrappedKeyCertificate(new X509Certificate(new ByteArrayInputStream(PayloadGenerateWrappedKeyResponse.getCertificate().getEncoded())));
             
             return wrappedKey;
-        } catch (CertificateException | IOException | javax.security.cert.CertificateException e) {
+        } catch (CertificateException | IOException e) {
             e.printStackTrace();
         }
 
@@ -557,7 +557,7 @@ public class CrysilAPI extends OneToOneInterlink{
             modifiedWrappedKey.setWrappedKeyCertificate(new X509Certificate(new ByteArrayInputStream(PayloadModifyWrappedKeyResponse.getCertificate().getEncoded())));
             
             return modifiedWrappedKey;
-        } catch (CertificateException | IOException | javax.security.cert.CertificateException e) {
+        } catch (CertificateException | IOException e) {
             e.printStackTrace();
         }
 
@@ -594,7 +594,7 @@ public class CrysilAPI extends OneToOneInterlink{
             exportedKey.setX509Certificate(new X509Certificate(new ByteArrayInputStream(PayloadExportWrappedKeyResponse.getCertificate().getEncoded())));
             
             return exportedKey;
-        } catch (CertificateException | IOException | javax.security.cert.CertificateException e) {
+        } catch (CertificateException | IOException e) {
             e.printStackTrace();
         }
 
