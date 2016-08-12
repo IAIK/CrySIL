@@ -20,3 +20,10 @@ The following other modules are implemented:
 Be sure to check out the samples too:
 * [U2F sample](./samples/u2f/)
 * [Android U2F sample](./samples/android/)
+
+Webservice demo:
+* Resource filter (bootstrap)
+
+JCE receiver demo:
+* Run with openjdk(javaSE-1.7)
+* Add external jar: jfxrt.jar
