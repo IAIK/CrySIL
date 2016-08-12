@@ -1,25 +1,26 @@
 package org.crysil.actor.staticKeyEncryption;
 
-import org.crysil.errorhandling.CrySILException;
-import org.crysil.errorhandling.UnknownErrorException;
-import org.crysil.protocol.Request;
-import org.crysil.protocol.payload.PayloadResponse;
-import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
-import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+
+import org.crysil.errorhandling.CrySILException;
+import org.crysil.errorhandling.UnknownErrorException;
+import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.PayloadResponse;
+import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
+import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 
 public class Decrypt implements Command {
 
 	@Override
-	public PayloadResponse perform(Request input) throws CrySILException {
-		PayloadDecryptRequest request = (PayloadDecryptRequest) input.getPayload();
+	public PayloadResponse perform(PayloadRequest input) throws CrySILException {
+		PayloadDecryptRequest request = (PayloadDecryptRequest) input;
 
 		try {
 			// prepare stuff

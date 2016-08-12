@@ -1,28 +1,29 @@
 package org.crysil.actor.staticKeyEncryption;
 
-import org.crysil.errorhandling.CrySILException;
-import org.crysil.errorhandling.UnknownErrorException;
-import org.crysil.protocol.Request;
-import org.crysil.protocol.payload.PayloadResponse;
-import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
-import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptResponse;
-import org.crysil.protocol.payload.crypto.key.Key;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import org.crysil.errorhandling.CrySILException;
+import org.crysil.errorhandling.UnknownErrorException;
+import org.crysil.protocol.payload.PayloadRequest;
+import org.crysil.protocol.payload.PayloadResponse;
+import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
+import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptResponse;
+import org.crysil.protocol.payload.crypto.key.Key;
+
 public class Encrypt implements Command {
 
 	@Override
-	public PayloadResponse perform(Request input) throws CrySILException {
-		PayloadEncryptRequest request = (PayloadEncryptRequest) input.getPayload();
+	public PayloadResponse perform(PayloadRequest input) throws CrySILException {
+		PayloadEncryptRequest request = (PayloadEncryptRequest) input;
 
 		try {
 			// prepare stuff

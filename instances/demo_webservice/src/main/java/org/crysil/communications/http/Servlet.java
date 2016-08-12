@@ -1,6 +1,7 @@
 package org.crysil.communications.http;
 
 import org.crysil.actor.staticKeyEncryption.StaticKeyEncryptionActor;
+import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
 import org.crysil.communications.json.JsonUtils;
 import org.crysil.errorhandling.CrySILException;
@@ -35,7 +36,9 @@ public class Servlet extends OneToOneInterlink {
 		/**if (WebAppInitializer.getConfiguration().isValidateSchema() && !JsonUtils.isValidJSONRequest(rawRequest)) {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}**/
-
+		
+		System.out.println("Request!!!");
+		
 		Request request = JsonUtils.fromJson(rawRequest, Request.class);
 		if (request == null) {
 			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -47,6 +50,9 @@ public class Servlet extends OneToOneInterlink {
 
 		//no extra JCE provider required for these basic operations
 	    final StaticKeyEncryptionActor actor = new StaticKeyEncryptionActor();
+	    //Module m = this.getAttachedModule();
+	    //System.out.println(m.getClass());
+		//final StaticKeyEncryptionActor actor = (StaticKeyEncryptionActor) this.getAttachedModule();
 	    try {
 			response = actor.take(request);
 		} catch (CrySILException e) {
