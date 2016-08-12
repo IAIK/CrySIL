@@ -24,6 +24,7 @@ import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
+import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadRequest;
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
@@ -38,14 +39,14 @@ import org.apache.commons.io.IOUtils;
 public class DecryptCMS implements Command {
 
 	@Override
-	public PayloadResponse perform(PayloadRequest input) throws CrySILException {
+	public PayloadResponse perform(Request input) throws CrySILException {
 		
 		try {
-			if (!(input instanceof PayloadDecryptCMSRequest)) {
+			if (!(input.getPayload() instanceof PayloadDecryptCMSRequest)) {
 				throw new UnknownErrorException();
 			}
 
-			PayloadDecryptCMSRequest payloadEncryptCMSRequest = (PayloadDecryptCMSRequest) input;
+			PayloadDecryptCMSRequest payloadEncryptCMSRequest = (PayloadDecryptCMSRequest) input.getPayload();
 			List<byte[]> encryptedCMSData = payloadEncryptCMSRequest.getEncryptedCMSData();
 			
 			Key key = (Key) payloadEncryptCMSRequest.getDecryptionKey();

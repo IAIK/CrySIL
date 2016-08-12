@@ -29,6 +29,7 @@ import org.bouncycastle.crypto.CryptoException;
 
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
+import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadRequest;
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
@@ -41,14 +42,14 @@ import org.crysil.protocol.payload.crypto.key.Key;
 public class EncryptCMS implements Command {
 
 	@Override
-	public PayloadResponse perform(PayloadRequest input) throws CrySILException {
+	public PayloadResponse perform(Request input) throws CrySILException {
 		
 		try {
-			if (!(input instanceof PayloadEncryptCMSRequest)) {
+			if (!(input.getPayload() instanceof PayloadEncryptCMSRequest)) {
 	            throw new UnknownErrorException();
 	        }
 			
-	        PayloadEncryptCMSRequest PayloadEncryptCMSRequest = (PayloadEncryptCMSRequest) input;
+	        PayloadEncryptCMSRequest PayloadEncryptCMSRequest = (PayloadEncryptCMSRequest) input.getPayload();
 	        List<Key> encryptionKeys = PayloadEncryptCMSRequest.getEncryptionKeys();
 	        List<byte[]> plainDataList = PayloadEncryptCMSRequest.getPlainData();
 	        String algorithm = PayloadEncryptCMSRequest.getAlgorithm();
