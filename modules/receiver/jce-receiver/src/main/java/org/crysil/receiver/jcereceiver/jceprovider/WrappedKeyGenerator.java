@@ -5,19 +5,23 @@
 
 package org.crysil.receiver.jcereceiver.jceprovider;
 
-import org.crysil.logging.Logger;
-import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilHighLevelAPI;
-import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKey;
-import org.crysil.errorhandling.CrySILException;
-
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.List;
+
+import org.crysil.errorhandling.CrySILException;
+import org.crysil.logging.Logger;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKey;
 
 /**
  * The Class WrappedKeyGenerator.
  */
 public class WrappedKeyGenerator extends KeyPairGenerator {
+
+	protected CrysilProvider provider;
     
     /** The key type. */
     private String keyType;
@@ -72,9 +76,9 @@ public class WrappedKeyGenerator extends KeyPairGenerator {
     @Override
     public KeyPair generateKeyPair() {
         try {
-            CrysilHighLevelAPI.getInstance().setCurrentCommandID(currentCommandId);
-            CrysilKey crysilKey = CrysilHighLevelAPI.getInstance().generateWrappedKey(keyType,encryptionkeys,subject);
-            return new KeyPair((PublicKey)crysilKey,(PrivateKey)crysilKey);
+			provider.getApi().setCurrentCommandID(currentCommandId);
+			CrysilKey crysilKey = provider.getApi().generateWrappedKey(keyType, encryptionkeys, subject);
+            return new KeyPair(crysilKey,crysilKey);
         } catch (CrySILException e) {
             Logger.error("error while generating wrapped key", e);
         }

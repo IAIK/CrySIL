@@ -1,7 +1,5 @@
 package org.crysil.receiver.jcereceiver.jceprovider;
 
-import java.security.Provider;
-
 import common.CrySilAlgorithm;
 
 
@@ -14,7 +12,6 @@ public class Signatures {
      * The Class SHA1withRSA.
      */
     public static class SHA1withRSA extends GenericSignature {
-		protected Provider provider;
         
         /**
          * Instantiates a new SH a1with rsa.
@@ -29,7 +26,6 @@ public class Signatures {
      * The Class SHA224withRSA.
      */
     public static class SHA224withRSA extends GenericSignature {
-		protected Provider provider;
         
         /**
          * Instantiates a new SH a224with rsa.
@@ -44,7 +40,6 @@ public class Signatures {
      * The Class SHA256withRSA.
      */
     public static class SHA256withRSA extends GenericSignature {
-		protected Provider provider;
         
         /**
          * Instantiates a new SH a256with rsa.
@@ -59,7 +54,6 @@ public class Signatures {
      * The Class SHA512withRSA.
      */
     public static class SHA512withRSA extends GenericSignature {
-		protected Provider provider;
         
         /**
          * Instantiates a new SH a512with rsa.
@@ -74,7 +68,6 @@ public class Signatures {
      * The Class NONEwithRSA.
      */
     public static class NONEwithRSA extends GenericSignature {
-		protected Provider provider;
         
         /**
          * Instantiates a new NON ewith rsa.

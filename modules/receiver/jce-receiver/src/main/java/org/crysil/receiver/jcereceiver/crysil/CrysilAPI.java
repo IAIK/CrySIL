@@ -4,6 +4,16 @@
  */
 
 package org.crysil.receiver.jcereceiver.crysil;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
@@ -41,26 +51,12 @@ import iaik.utils.Base64Exception;
 import iaik.utils.Util;
 import iaik.x509.X509Certificate;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.List;
-
-import element.CrysilElement;
-
 /**
  * Crysil low level API, for internal use only
  * The API directly uses the POJOs which are used for modelling the JSON based protocol.
  */
-public class CrysilAPI extends OneToOneInterlink{
+public class CrysilAPI extends OneToOneInterlink {
 	
-    /** The receiver. */
-    private APIReceiver receiver = (APIReceiver) CrysilElement.get().getReceiver("APIReceiver");
-
     /** The last request. */
     private Request lastRequest;
 
@@ -73,25 +69,8 @@ public class CrysilAPI extends OneToOneInterlink{
     /**
      * Instantiates a new crysil api.
      */
-    protected CrysilAPI() {
-    }
-
-    /**
-     * The Class APIHolder.
-     */
-    private static class APIHolder {
-
-        /** The Constant INSTANCE. */
-        private static final CrysilAPI INSTANCE = new CrysilAPI();
-    }
-
-    /**
-     * Gets the single instance of CrysilAPI.
-     *
-     * @return single instance of CrysilAPI
-     */
-    public static CrysilAPI getInstance() {
-        return APIHolder.INSTANCE;
+	public CrysilAPI(Module module) {
+		attach(module);
     }
 
     /**
@@ -103,7 +82,7 @@ public class CrysilAPI extends OneToOneInterlink{
      */
     private Response forwardRequest(Request crysilRequest) throws CrySILException {
         lastRequest = crysilRequest;
-        Response crysilResponse = receiver.take(crysilRequest);
+		Response crysilResponse = getAttachedModule().take(crysilRequest);
         lastResponse = crysilResponse;
 
         if (crysilResponse != null && crysilResponse.getPayload() instanceof PayloadStatus) {

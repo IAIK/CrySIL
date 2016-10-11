@@ -5,20 +5,30 @@
 
 package org.crysil.receiver.jcereceiver.jceprovider;
 
-import org.crysil.errorhandling.CrySILException;
-import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilHighLevelAPI;
-import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKey;
-
 import java.io.ByteArrayOutputStream;
-
-import javax.crypto.*;
-import java.security.*;
+import java.security.AlgorithmParameters;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.CipherSpi;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import org.crysil.errorhandling.CrySILException;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKey;
 
 /**
  * The Class GenericCipher.
  */
 public class GenericCipher extends CipherSpi {
+
+	protected CrysilProvider provider;
     
     /** The opmode. */
     protected int opmode;
@@ -52,11 +62,11 @@ public class GenericCipher extends CipherSpi {
         try {
             byte[] load;
             if (opmode == Cipher.DECRYPT_MODE) {
-                CrysilHighLevelAPI.getInstance().setCurrentCommandID(currentCommandID);
-                load = CrysilHighLevelAPI.getInstance().decryptDataRequest(algorithm, bytes, crysilKey);
+				provider.getApi().setCurrentCommandID(currentCommandID);
+				load = provider.getApi().decryptDataRequest(algorithm, bytes, crysilKey);
             } else {
-                CrysilHighLevelAPI.getInstance().setCurrentCommandID(currentCommandID);
-                load = CrysilHighLevelAPI.getInstance().encryptDataRequest(algorithm, bytes, crysilKey);
+				provider.getApi().setCurrentCommandID(currentCommandID);
+				load = provider.getApi().encryptDataRequest(algorithm, bytes, crysilKey);
             }
             return load;
         } catch (CrySILException e) {

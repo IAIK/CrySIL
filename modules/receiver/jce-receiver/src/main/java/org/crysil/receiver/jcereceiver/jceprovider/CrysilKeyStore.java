@@ -13,7 +13,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.KeyStoreSpi;
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -23,7 +22,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.crysil.errorhandling.CrySILException;
-import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilHighLevelAPI;
 import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKey;
 import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKeyHandle;
 import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKeyInternalCertificate;
@@ -33,14 +31,11 @@ import org.crysil.receiver.jcereceiver.crysilhighlevelapi.KeyRepresentation;
  * The Class CrysilKeyStore.
  */
 public class CrysilKeyStore extends KeyStoreSpi {
-	protected Provider provider;
+	protected CrysilProvider provider;
     
     /** The table. */
     private Hashtable<String, CrysilKey> table = new Hashtable<>();
     
-    /** The current command id. */
-    private String currentCommandId;
-
     /* (non-Javadoc)
      * @see java.security.KeyStoreSpi#engineLoad(java.security.KeyStore.LoadStoreParameter)
      */
@@ -49,8 +44,6 @@ public class CrysilKeyStore extends KeyStoreSpi {
         if (param!=null) {
             if (!(param instanceof CommandIdParameters)) {
                 throw new IOException(param.getClass() + " parameters not supported");
-            } else {
-                currentCommandId = ((CommandIdParameters) param).getCommandId();
             }
         }
         this.engineLoad(null,null);
@@ -147,8 +140,7 @@ public class CrysilKeyStore extends KeyStoreSpi {
         table.clear();
 
         try {
-            CrysilHighLevelAPI.getInstance().setCurrentCommandID(currentCommandId);
-            List<CrysilKey> crysilKeys = CrysilHighLevelAPI.getInstance().discoverKeys(KeyRepresentation.CERTIFICATE);
+			List<CrysilKey> crysilKeys = provider.getApi().discoverKeys(KeyRepresentation.CERTIFICATE);
             for (CrysilKey crysilKey : crysilKeys) {
                 CrysilKeyHandle handle = (CrysilKeyHandle)crysilKey;
                 table.put(handle.getId() + handle.getSubId(), crysilKey);

@@ -9,9 +9,8 @@ import java.security.Provider;
 
 import org.crysil.commons.Interlink;
 import org.crysil.commons.Module;
-import org.crysil.errorhandling.CrySILException;
-import org.crysil.protocol.Request;
-import org.crysil.protocol.Response;
+import org.crysil.receiver.jcereceiver.crysil.CrysilAPI;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilHighLevelAPI;
 import org.crysil.receiver.jcereceiver.jceprovider.Ciphers.CMS;
 import org.crysil.receiver.jcereceiver.jceprovider.Ciphers.RSAES_PKCS1_V1_5;
 import org.crysil.receiver.jcereceiver.jceprovider.Ciphers.RSAES_RAW;
@@ -25,12 +24,13 @@ import org.crysil.receiver.jcereceiver.jceprovider.Signatures.SHA512withRSA;
 import common.CrySilAlgorithm;
 
 public class CrysilProvider extends Provider
-		implements Interlink, Module
+		implements Interlink
 {
 
 	private static final long serialVersionUID = -4049655518950675946L;
 	private static CrysilProvider instance0;
 	private Module module;
+	private CrysilHighLevelAPI api;
 
 	/**
 	 * Instantiates a new crysil provider.
@@ -211,21 +211,23 @@ public class CrysilProvider extends Provider
 	}
 
 	@Override
-	public Response take(Request request) throws CrySILException {
-		return module.take(request);
-	}
-
-	@Override
 	public void attach(Module module) {
 		this.module = module;
+
+		api = new CrysilHighLevelAPI(new CrysilAPI(module));
 	}
 
 	@Override
 	public void detach(Module module) {
 		this.module = null;
+		api = null;
 	}
 
 	public Module getAttachedModule() {
 		return module;
+	}
+
+	public CrysilHighLevelAPI getApi() {
+		return api;
 	}
 }

@@ -35,39 +35,12 @@ public class CrysilHighLevelAPI {
     protected CrysilAPI crysilAPI;
 
     /**
-     * Hidden constructor.
-     */
-    protected CrysilHighLevelAPI() {
-    }
-
-    /**
      * Constructor that is used for initializing the high-level API when the low-level API is already available.
      * @param crysilAPI
      * A low-level API instance.
      */
     public CrysilHighLevelAPI(CrysilAPI crysilAPI) {
         this.crysilAPI = crysilAPI;
-    }
-
-    /**
-     * Internal class for holding the CrysilHighLevelAPI singleton.
-     */
-    private static class APIHolder {
-        
-        /** The Constant INSTANCE. */
-        private static final CrysilHighLevelAPI INSTANCE = new CrysilHighLevelAPI(CrysilAPI.getInstance());
-    }
-
-    /**
-     * Returns a singleton of the CrysilHighLevelAPI.
-     * The call assumes that the API has already been initialized via
-     * CrysilAPIFactory.initialize("http://crysil-instance.example.com/json");
-     *
-     * @return
-     * The CrysilHighLevelAPI singleton is returned
-     */
-    public static CrysilHighLevelAPI getInstance() {
-        return APIHolder.INSTANCE;
     }
 
     /**

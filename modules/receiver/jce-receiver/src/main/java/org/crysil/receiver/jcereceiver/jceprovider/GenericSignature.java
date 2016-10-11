@@ -5,22 +5,30 @@
 
 package org.crysil.receiver.jcereceiver.jceprovider;
 
-import common.CrySilAlgorithm;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.InvalidParameterException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SignatureException;
+import java.security.SignatureSpi;
+import java.security.spec.AlgorithmParameterSpec;
 
 import org.crysil.errorhandling.CrySILException;
-import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilHighLevelAPI;
 import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKey;
 
+import common.CrySilAlgorithm;
 import iaik.asn1.CodingException;
 import iaik.pkcs.pkcs7.DigestInfo;
-
-import java.security.*;
-import java.security.spec.AlgorithmParameterSpec;
 
 /**
  * The Class GenericSignature.
  */
 public class GenericSignature extends SignatureSpi {
+
+	protected CrysilProvider provider;
 
     /** The crysil key. */
     private CrysilKey crysilKey = null;
@@ -118,11 +126,11 @@ public class GenericSignature extends SignatureSpi {
                 } else {
                     throw new SignatureException("Algorithm " + algorithm + "not implemented");
                 }
-                CrysilHighLevelAPI.getInstance().setCurrentCommandID(currentCommandId);
-                return CrysilHighLevelAPI.getInstance().signHashRequest(crysilAlgorithm, digestInfo.getDigest(), crysilKey);
+				provider.getApi().setCurrentCommandID(currentCommandId);
+				return provider.getApi().signHashRequest(crysilAlgorithm, digestInfo.getDigest(), crysilKey);
             } else {
-                CrysilHighLevelAPI.getInstance().setCurrentCommandID(currentCommandId);
-                return CrysilHighLevelAPI.getInstance().signHashRequest(algorithm, digest.digest(), crysilKey);
+				provider.getApi().setCurrentCommandID(currentCommandId);
+				return provider.getApi().signHashRequest(algorithm, digest.digest(), crysilKey);
             }
         } catch (CrySILException e) {
             throw new SignatureException(e);
