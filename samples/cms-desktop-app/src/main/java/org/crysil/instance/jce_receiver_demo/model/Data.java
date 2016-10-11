@@ -2,7 +2,8 @@ package org.crysil.instance.jce_receiver_demo.model;
 
 import java.io.File;
 import java.security.Key;
-import java.security.Provider;
+
+import org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider;
 
 /**
  * Holds all the data necessary for performing the encryption/decryption.
@@ -11,7 +12,7 @@ public class Data {
 
 	private byte[] fileContent;
 	private Key key;
-	private Provider provider;
+	private CrysilProvider provider;
 	private byte[] result;
 	private File sourceFile;
 
@@ -31,11 +32,11 @@ public class Data {
 		this.key = key;
 	}
 
-	public void setProvider(Provider crysilProvider) {
+	public void setProvider(CrysilProvider crysilProvider) {
 		this.provider = crysilProvider;
 	}
 
-	public Provider getProvider() {
+	public CrysilProvider getProvider() {
 		return provider;
 	}
 

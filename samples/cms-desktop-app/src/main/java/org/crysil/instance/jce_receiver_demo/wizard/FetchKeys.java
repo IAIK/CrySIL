@@ -1,20 +1,17 @@
 package org.crysil.instance.jce_receiver_demo.wizard;
 
 import java.security.KeyStore;
-import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.prefs.Preferences;
 
+import org.crysil.communications.http.HttpJsonTransmitter;
+import org.crysil.instance.jce_receiver_demo.Main;
+import org.crysil.instance.jce_receiver_demo.model.Data;
+
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
-
-import org.crysil.instance.jce_receiver_demo.Main;
-import org.crysil.instance.jce_receiver_demo.model.Data;
-import org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider;
-
-import crysil.CrysilAPIFactory;
 
 public class FetchKeys extends Step {
 
@@ -32,14 +29,12 @@ public class FetchKeys extends Step {
 			@Override
 			protected Integer call() throws Exception {
 				try {
-					// load anything we need
-					// - crysil
-                    CrysilAPIFactory.initialize(Preferences.userNodeForPackage(Main.class).get("last", ""));
-                    Provider crysilProvider = new CrysilProvider();
-					data.setProvider(crysilProvider);
+					// set url
+					((HttpJsonTransmitter) data.getProvider().getAttachedModule())
+							.setTargetURI(Preferences.userNodeForPackage(Main.class).get("last", ""));
 
 					// - fetch keys
-                    KeyStore keystore = KeyStore.getInstance("Crysil", crysilProvider);
+					KeyStore keystore = KeyStore.getInstance("Crysil", data.getProvider());
 					keystore.load(null); // isn't nice at all
 
 					ArrayList<String> keyList = Collections.list(keystore.aliases());

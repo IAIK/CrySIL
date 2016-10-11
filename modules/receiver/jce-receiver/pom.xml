@@ -68,13 +68,6 @@
             <version>${okhttp.version}</version>
         </dependency>
         <dependency>
-			<groupId>javafx</groupId>
-	        <artifactId>javafx</artifactId>
-	        <version>2.1</version>
-	        <scope>system</scope>
-	        <systemPath>C:/Program Files/Java/jre7/lib/jfxrt.jar</systemPath>
-		</dependency>
-        <dependency>
         	<groupId>org.crysil.communcations</groupId>
         	<artifactId>http-json-transmitter</artifactId>
         	<version>2.0-1</version>

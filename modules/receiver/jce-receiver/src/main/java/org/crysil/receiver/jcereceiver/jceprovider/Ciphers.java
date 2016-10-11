@@ -7,16 +7,17 @@ package org.crysil.receiver.jcereceiver.jceprovider;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.Provider;
 import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
-import common.CrySilAlgorithm;
-
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilHighLevelAPI;
+
+import common.CrySilAlgorithm;
 
 /**
  * The Class Ciphers.
@@ -27,6 +28,8 @@ public class Ciphers {
      * The Class RSAES_RAW.
      */
     public static class RSAES_RAW extends GenericCipher {
+
+		protected Provider provider;
         
         /**
          * Instantiates a new rsaes raw.
@@ -40,6 +43,8 @@ public class Ciphers {
      * The Class RSAES_PKCS1_V1_5.
      */
     public static class RSAES_PKCS1_V1_5 extends GenericCipher {
+
+		protected Provider provider;
         
         /**
          * Instantiates a new RSAE s_ pkc s1_ v1_5.
@@ -53,6 +58,8 @@ public class Ciphers {
      * The Class RSA_OAEP.
      */
     public static class RSA_OAEP extends GenericCipher {
+
+		protected Provider provider;
         
         /**
          * Instantiates a new rsa oaep.
@@ -66,6 +73,8 @@ public class Ciphers {
      * The Class CMS.
      */
     public static class CMS extends GenericCipher {
+
+		protected Provider provider;
         
         /* (non-Javadoc)
          * @see org.crysil.communications.jcereceiver.jceprovider.GenericCipher#engineInit(int, java.security.Key, java.security.SecureRandom)

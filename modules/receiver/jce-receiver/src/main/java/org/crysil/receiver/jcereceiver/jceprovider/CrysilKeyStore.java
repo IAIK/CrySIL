@@ -5,13 +5,16 @@
 
 package org.crysil.receiver.jcereceiver.jceprovider;
 
-import org.crysil.errorhandling.CrySILException;
-import org.crysil.receiver.jcereceiver.crysilhighlevelapi.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.*;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.KeyStoreSpi;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Date;
@@ -19,10 +22,18 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.crysil.errorhandling.CrySILException;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilHighLevelAPI;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKey;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKeyHandle;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilKeyInternalCertificate;
+import org.crysil.receiver.jcereceiver.crysilhighlevelapi.KeyRepresentation;
+
 /**
  * The Class CrysilKeyStore.
  */
 public class CrysilKeyStore extends KeyStoreSpi {
+	protected Provider provider;
     
     /** The table. */
     private Hashtable<String, CrysilKey> table = new Hashtable<>();
