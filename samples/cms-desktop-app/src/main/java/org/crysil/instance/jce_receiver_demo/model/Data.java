@@ -2,6 +2,7 @@ package org.crysil.instance.jce_receiver_demo.model;
 
 import java.io.File;
 import java.security.Key;
+import java.security.Provider;
 
 import org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider;
 
@@ -12,7 +13,7 @@ public class Data {
 
 	private byte[] fileContent;
 	private Key key;
-	private CrysilProvider provider;
+	private Provider provider;
 	private byte[] result;
 	private File sourceFile;
 
@@ -36,7 +37,7 @@ public class Data {
 		this.provider = crysilProvider;
 	}
 
-	public CrysilProvider getProvider() {
+	public Provider getProvider() {
 		return provider;
 	}
 

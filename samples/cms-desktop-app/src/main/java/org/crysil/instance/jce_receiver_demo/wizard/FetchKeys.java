@@ -8,6 +8,7 @@ import java.util.prefs.Preferences;
 import org.crysil.communications.http.HttpJsonTransmitter;
 import org.crysil.instance.jce_receiver_demo.Main;
 import org.crysil.instance.jce_receiver_demo.model.Data;
+import org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
@@ -30,7 +31,7 @@ public class FetchKeys extends Step {
 			protected Integer call() throws Exception {
 				try {
 					// set url
-					((HttpJsonTransmitter) data.getProvider().getAttachedModule())
+					((HttpJsonTransmitter) ((CrysilProvider) data.getProvider()).getAttachedModule())
 							.setTargetURI(Preferences.userNodeForPackage(Main.class).get("last", ""));
 
 					// - fetch keys

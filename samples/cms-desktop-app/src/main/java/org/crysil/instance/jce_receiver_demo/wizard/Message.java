@@ -1,6 +1,8 @@
 package org.crysil.instance.jce_receiver_demo.wizard;
 
 import org.crysil.instance.jce_receiver_demo.model.Data;
+import org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,7 +27,10 @@ public class Message extends Step {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				procedeTo(new SelectFile(new Data()));
+
+				Data data = new Data();
+				data.setProvider(CrysilProvider.getInstance0());
+				procedeTo(new SelectFile(data));
 			}
 		});
 
