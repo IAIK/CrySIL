@@ -23,7 +23,3 @@ Be sure to check out the samples too:
 
 Webservice demo:
 * Resource filter (bootstrap)
-
-JCE receiver demo:
-* Run with openjdk(javaSE-1.7)
-* Add external jar: jfxrt.jar
