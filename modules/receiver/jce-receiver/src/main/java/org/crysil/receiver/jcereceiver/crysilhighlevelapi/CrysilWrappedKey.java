@@ -1,8 +1,3 @@
-/*
- * Crysil Core
- * This file is subject to the license defined in the directory “license” at the top level of this package.
- */
-
 package org.crysil.receiver.jcereceiver.crysilhighlevelapi;
 
 import java.security.cert.X509Certificate;
@@ -17,7 +12,9 @@ import org.crysil.receiver.jcereceiver.crysil.WrappedKey;
  */
 public class CrysilWrappedKey extends CrysilKey {
     
-    /** The wrapped key. */
+	private static final long serialVersionUID = 260316900819331912L;
+
+	/** The wrapped key. */
     protected WrappedKey wrappedKey;
 
     /**

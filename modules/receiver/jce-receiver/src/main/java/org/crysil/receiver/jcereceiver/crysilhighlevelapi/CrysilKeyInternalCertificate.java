@@ -1,15 +1,11 @@
-/*
- * Crysil Core
- * This file is subject to the license defined in the directory “license” at the top level of this package.
- */
-
 package org.crysil.receiver.jcereceiver.crysilhighlevelapi;
-
-import org.crysil.protocol.payload.crypto.key.InternalCertificate;
-import iaik.x509.X509Certificate;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+
+import org.crysil.protocol.payload.crypto.key.InternalCertificate;
+
+import iaik.x509.X509Certificate;
 
 /**
  * This high-level key model extends the CrysilKeyHandle and - in addition - includes the {@link iaik.x509.X509Certificate}
@@ -17,11 +13,13 @@ import java.security.cert.CertificateException;
  */
 public class CrysilKeyInternalCertificate extends CrysilKeyHandle {
     
-    /**
-     * Instantiates a new crysil key internal certificate.
-     *
-     * @param InternalCertificate the internal certificate
-     */
+	private static final long serialVersionUID = -3741241968826983878L;
+
+	/**
+	 * Instantiates a new crysil key internal certificate.
+	 *
+	 * @param InternalCertificate the internal certificate
+	 */
     public CrysilKeyInternalCertificate(InternalCertificate InternalCertificate) {
         KeyHandle = InternalCertificate;
     }

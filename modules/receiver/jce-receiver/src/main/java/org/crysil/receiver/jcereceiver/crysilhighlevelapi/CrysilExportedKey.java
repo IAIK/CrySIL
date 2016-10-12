@@ -1,8 +1,3 @@
-/*
- * Crysil Core
- * This file is subject to the license defined in the directory “license” at the top level of this package.
- */
-
 package org.crysil.receiver.jcereceiver.crysilhighlevelapi;
 
 import java.security.cert.X509Certificate;
@@ -17,7 +12,9 @@ import org.crysil.receiver.jcereceiver.crysil.ExportedKey;
  */
 public class CrysilExportedKey extends CrysilKey {
     
-    /** The exported key. */
+	private static final long serialVersionUID = -6197510932723060341L;
+
+	/** The exported key. */
     protected ExportedKey exportedKey;
 
     /**

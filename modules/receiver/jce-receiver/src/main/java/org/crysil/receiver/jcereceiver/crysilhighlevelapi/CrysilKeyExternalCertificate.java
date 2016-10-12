@@ -1,17 +1,12 @@
-/*
- * Crysil Core
- * This file is subject to the license defined in the directory “license” at the top level of this package.
- */
-
 package org.crysil.receiver.jcereceiver.crysilhighlevelapi;
-
-import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
-
-import iaik.utils.Util;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+
+import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
+
+import iaik.utils.Util;
 
 /**
  * This high-level API key model represents an external key that is used within a Crysil operation.
@@ -23,7 +18,9 @@ import java.security.cert.X509Certificate;
 
 public class CrysilKeyExternalCertificate extends CrysilKey {
     
-    /** The external certificate. */
+	private static final long serialVersionUID = 1593909455040564569L;
+
+	/** The external certificate. */
     protected ExternalCertificate ExternalCertificate;
 
     /**

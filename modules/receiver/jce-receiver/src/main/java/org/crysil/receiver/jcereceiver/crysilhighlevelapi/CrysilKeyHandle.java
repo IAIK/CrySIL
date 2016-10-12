@@ -1,8 +1,3 @@
-/*
- * Crysil Core
- * This file is subject to the license defined in the directory “license” at the top level of this package.
- */
-
 package org.crysil.receiver.jcereceiver.crysilhighlevelapi;
 
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
@@ -17,7 +12,9 @@ import org.crysil.protocol.payload.crypto.key.KeyHandle;
  */
 public class CrysilKeyHandle extends CrysilKey {
     
-    /** The key handle. */
+	private static final long serialVersionUID = -4409904311579757648L;
+
+	/** The key handle. */
     protected KeyHandle KeyHandle;
 
     /**

@@ -5,10 +5,10 @@
 
 package org.crysil.receiver.jcereceiver.crysilhighlevelapi;
 
-import org.crysil.protocol.payload.crypto.key.Key;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
+
+import org.crysil.protocol.payload.crypto.key.Key;
 
 /**
  * Abstract class representing a high-level API Crysil key model
@@ -18,11 +18,13 @@ import java.security.PublicKey;
  */
 public abstract class CrysilKey implements PrivateKey, PublicKey {
     
-    /**
-     * Gets the internal representation.
-     *
-     * @return the internal representation
-     */
+	private static final long serialVersionUID = 3060611901311555044L;
+
+	/**
+	 * Gets the internal representation.
+	 *
+	 * @return the internal representation
+	 */
     public abstract Key getInternalRepresentation();
 
     /* (non-Javadoc)

@@ -1,8 +1,3 @@
-/*
- * Crysil Core
- * This file is subject to the license defined in the directory “license” at the top level of this package.
- */
-
 package org.crysil.receiver.jcereceiver.jceprovider;
 
 import java.security.InvalidKeyException;

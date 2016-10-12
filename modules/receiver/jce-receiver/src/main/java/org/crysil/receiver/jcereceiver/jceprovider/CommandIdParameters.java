@@ -1,13 +1,8 @@
-/*
- * Crysil Core
- * This file is subject to the license defined in the directory “license” at the top level of this package.
- */
-
 package org.crysil.receiver.jcereceiver.jceprovider;
 
-import iaik.pkcs.pkcs1.PKCS1AlgorithmParameterSpec;
-
 import java.security.KeyStore;
+
+import iaik.pkcs.pkcs1.PKCS1AlgorithmParameterSpec;
 
 public class CommandIdParameters extends PKCS1AlgorithmParameterSpec implements KeyStore.LoadStoreParameter {
     
