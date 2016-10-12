@@ -40,19 +40,19 @@ public class CrysilProvider extends Provider
 		super("Crysil" + index, 1.0, "Crysil Security Provider");
 
 		// Keystore
-		put("KeyStore.Crysil", "org.crysil.receiver.jcereceiver.jceprovider.CrysilKeyStore" + index);
+		put("KeyStore.Crysil", "org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$CrysilKeyStore" + index);
 
 		// Ciphers
-		put("Cipher.RSA", "org.crysil.receiver.jcereceiver.jceprovider.Ciphers$RSAES_RAW" + index);
+		put("Cipher.RSA", "org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$RSAES_RAW" + index);
 		put("Alg.Alias.Cipher.RSA/RAW", "RSA");
 		put("Alg.Alias.Cipher.RSA/ECB/NOPADDING", "RSA");
 		put("Alg.Alias.Cipher.RSA//RAW", "RSA");
 		put("Alg.Alias.Cipher.RSA//NOPADDING", "RSA");
 
-		put("Cipher.RSA/PKCS1", "org.crysil.receiver.jcereceiver.jceprovider.Ciphers$RSAES_PKCS1_V1_5" + index);
+		put("Cipher.RSA/PKCS1", "org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$RSAES_PKCS1_V1_5" + index);
 		put("Alg.Alias.Cipher.RSA//PKCS1PADDING", "RSA/PKCS1");
 
-		put("Cipher.RSA/OAEP", "org.crysil.receiver.jcereceiver.jceprovider.Ciphers$RSA_OAEP" + index);
+		put("Cipher.RSA/OAEP", "org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$RSA_OAEP" + index);
 		put("Alg.Alias.Cipher.RSA//OAEPPADDING", "RSA/OAEP");
 
 		put("Cipher.CMS", "org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$CMS" + index);
@@ -67,11 +67,14 @@ public class CrysilProvider extends Provider
 		put("Alg.Alias.Signature." + CrySilAlgorithm.RSASSA_PKCS1_V1_5_SHA_512.getAlgorithmName(),
 				"SHA512withRSA");
 
-		put("Signature.NONEwithRSA", "org.crysil.receiver.jcereceiver.jceprovider.Signatures$NONEwithRSA" + index);
-		put("Signature.SHA1withRSA", "org.crysil.receiver.jcereceiver.jceprovider.Signatures$SHA1withRSA" + index);
-		put("Signature.SHA224withRSA", "org.crysil.receiver.jcereceiver.jceprovider.Signatures$SHA224withRSA" + index);
-		put("Signature.SHA256withRSA", "org.crysil.receiver.jcereceiver.jceprovider.Signatures$SHA256withRSA" + index);
-		put("Signature.SHA512withRSA", "org.crysil.receiver.jcereceiver.jceprovider.Signatures$SHA512withRSA" + index);
+		put("Signature.NONEwithRSA", "org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$NONEwithRSA" + index);
+		put("Signature.SHA1withRSA", "org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$SHA1withRSA" + index);
+		put("Signature.SHA224withRSA",
+				"org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$SHA224withRSA" + index);
+		put("Signature.SHA256withRSA",
+				"org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$SHA256withRSA" + index);
+		put("Signature.SHA512withRSA",
+				"org.crysil.receiver.jcereceiver.jceprovider.CrysilProvider$SHA512withRSA" + index);
 
 	}
 
