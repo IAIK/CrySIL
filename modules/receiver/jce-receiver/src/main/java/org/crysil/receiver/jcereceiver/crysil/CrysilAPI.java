@@ -22,12 +22,8 @@ import org.crysil.protocol.Response;
 import org.crysil.protocol.header.StandardHeader;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
-import org.crysil.protocol.payload.crypto.decryptCMS.PayloadDecryptCMSRequest;
-import org.crysil.protocol.payload.crypto.decryptCMS.PayloadDecryptCMSResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptResponse;
-import org.crysil.protocol.payload.crypto.encryptCMS.PayloadEncryptCMSRequest;
-import org.crysil.protocol.payload.crypto.encryptCMS.PayloadEncryptCMSResponse;
 import org.crysil.protocol.payload.crypto.exportWrappedKey.PayloadExportWrappedKeyRequest;
 import org.crysil.protocol.payload.crypto.exportWrappedKey.PayloadExportWrappedKeyResponse;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateWrappedKeyRequest;
@@ -365,74 +361,6 @@ public class CrysilAPI extends OneToOneInterlink {
         }
 
         return ((PayloadDecryptResponse) res.getPayload()).getPlainData();
-    }
-
-    // CMS
-    /**
-     * Encrypt cms data request.
-     *
-     * @param algorithm the algorithm
-     * @param inputDataList the input data list
-     * @param encryptionKeys the encryption keys
-     * @return the list
-     * @throws CrySILException the crysil exception
-     */
-    public List<byte[]> encryptCMSDataRequest(String algorithm, List<byte[]> inputDataList, List<Key> encryptionKeys)
-            throws CrySILException {
-        Request request = createBasicRequest();
-
-        PayloadEncryptCMSRequest PayloadEncryptCMSRequest = new PayloadEncryptCMSRequest();
-        PayloadEncryptCMSRequest.setAlgorithm(algorithm);
-        PayloadEncryptCMSRequest.setEncryptionKeys(encryptionKeys);
-        PayloadEncryptCMSRequest.setPlainData(inputDataList);
-        request.setPayload(PayloadEncryptCMSRequest);
-
-        Response res = forwardRequest(request);
-        if (res == null)
-            return new ArrayList<>();
-
-        return ((PayloadEncryptCMSResponse) res.getPayload()).getEncryptedCMSData();
-    }
-
-    /**
-     * Encrypt cms data request with certificates.
-     *
-     * @param algorithm the algorithm
-     * @param inputDataList the input data list
-     * @param certificates the certificates
-     * @return the list
-     * @throws CrySILException the crysil exception
-     */
-    public List<byte[]> encryptCMSDataRequestWithCertificates(String algorithm, List<byte[]> inputDataList,
-                                                              List<Certificate> certificates) throws CrySILException {
-        List<Key> encryptionKeys = convertCertificates(certificates);
-
-        return encryptCMSDataRequest(algorithm, inputDataList, encryptionKeys);
-    }
-
-    /**
-     * Decrypt cms data request.
-     *
-     * @param inputDataList the input data list
-     * @param decryptionKey the decryption key
-     * @return the list
-     * @throws CrySILException the crysil exception
-     */
-    public List<byte[]> decryptCMSDataRequest(List<byte[]> inputDataList, Key decryptionKey)
-            throws CrySILException {
-        Request request = createBasicRequest();
-
-        PayloadDecryptCMSRequest PayloadDecryptCMSRequest = new PayloadDecryptCMSRequest();
-        PayloadDecryptCMSRequest.setEncryptedCMSData(inputDataList);
-        PayloadDecryptCMSRequest.setDecryptionKey(decryptionKey);
-        request.setPayload(PayloadDecryptCMSRequest);
-
-        Response res = forwardRequest(request);
-        if (res == null) {
-            return new ArrayList<>();
-        }
-
-        return ((PayloadDecryptCMSResponse) res.getPayload()).getPlainData();
     }
 
     // Signatures

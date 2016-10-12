@@ -93,10 +93,10 @@ public class Ciphers {
                 byte[] load;
                 if (opmode == Cipher.DECRYPT_MODE) {
 					provider.getApi().setCurrentCommandID(currentCommandID);
-					load = provider.getApi().decryptCMSDataRequest(bytes, crysilKey);
+					load = provider.getApi().decryptDataRequest(algorithm, bytes, crysilKey);
                 } else {
 					provider.getApi().setCurrentCommandID(currentCommandID);
-					load = provider.getApi().encryptCMSDataRequest(algorithm, bytes, crysilKey);
+					load = provider.getApi().encryptDataRequest(algorithm, bytes, crysilKey);
                 }
                 return load;
             } catch (CrySILException e) {

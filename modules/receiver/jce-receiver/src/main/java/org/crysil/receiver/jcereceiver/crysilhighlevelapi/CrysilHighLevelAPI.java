@@ -326,64 +326,6 @@ public class CrysilHighLevelAPI {
     }
 
     /**
-     * For internal/future use (CMS encryption). Method most likely will change.
-     *
-     * @param algorithm the algorithm
-     * @param plainDataList the plain data list
-     * @param encryptionKeyList the encryption key list
-     * @return the list
-     * @throws CrySILException the crysil exception
-     */
-    public List<byte[]> encryptCMSDataRequest(String algorithm, List<byte[]> plainDataList, List<CrysilKey> encryptionKeyList) throws CrySILException {
-        return crysilAPI.encryptCMSDataRequest(algorithm, plainDataList, convertCrysilKeyToKey(encryptionKeyList, true));
-    }
-
-    /**
-     * For internal/future use (CMS encryption). Method most likely will change.
-     *
-     * @param algorithm the algorithm
-     * @param plainData the plain data
-     * @param encryptionKey the encryption key
-     * @return the byte[]
-     * @throws CrySILException the crysil exception
-     */
-    public byte[] encryptCMSDataRequest(String algorithm, byte[] plainData, CrysilKey encryptionKey) throws CrySILException {
-        List<byte[]> plainDataList = new ArrayList<>();
-        plainDataList.add(plainData);
-        List<CrysilKey> encryptionKeyList = new ArrayList<>();
-        encryptionKeyList.add(encryptionKey);
-
-        return encryptCMSDataRequest(algorithm, plainDataList, encryptionKeyList).get(0);
-    }
-
-    /**
-     * For internal/future use (CMS encryption). Method most likely will change.
-     *
-     * @param encryptedDataList the encrypted data list
-     * @param decryptionKey the decryption key
-     * @return the list
-     * @throws CrySILException the crysil exception
-     */
-    public List<byte[]> decryptCMSDataRequest(List<byte[]> encryptedDataList, CrysilKey decryptionKey) throws CrySILException {
-        return crysilAPI.decryptCMSDataRequest(encryptedDataList, convertCrysilKeyToKey(decryptionKey, false));
-    }
-
-    /**
-     * For internal/future use (CMS encryption). Method most likely will change.
-     *
-     * @param encryptedData the encrypted data
-     * @param decryptionKey the decryption key
-     * @return the byte[]
-     * @throws CrySILException the crysil exception
-     */
-    public byte[] decryptCMSDataRequest(byte[] encryptedData, CrysilKey decryptionKey) throws CrySILException {
-        List<byte[]> encryptedDataList = new ArrayList<>();
-        encryptedDataList.add(encryptedData);
-
-        return decryptCMSDataRequest(encryptedDataList, decryptionKey).get(0);
-    }
-
-    /**
      * Generate an assymetric key pair (including the X509Certificate)
      * The key pair and the certificate are stored in a container (the
      * {@link org.crysil.receiver.jcereceiver.crysilhighlevelapi.CrysilWrappedKey}) that
