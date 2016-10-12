@@ -8,7 +8,10 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.PayloadRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
+import org.crysil.protocol.payload.crypto.decryptCMS.PayloadDecryptCMSRequest;
+import org.crysil.protocol.payload.crypto.decryptCMS.PayloadDecryptCMSResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
+import org.crysil.protocol.payload.crypto.encryptCMS.PayloadEncryptCMSRequest;
 import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
@@ -27,7 +30,9 @@ public class StaticKeyEncryptionActor implements Module {
 		commands.put(PayloadEncryptRequest.class, new Encrypt());
 		commands.put(PayloadDecryptRequest.class, new Decrypt());
 		commands.put(PayloadSignRequest.class, new Sign());
-    commands.put(PayloadGenerateU2FKeyRequest.class, new GenerateU2FKey());
+		commands.put(PayloadGenerateU2FKeyRequest.class, new GenerateU2FKey());
+		commands.put(PayloadEncryptCMSRequest.class, new EncryptCMS());
+		commands.put(PayloadDecryptCMSRequest.class, new DecryptCMS());
 	}
 
 	@Override

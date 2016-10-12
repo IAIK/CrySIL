@@ -82,7 +82,7 @@
 	<script>
 		function discoverKeys(){
 			request = new XMLHttpRequest();
-			request.open("POST", "http://localhost:8080/demo_webservice/json", true)
+			request.open("POST", "http://crysil.iaik.tugraz.at/demo_webservice/json", true)
 			request.onreadystatechange = function(){
 				if(this.readyState == 4){
 					if(this.status == 200){

@@ -34,6 +34,7 @@
         <module>lib-gridh/java</module>
         <module>lib-tor/java</module>
         <module>lib-gridh-tor/java</module>
+        <module>receiver/jce-receiver</module>
     </modules>
 
     <properties>
