@@ -36,10 +36,10 @@ public class StaticKeyEncryptionActor implements Module {
 		// see if we have someone capable of handling the request
 		String target = request.getPayload().getClass().getName();
 		if (target.equals(PayloadEncryptRequest.class.getName()))
-			if (((PayloadEncryptRequest) request.getPayload()).getAlgorithm().equals("CMS"))
+			if (((PayloadEncryptRequest) request.getPayload()).getAlgorithm().contains("CMS"))
 				target = "EncryptCMS";
 		if (target.equals(PayloadDecryptRequest.class.getName()))
-			if (((PayloadDecryptRequest) request.getPayload()).getAlgorithm().equals("CMS"))
+			if (((PayloadDecryptRequest) request.getPayload()).getAlgorithm().contains("CMS"))
 				target = "DecryptCMS";
 
 		Command command = commands.get(target);
