@@ -2,6 +2,9 @@ package org.crysil.communications.http;
 
 import org.crysil.actor.staticKeyEncryption.StaticKeyEncryptionActor;
 import org.crysil.commons.Module;
+import org.crysil.commons.OneToOneInterlink;
+import org.crysil.gatekeeper.Configuration;
+import org.crysil.gatekeeper.Gatekeeper;
 
 /**
  * exemplary element builder without the need for specifying the whole CrySIL node with xml
@@ -14,7 +17,10 @@ public class ElementBuilder {
 	 * @return the entry module to the CrySIL node
 	 */
 	public static Module build() {
-		return new StaticKeyEncryptionActor();
+		Configuration config = new GateKeeperConfiguration();
+		OneToOneInterlink gatekeeper = new Gatekeeper(config);
+		gatekeeper.attach(new StaticKeyEncryptionActor());
+		return (Module) gatekeeper;
 	}
 
 }
