@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.crysil.commons.Module;
+import org.crysil.commons.OneToOneInterlink;
 import org.crysil.errorhandling.AuthenticationFailedException;
 import org.crysil.errorhandling.CrySILException;
+import org.crysil.errorhandling.NotAcceptableException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.gatekeeperwithsessions.configuration.Feature;
 import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
@@ -27,7 +30,8 @@ import org.crysil.protocol.payload.status.PayloadStatus;
 /**
  * decides upon the authentication methods without any actor involvement.
  */
-public class Gatekeeper {
+public class Gatekeeper extends OneToOneInterlink implements Module
+{
 
     /**
      * The command queue. Incoming commands are put to the queue when authentication is to be performed.
@@ -51,11 +55,11 @@ public class Gatekeeper {
 
     private final Map<String, AuthorizationProcess> pendingAuthorizationProcesses = new HashMap<>();
 
-    public Result process(Request request) throws AuthenticationRequiredException {
+	@Override
+	public Response take(Request request) throws CrySILException {
     	// even firster, check if the header is appropriate for our use case
     	if(!(request.getHeader() instanceof SessionHeader))
-			return new Result(request, null);// createAuthenticationFailedResponse(request.getHeader(),
-								// new NotAcceptableException());
+			return createAuthenticationFailedResponse(request.getHeader(), new NotAcceptableException());
     	
         // first find the appropriate AuthorizationProcess
         AuthorizationProcess process;
@@ -80,7 +84,7 @@ public class Gatekeeper {
             if (session != null && session.checkFeatureSet(featureSet)) {
 
                 // return the result to the caller
-                return new Result(request, session.getFeatures());
+                return getAttachedModule().take(request);
             }
 
             // fetch required AuthorizationProcess from config
@@ -89,8 +93,7 @@ public class Gatekeeper {
             } catch (AuthenticationFailedException e) {
                 // this operation is simply not allowed. thus, report an unknown error.
                 // TODO or should we state that the operation is not allowed? oracle?
-				throw new AuthenticationRequiredException(
-						createAuthenticationFailedResponse(request.getHeader(), new UnknownErrorException()));
+				return createAuthenticationFailedResponse(request.getHeader(), new UnknownErrorException());
             }
         }
 
@@ -122,15 +125,13 @@ public class Gatekeeper {
             // TODO recheck if the new info leads to more auth info gathering
 
             // return the result to the caller
-			return new Result(updatedOriginalRequest, sessionManager
-					.getSession(((SessionHeader) updatedOriginalRequest.getHeader()).getSessionId()).getFeatures());
+			return getAttachedModule().take(updatedOriginalRequest);
         } catch (AuthenticationRequiredException e) {
             // we came here because user-interaction is necessary to perform the authorization
             // thus, get the servergenerated commandId of the AuthChallenge package and memorize the according process
             pendingAuthorizationProcesses.put(process.getCommandId(), process);
 
-            // throw the exception to the next level in order to send the encapsulated response
-            throw e;
+			return e.getResponse();
         }
     }
 
