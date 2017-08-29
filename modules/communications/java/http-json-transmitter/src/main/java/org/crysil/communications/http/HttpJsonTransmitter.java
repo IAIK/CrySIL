@@ -1,8 +1,7 @@
 package org.crysil.communications.http;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.RequestBody;
+import java.io.IOException;
+
 import org.crysil.commons.Module;
 import org.crysil.communications.json.JsonUtils;
 import org.crysil.errorhandling.CrySILException;
@@ -12,7 +11,9 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.status.PayloadStatus;
 
-import java.io.IOException;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.RequestBody;
 
 /**
  * The Class HttpForwarder.
@@ -55,9 +56,6 @@ public class HttpJsonTransmitter implements Module {
 		isValidateSchema = validate;
 	}
 
-	/* (non-Javadoc)
-	 * @see at.iaik.crysil.element.actors.Actor#take(at.iaik.crysil.element.crysilprotocol.SRequest)
-	 */
 	@Override
 	public Response take(Request crysilRequest) throws CrySILException {
 		String url = targetURI;

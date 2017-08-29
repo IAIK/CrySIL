@@ -100,25 +100,11 @@ public class PSKDialog extends JFrame implements IAuthUI<char[], Void> {
     contentPane.setLayout(gl_contentPane);
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see at.iaik.crysil.element.authentication.ui.IAuthDialog#
-   * getCallbackAuthenticate()
-   */
   @Override
   public ActionPerformedCallback getCallbackAuthenticate() {
     return callbackAuthenticate;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * at.iaik.crysil.element.authentication.ui.IAuthDialog#
-   * setCallbackAuthenticate(at.iaik.crysil.element.authentication
-   * .ui.ActionPerformedCallback)
-   */
   @Override
   public void setCallbackAuthenticate(final ActionPerformedCallback callbackAuthenticate) {
     this.callbackAuthenticate = callbackAuthenticate;
