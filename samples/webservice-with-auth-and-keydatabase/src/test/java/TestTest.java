@@ -65,7 +65,7 @@ public class TestTest {
 
 	@Test
 	public void testEncryptRequestWrongAuth() throws CrySILException {
-		Request fixture = createFixture();
+		Request fixture = createFixture("admin", "a");
 
 		Response response0 = DUT.take(fixture);
 		Assert.assertTrue(response0.getPayload() instanceof PayloadAuthResponse);
@@ -75,7 +75,7 @@ public class TestTest {
 
 	@Test
 	public void testEncryptRequestCorrectAuth() throws CrySILException {
-		Request fixture = createFixture();
+		Request fixture = createFixture("admin", "a");
 
 		Response response0 = DUT.take(fixture);
 		Assert.assertTrue(response0.getPayload() instanceof PayloadAuthResponse);
@@ -83,11 +83,19 @@ public class TestTest {
 		Assert.assertTrue(response1.getPayload() instanceof PayloadDiscoverKeysResponse);
 	}
 
-	private Request createFixture() {
+	@Test
+	public void testEncryptRequestNonexistingKey() throws CrySILException {
+		Request fixture = createFixture("nonexisting", "key");
+
+		Response response0 = DUT.take(fixture);
+		Assert.assertTrue(response0.getPayload() instanceof PayloadStatus);
+	}
+
+	private Request createFixture(String id, String subid) {
 		PayloadEncryptRequest payload = new PayloadEncryptRequest();
 		KeyHandle key = new KeyHandle();
-		key.setId("a");
-		key.setSubId("b");
+		key.setId(id);
+		key.setSubId(subid);
 		payload.addEncryptionKey(key);
 		payload.addPlainData("data".getBytes());
 		Request fixture = new Request(new StandardHeader(), payload);

@@ -18,6 +18,10 @@ public class Key extends Feature {
         this.key = key;
     }
 
+	public org.crysil.protocol.payload.crypto.key.Key getKeyObject() {
+		return key;
+	}
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "=" + key.toString();
