@@ -6,20 +6,18 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.crysil.errorhandling.AuthenticationFailedException;
-import org.crysil.gatekeeper.AuthPlugin;
-import org.crysil.gatekeeper.AuthProcess;
-import org.crysil.gatekeeper.Configuration;
-import org.crysil.gatekeeper.Gatekeeper;
-import org.crysil.gatekeeper.basicauthplugins.SecretAuthPlugin;
-import org.crysil.protocol.Request;
-import org.crysil.protocol.payload.auth.credentials.SecretAuthInfo;
-import org.crysil.protocol.payload.auth.credentials.SecretAuthType;
+import org.crysil.gatekeeperwithsessions.AuthorizationProcess;
+import org.crysil.gatekeeperwithsessions.Configuration;
+import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
+import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.SecretAuthPlugin;
+import org.crysil.gatekeeperwithsessions.configuration.CountLimit;
+import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
 
 public class GateKeeperConfiguration implements Configuration {
 
 	@Override
-	public AuthProcess getAuthProcess(Request request, Gatekeeper gatekeeper) throws AuthenticationFailedException {
-		AuthPlugin<?, ?> plugin = null;
+	public AuthorizationProcess getAuthorizationProcess(FeatureSet features) throws AuthenticationFailedException {
+		AuthPlugin plugin = null;
 		// create database connection
 		try {
 			// create our mysql database connection
@@ -47,9 +45,9 @@ public class GateKeeperConfiguration implements Configuration {
 				
 				// assemble plugins
 				if(auth.contains("PIN")) {
-					SecretAuthInfo tmp = new SecretAuthInfo();
-					tmp.setSecret(auth.substring(auth.indexOf("\"secret\":") + 11, auth.indexOf("\",", auth.indexOf("\"secret\":") + 11)));
-					plugin = new SecretAuthPlugin(new SecretAuthType(), tmp);
+					plugin = new SecretAuthPlugin();
+					plugin.setExpectedValue(auth.substring(auth.indexOf("\"secret\":") + 11,
+							auth.indexOf("\",", auth.indexOf("\"secret\":") + 11)));
 				}
 
 			}
@@ -60,7 +58,7 @@ public class GateKeeperConfiguration implements Configuration {
 		}
 
 		// return the complete auth process
-		return new AuthProcess(request, new AuthPlugin[] { plugin });
+		return new AuthorizationProcess(new CountLimit(5), new AuthPlugin[] { plugin });
 	}
 
 }

@@ -3,8 +3,8 @@ package org.crysil.communications.http;
 import org.crysil.actor.staticKeyEncryption.StaticKeyEncryptionActor;
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
-import org.crysil.gatekeeper.Configuration;
-import org.crysil.gatekeeper.Gatekeeper;
+import org.crysil.gatekeeperwithsessions.Configuration;
+import org.crysil.gatekeeperwithsessions.Gatekeeper;
 
 /**
  * exemplary element builder without the need for specifying the whole CrySIL node with xml

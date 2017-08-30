@@ -33,7 +33,7 @@
 
 		<dependency>
 			<groupId>org.crysil</groupId>
-			<artifactId>gatekeeper</artifactId>
+			<artifactId>gatekeeper-with-sessions</artifactId>
 			<version>${crysil.version}</version>
 		</dependency>
 
@@ -56,11 +56,6 @@
 			<artifactId>testng</artifactId>
 			<version>${testng.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.crysil.gatekeeper</groupId>
-			<artifactId>basic-auth-plugins</artifactId>
-			<version>2.0-1</version>
 		</dependency>
 	</dependencies>
 

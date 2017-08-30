@@ -18,6 +18,11 @@ public class Key extends Feature {
         this.key = key;
     }
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "=" + key.toString();
+	}
+
     @Override
     public int hashCode() {
         final int prime = 31;
