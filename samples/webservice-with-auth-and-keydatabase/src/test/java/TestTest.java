@@ -9,8 +9,10 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.header.SessionHeader;
 import org.crysil.protocol.header.StandardHeader;
+import org.crysil.protocol.payload.auth.AuthInfo;
 import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.PayloadAuthResponse;
+import org.crysil.protocol.payload.auth.credentials.IdentifierAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.SecretAuthInfo;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
@@ -51,11 +53,14 @@ public class TestTest {
 		DUT.getAuthorizationProcess(null);
 	}
 
-	@Test(enabled = false)
+	@Test
 	public void testDiscoverKeysRequest() throws CrySILException {
 
 		Request fixture = new Request(new StandardHeader(), new PayloadDiscoverKeysRequest());
-		DUT.take(fixture);
+		Response response0 = DUT.take(fixture);
+		Assert.assertTrue(response0.getPayload() instanceof PayloadAuthResponse);
+		Response response1 = DUT.take(answerIdentifierChallenge(response0, "identifier"));
+		Assert.assertFalse(response1.getPayload() instanceof PayloadStatus);
 	}
 
 	@Test
@@ -64,7 +69,7 @@ public class TestTest {
 
 		Response response0 = DUT.take(fixture);
 		Assert.assertTrue(response0.getPayload() instanceof PayloadAuthResponse);
-		Response response1 = DUT.take(answerAuthChallenge(response0, "wrong"));
+		Response response1 = DUT.take(answerSecretChallenge(response0, "wrong"));
 		Assert.assertTrue(response1.getPayload() instanceof PayloadStatus);
 	}
 
@@ -74,7 +79,7 @@ public class TestTest {
 
 		Response response0 = DUT.take(fixture);
 		Assert.assertTrue(response0.getPayload() instanceof PayloadAuthResponse);
-		Response response1 = DUT.take(answerAuthChallenge(response0, "correct"));
+		Response response1 = DUT.take(answerSecretChallenge(response0, "correct"));
 		Assert.assertTrue(response1.getPayload() instanceof PayloadDiscoverKeysResponse);
 	}
 
@@ -99,10 +104,20 @@ public class TestTest {
 		return request;
 	}
 
-	public Request answerAuthChallenge(Response challenge, String secret) {
-		Request authRequest = createBasicRequest();
+	public Request answerIdentifierChallenge(Response challenge, String identifier) {
+		IdentifierAuthInfo authInfo = new IdentifierAuthInfo();
+		authInfo.setIdentifier(identifier);
+		return createBasicAnswer(challenge, authInfo);
+	}
+
+	public Request answerSecretChallenge(Response challenge, String secret) {
 		SecretAuthInfo authInfo = new SecretAuthInfo();
 		authInfo.setSecret(secret);
+		return createBasicAnswer(challenge, authInfo);
+	}
+
+	public Request createBasicAnswer(Response challenge, AuthInfo authInfo) {
+		Request authRequest = createBasicRequest();
 		PayloadAuthRequest authRequestPayload = new PayloadAuthRequest();
 		authRequestPayload.setAuthInfo(authInfo);
 		authRequest.setPayload(authRequestPayload);
