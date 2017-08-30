@@ -1,3 +1,5 @@
+import java.sql.SQLException;
+
 import org.crysil.commons.Module;
 import org.crysil.communications.http.GateKeeperConfiguration;
 import org.crysil.errorhandling.AuthenticationFailedException;
@@ -34,15 +36,17 @@ public class TestTest {
 
 	/**
 	 * Create a fresh {@link crysilElement} and retrieve the {@link TestReceiver} before every test.
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
 	 */
 	@BeforeMethod
-	public void init() {
+	public void init() throws ClassNotFoundException, SQLException {
 		DUT = new Gatekeeper(new GateKeeperConfiguration());
 		DUT.attach(new TestActor());
 	}
 
 	@Test(enabled = false)
-	public void gettingStarted() throws AuthenticationFailedException {
+	public void gettingStarted() throws AuthenticationFailedException, ClassNotFoundException, SQLException {
 		GateKeeperConfiguration DUT = new GateKeeperConfiguration();
 		DUT.getAuthorizationProcess(null);
 	}

@@ -3,6 +3,7 @@ package org.crysil.communications.http;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.crysil.errorhandling.AuthenticationFailedException;
@@ -15,24 +16,24 @@ import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
 
 public class GateKeeperConfiguration implements Configuration {
 
+	private Connection conn;
+
+	public GateKeeperConfiguration() throws ClassNotFoundException, SQLException {
+		// create database connection
+		String myDriver = "com.mysql.jdbc.Driver";
+		String myUrl = "jdbc:mysql://localhost/cloudks_dev";
+		Class.forName(myDriver);
+		conn = DriverManager.getConnection(myUrl, "cloudks", "cloudkspassword");
+	}
+
 	@Override
 	public AuthorizationProcess getAuthorizationProcess(FeatureSet features) throws AuthenticationFailedException {
 		AuthPlugin plugin = null;
-		// create database connection
 		try {
-			// create our mysql database connection
-			String myDriver = "com.mysql.jdbc.Driver";
-			String myUrl = "jdbc:mysql://localhost/cloudks_dev";
-			Class.forName(myDriver);
-			Connection conn = DriverManager.getConnection(myUrl, "cloudks", "cloudkspassword");
-
 			// find appropriate auth information
 			String query = "SELECT * FROM keyslots";
 
-			// create the java statement
 			Statement st = conn.createStatement();
-
-			// execute the query, and get a java resultset
 			ResultSet rs = st.executeQuery(query);
 
 			// iterate through the java resultset
