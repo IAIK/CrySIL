@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.crysil.errorhandling.AuthenticationFailedException;
 import org.crysil.gatekeeperwithsessions.AuthorizationProcess;
@@ -12,7 +14,7 @@ import org.crysil.gatekeeperwithsessions.Configuration;
 import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.IdentifierAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.SecretAuthPlugin;
-import org.crysil.gatekeeperwithsessions.authentication.plugins.misc.NoAuthPlugin;
+import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.UsernamePasswordAuthPlugin;
 import org.crysil.gatekeeperwithsessions.configuration.CountLimit;
 import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
 import org.crysil.gatekeeperwithsessions.configuration.Operation;
@@ -32,11 +34,11 @@ public class GateKeeperConfiguration implements Configuration {
 
 	@Override
 	public AuthorizationProcess getAuthorizationProcess(FeatureSet features) throws AuthenticationFailedException {
-		AuthPlugin plugin = null;
+		List<AuthPlugin> plugins = new ArrayList<>();
 
 		if (features.containKey("Operation")
 				&& ((Operation) features.get("Operation")).getOperation().equals("discoverKeys"))
-			plugin = new IdentifierAuthPlugin();
+			plugins.add(new IdentifierAuthPlugin());
 		else if (features.containKey("Operation")
 				&& ((Operation) features.get("Operation")).getOperation().equals("encrypt")) {
 			PreparedStatement st = null;
@@ -56,13 +58,34 @@ public class GateKeeperConfiguration implements Configuration {
 				while (rs.next()) {
 					String auth = rs.getString("auth");
 
-					// assemble plugins
-					if (auth.contains("PIN")) {
-						plugin = new SecretAuthPlugin();
-						plugin.setExpectedValue(auth.substring(auth.indexOf("\"secret\":") + 11,
-								auth.indexOf("\",", auth.indexOf("\"secret\":") + 11)));
-					} else
-						plugin = new NoAuthPlugin();
+					// iterate through the auth json
+					while (auth.contains("\"type\": ")) {
+						// extract authblob with id
+						int idlocation = auth.indexOf("\"type\": ");
+						String authblob = auth.substring(auth.lastIndexOf("{", idlocation),
+								auth.indexOf("}", idlocation + 1));
+
+						// assemble plugins
+						AuthPlugin plugin;
+						if (authblob.contains("PIN")) {
+							plugin = new SecretAuthPlugin();
+							plugin.setExpectedValue(authblob.substring(authblob.indexOf("\"secret\":") + 11,
+									authblob.indexOf("\",", authblob.indexOf("\"secret\":") + 11)));
+						} else if (authblob.contains("PASSWORD")) {
+							plugin = new UsernamePasswordAuthPlugin();
+							String expectedValue = authblob.substring(authblob.indexOf("\"username\":") + 13,
+									authblob.indexOf("\",", authblob.indexOf("\"username\":") + 13));
+							expectedValue += authblob.substring(authblob.indexOf("\"secret\":") + 11,
+									authblob.indexOf("\",", authblob.indexOf("\"secret\":") + 11));
+							plugin.setExpectedValue(expectedValue);
+						} else
+							// if we do not know how to handle a given auth
+							// method
+							throw new AuthenticationFailedException();
+
+						plugins.add(plugin);
+						auth = auth.replace(authblob, "");
+					}
 
 				}
 			} catch (Exception e) {
@@ -78,11 +101,11 @@ public class GateKeeperConfiguration implements Configuration {
 		}
 
 		// trigger an unknown error
-		if (null == plugin)
+		if (plugins.isEmpty())
 			throw new AuthenticationFailedException();
 
 		// return the complete auth process
-		return new AuthorizationProcess(new CountLimit(5), new AuthPlugin[] { plugin });
+		return new AuthorizationProcess(new CountLimit(5), plugins);
 	}
 
 }

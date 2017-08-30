@@ -14,6 +14,7 @@ import org.crysil.protocol.payload.auth.PayloadAuthRequest;
 import org.crysil.protocol.payload.auth.PayloadAuthResponse;
 import org.crysil.protocol.payload.auth.credentials.IdentifierAuthInfo;
 import org.crysil.protocol.payload.auth.credentials.SecretAuthInfo;
+import org.crysil.protocol.payload.auth.credentials.UserPasswordAuthInfo;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
@@ -84,6 +85,18 @@ public class TestTest {
 	}
 
 	@Test
+	public void testEncryptRequestCorrect2StepAuth() throws CrySILException {
+		Request fixture = createFixture("admin", "b");
+
+		Response response0 = DUT.take(fixture);
+		Assert.assertTrue(response0.getPayload() instanceof PayloadAuthResponse);
+		Response response1 = DUT.take(answerSecretChallenge(response0, "correct"));
+		Assert.assertTrue(response1.getPayload() instanceof PayloadAuthResponse);
+		Response response2 = DUT.take(answerUsernamePasswordChallenge(response1, "username", "correct"));
+		Assert.assertTrue(response2.getPayload() instanceof PayloadDiscoverKeysResponse);
+	}
+
+	@Test
 	public void testEncryptRequestNonexistingKey() throws CrySILException {
 		Request fixture = createFixture("nonexisting", "key");
 
@@ -121,6 +134,13 @@ public class TestTest {
 	public Request answerSecretChallenge(Response challenge, String secret) {
 		SecretAuthInfo authInfo = new SecretAuthInfo();
 		authInfo.setSecret(secret);
+		return createBasicAnswer(challenge, authInfo);
+	}
+
+	public Request answerUsernamePasswordChallenge(Response challenge, String username, String password) {
+		UserPasswordAuthInfo authInfo = new UserPasswordAuthInfo();
+		authInfo.setUserName(username);
+		authInfo.setPassWord(password);
 		return createBasicAnswer(challenge, authInfo);
 	}
 
