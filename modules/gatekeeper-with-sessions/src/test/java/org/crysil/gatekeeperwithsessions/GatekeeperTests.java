@@ -233,7 +233,7 @@ public class GatekeeperTests {
 	 * 1-step authentication without expected value.
 	 * @throws CrySILException 
 	 */
-	@Test(groups = "basicTests", enabled = false)
+	@Test(groups = "basicTests")
 	public void testSuccessfulUserAuthenticationWithoutExpectedValue() throws CrySILException {
         Config config = new Config();
 
@@ -246,15 +246,11 @@ public class GatekeeperTests {
 
         Request request = generateRequest();
 
-			Response response0 = DUT.take(request);
+		Response response0 = DUT.take(request);
 		if (response0.getPayload() instanceof PayloadAuthResponse) {
-					Response response1 = DUT.take(answerAuthChallenge(response0, "correct"));
-//                    Assert.assertNotNull(result.getSessionFeatures(), "session feature list is null");
-//                    Assert.assertFalse(result.getSessionFeatures().isEmpty(), "no session features present");
-//                    Assert.assertTrue(result.getSessionFeatures().get(0) instanceof IdentifierAuthResult
-//                            || result.getSessionFeatures().get(1) instanceof IdentifierAuthResult,
-//                            "wrong authentication result info in session");
-            } else
+			Response response1 = DUT.take(answerAuthChallenge(response0, "correct"));
+			Assert.assertTrue(response1.getPayload() instanceof PayloadDiscoverKeysResponse);
+		} else
 			Assert.fail("we got data instead of an auth challenge");
     }
 
