@@ -46,7 +46,7 @@ public class GateKeeperConfiguration implements Configuration {
 						.getKeyObject();
 
 				st = conn.prepareStatement(
-						"SELECT users.username, keyslots.name, keyslots.auth FROM keyslots INNER JOIN users ON keyslots.user_id=users.id WHERE username=? AND name=?");
+						"SELECT keyslots.auth FROM keyslots INNER JOIN users ON keyslots.user_id=users.id WHERE users.username=? AND keyslots.name=?");
 				st.setString(1, key.getId());
 				st.setString(2, key.getSubId());
 
@@ -54,11 +54,7 @@ public class GateKeeperConfiguration implements Configuration {
 
 				// iterate through the java resultset
 				while (rs.next()) {
-					String id = rs.getString("name");
 					String auth = rs.getString("auth");
-
-					// print the results
-					System.out.format("%s: %s\n", id, auth);
 
 					// assemble plugins
 					if (auth.contains("PIN")) {
@@ -69,11 +65,8 @@ public class GateKeeperConfiguration implements Configuration {
 						plugin = new NoAuthPlugin();
 
 				}
-
-
 			} catch (Exception e) {
-				System.err.println("Got an exception! ");
-				System.err.println(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				if (null != st)
 					try {
