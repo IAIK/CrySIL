@@ -2,9 +2,11 @@ package org.crysil.communications.http;
 
 import java.sql.SQLException;
 
-import org.crysil.actor.staticKeyEncryption.StaticKeyEncryptionActor;
+import org.crysil.actor.softwarecrypto.SimpleKeyStore;
+import org.crysil.actor.softwarecrypto.SoftwareCrypto;
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
+import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.gatekeeperwithsessions.Configuration;
 import org.crysil.gatekeeperwithsessions.Gatekeeper;
 
@@ -19,11 +21,12 @@ public class ElementBuilder {
 	 * @return the entry module to the CrySIL node
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException 
+	 * @throws KeyStoreUnavailableException 
 	 */
-	public static Module build() throws ClassNotFoundException, SQLException {
+	public static Module build() throws ClassNotFoundException, SQLException, KeyStoreUnavailableException {
 		Configuration config = new GateKeeperConfiguration();
 		OneToOneInterlink gatekeeper = new Gatekeeper(config);
-		gatekeeper.attach(new StaticKeyEncryptionActor());
+		gatekeeper.attach(new SoftwareCrypto(new SimpleKeyStore()));
 		return (Module) gatekeeper;
 	}
 

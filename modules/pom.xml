@@ -15,7 +15,8 @@
         <module>cms/java</module>
         <module>actors/java/actor-decentral</module>
         <module>actors/java/invertedTrustActor</module>
-        <module>actors/java/staticKeyEncryption</module>
+        <module>actors/java/software-crypto</module>
+        <module>actors/java/singlekey-keystore</module>
         <module>actors/java/smcc</module>
         <module>actors/java/u2f-android</module>
         <module>actors/java/u2f-pkcs11</module>
