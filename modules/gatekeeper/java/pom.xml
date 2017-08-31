@@ -10,6 +10,8 @@
     <version>2.0-1</version>
     <relativePath>../..</relativePath>
   </parent>
+  
+  <groupId>org.crysil</groupId>
   <artifactId>gatekeeper</artifactId>
   <name>CrySIL Gatekeeper</name>
   <dependencies>
