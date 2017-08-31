@@ -27,13 +27,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.crysil.actor</groupId>
-			<artifactId>staticKeyEncryption</artifactId>
-			<version>${crysil.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.crysil.communications</groupId>
-			<artifactId>u2f-commons</artifactId>
+			<artifactId>software-crypto</artifactId>
 			<version>${crysil.version}</version>
 		</dependency>
 

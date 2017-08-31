@@ -1,5 +1,14 @@
 package org.crysil.actor.softwarecrypto;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.Request;
@@ -7,23 +16,14 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-
 public class Decrypt implements Command {
 
 	@Override
-	public PayloadResponse perform(Request input) throws CrySILException {
+	public PayloadResponse perform(Request input, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		PayloadDecryptRequest request = (PayloadDecryptRequest) input.getPayload();
 
 		try {
 			// prepare stuff
-			SimpleKeyStore keystore = SimpleKeyStore.getInstance();
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
 			PrivateKey key = keystore.getJCEPrivateKey(request.getDecryptionKey());

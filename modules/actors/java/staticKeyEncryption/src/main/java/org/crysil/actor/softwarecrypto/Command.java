@@ -5,5 +5,5 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadResponse;
 
 public interface Command {
-	public PayloadResponse perform(Request request) throws CrySILException;
+	public PayloadResponse perform(Request request, SoftwareCryptoKeyStore keystore) throws CrySILException;
 }

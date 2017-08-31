@@ -25,7 +25,7 @@ import org.crysil.protocol.payload.crypto.key.Key;
 public class DecryptCMS implements Command {
 
 	@Override
-	public PayloadResponse perform(Request input) throws CrySILException {
+	public PayloadResponse perform(Request input, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		
 		try {
 			if (!(input.getPayload() instanceof PayloadDecryptRequest)) {
@@ -36,8 +36,7 @@ public class DecryptCMS implements Command {
 			List<byte[]> encryptedCMSData = payloadEncryptCMSRequest.getEncryptedData();
 			
 			Key key = payloadEncryptCMSRequest.getDecryptionKey();
-			SimpleKeyStore ks = SimpleKeyStore.getInstance();
-			PrivateKey decryptionKey = ks.getJCEPrivateKey(key);
+			PrivateKey decryptionKey = keystore.getJCEPrivateKey(key);
 
 			List<byte[]> decryptedCMSdataList = new ArrayList<>();
 			for (byte[] encryptedCMSEntry : encryptedCMSData) {

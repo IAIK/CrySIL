@@ -24,7 +24,7 @@ import org.crysil.protocol.payload.crypto.key.Key;
 public class EncryptCMS implements Command {
 
 	@Override
-	public PayloadResponse perform(Request input) throws CrySILException {
+	public PayloadResponse perform(Request input, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		
 		try {
 			if (!(input.getPayload() instanceof PayloadEncryptRequest)) {

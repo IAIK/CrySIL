@@ -10,7 +10,6 @@ import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
-import org.crysil.protocol.payload.crypto.generatekey.PayloadGenerateU2FKeyRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 
@@ -19,15 +18,17 @@ import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
  */
 public class SoftwareCrypto implements Module {
 	private Map<String, Command> commands = new HashMap<>();
+	private SoftwareCryptoKeyStore keystore;
 
-	public SoftwareCrypto() {
+	public SoftwareCrypto(SoftwareCryptoKeyStore keystore) {
 		commands.put(PayloadDiscoverKeysRequest.class.getName(), new DiscoverKeys());
 		commands.put(PayloadEncryptRequest.class.getName(), new Encrypt());
 		commands.put(PayloadDecryptRequest.class.getName(), new Decrypt());
 		commands.put(PayloadSignRequest.class.getName(), new Sign());
-		commands.put(PayloadGenerateU2FKeyRequest.class.getName(), new GenerateU2FKey());
 		commands.put("EncryptCMS", new EncryptCMS());
 		commands.put("DecryptCMS", new DecryptCMS());
+
+		this.keystore = keystore;
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class SoftwareCrypto implements Module {
 			throw new UnsupportedRequestException();
 
 		// let someone else do the actual work
-		response.setPayload(command.perform(request));
+		response.setPayload(command.perform(request, keystore));
 
 		return response;
 	}

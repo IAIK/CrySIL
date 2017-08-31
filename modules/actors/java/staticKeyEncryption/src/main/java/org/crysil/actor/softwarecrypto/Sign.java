@@ -1,5 +1,9 @@
 package org.crysil.actor.softwarecrypto;
 
+import java.security.Signature;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.Request;
@@ -8,17 +12,13 @@ import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
 
-import java.security.Signature;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Signs data with a U2F Key
  */
 public class Sign implements Command {
 
 	@Override
-	public PayloadResponse perform(Request request) throws CrySILException {
+	public PayloadResponse perform(Request request, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		PayloadSignRequest payload = (PayloadSignRequest) request.getPayload();
 
 		List<byte[]> hashesToBeSigned = payload.getHashesToBeSigned();
@@ -32,7 +32,7 @@ public class Sign implements Command {
 			byte[] signature = null;
 			try {
 				Signature sig = Signature.getInstance("SHA256withECDSA");
-				sig.initSign(SimpleKeyStore.getInstance().getJCEPrivateKeyECDSA());
+				sig.initSign(keystore.getJCEPrivateKey(null));
 				sig.update(inputData);
 				signature = sig.sign();
 			} catch (Exception e) {

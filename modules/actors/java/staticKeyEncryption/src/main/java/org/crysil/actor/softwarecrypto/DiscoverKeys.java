@@ -1,6 +1,12 @@
 package org.crysil.actor.softwarecrypto;
 
-import org.crysil.errorhandling.*;
+import java.security.cert.CertificateEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.crysil.errorhandling.CrySILException;
+import org.crysil.errorhandling.KeyStoreUnavailableException;
+import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.key.InternalCertificate;
@@ -10,17 +16,13 @@ import org.crysil.protocol.payload.crypto.key.KeyRepresentation;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysRequest;
 import org.crysil.protocol.payload.crypto.keydiscovery.PayloadDiscoverKeysResponse;
 
-import java.security.cert.CertificateEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * can handle discover key requests.
  */
 public class DiscoverKeys implements Command {
 
 	@Override
-	public PayloadResponse perform(Request input) throws CrySILException {
+	public PayloadResponse perform(Request input, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		PayloadDiscoverKeysRequest request = (PayloadDiscoverKeysRequest) input.getPayload();
 
 		final List<Key> keys = new ArrayList<>();
@@ -40,11 +42,9 @@ public class DiscoverKeys implements Command {
 			internalcertificate.setId("testkey");
 			internalcertificate.setSubId("1");
 			try {
-				final SimpleKeyStore keystore = SimpleKeyStore.getInstance();
 				internalcertificate.setCertificate(keystore.getX509Certificate(new KeyHandle()));
 				keys.add(internalcertificate);
-			} catch (KeyStoreUnavailableException | CertificateEncodingException | InvalidCertificateException
-					| KeyNotFoundException e) {
+			} catch (CertificateEncodingException e) {
 
 				throw new KeyStoreUnavailableException();
 			}

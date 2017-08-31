@@ -1,6 +1,15 @@
 package org.crysil.actor.softwarecrypto;
 
-import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
@@ -8,20 +17,12 @@ import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
-import java.io.ByteArrayInputStream;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.security.cert.X509Certificate;
+import com.google.common.io.BaseEncoding;
 
 /**
  * holds exactly one hardcoded key for demonstration purposes.
  */
-public class SimpleKeyStore {
+public class SimpleKeyStore implements SoftwareCryptoKeyStore {
 
 	/** the raw key data */
 	private static final String rawPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwQSeSuzJ9MndkJeBkymovvDiFjCOYsd8zPgBGw2+euFfZI3aNJ32dZWMfxW1A2qDF39MazLsCAsE6Z2Vo5BQXz2xEiPlmTko8cUrjM9Qsj0WXc0vUmYKbPsrghco9tQ98PMVQn95kUUTpLDOSPFTebL6rolU+WEtdC1LQtrLaNhrowWJ0OnxtGJINc//ZZFNroHWzdmg6rlu+BojePSBzEoR7/2UmeGQK47vE7KsOl4zMW99E6njCp7vanDnK92XlOfHkAH8pYpnBDzbBBwdKgTok6sfP18/HoQGN853qSq2PXLgk6CNrJoKHB5N9Lp1REO6yCZMarm4eRYCd2GIhwIDAQAB";
@@ -36,25 +37,7 @@ public class SimpleKeyStore {
 	private PrivateKey privKey, privKeyECDSA;
 	private X509Certificate cert, certEC;
 
-	/**
-	 * make it a singleton to avoid loading the keys everytime we need them
-	 */
-	private static SimpleKeyStore instance = null;
-
-	/**
-	 * get the single instance
-	 *
-	 * @return the singleton instance of SimpleKeyStore
-	 * @throws KeyStoreUnavailableException
-	 */
-	public static SimpleKeyStore getInstance() throws KeyStoreUnavailableException {
-		if (null == instance) {
-      instance = new SimpleKeyStore();
-    }
-		return instance;
-	}
-
-	private SimpleKeyStore() throws KeyStoreUnavailableException {
+	public SimpleKeyStore() throws KeyStoreUnavailableException {
 		try {
 			// create java representation of the raw key data
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -89,6 +72,7 @@ public class SimpleKeyStore {
 	 * @throws InvalidCertificateException
 	 * @throws KeyNotFoundException
 	 */
+	@Override
 	public PublicKey getJCEPublicKey(final Key current) throws InvalidCertificateException, KeyNotFoundException {
 		if (current instanceof KeyHandle) {
 			return pubKey;
@@ -110,6 +94,7 @@ public class SimpleKeyStore {
 	 * @return the private key
 	 * @throws KeyNotFoundException
 	 */
+	@Override
 	public PrivateKey getJCEPrivateKey(final Key current) throws KeyNotFoundException {
 		if (current instanceof KeyHandle) {
 			return privKey;
@@ -144,21 +129,22 @@ public class SimpleKeyStore {
     }
 	}
 
-	public X509Certificate getX509Certificate() {
-		return cert;
+	public PublicKey getJCEPublicKeyECDSA() {
+		return pubKeyECDSA;
 	}
 
-  public PublicKey getJCEPublicKeyECDSA() {
-    return pubKeyECDSA;
-  }
+	public PrivateKey getJCEPrivateKeyECDSA() {
+		return privKeyECDSA;
+	}
 
-  public PrivateKey getJCEPrivateKeyECDSA() {
-    return privKeyECDSA;
-  }
+	public X509Certificate getX509CertificateEC() {
+		return certEC;
+	}
 
-  public X509Certificate getX509CertificateEC() {
-    return certEC;
-  }
+	@Override
+	public X509Certificate getX509Certificate(KeyHandle keyHandle) {
+		return cert;
+	}
 
   // /**
 	// * helper for creating the raw key data
