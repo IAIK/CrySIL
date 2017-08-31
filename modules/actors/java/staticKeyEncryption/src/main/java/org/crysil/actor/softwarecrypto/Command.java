@@ -1,4 +1,4 @@
-package org.crysil.actor.staticKeyEncryption;
+package org.crysil.actor.softwarecrypto;
 
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.protocol.Request;

@@ -27,7 +27,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.crysil.actor</groupId>
-			<artifactId>staticKeyEncryption</artifactId>
+			<artifactId>software-crypto</artifactId>
 			<version>${crysil.version}</version>
 		</dependency>
 

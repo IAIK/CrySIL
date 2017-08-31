@@ -2,7 +2,7 @@ package org.crysil.communications.http;
 
 import java.sql.SQLException;
 
-import org.crysil.actor.staticKeyEncryption.StaticKeyEncryptionActor;
+import org.crysil.actor.softwarecrypto.SoftwareCrypto;
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
 import org.crysil.gatekeeperwithsessions.Configuration;
@@ -23,7 +23,7 @@ public class ElementBuilder {
 	public static Module build() throws ClassNotFoundException, SQLException {
 		Configuration config = new GateKeeperConfiguration();
 		OneToOneInterlink gatekeeper = new Gatekeeper(config);
-		gatekeeper.attach(new StaticKeyEncryptionActor());
+		gatekeeper.attach(new SoftwareCrypto());
 		return (Module) gatekeeper;
 	}
 

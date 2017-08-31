@@ -1,4 +1,4 @@
-package org.crysil.actor.staticKeyEncryption;
+package org.crysil.actor.softwarecrypto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +17,10 @@ import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 /**
  * Has one static key available and can use this very key to encrypt and decrypt data.
  */
-public class StaticKeyEncryptionActor implements Module {
+public class SoftwareCrypto implements Module {
 	private Map<String, Command> commands = new HashMap<>();
 
-	public StaticKeyEncryptionActor() {
+	public SoftwareCrypto() {
 		commands.put(PayloadDiscoverKeysRequest.class.getName(), new DiscoverKeys());
 		commands.put(PayloadEncryptRequest.class.getName(), new Encrypt());
 		commands.put(PayloadDecryptRequest.class.getName(), new Decrypt());

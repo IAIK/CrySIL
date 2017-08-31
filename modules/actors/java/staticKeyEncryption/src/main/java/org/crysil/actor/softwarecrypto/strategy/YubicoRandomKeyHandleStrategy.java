@@ -1,10 +1,12 @@
-package org.crysil.actor.staticKeyEncryption.strategy;
+package org.crysil.actor.softwarecrypto.strategy;
 
 import com.google.common.primitives.Bytes;
-import org.crysil.actor.staticKeyEncryption.SimpleKeyStore;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.crysil.actor.softwarecrypto.SimpleKeyStore;
+
 import java.security.Key;
 import java.security.SecureRandom;
 import java.security.Signature;

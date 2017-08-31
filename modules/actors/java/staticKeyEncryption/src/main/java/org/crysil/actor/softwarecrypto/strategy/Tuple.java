@@ -1,4 +1,4 @@
-package org.crysil.actor.staticKeyEncryption.strategy;
+package org.crysil.actor.softwarecrypto.strategy;
 
 /**
  * Class that represents a tuple of two values with different types

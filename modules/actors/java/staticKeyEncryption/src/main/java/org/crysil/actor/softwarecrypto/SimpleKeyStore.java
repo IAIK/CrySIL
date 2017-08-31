@@ -1,4 +1,4 @@
-package org.crysil.actor.staticKeyEncryption;
+package org.crysil.actor.softwarecrypto;
 
 import com.google.common.io.BaseEncoding;
 import org.crysil.errorhandling.InvalidCertificateException;

@@ -1,7 +1,7 @@
-package org.crysil.actor.staticKeyEncryption;
+package org.crysil.actor.softwarecrypto;
 
-import org.crysil.actor.staticKeyEncryption.strategy.Tuple;
-import org.crysil.actor.staticKeyEncryption.strategy.YubicoRandomKeyHandleStrategy;
+import org.crysil.actor.softwarecrypto.strategy.Tuple;
+import org.crysil.actor.softwarecrypto.strategy.YubicoRandomKeyHandleStrategy;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.Request;

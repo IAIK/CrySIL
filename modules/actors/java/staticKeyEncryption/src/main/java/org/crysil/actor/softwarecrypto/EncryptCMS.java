@@ -1,4 +1,4 @@
-package org.crysil.actor.staticKeyEncryption;
+package org.crysil.actor.softwarecrypto;
 
 import java.security.Security;
 import java.security.cert.X509Certificate;
