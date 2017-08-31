@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.crysil.errorhandling.AuthenticationFailedException;
@@ -15,9 +16,9 @@ import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.IdentifierAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.SecretAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.UsernamePasswordAuthPlugin;
-import org.crysil.gatekeeperwithsessions.configuration.CountLimit;
 import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
 import org.crysil.gatekeeperwithsessions.configuration.Operation;
+import org.crysil.gatekeeperwithsessions.configuration.TimeLimit;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public class GateKeeperConfiguration implements Configuration {
@@ -105,7 +106,7 @@ public class GateKeeperConfiguration implements Configuration {
 			throw new AuthenticationFailedException();
 
 		// return the complete auth process
-		return new AuthorizationProcess(new CountLimit(5), plugins);
+		return new AuthorizationProcess(new TimeLimit(Calendar.MINUTE, 30), plugins);
 	}
 
 }
