@@ -1,8 +1,9 @@
-package org.crysil.actor.softwarecrypto;
+package org.crysil.actor.softwarecrypto.test;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 
+import org.crysil.actor.softwarecrypto.SoftwareCrypto;
 import org.crysil.builders.KeyBuilder;
 import org.crysil.builders.PayloadBuilder;
 import org.crysil.commons.Module;
@@ -54,7 +55,7 @@ public class TestTest {
   @Test(dataProvider = "discoverKeyFixtures")
   public void discoverKeyTest(final KeyRepresentation keytype, final boolean expectError,
       final Object expected) throws CrySILException {
-		final Module DUT = new SoftwareCrypto(new SimpleKeyStore());
+		final Module DUT = new SoftwareCrypto(new TestKeystore());
 
     final Request request = new Request();
     final PayloadDiscoverKeysRequest payload = new PayloadDiscoverKeysRequest();
@@ -79,7 +80,7 @@ public class TestTest {
   public void keyStoreTest() throws KeyNotFoundException, KeyStoreUnavailableException,
       InvalidCertificateException, CertificateEncodingException {
 
-		final SimpleKeyStore DUT = new SimpleKeyStore();
+		final TestKeystore DUT = new TestKeystore();
     Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPublicKey(new KeyHandle()).getEncoded()),
         rawPublicKey, "public key value does not match");
     Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPrivateKey(new KeyHandle()).getEncoded()),
@@ -104,7 +105,7 @@ public class TestTest {
 
   @Test(dataProvider = "encryptFixtures")
   public void encryptTest(final PayloadRequest payload) throws Exception {
-		final Module DUT = new SoftwareCrypto(new SimpleKeyStore());
+		final Module DUT = new SoftwareCrypto(new TestKeystore());
 
     final Request request = new Request(null, payload);
 
@@ -117,7 +118,7 @@ public class TestTest {
     final PayloadRequest payload = PayloadBuilder.buildDecryptRequest(new KeyHandle(),
         "UgKSFG8R0meUoR3VbewR20MwrEJI3Nx2Qvdb2/htnPmTnTqx6+qacplg5jtMB6h8W4YaQZ1L3IEGJeLqI/fkPrvxoh95pIacpEJQzz3zyg1YGqtDo6NZARfMAYIj0COmpY2E1BcJmVbtUYW95DcqYt7Brsyse+lqZBkIo5WObpqBIhGkDcmw+5goRcY92/kpwV8YL8g8nMbqOJpq85vZfbmtR1rtoo1kWt+erUN4ThkQw7jaFvJmjSFAMpKql4OzdKb4NYrb28WA66VIKGqiHzcUDAJC5KGtp3a4UYKcAEW4mm+8vcMAjLwxbUGU7CPvRwyk3TQ+GCaVw5EA8ZopYw==");
 
-		final Module DUT = new SoftwareCrypto(new SimpleKeyStore());
+		final Module DUT = new SoftwareCrypto(new TestKeystore());
 
     final Request request = new Request(new StandardHeader(), payload);
 
