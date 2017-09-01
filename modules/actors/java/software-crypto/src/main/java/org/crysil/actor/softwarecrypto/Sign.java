@@ -1,5 +1,6 @@
 package org.crysil.actor.softwarecrypto;
 
+import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,8 @@ public class Sign implements Command {
 
 			byte[] signature = null;
 			try {
-				Signature sig = Signature.getInstance("SHA256withECDSA");
-				sig.initSign(keystore.getJCEPrivateKey(null));
+				Signature sig = Signature.getInstance("SHA256withRSA");
+				sig.initSign((PrivateKey) keystore.getJCEPrivateKey(payload.getSignatureKey()));
 				sig.update(inputData);
 				signature = sig.sign();
 			} catch (Exception e) {

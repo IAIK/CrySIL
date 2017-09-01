@@ -16,7 +16,6 @@
     </parent>
 
     <properties>
-    	<spring.version>4.2.9.RELEASE</spring.version>
     	<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
     	<jstl.version>1.2</jstl.version>
     	<maven-war-plugin.version>2.6</maven-war-plugin.version>
@@ -31,18 +30,11 @@
 	        <artifactId>commons</artifactId>
 	        <version>${crysil.version}</version>
         </dependency>
-        
+
         <dependency>
 	        <groupId>org.crysil.communications</groupId>
 	        <artifactId>json-commons</artifactId>
 	        <version>${crysil.version}</version>
-        </dependency>
-        
-        <dependency>
-	        <groupId>org.crysil.actor</groupId>
-	        <artifactId>staticKeyEncryption</artifactId>
-	        <version>${crysil.version}</version>
-	        <scope>test</scope>
         </dependency>
 	    
     	<!-- JSON/XML -->

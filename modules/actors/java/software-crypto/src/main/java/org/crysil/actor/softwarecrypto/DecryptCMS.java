@@ -36,7 +36,7 @@ public class DecryptCMS implements Command {
 			List<byte[]> encryptedCMSData = payloadEncryptCMSRequest.getEncryptedData();
 			
 			Key key = payloadEncryptCMSRequest.getDecryptionKey();
-			PrivateKey decryptionKey = keystore.getJCEPrivateKey(key);
+			PrivateKey decryptionKey = (PrivateKey) keystore.getJCEPrivateKey(key);
 
 			List<byte[]> decryptedCMSdataList = new ArrayList<>();
 			for (byte[] encryptedCMSEntry : encryptedCMSData) {

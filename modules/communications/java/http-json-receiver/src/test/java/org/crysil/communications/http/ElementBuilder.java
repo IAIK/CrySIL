@@ -1,6 +1,5 @@
 package org.crysil.communications.http;
 
-import org.crysil.actor.staticKeyEncryption.StaticKeyEncryptionActor;
 import org.crysil.commons.Module;
 
 /**
@@ -14,7 +13,7 @@ public class ElementBuilder {
 	 * @return the entry module to the CrySIL node
 	 */
 	public static Module build() {
-		return new StaticKeyEncryptionActor();
+		return null;
 	}
 
 }
