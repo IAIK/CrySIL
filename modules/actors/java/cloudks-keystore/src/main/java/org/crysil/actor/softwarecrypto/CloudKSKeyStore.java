@@ -1,7 +1,6 @@
 package org.crysil.actor.softwarecrypto;
 
 import java.security.KeyFactory;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
@@ -13,6 +12,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.crysil.errorhandling.InvalidCertificateException;
@@ -50,7 +51,7 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 	 * @throws KeyNotFoundException
 	 */
 	@Override
-	public PrivateKey getJCEPrivateKey(final Key current) throws KeyNotFoundException {
+	public java.security.Key getJCEPrivateKey(final Key current) throws KeyNotFoundException {
 		KeyHandle key = null;
 		if (current instanceof KeyHandle)
 			key = (KeyHandle) current;
@@ -71,10 +72,13 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 				keydata = keydata.replaceAll("-----.*KEY-----", "");
 				keydata = keydata.replaceAll("\\n", "");
 
-				// create java representation of the raw key data
-				KeyFactory keyFactory = KeyFactory.getInstance(type);
-				PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(keydata));
-				return keyFactory.generatePrivate(privKeySpec);
+				if("AES".equals(type)) {
+					return new SecretKeySpec(keydata.getBytes(), type);
+				} else {
+					KeyFactory keyFactory = KeyFactory.getInstance(type);
+					PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(keydata));
+					return keyFactory.generatePrivate(privKeySpec);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,7 +103,7 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 	@Override
 	public PublicKey getJCEPublicKey(Key current) throws InvalidCertificateException, KeyNotFoundException {
 		try {
-			PrivateKey privateKey = getJCEPrivateKey(current);
+			java.security.Key privateKey = getJCEPrivateKey(current);
 
 			// beat JCE to give up the public exponent...
 			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;

@@ -26,7 +26,7 @@ public class Decrypt implements Command {
 			// prepare stuff
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
-			PrivateKey key = keystore.getJCEPrivateKey(request.getDecryptionKey());
+			PrivateKey key = (PrivateKey) keystore.getJCEPrivateKey(request.getDecryptionKey());
 			cipher.init(Cipher.DECRYPT_MODE, key);
 
 			// assemble response

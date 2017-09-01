@@ -1,5 +1,8 @@
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+
+import javax.crypto.SecretKey;
 
 import org.crysil.actor.softwarecrypto.CloudKSKeyStore;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
@@ -14,7 +17,7 @@ public class TestTest {
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("a");
-		PrivateKey privatekey = DUT.getJCEPrivateKey(keyhandle);
+		Key privatekey = DUT.getJCEPrivateKey(keyhandle);
 		Assert.assertTrue(privatekey instanceof PrivateKey);
 	}
 
@@ -25,8 +28,19 @@ public class TestTest {
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("a");
-		PublicKey privatekey = DUT.getJCEPublicKey(keyhandle);
+		Key privatekey = DUT.getJCEPublicKey(keyhandle);
 		Assert.assertTrue(privatekey instanceof PublicKey);
+	}
+
+	@Test
+	public void getSymmetricKey() throws Exception {
+
+		CloudKSKeyStore DUT = new CloudKSKeyStore("jdbc:mysql://localhost/cloudks_dev", "cloudks", "cloudkspassword");
+		KeyHandle keyhandle = new KeyHandle();
+		keyhandle.setId("admin");
+		keyhandle.setSubId("b");
+		Key key = DUT.getJCEPrivateKey(keyhandle);
+		Assert.assertTrue(key instanceof SecretKey);
 	}
 
 }
