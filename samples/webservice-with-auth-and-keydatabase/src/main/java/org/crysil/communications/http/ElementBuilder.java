@@ -2,7 +2,7 @@ package org.crysil.communications.http;
 
 import java.sql.SQLException;
 
-import org.crysil.actor.softwarecrypto.SimpleKeyStore;
+import org.crysil.actor.softwarecrypto.CloudKSKeyStore;
 import org.crysil.actor.softwarecrypto.SoftwareCrypto;
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
@@ -26,7 +26,8 @@ public class ElementBuilder {
 	public static Module build() throws ClassNotFoundException, SQLException, KeyStoreUnavailableException {
 		Configuration config = new GateKeeperConfiguration();
 		OneToOneInterlink gatekeeper = new Gatekeeper(config);
-		gatekeeper.attach(new SoftwareCrypto(new SimpleKeyStore()));
+		gatekeeper.attach(new SoftwareCrypto(
+				new CloudKSKeyStore("jdbc:mysql://localhost/cloudks_dev", "cloudks", "cloudkspassword")));
 		return (Module) gatekeeper;
 	}
 
