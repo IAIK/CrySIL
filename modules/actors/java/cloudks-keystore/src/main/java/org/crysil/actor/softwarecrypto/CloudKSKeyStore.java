@@ -5,7 +5,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -69,8 +71,6 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 				keydata = keydata.replaceAll("-----.*KEY-----", "");
 				keydata = keydata.replaceAll("\\n", "");
 
-				System.out.println(keydata);
-
 				// create java representation of the raw key data
 				KeyFactory keyFactory = KeyFactory.getInstance(type);
 				PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(keydata));
@@ -97,8 +97,19 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 	}
 
 	@Override
-	public PublicKey getJCEPublicKey(Key currentKey) throws InvalidCertificateException, KeyNotFoundException {
-		// TODO Auto-generated method stub
+	public PublicKey getJCEPublicKey(Key current) throws InvalidCertificateException, KeyNotFoundException {
+		try {
+			PrivateKey privateKey = getJCEPrivateKey(current);
+
+			// beat JCE to give up the public exponent...
+			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
+
+			return KeyFactory.getInstance("RSA").generatePublic(
+					new RSAPublicKeySpec(rsaPrivateKey.getModulus(), rsaPrivateKey.getPublicExponent()));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }
