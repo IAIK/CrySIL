@@ -1,3 +1,5 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.crysil.commons.Module;
@@ -28,6 +30,7 @@ public class TestTest {
 
 	private String sessionID;
 	private Gatekeeper DUT;
+	private Connection connection;
 
 	class TestActor implements Module {
 
@@ -44,13 +47,18 @@ public class TestTest {
 	 */
 	@BeforeMethod
 	public void init() throws ClassNotFoundException, SQLException {
-		DUT = new Gatekeeper(new GateKeeperConfiguration());
+		DriverManager.getDriver("jdbc:mysql://localhost/cloudks_dev");
+		connection = DriverManager.getConnection("jdbc:mysql://localhost/cloudks_dev",
+				"cloudks",
+				"cloudkspassword");
+		
+		DUT = new Gatekeeper(new GateKeeperConfiguration(connection));
 		DUT.attach(new TestActor());
 	}
 
 	@Test(enabled = false)
 	public void gettingStarted() throws AuthenticationFailedException, ClassNotFoundException, SQLException {
-		GateKeeperConfiguration DUT = new GateKeeperConfiguration();
+		GateKeeperConfiguration DUT = new GateKeeperConfiguration(connection);
 		DUT.getAuthorizationProcess(null);
 	}
 

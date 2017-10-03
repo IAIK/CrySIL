@@ -8,7 +8,6 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,16 +30,12 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 
 	private Connection connection;
 
-	public CloudKSKeyStore(String connectionString, String username, String password)
+	public CloudKSKeyStore(Connection connection)
 			throws KeyStoreUnavailableException, ClassNotFoundException, SQLException {
 
 		Security.addProvider(new BouncyCastleProvider());
 
-		// create database connection
-		String myDriver = "com.mysql.jdbc.Driver";
-		String myUrl = connectionString;
-		Class.forName(myDriver);
-		connection = DriverManager.getConnection(myUrl, username, password);
+		this.connection = connection;
 	}
 
 	/**

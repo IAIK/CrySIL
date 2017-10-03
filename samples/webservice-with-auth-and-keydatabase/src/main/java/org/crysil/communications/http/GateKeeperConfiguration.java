@@ -1,7 +1,6 @@
 package org.crysil.communications.http;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,12 +24,8 @@ public class GateKeeperConfiguration implements Configuration {
 
 	private Connection conn;
 
-	public GateKeeperConfiguration() throws ClassNotFoundException, SQLException {
-		// create database connection
-		String myDriver = "com.mysql.jdbc.Driver";
-		String myUrl = "jdbc:mysql://localhost/cloudks_dev";
-		Class.forName(myDriver);
-		conn = DriverManager.getConnection(myUrl, "cloudks", "cloudkspassword");
+	public GateKeeperConfiguration(Connection connection) {
+		conn = connection;
 	}
 
 	@Override
