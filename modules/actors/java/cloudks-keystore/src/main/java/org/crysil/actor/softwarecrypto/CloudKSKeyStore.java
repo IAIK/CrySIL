@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -109,6 +111,42 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	@Override
+	public List<KeyHandle> getKeyList() {
+		List<KeyHandle> result = new ArrayList<>();
+
+		PreparedStatement st = null;
+		try {
+			st = connection.prepareStatement(
+					"SELECT users.username, keyslots.name FROM keyslots INNER JOIN users ON keyslots.user_id=users.id");
+
+			ResultSet rs = st.executeQuery();
+
+			// iterate through the java resultset
+			while (rs.next()) {
+				String id = rs.getString("username");
+				String subid = rs.getString("name");
+
+				KeyHandle tmp = new KeyHandle();
+				tmp.setId(id);
+				tmp.setSubId(subid);
+				result.add(tmp);
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != st)
+				try {
+					st.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+
 		return null;
 	}
 }

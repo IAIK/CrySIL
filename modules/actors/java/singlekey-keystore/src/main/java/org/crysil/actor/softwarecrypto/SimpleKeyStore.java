@@ -9,6 +9,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
@@ -144,6 +146,17 @@ public class SimpleKeyStore implements SoftwareCryptoKeyStore {
 	@Override
 	public X509Certificate getX509Certificate(KeyHandle keyHandle) {
 		return cert;
+	}
+
+	@Override
+	public List<KeyHandle> getKeyList() {
+		List<KeyHandle> result = new ArrayList<>();
+
+		KeyHandle tmp = new KeyHandle();
+		tmp.setId("test");
+		tmp.setSubId("key");
+		result.add(tmp);
+		return result;
 	}
 
   // /**

@@ -32,21 +32,20 @@ public class DiscoverKeys implements Command {
 
 		switch (request.getRepresentation()) {
 		case HANDLE:
-			final KeyHandle keyhandle = new KeyHandle();
-			keyhandle.setId("testkey");
-			keyhandle.setSubId("1");
-			keys.add(keyhandle);
+			for (Key keyhandle : keystore.getKeyList())
+				keys.add(keyhandle);
 			break;
 		case CERTIFICATE:
-			final InternalCertificate internalcertificate = new InternalCertificate();
-			internalcertificate.setId("testkey");
-			internalcertificate.setSubId("1");
-			try {
-				internalcertificate.setCertificate(keystore.getX509Certificate(new KeyHandle()));
-				keys.add(internalcertificate);
-			} catch (CertificateEncodingException e) {
-
-				throw new KeyStoreUnavailableException();
+			for (KeyHandle keyhandle : keystore.getKeyList()) {
+				InternalCertificate internalcertificate = new InternalCertificate();
+				internalcertificate.setId(keyhandle.getId());
+				internalcertificate.setSubId(keyhandle.getSubId());
+				try {
+					internalcertificate.setCertificate(keystore.getX509Certificate(keyhandle));
+					keys.add(internalcertificate);
+				} catch (CertificateEncodingException e) {
+					throw new KeyStoreUnavailableException();
+				}
 			}
 			break;
 		default:
