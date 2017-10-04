@@ -2,7 +2,6 @@ package org.crysil.actor.softwarecrypto;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +9,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
@@ -27,14 +27,22 @@ public class Encrypt implements Command {
 
 		try {
 			// prepare stuff
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			Cipher cipher = null;
 
 			// assemble response
 			PayloadEncryptResponse result = new PayloadEncryptResponse();
 
 			// for each key
 			for (Key currentKey : request.getKeys()) {
-				PublicKey key = keystore.getJCEPublicKey(currentKey);
+				java.security.Key key = keystore.getJCEPrivateKey(currentKey);
+
+				if (key instanceof SecretKey)
+					cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+				else {
+					cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+					key = keystore.getJCEPublicKey(currentKey);
+				}
+
 				cipher.init(Cipher.ENCRYPT_MODE, key);
 
 				// encrypt

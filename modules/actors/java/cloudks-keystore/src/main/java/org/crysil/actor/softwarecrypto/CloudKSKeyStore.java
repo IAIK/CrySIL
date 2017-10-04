@@ -17,13 +17,12 @@ import java.util.List;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
-
-import com.google.common.io.BaseEncoding;
 
 /**
  * keystore for the CloudKS (by Attila Földes) database
@@ -70,10 +69,11 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 				keydata = keydata.replaceAll("\\n", "");
 
 				if("AES".equals(type)) {
-					return new SecretKeySpec(keydata.getBytes(), type);
+					return new SecretKeySpec(Base64.decode(keydata.getBytes()),
+							type);
 				} else {
 					KeyFactory keyFactory = KeyFactory.getInstance(type);
-					PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(BaseEncoding.base64().decode(keydata));
+					PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(Base64.decode(keydata));
 					return keyFactory.generatePrivate(privKeySpec);
 				}
 			}
