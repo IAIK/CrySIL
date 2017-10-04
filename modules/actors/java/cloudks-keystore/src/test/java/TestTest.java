@@ -1,6 +1,8 @@
 import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 import javax.crypto.SecretKey;
 
@@ -10,10 +12,18 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class TestTest {
+	private Connection connection;
+
+	public void init() throws Exception {
+		// create database connection
+		Class.forName("com.mysql.jdbc.Driver");
+		connection = DriverManager.getConnection("jdbc:mysql://localhost/cloudks_dev", "cloudks", "cloudkspassword");
+	}
+
 	@Test
 	public void gettingStarted() throws Exception {
 
-		CloudKSKeyStore DUT = new CloudKSKeyStore("jdbc:mysql://localhost/cloudks_dev", "cloudks", "cloudkspassword");
+		CloudKSKeyStore DUT = new CloudKSKeyStore(connection);
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("a");
@@ -24,7 +34,7 @@ public class TestTest {
 	@Test
 	public void getPublicKey() throws Exception {
 
-		CloudKSKeyStore DUT = new CloudKSKeyStore("jdbc:mysql://localhost/cloudks_dev", "cloudks", "cloudkspassword");
+		CloudKSKeyStore DUT = new CloudKSKeyStore(connection);
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("a");
@@ -35,7 +45,7 @@ public class TestTest {
 	@Test
 	public void getSymmetricKey() throws Exception {
 
-		CloudKSKeyStore DUT = new CloudKSKeyStore("jdbc:mysql://localhost/cloudks_dev", "cloudks", "cloudkspassword");
+		CloudKSKeyStore DUT = new CloudKSKeyStore(connection);
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("b");
