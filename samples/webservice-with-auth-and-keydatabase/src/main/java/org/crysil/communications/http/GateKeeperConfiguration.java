@@ -12,7 +12,6 @@ import org.crysil.errorhandling.AuthenticationFailedException;
 import org.crysil.gatekeeperwithsessions.AuthorizationProcess;
 import org.crysil.gatekeeperwithsessions.Configuration;
 import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
-import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.IdentifierAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.SecretAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.UsernamePasswordAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.misc.NoAuthPlugin;
@@ -35,7 +34,7 @@ public class GateKeeperConfiguration implements Configuration {
 
 		if (features.containKey("Operation")
 				&& ((Operation) features.get("Operation")).getOperation().equals("discoverKeys"))
-			plugins.add(new IdentifierAuthPlugin());
+			plugins.add(new NoAuthPlugin());
 		else if (features.containKey("Operation")
 				&& (((Operation) features.get("Operation")).getOperation().equals("encrypt")
 						|| ((Operation) features.get("Operation")).getOperation().equals("decrypt"))) {
