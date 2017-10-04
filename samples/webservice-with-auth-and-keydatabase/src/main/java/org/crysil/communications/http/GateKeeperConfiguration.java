@@ -36,7 +36,8 @@ public class GateKeeperConfiguration implements Configuration {
 				&& ((Operation) features.get("Operation")).getOperation().equals("discoverKeys"))
 			plugins.add(new IdentifierAuthPlugin());
 		else if (features.containKey("Operation")
-				&& ((Operation) features.get("Operation")).getOperation().equals("encrypt")) {
+				&& (((Operation) features.get("Operation")).getOperation().equals("encrypt")
+						|| ((Operation) features.get("Operation")).getOperation().equals("decrypt"))) {
 			PreparedStatement st = null;
 			try {
 				// find appropriate auth information
