@@ -15,6 +15,7 @@ import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.IdentifierAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.SecretAuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.credentials.UsernamePasswordAuthPlugin;
+import org.crysil.gatekeeperwithsessions.authentication.plugins.misc.NoAuthPlugin;
 import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
 import org.crysil.gatekeeperwithsessions.configuration.Operation;
 import org.crysil.gatekeeperwithsessions.configuration.TimeLimit;
@@ -54,6 +55,9 @@ public class GateKeeperConfiguration implements Configuration {
 				// iterate through the java resultset
 				while (rs.next()) {
 					String auth = rs.getString("auth");
+
+					if ("[]".equals(auth))
+						plugins.add(new NoAuthPlugin());
 
 					// iterate through the auth json
 					while (auth.contains("\"type\": ")) {
