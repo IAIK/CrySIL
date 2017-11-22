@@ -6,6 +6,7 @@
 	<groupId>org.crysil.instance</groupId>
 	<artifactId>android-webserivce</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<packaging>war</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

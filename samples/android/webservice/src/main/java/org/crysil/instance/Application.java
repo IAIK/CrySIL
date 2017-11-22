@@ -35,6 +35,10 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @Configuration
 public class Application extends SpringBootServletInitializer implements WebSocketConfigurer {
 
+	{
+		Security.addProvider(new BouncyCastleProvider());
+	}
+
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Application.class);
@@ -102,11 +106,6 @@ public class Application extends SpringBootServletInitializer implements WebSock
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new Thread() {
-			public void run() {
-				Security.addProvider(new BouncyCastleProvider());
-			};
-		}.run();
 		SpringApplication.run(Application.class, args);
 	}
 }
