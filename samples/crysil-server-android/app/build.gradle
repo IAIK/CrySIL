@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        applicationId "at.tugraz.iaik.skytrust.android"
+        minSdkVersion 19
+        targetSdkVersion 19
+        versionCode 7
+        versionName "0.1.7"
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    dexOptions {
+        incremental true
+        preDexLibraries false
+        javaMaxHeapSize "2g"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/ASL-2.0.txt'
+        exclude 'META-INF/LGPL-3.0.txt'
+        exclude 'META-INF/spring.handlers'
+        exclude 'META-INF/spring.schemas'
+        exclude 'META-INF/spring.tooling'
+        exclude 'draftv3/schema'
+        exclude 'draftv4/schema'
+        exclude 'LICENSE.txt'
+    }
+}
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(":auth-android")
+    compile "at.iaik.skytrust.instance:instance-private-server:1.0-SNAPSHOT"
+    compile "com.google.android.gms:play-services-gcm:7.3.0"
+    compile "com.android.support:support-v4:22.2.0"
+    compile "com.android.support:multidex:1.0.1"
+    androidTestCompile 'com.google.code.findbugs:jsr305:3.0.0'
+    compile 'io.netty:netty-all:4.0.28.Final'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
+    androidTestCompile 'com.android.support.test:runner:0.3'
+}

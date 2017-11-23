@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="at.tugraz.iaik.skytrust" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <permission
+        android:name="at.tugraz.iaik.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
+
+    <application
+        android:name=".utils.ApplicationContextProvider"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        >
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="at.tugraz.iaik.skytrust.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".push.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="at.tugraz.iaik" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".push.GcmIntentService" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.iaik.skytrust.MainActivity" />
+        </activity>
+        <activity
+            android:name=".WebserviceListActivity"
+            android:label="@string/title_activity_webservice_list"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.iaik.skytrust.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".KeyListActivity"
+            android:label="@string/title_activity_key_list"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.iaik.skytrust.MainActivity" />
+        </activity>
+        <activity
+            android:name=".CreateKeyActivity"
+            android:label="@string/title_activity_create_key"
+            android:parentActivityName=".KeyListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.iaik.skytrust.KeyListActivity" />
+        </activity>
+        <activity
+            android:name=".ImportKeyActivity"
+            android:label="@string/title_activity_import_keys"
+            android:parentActivityName=".KeyListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.iaik.skytrust.KeyListActivity" />
+        </activity>
+        <activity
+            android:name=".NotificationBarAcceptActivity"
+            android:label="Accept"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.iaik.skytrust.MainActivity" />
+        </activity>
+        <activity
+            android:name=".WizardActivity"
+            android:label="@string/wizard_title" />
+        <activity
+            android:name=".WizardExportActivity"
+            android:label="@string/wizard_export_title" />
+        <activity
+            android:name=".WizardCreateActivity"
+            android:label="@string/wizard_create_title" />
+        <activity
+            android:name=".AccountListActivity"
+            android:label="@string/title_activity_list_accounts"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.iaik.skytrust.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ErrorActivity"
+            android:label="@string/title_activity_error" >
+        </activity>
+    </application>
+
+</manifest>
