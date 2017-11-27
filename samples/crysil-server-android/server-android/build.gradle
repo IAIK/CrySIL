@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 22
+
+
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 20
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    compile ("at.iaik.skytrust.instance:instance-private-server:1.0-SNAPSHOT") {
+//        exclude module: 'commons'
+//        exclude group: 'commons-io', module: 'commons-io'
+        //transitive = false
+//    }
+    compile project(":auth-android")
+    compile ("org.crysil.communications:websocket-receiver:2.0-1") {
+        exclude module: 'commons'
+    }
+    //compile "org.crysil:interceptor-authentication:2.0-1"
+    //compile "org.crysil.actor:software-crypto:2.0-1"
+    compile ("org.crysil.actor:singlekey-keystore:2.0-1") {
+        exclude module: 'commons'
+    }
+
+    implementation 'com.android.support:appcompat-v7:22.2.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
