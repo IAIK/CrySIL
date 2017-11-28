@@ -11,7 +11,6 @@ import org.crysil.instance.datastore.DeviceRepository;
 import org.crysil.instance.datastore.ServerInfo;
 import org.crysil.instance.util.Constants;
 import org.crysil.instance.util.StringUtils;
-import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +51,9 @@ public class ClientController {
 	 * @return Response from the CrySIL Android server (received over its WebSocket connection to us)
 	 */
 	@RequestMapping(value = Constants.API_CRYSIL_CLIENT, method = RequestMethod.POST, produces = Constants.APPLICATION_JSON, consumes = Constants.APPLICATION_JSON)
-	public @ResponseBody Response crysil(@RequestBody Request crysilRequest,
+	public @ResponseBody Response crysil(@RequestBody String crysilRequest,
 			@RequestParam(value = Constants.PARAM_ID) Long crysilId, HttpServletRequest request) {
-		String responseJson = forwardToCrysilServer(JsonUtils.toJson(crysilRequest), crysilId, request);
+		String responseJson = forwardToCrysilServer(crysilRequest, crysilId, request);
 		return JsonUtils.fromJson(responseJson, Response.class);
 	}
 
