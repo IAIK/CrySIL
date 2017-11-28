@@ -23,7 +23,10 @@ public class AppConfiguration {
 	
 	@Value("${keyFileAliasPassword:null}")
 	private String keyFileAliasPassword;
-	
+
+	@Value("${serverUrl:null}")
+	private String localUrl;
+
 	public String getGcmServerKey() {
 		return gcmServerKey;
 	}
@@ -63,5 +66,8 @@ public class AppConfiguration {
 	public void setKeyFileAliasPassword(String keyFileAliasPassword) {
 		this.keyFileAliasPassword = keyFileAliasPassword;
 	}
-	
+
+	public String getLocalUrl() {
+		return localUrl;
+	}
 }
