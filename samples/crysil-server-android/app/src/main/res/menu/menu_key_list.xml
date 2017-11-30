@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="at.tugraz.iaik.skytrust.KeyListActivity">
+      tools:context="org.crysil.KeyListActivity">
     <item
         android:id="@+id/action_importkeystore"
         android:orderInCategory="1"
