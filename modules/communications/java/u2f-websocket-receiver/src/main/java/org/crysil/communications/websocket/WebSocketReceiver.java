@@ -18,7 +18,7 @@ import org.crysil.communications.websocket.interfaces.WebSocketListener;
 import org.crysil.communications.websocket.ssl.WebsocketKeyManagerFactory;
 import org.crysil.communications.websocket.ssl.WebsocketKeyStore;
 import org.crysil.communications.websocket.ssl.WebsocketTrustManagerFactory;
-import org.crysil.errorhandling.UnsupportedRequestException;
+import org.crysil.errorhandling.CrySILException;
 import org.crysil.logging.Logger;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.Response;
@@ -73,10 +73,11 @@ public class WebSocketReceiver extends OneToManyInterlink implements WebSocketLi
 		}
 	}
 
+	@Override
 	public Response forwardRequest(Request request, Module actor) {
 		try {
 			return actor.take(request);
-		} catch (UnsupportedRequestException e) {
+		} catch (CrySILException e) {
 			Logger.error("Unsupported request", e);
 			return null;
 		}
