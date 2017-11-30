@@ -31,6 +31,7 @@ public class ResolveWebServiceAsyncTask extends AsyncTask<String, Void, Webservi
         Matcher matcher = PATTERN_IPV4.matcher(address);
         int port = -1;
         InetAddress inetAddress = null;
+        String path = "";
         if (matcher.matches()) {
             try {
                 inetAddress = InetAddress.getByName(matcher.group(1));
@@ -49,6 +50,9 @@ public class ResolveWebServiceAsyncTask extends AsyncTask<String, Void, Webservi
                     if (matcher.group(3) != null) {
                         port = Integer.valueOf(matcher.group(3));
                     }
+                    if (matcher.group(4) != null) {
+                        path = String.valueOf(matcher.group(4));
+                    }
                 } catch (UnknownHostException e) {
                     Log.e(TAG, "Could not resolve webservice", e);
                     return null;
@@ -58,6 +62,6 @@ public class ResolveWebServiceAsyncTask extends AsyncTask<String, Void, Webservi
                 return null;
             }
         }
-        return new WebserviceEntry(title, inetAddress.getHostName(), inetAddress.getHostAddress(), port);
+        return new WebserviceEntry(title, inetAddress.getHostName(), inetAddress.getHostAddress(), port, path);
     }
 }

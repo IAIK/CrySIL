@@ -51,6 +51,7 @@ public class WebserviceManagementAsyncTask extends AsyncTask<String, Void, Strin
     private final Cursor cursor;
     private final String hostname;
     private String port;
+    private String path;
     private String gcmDeviceId;
     private String skytrustId;
     private String certAlias;
@@ -69,9 +70,10 @@ public class WebserviceManagementAsyncTask extends AsyncTask<String, Void, Strin
         } else {
             port = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_PORT));
             hostname = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_HOSTNAME));
+            path = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_PATH));
         }
         String websocketSuffix = action == WebserviceManagementAction.REGISTER ? "/api/register" : "/api/manage";
-        this.websocketUrl = String.format("wss://%s:%s%s", hostname.replace(" ", "").trim(), port, websocketSuffix);
+        this.websocketUrl = String.format("wss://%s:%s%s%s", hostname.replace(" ", "").trim(), port, path, websocketSuffix);
         databaseHandler.close();
     }
 
