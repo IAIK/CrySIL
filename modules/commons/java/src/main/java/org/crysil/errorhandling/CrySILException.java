@@ -7,16 +7,21 @@ public abstract class CrySILException extends Exception {
 	public abstract int getErrorCode();
 
 	public static CrySILException fromErrorCode(final int code) {
-		// FIXME return appropriate exception
-		return new CrySILException() {
 
-			private static final long serialVersionUID = 7248400306801724819L;
+		switch (code) {
+		case 609:
+			return new AuthenticationFailedException();
+		default:
+			return new CrySILException() {
 
-			@Override
-			public int getErrorCode() {
-				return code;
-			}
-		};
+				private static final long serialVersionUID = 7248400306801724819L;
+
+				@Override
+				public int getErrorCode() {
+					return code;
+				}
+			};
+		}
 	}
 
 }

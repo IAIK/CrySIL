@@ -1,0 +1,17 @@
+#all {
+	-fx-fill-height: true;
+}
+
+#title {
+	-fx-background-color: lightblue;
+	-fx-padding: 10;
+	-fx-fill-width: true;
+}
+
+#buttons, #content {
+	-fx-padding: 10;
+}
+
+#buttons {
+	-fx-alignment: top-right;
+}

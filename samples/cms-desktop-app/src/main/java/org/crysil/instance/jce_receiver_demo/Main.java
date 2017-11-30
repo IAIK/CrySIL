@@ -30,7 +30,7 @@ public class Main extends Application {
 
 		// setup and start gui
 		primaryStage.setTitle("Crysil Demo CMS Writer/Reader");
-		primaryStage.setScene(new Scene(new SelectFile(data), 300, 200));
+		primaryStage.setScene(new Scene(new SelectFile(data), 700, 300));
 		primaryStage.getScene().getStylesheets().add(Main.class.getResource("main.css").toExternalForm());
 		primaryStage.show();
 	}

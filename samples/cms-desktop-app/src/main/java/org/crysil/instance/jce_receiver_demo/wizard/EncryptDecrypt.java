@@ -3,9 +3,12 @@ package org.crysil.instance.jce_receiver_demo.wizard;
 import javax.crypto.Cipher;
 
 import org.crysil.instance.jce_receiver_demo.model.Data;
+
 import javafx.concurrent.Task;
+import javafx.geometry.Pos;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 public class EncryptDecrypt extends Step {
 
@@ -13,7 +16,9 @@ public class EncryptDecrypt extends Step {
 		setTitle("Encrypting/decrypting...");
 
 		final ProgressIndicator pin = new ProgressIndicator();
-		final StackPane hb = new StackPane();
+		final HBox hb = new HBox();
+		hb.setAlignment(Pos.CENTER);
+		HBox.setHgrow(hb, Priority.ALWAYS);
 		hb.getChildren().add(pin);
 
 		setContent(hb);
