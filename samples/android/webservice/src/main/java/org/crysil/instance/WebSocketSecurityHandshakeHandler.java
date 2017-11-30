@@ -5,6 +5,7 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import org.crysil.instance.datastore.CertificatePrincipal;
+import org.crysil.instance.util.CertificateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.server.ServerHttpRequest;
@@ -26,6 +27,20 @@ public class WebSocketSecurityHandshakeHandler extends DefaultHandshakeHandler {
 	protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) {
 		Object credentials = SecurityContextHolder.getContext().getAuthentication().getCredentials();
+
+		/*
+		 *  whenever the server is run in a non-/ environment, we cannot terminate the TLS connection. Likely, a reverse proxy
+		 *  will handle and therefore terminate TLS. However, in order to get the client certificate one can set the client certificate
+		 *  as a header field within the reverse proxy. The code below parses the field whenever the direct method fails.
+		 */
+		if (!(credentials instanceof X509Certificate)) {
+			try {
+				credentials = CertificateUtil.parseCertificate(request.getHeaders().get("ssl_client_cert").get(0));
+			} catch (Exception e) {
+				// did not work. we do not care.
+				e.printStackTrace();
+			}
+		}
 		if (credentials instanceof X509Certificate) {
 			X509Certificate certificate = (X509Certificate) credentials;
 			logger.debug("Got certificate for '{}' from client", certificate.getSubjectDN().getName());
