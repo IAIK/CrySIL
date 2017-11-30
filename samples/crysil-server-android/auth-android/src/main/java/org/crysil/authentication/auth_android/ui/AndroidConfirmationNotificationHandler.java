@@ -17,7 +17,7 @@ import java.util.Map;
  * Displays a notification in the Android system, so that the user can accept an incoming SkyTrust request.
  *
  */
-public class AndroidConfirmationNotificationHandler implements IAuthUI<Boolean, Void> {
+public class AndroidConfirmationNotificationHandler implements IAuthUI<String, Void> {
 
     public static int NOTIFACTION_ID = 1;
     private ActionPerformedCallback callback = null;
@@ -56,8 +56,8 @@ public class AndroidConfirmationNotificationHandler implements IAuthUI<Boolean, 
     }
 
     @Override
-    public Boolean getAuthValue() {
-        return true;
+    public String getAuthValue() {
+        return "allow";
     }
 
     @Override

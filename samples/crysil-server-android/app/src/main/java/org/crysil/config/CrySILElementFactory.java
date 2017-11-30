@@ -1,4 +1,4 @@
-package org.crysil.server_android;
+package org.crysil.config;
 
 import java.security.KeyStore;
 import java.util.ArrayList;
@@ -14,6 +14,8 @@ import org.crysil.commons.Interlink;
 import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
 import org.crysil.communications.websocket.WebSocketReceiver;
+import org.crysil.gatekeeper.Configuration;
+import org.crysil.gatekeeper.Gatekeeper;
 
 
 public class CrySILElementFactory {
@@ -39,11 +41,14 @@ public class CrySILElementFactory {
 			final List<AuthHandlerFactory<?, ?, ?>> authPluginFactories = new ArrayList<>();
 			authPluginFactories.add(new Auth1ClickConfirmation.Factory(Auth1ClickConfirmation.class));
 			interceptor.setAuthenticationPlugins(authPluginFactories);
-
 			receiver.attach(interceptor);
-			// interceptor.attach(gatekeeper);
-			// gatekeeper.attach(jceActor);
-			interceptor.attach(jceActor);
+
+			Configuration conf = new Config();
+			Gatekeeper gatekeeper = new Gatekeeper(conf);
+
+			interceptor.attach(gatekeeper);
+
+			gatekeeper.attach(jceActor);
 		} catch (Exception e) {
 
 		}

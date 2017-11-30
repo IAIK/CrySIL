@@ -41,6 +41,10 @@ dependencies {
         exclude module: 'commons'
     }
 
+    compile ("org.crysil:gatekeeper:2.0-1") {
+        exclude module: 'commons'
+    }
+
     implementation 'com.android.support:appcompat-v7:22.2.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

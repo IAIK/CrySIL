@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 import org.crysil.communications.websocket.WebSocketReceiver;
 import org.crysil.database.DatabaseHandler;
 import org.crysil.database.webservice.WebserviceEntry;
-import org.crysil.server_android.CrySILElementFactory;
+import org.crysil.config.CrySILElementFactory;
 
 /**
  * Gets executed when a token from the GCM push services is received from {@link org.crysil.push.GcmBroadcastReceiver}.

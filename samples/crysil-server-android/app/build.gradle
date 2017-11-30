@@ -49,7 +49,17 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(":server-android")
+    compile project(":auth-android")
+
+    compile ("org.crysil.actor:software-crypto:2.0-1") {
+        exclude module: 'commons'
+    }
+    compile ("org.crysil.actor:singlekey-keystore:2.0-1") {
+        exclude module: 'commons'
+    }
+    compile ("org.crysil.communications:websocket-receiver:2.0-1") {
+        exclude module: 'commons'
+    }
 
     compile "com.google.android.gms:play-services-gcm:7.3.0"
     compile "com.android.support:support-v4:22.2.0"

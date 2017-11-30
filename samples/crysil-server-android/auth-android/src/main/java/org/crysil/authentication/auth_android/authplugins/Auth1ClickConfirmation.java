@@ -1,6 +1,10 @@
 package org.crysil.authentication.auth_android.authplugins;
 
 import org.crysil.authentication.AuthException;
+import org.crysil.authentication.auth_android.ui.AndroidConfirmationDialog;
+import org.crysil.authentication.auth_android.ui.AndroidConfirmationNotificationHandler;
+import org.crysil.authentication.auth_android.ui.CurrentActivityTracker;
+import org.crysil.authentication.ui.ActionPerformedCallback;
 import org.crysil.protocol.Response;
 import org.crysil.protocol.payload.auth.AuthType;
 
@@ -10,7 +14,10 @@ import org.crysil.authentication.ui.IAuthUI;
 import org.crysil.protocol.payload.auth.AuthInfo;
 
 import org.crysil.protocol.payload.auth.credentials.IdentifierAuthInfo;
+import org.crysil.protocol.payload.auth.credentials.IdentifierAuthType;
 import org.crysil.protocol.payload.auth.credentials.UserPasswordAuthType;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by Christoph Thaller on 03/01/15.
@@ -39,7 +46,7 @@ public class Auth1ClickConfirmation<T extends IAuthUI<char[][], Void>> implement
 
         @Override
         public boolean canTake(final Response crysilResponse, final AuthType authType) throws AuthException {
-            return (authType instanceof UserPasswordAuthType);
+            return (authType instanceof IdentifierAuthType);
         }
 
         @Override
@@ -56,8 +63,26 @@ public class Auth1ClickConfirmation<T extends IAuthUI<char[][], Void>> implement
 
     @Override
     public AuthInfo authenticate() throws AuthException {
+        IAuthUI authdialog = new AndroidConfirmationDialog(CurrentActivityTracker.getActivity());
+        authdialog.init(null);
+        final CountDownLatch processing = new CountDownLatch(1);
+        authdialog.setCallbackAuthenticate(new ActionPerformedCallback() {
+            @Override
+            public void actionPerformed() {
+                processing.countDown();
+            }
+        });
+        authdialog.present();
+        String result = "decline";
+        try {
+            processing.await();
+            result = (String) authdialog.getAuthValue();
+        } catch(InterruptedException e) {
+            throw new AuthException(e);
+        }
+
         final IdentifierAuthInfo authInfo = new IdentifierAuthInfo();
-        authInfo.setIdentifier("true");
+        authInfo.setIdentifier(result);
         return authInfo;
     }
 

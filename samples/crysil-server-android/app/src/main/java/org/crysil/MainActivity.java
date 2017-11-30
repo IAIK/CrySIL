@@ -24,7 +24,7 @@ import org.crysil.database.DatabaseHandler;
 import org.crysil.database.webservice.WebserviceEntry;
 import org.crysil.database.webservice.WebserviceEntryStatus;
 import org.crysil.push.PushHelper;
-import org.crysil.server_android.CrySILElementFactory;
+import org.crysil.config.CrySILElementFactory;
 import org.crysil.tasks.GcmRegisterAsyncTask;
 import org.crysil.tasks.WebserviceManagementAction;
 import org.crysil.tasks.WebserviceManagementAsyncTask;

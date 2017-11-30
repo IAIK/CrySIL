@@ -32,6 +32,9 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:22.2.0'
     compile 'org.crysil:interceptor-authentication:2.0-1'
+    compile ("org.crysil:gatekeeper:2.0-1") {
+        exclude module: 'commons'
+    }
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
