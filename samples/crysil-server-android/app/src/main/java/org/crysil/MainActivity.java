@@ -16,6 +16,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.security.ProviderInstaller;
 
+import java.security.Security;
 import java.util.concurrent.TimeUnit;
 
 
@@ -30,6 +31,8 @@ import org.crysil.tasks.WebserviceManagementAsyncTask;
 import org.crysil.utils.ApplicationContextProvider;
 import org.crysil.utils.KeyStoreHandler;
 import org.crysil.utils.WebserviceListAdapter;
+
+import iaik.security.provider.IAIK;
 
 /**
  * Shows the spinner for webservices we are registered on, and buttons for managing keys, accounts and webservices
@@ -73,9 +76,8 @@ public class MainActivity extends AbstractActivity {
         new Thread(new Runnable() {
             public void run() {
                 // Insert IAIK at the last position to fix TLS connections (WebSocket, Gatekeeper)
-                //Security.removeProvider(IAIK.getInstance().getName());
-                //Security.insertProviderAt(IAIK.getInstance(), Security.getProviders().length + 1);
-                // Start SkyTrust afterwards, else it will insert IAIK as the first security provider
+                Security.removeProvider(IAIK.getInstance().getName());
+                Security.insertProviderAt(IAIK.getInstance(), Security.getProviders().length + 1);
                 CrySILElementFactory.initialize(KeyStoreHandler.getInstance().getKeyStore(),
                         KeyStoreHandler.getInstance().getKeyStore());
             }
