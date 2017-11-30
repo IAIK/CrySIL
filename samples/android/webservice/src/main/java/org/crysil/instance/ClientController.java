@@ -5,13 +5,11 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.crysil.communications.json.JsonUtils;
 import org.crysil.instance.datastore.DeviceRegistration;
 import org.crysil.instance.datastore.DeviceRepository;
 import org.crysil.instance.datastore.ServerInfo;
 import org.crysil.instance.util.Constants;
 import org.crysil.instance.util.StringUtils;
-import org.crysil.protocol.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +49,10 @@ public class ClientController {
 	 * @return Response from the CrySIL Android server (received over its WebSocket connection to us)
 	 */
 	@RequestMapping(value = Constants.API_CRYSIL_CLIENT, method = RequestMethod.POST, produces = Constants.APPLICATION_JSON, consumes = Constants.APPLICATION_JSON)
-	public @ResponseBody Response crysil(@RequestBody String crysilRequest,
+	public @ResponseBody String crysil(@RequestBody String crysilRequest,
 			@RequestParam(value = Constants.PARAM_ID) Long crysilId, HttpServletRequest request) {
-		String responseJson = forwardToCrysilServer(crysilRequest, crysilId, request);
-		return JsonUtils.fromJson(responseJson, Response.class);
+		return forwardToCrysilServer(crysilRequest, crysilId, request);
+		// return JsonUtils.fromJson(responseJson, Response.class);
 	}
 
 	/**
