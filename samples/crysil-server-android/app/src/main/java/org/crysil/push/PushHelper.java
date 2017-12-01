@@ -20,7 +20,7 @@ public class PushHelper {
 
     private static final String TAG = PushHelper.class.getSimpleName();
 
-    private static final String PROPERTY_BASE = "org.crysil.skytrust";
+    private static final String PROPERTY_BASE = "org.crysil.crysil";
     private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;

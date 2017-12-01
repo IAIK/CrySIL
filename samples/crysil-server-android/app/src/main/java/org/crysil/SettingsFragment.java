@@ -29,10 +29,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getActivity().getApplicationContext().getString(R.string.pref_key_skytrust_dialog))) {
+        if (key.equals(getActivity().getApplicationContext().getString(R.string.pref_key_crysil_dialog))) {
             Preference pref = findPreference(key);
             Boolean confirmationDialog = getPreferenceManager().getSharedPreferences().getBoolean(
-                    getActivity().getApplicationContext().getString(R.string.pref_key_skytrust_dialog), true);
+                    getActivity().getApplicationContext().getString(R.string.pref_key_crysil_dialog), true);
         }
     }
 }

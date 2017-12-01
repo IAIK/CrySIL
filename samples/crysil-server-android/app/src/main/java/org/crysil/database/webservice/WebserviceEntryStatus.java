@@ -1,7 +1,7 @@
 package org.crysil.database.webservice;
 
 /**
- * Status of this SkyTrust server on one webservice
+ * Status of this CrySIL server on one webservice
  */
 public enum WebserviceEntryStatus {
 

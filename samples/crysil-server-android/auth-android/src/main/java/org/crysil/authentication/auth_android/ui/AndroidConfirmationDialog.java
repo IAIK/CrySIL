@@ -12,7 +12,7 @@ import org.crysil.authentication.ui.ActionPerformedCallback;
 import java.util.Map;
 
 /**
- * Shows a dialog to the user, whether she wants to accept an incoming SkyTrust request or not.
+ * Shows a dialog to the user, whether she wants to accept an incoming CrySIL request or not.
  * <p/>
  * If the app is paused, a {@link AndroidConfirmationNotificationHandler}
  * is used instead.

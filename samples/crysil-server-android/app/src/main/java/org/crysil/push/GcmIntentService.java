@@ -42,16 +42,16 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 String uri = extras.getString("uri");
                 Log.i(TAG, String.format("Received uri '%s'", uri));
-                handleSkyTrustMessage(uri);
+                handleCrySILMessage(uri);
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void handleSkyTrustMessage(String uriString) {
+    private void handleCrySILMessage(String uriString) {
         WebSocketReceiver webSocketReceiver = (WebSocketReceiver) CrySILElementFactory.getReceiver();
         if (webSocketReceiver == null) {
-            Log.e(TAG, "WebSocketReceiver from SkyTrust is null", new NullPointerException());
+            Log.e(TAG, "WebSocketReceiver from CrySIL is null", new NullPointerException());
             return;
         }
         String alias = null;

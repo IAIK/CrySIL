@@ -28,7 +28,7 @@ import org.crysil.utils.KeyStoreHandler;
 
 /**
  * Lists all keys in a simple list, with some details. Enables a context menu on long press (=selection) to delete
- * keys or map user accounts to them for access via SkyTrust methods
+ * keys or map user accounts to them for access via CrySIL methods
  *
  * @see org.crysil.utils.KeyListAdapter
  */

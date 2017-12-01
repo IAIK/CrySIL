@@ -14,9 +14,9 @@
     <string name="main_button_resume">Resume</string>
     <string name="main_button_register">Register</string>
     <string name="main_button_unregister">Unregister</string>
-    <string name="pref_key_skytrust_dialog">pref_skytrust_dialog</string>
-    <string name="pref_text_skytrust_dialog">Confirmation dialog</string>
-    <string name="pref_sum_skytrust_dialog">Show a confirmation dialog on each SkyTrust request</string>
+    <string name="pref_key_crysil_dialog">pref_crysil_dialog</string>
+    <string name="pref_text_crysil_dialog">Confirmation dialog</string>
+    <string name="pref_sum_crysil_dialog">Show a confirmation dialog on each CrySIL request</string>
     <string name="wizard_export_title">Export the CA certificate</string>
     <string name="wizard_export_placeholder">Touch to show details</string>
     <string name="wizard_export_btexport">Export</string>
@@ -26,17 +26,17 @@
     <string name="activity_wizard_export_email">Recipient mail address</string>
     <string name="email_error">No valid mail address</string>
     <string name="alias_error">Alias is already in use</string>
-    <string name="wizard_text" formatted="true"><b>SkyTust</b> enables you to create cryptographic keys. In order to
+    <string name="wizard_text" formatted="true"><b>CrySIL</b> enables you to create cryptographic keys. In order to
         use it for digital signature (e.g. email signature), the corresponding certificate has to be signed with a
         certificate you trust.\nYou can choose to either <b>import</b> existing keys or <b>create</b> a new one
     and export the certificate.</string>
     <string name="wizard_create_text">Please enter your contact information to create a personal mail certificate.</string>
-    <string name="keystore_import_text">Provide an existing keystore file in PKCS12 format to be imported into your SkyTrust keystore. Note that only private keys can be imported.</string>
+    <string name="keystore_import_text">Provide an existing keystore file in PKCS12 format to be imported into your CrySIL keystore. Note that only private keys can be imported.</string>
     <string name="keystore_import_password">Password for the existing keystore:</string>
     <string name="wizard_export_text">You can now optionally export the certificate that has signed your mail certificate. You can import that certificate into your mail client.</string>
-    <string name="wizard_create_title">Welcome to SkyTrust on Android</string>
-    <string name="wizard_export_mail_subject">Your CA certificate from SkyTrust on Android</string>
-    <string name="wizard_export_mail_body">The CA Certificate is attached to this email.\n-- \nCheers\nSkytrust-Android-Team</string>
+    <string name="wizard_create_title">Welcome to CrySIL on Android</string>
+    <string name="wizard_export_mail_subject">Your CA certificate from CrySIL on Android</string>
+    <string name="wizard_export_mail_body">The CA Certificate is attached to this email.\n-- \nCheers\nCrySIL-Android-Team</string>
     <string name="keystore_alias">Keystore Alias</string>
     <string name="keystore_alias_def">android-1</string>
     <string name="common_name">Your name</string>
@@ -63,13 +63,13 @@
     <string name="wizard_export_error_no_file">Something went wrong, there is no certificate to export</string>
     <string name="wizard_export_btskip">Skip</string>
     <string name="wizard_create_btcontinue">Continue</string>
-    <string name="wizard_title">Welcome to SkyTrust on Android</string>
+    <string name="wizard_title">Welcome to CrySIL on Android</string>
     <string name="wizard_btimport">Import</string>
     <string name="wizard_btcreate">Create</string>
     <string name="main_btmanage_keys">Manage Keys</string>
     <string name="main_btmanage_webservices">Manage Webservices</string>
     <string name="main_btmanage_accounts">Manage Accounts</string>
-    <string name="text_skytrustid">SkyTrust ID</string>
+    <string name="text_crysilid">CrySIL ID</string>
     <string name="keylist_create_toast_wait">Key is being created in the background (list will be updated)</string>
     <string name="keylist_create_toast_finished">Key creation finished</string>
     <string name="title_activity_list_accounts">Manage Accounts</string>
@@ -92,11 +92,11 @@
     <string name="keystore_import_failed_message">No keys could be imported</string>
     <string name="keystore_import_finish">Finish</string>
     <string name="title_activity_error">Error</string>
-    <string name="error_keystore">We are sorry, but we can\'t continue executing SkyTrust on Android: Your system does
-        not support the Android KeyStore. This is absolutely necessary to run SkyTrust on Android. See the details
+    <string name="error_keystore">We are sorry, but we can\'t continue executing CrySIL on Android: Your system does
+        not support the Android KeyStore. This is absolutely necessary to run CrySIL on Android. See the details
         of the error message:</string>
-    <string name="error_gcm">We are sorry, but we can\'t continue executing SkyTrust on Android: Your system does
-        not have the Google Play Services installed. This is absolutely necessary to run SkyTrust on Android.</string>
+    <string name="error_gcm">We are sorry, but we can\'t continue executing CrySIL on Android: Your system does
+        not have the Google Play Services installed. This is absolutely necessary to run CrySIL on Android.</string>
     <string name="warn_keys_empty">The are no keys defined, you may want to add one\n</string>
     <string name="warn_accounts_empty">There are no accounts defined, you may want to add some\n</string>
     <string name="warn_webservices_empty">There are no webservices defined, you may want to add one\n</string>

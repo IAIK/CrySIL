@@ -4,7 +4,7 @@ import android.provider.BaseColumns;
 
 /**
  * Represents a key from the key store to map accounts to it.
- * Keys from the key store without an entry in the database are not visible to SkyTrust.
+ * Keys from the key store without an entry in the database are not visible to CrySIL.
  */
 public class KeyEntry implements BaseColumns {
 

@@ -18,10 +18,10 @@ public class WebserviceEntry implements BaseColumns {
     public static final String COLUMN_NAME_PORT = "port";
     public static final String COLUMN_NAME_PATH = "path";
     public static final String COLUMN_NAME_ALIAS = "certalias";
-    public static final String COLUMN_NAME_SKYTRUSTID = "skytrustid";
+    public static final String COLUMN_NAME_CRYSILID = "crysilid";
     public static final String COLUMN_NAME_STATUS = "status";
 
-    public static final String[] ALL_COLUMNS = new String[]{WebserviceEntry._ID, WebserviceEntry.COLUMN_NAME_TITLE, WebserviceEntry.COLUMN_NAME_HOSTNAME, WebserviceEntry.COLUMN_NAME_IP, WebserviceEntry.COLUMN_NAME_PORT, WebserviceEntry.COLUMN_NAME_PATH, WebserviceEntry.COLUMN_NAME_SKYTRUSTID, WebserviceEntry.COLUMN_NAME_STATUS, WebserviceEntry.COLUMN_NAME_ALIAS};
+    public static final String[] ALL_COLUMNS = new String[]{WebserviceEntry._ID, WebserviceEntry.COLUMN_NAME_TITLE, WebserviceEntry.COLUMN_NAME_HOSTNAME, WebserviceEntry.COLUMN_NAME_IP, WebserviceEntry.COLUMN_NAME_PORT, WebserviceEntry.COLUMN_NAME_PATH, WebserviceEntry.COLUMN_NAME_CRYSILID, WebserviceEntry.COLUMN_NAME_STATUS, WebserviceEntry.COLUMN_NAME_ALIAS};
 
     public static final String STMT_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
             _ID + " INTEGER PRIMARY KEY," +
@@ -31,7 +31,7 @@ public class WebserviceEntry implements BaseColumns {
             COLUMN_NAME_PATH + " TEXT, " +
             COLUMN_NAME_TITLE + " TEXT, " +
             COLUMN_NAME_ALIAS + " TEXT, " +
-            COLUMN_NAME_SKYTRUSTID + " TEXT, " +
+            COLUMN_NAME_CRYSILID + " TEXT, " +
             COLUMN_NAME_STATUS + " TEXT " +
             " )";
 
@@ -45,7 +45,7 @@ public class WebserviceEntry implements BaseColumns {
     private int port;
     private String path;
     private String alias;
-    private String skytrustId;
+    private String crysilId;
     private WebserviceEntryStatus status;
 
     public WebserviceEntry(String title, String hostname, String ip, int port, String path) {
@@ -55,7 +55,7 @@ public class WebserviceEntry implements BaseColumns {
         this.port = port == -1 ? DEFAULT_PORT : port;
         this.path = path;
         this.alias = String.format("%s-%s", title, randomString(6));
-        this.skytrustId = "";
+        this.crysilId = "";
         this.status = WebserviceEntryStatus.UNKNOWN;
     }
 
@@ -77,7 +77,7 @@ public class WebserviceEntry implements BaseColumns {
         values.put(COLUMN_NAME_PATH, path);
         values.put(COLUMN_NAME_TITLE, title);
         values.put(COLUMN_NAME_ALIAS, alias);
-        values.put(COLUMN_NAME_SKYTRUSTID, skytrustId);
+        values.put(COLUMN_NAME_CRYSILID, crysilId);
         values.put(COLUMN_NAME_STATUS, status.toString());
         return values;
     }

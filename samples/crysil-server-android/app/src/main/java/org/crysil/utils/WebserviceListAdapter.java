@@ -45,8 +45,8 @@ public class WebserviceListAdapter extends SimpleCursorAdapter {
         String hostAndPort = String.format("%s:%d",host, port);
         ((TextView) view.findViewById(R.id.webservicelist_item_address)).setText(hostAndPort);
 
-        String skytrustId = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_SKYTRUSTID));
-        ((TextView) view.findViewById(R.id.webservicelist_item_id)).setText(skytrustId);
+        String crysilId = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_CRYSILID));
+        ((TextView) view.findViewById(R.id.webservicelist_item_id)).setText(crysilId);
 
         String status = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_STATUS));
         if (status != null) {

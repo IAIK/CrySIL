@@ -14,7 +14,7 @@ import org.crysil.authentication.ui.IAuthUI;
 import java.util.Map;
 
 /**
- * Displays a notification in the Android system, so that the user can accept an incoming SkyTrust request.
+ * Displays a notification in the Android system, so that the user can accept an incoming CrySIL request.
  *
  */
 public class AndroidConfirmationNotificationHandler implements IAuthUI<String, Void> {

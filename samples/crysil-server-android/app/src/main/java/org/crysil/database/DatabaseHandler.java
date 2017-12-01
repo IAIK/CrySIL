@@ -24,7 +24,7 @@ import org.crysil.database.webservice.WebserviceEntryStatus;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String PLACEHOLDER = "=?";
-    private static final String DATABASE_NAME = "Skytrust.db";
+    private static final String DATABASE_NAME = "CrySIL.db";
     private static final int DATABASE_VERSION = 2;
 
     public DatabaseHandler(Context context) {
@@ -97,9 +97,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         getWritableDatabase().insert(WebserviceEntry.TABLE_NAME, null, values);
     }
 
-    public boolean updateWebserviceInfo(Long id, String skytrustId, WebserviceEntryStatus status) {
+    public boolean updateWebserviceInfo(Long id, String crysilId, WebserviceEntryStatus status) {
         ContentValues values = new ContentValues();
-        values.put(WebserviceEntry.COLUMN_NAME_SKYTRUSTID, skytrustId);
+        values.put(WebserviceEntry.COLUMN_NAME_CRYSILID, crysilId);
         values.put(WebserviceEntry.COLUMN_NAME_STATUS, status.toString());
         return getWritableDatabase().update(WebserviceEntry.TABLE_NAME, values, WebserviceEntry._ID + PLACEHOLDER,
                 new String[]{id.toString()}) == 1;

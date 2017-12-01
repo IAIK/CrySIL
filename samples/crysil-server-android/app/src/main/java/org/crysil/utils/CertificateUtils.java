@@ -42,18 +42,18 @@ public class CertificateUtils {
 
     public static final String TAG = CertificateUtils.class.getSimpleName();
 
-    private static final String FILE_PROVIDER = "org.crysil.skytrust.fileprovider";
+    private static final String FILE_PROVIDER = "org.crysil.crysil.fileprovider";
     private static final String CERT_CA_FOLDER = "certs";
-    private static final String CERT_CA_FILENAME = "skytrust_ca.cert";
+    private static final String CERT_CA_FILENAME = "crysil_ca.cert";
 
-    private static final String CERT_CA_ALIAS = "skytrust-ca";
+    private static final String CERT_CA_ALIAS = "crysil-ca";
     private static final String CERT_CA_COUNTRY = "Austria";
     private static final String CERT_CA_ORGANIZATION = "TU Graz";
     private static final String CERT_CA_ORGANIZATIONAL_UNIT = "IAIK";
-    private static final String CERT_CA_COMMON_NAME = "tugraz-iaik-skytrust";
-    private static final String CERT_CA_EMAIL = "skytrust@iaik.tugraz.at";
+    private static final String CERT_CA_COMMON_NAME = "tugraz-iaik-crysil";
+    private static final String CERT_CA_EMAIL = "crysil@iaik.tugraz.at";
 
-    private static final int CERT_KEYSIZE_DEFAULT = 2048;
+    private static final int CERT_KEYSIZE_DEFAULT = 512;
     private static final AlgorithmID CERT_ALGORITHM_ID_DEFAULT = AlgorithmID.sha256WithRSAEncryption;
     private static final String CERT_ALGORITHM_DEFAULT = "RSA";
     private static final String CERT_PROVIDER_DEFAULT = "IAIK";
@@ -75,7 +75,7 @@ public class CertificateUtils {
         }
     }
 
-    public static CertificateRequest createWebserviceCsr(String alias, String skytrustId) {
+    public static CertificateRequest createWebserviceCsr(String alias, String crysilId) {
         SimpleImmutableEntry<KeyPair, X509Certificate> webVpnCertificate = createKeyAndCert(CERT_PROVIDER_DEFAULT,
                 CERT_ALGORITHM_ID_DEFAULT, CERT_ALGORITHM_DEFAULT, CERT_KEYSIZE_DEFAULT, alias, CERT_CA_COMMON_NAME,
                 CERT_CA_EMAIL, CERT_CA_COUNTRY, CERT_CA_ORGANIZATION, CERT_CA_ORGANIZATIONAL_UNIT, null, true);
@@ -86,7 +86,7 @@ public class CertificateUtils {
         CertificateRequest certRequest = null;
         try {
             Name certSubject = new Name();
-            certSubject.addRDN(ObjectID.commonName, skytrustId);
+            certSubject.addRDN(ObjectID.commonName, crysilId);
             certSubject.addRDN(ObjectID.emailAddress, CERT_CA_EMAIL);
             certRequest = new CertificateRequest(webVpnCertificate.getKey().getPublic(), certSubject);
             certRequest.sign(AlgorithmID.sha256WithRSAEncryption, webVpnCertificate.getKey().getPrivate());

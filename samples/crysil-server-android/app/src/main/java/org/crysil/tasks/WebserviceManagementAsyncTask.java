@@ -53,7 +53,7 @@ public class WebserviceManagementAsyncTask extends AsyncTask<String, Void, Strin
     private String port;
     private String path;
     private String gcmDeviceId;
-    private String skytrustId;
+    private String crysilId;
     private String certAlias;
     private ReentrantLock lock;
     private Condition condition;
@@ -116,9 +116,9 @@ public class WebserviceManagementAsyncTask extends AsyncTask<String, Void, Strin
         Log.d(TAG, String.format("Action %s on %s got result %s", action, hostname, s));
         if (s != null) {
             WebserviceEntryStatus newStatus = getWebserviceEntryStatus();
-            String skytrustId = newStatus == WebserviceEntryStatus.UNKNOWN ? null : s;
+            String crysilId = newStatus == WebserviceEntryStatus.UNKNOWN ? null : s;
             DatabaseHandler databaseHandler = new DatabaseHandler(ApplicationContextProvider.getAppContext());
-            if (!databaseHandler.updateWebserviceInfo(webserviceId, skytrustId, newStatus)) {
+            if (!databaseHandler.updateWebserviceInfo(webserviceId, crysilId, newStatus)) {
                 Log.e(TAG, "Could not update database entry for webservice entry with ID " + webserviceId);
             }
             databaseHandler.close();
@@ -146,11 +146,11 @@ public class WebserviceManagementAsyncTask extends AsyncTask<String, Void, Strin
         SimpleMessage msg = JsonUtils.fromJson(message, SimpleMessage.class);
         try {
             if (msg.getHeader().equalsIgnoreCase(MSG_REGISTER)) {
-                skytrustId = msg.getPayload();
+                crysilId = msg.getPayload();
                 Certificate cert = KeyStoreHandler.getInstance().getCertificate(certAlias);
                 if (cert == null) {
                     Log.d(TAG, String.format("No existing WebVPN certificate for alias '%s', sending CSR", certAlias));
-                    CertificateRequest csr = CertificateUtils.createWebserviceCsr(certAlias, skytrustId);
+                    CertificateRequest csr = CertificateUtils.createWebserviceCsr(certAlias, crysilId);
                     send(websocketChannel, MSG_CSR, Base64.encodeToString(csr.toByteArray(), Base64.DEFAULT));
                 } else {
                     Log.d(TAG, String.format("Got existing WebVPN certificate for alias '%s', sending certificate",
@@ -162,9 +162,9 @@ public class WebserviceManagementAsyncTask extends AsyncTask<String, Void, Strin
                 X509Certificate signedCert = new X509Certificate(certResponse);
                 Principal subject = signedCert.getSubjectDN();
                 if (subject instanceof Name) {
-                    String certSkytrustId = ((Name) subject).getRDN(ObjectID.commonName);
-                    if (certSkytrustId == null || !certSkytrustId.equalsIgnoreCase(skytrustId)) {
-                        Log.d(TAG, String.format("Got some weird certificate with skytrustId %s", certSkytrustId));
+                    String certCrySILId = ((Name) subject).getRDN(ObjectID.commonName);
+                    if (certCrySILId == null || !certCrySILId.equalsIgnoreCase(crysilId)) {
+                        Log.d(TAG, String.format("Got some weird certificate with crysilId %s", certCrySILId));
                         finished();
                         return;
                     }
@@ -174,24 +174,24 @@ public class WebserviceManagementAsyncTask extends AsyncTask<String, Void, Strin
                     return;
                 }
                 CertificateUtils.storeWebserviceCert(certAlias, signedCert);
-                Log.d(TAG, String.format("Got a signed certificate with skytrustId %s", skytrustId));
-                finished(skytrustId);
+                Log.d(TAG, String.format("Got a signed certificate with crysilId %s", crysilId));
+                finished(crysilId);
                 return;
             } else if (msg.getHeader().equalsIgnoreCase(MSG_CERT)) {
-                Log.d(TAG, String.format("Our certificate for skytrustId %s is valid", skytrustId));
-                finished(skytrustId);
+                Log.d(TAG, String.format("Our certificate for crysilId %s is valid", crysilId));
+                finished(crysilId);
                 return;
             } else if (msg.getHeader().equalsIgnoreCase(MSG_UNREGISTER)) {
-                Log.d(TAG, String.format("Accepting unregistration for skytrustId %s", msg.getPayload()));
+                Log.d(TAG, String.format("Accepting unregistration for crysilId %s", msg.getPayload()));
                 KeyStoreHandler.getInstance().deleteKey(certAlias);
                 finished(msg.getPayload());
                 return;
             } else if (msg.getHeader().equalsIgnoreCase(MSG_PAUSE)) {
-                Log.d(TAG, String.format("Accepting pause for skytrustId %s", msg.getPayload()));
+                Log.d(TAG, String.format("Accepting pause for crysilId %s", msg.getPayload()));
                 finished(msg.getPayload());
                 return;
             } else if (msg.getHeader().equalsIgnoreCase(MSG_RESUME)) {
-                Log.d(TAG, String.format("Accepting resume for skytrustId %s", msg.getPayload()));
+                Log.d(TAG, String.format("Accepting resume for crysilId %s", msg.getPayload()));
                 finished(msg.getPayload());
                 return;
             } else {
