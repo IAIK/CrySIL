@@ -76,18 +76,8 @@ public class TestKeystore implements SoftwareCryptoKeyStore {
 	 * @throws KeyNotFoundException
 	 */
 	@Override
-	public PublicKey getJCEPublicKey(final Key current) throws InvalidCertificateException, KeyNotFoundException {
-		if (current instanceof KeyHandle) {
+	public PublicKey getPublicKey(final KeyHandle current) throws InvalidCertificateException, KeyNotFoundException {
 			return pubKey;
-		} else if (current instanceof ExternalCertificate) {
-			try {
-				return ((ExternalCertificate) current).getCertificate().getPublicKey();
-			} catch (final CertificateException e) {
-				throw new InvalidCertificateException();
-			}
-		} else {
-      throw new KeyNotFoundException();
-    }
 	}
 
 	/**
@@ -98,12 +88,8 @@ public class TestKeystore implements SoftwareCryptoKeyStore {
 	 * @throws KeyNotFoundException
 	 */
 	@Override
-	public PrivateKey getJCEPrivateKey(final Key current) throws KeyNotFoundException {
-		if (current instanceof KeyHandle) {
-			return privKey;
-		} else {
-      throw new KeyNotFoundException();
-    }
+	public PrivateKey getPrivateKey(final KeyHandle current) throws KeyNotFoundException {
+		return privKey;
 	}
 
 	public PrivateKey getJCEPrivateKey() {

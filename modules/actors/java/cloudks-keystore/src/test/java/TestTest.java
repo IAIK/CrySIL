@@ -27,7 +27,7 @@ public class TestTest {
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("a");
-		Key privatekey = DUT.getJCEPrivateKey(keyhandle);
+		Key privatekey = DUT.getPrivateKey(keyhandle);
 		Assert.assertTrue(privatekey instanceof PrivateKey);
 	}
 
@@ -38,7 +38,7 @@ public class TestTest {
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("a");
-		Key privatekey = DUT.getJCEPublicKey(keyhandle);
+		Key privatekey = DUT.getPublicKey(keyhandle);
 		Assert.assertTrue(privatekey instanceof PublicKey);
 	}
 
@@ -49,7 +49,7 @@ public class TestTest {
 		KeyHandle keyhandle = new KeyHandle();
 		keyhandle.setId("admin");
 		keyhandle.setSubId("b");
-		Key key = DUT.getJCEPrivateKey(keyhandle);
+		Key key = DUT.getPrivateKey(keyhandle);
 		Assert.assertTrue(key instanceof SecretKey);
 	}
 

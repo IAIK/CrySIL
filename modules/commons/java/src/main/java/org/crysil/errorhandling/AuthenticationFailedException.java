@@ -5,6 +5,11 @@ public class AuthenticationFailedException extends CrySILException {
 	private static final long serialVersionUID = 2367809819693717009L;
 
 	@Override
+	public String getMessage() {
+		return "Access has been denied";
+	}
+
+	@Override
 	public int getErrorCode() {
 		return 609;
 	}

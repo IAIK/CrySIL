@@ -6,18 +6,22 @@ import java.util.prefs.Preferences;
 
 import org.crysil.instance.jce_receiver_demo.Main;
 import org.crysil.instance.jce_receiver_demo.model.Data;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 
 public class SelectService extends Step {
 
@@ -35,15 +39,11 @@ public class SelectService extends Step {
         // prepare the list of past service
 
         // - display a text box for new services
-
         Label serviceLabel = new Label("Service:");
         serviceText = new TextField();
-        serviceText.setMinHeight(20);
-        HBox serviceHBox = new HBox();
-        serviceHBox.getChildren().addAll(serviceLabel, serviceText);
-        // - display a select box to the user
+		serviceText.setMinHeight(25);
         Label recentLabel = new Label("Recent:");
-        recentList = new ListView<String>();
+        recentList = new ListView<>();
         ObservableList<String> items = FXCollections.observableArrayList(getRecent());
         recentList.setItems(items);
         recentList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -53,12 +53,31 @@ public class SelectService extends Step {
             }
         });
         recentList.getSelectionModel().select(0);
-        HBox recentHBox = new HBox();
-        recentHBox.getChildren().addAll(recentLabel, recentList);
 
-        VBox hbox = new VBox();
-        hbox.getChildren().addAll(serviceHBox, recentHBox);
-        setContent(hbox);
+		GridPane gridPane = new GridPane();
+		
+		gridPane.add(serviceLabel, 0, 0);
+		gridPane.add(serviceText, 1, 0);
+		gridPane.add(recentLabel, 0, 1);
+		gridPane.add(recentList, 1, 1);
+
+		gridPane.setVgap(3d);
+		GridPane.setValignment(recentLabel, VPos.TOP);
+
+		ColumnConstraints columnConstraints = new ColumnConstraints();
+		columnConstraints.setFillWidth(true);
+		// set to calculated size. done by default. so just add the constraint
+		// as is.
+		gridPane.getColumnConstraints().add(columnConstraints);
+
+		ColumnConstraints columnConstraints1 = new ColumnConstraints();
+		columnConstraints1.setFillWidth(true);
+		columnConstraints1.setHgrow(Priority.ALWAYS);
+		gridPane.getColumnConstraints().add(columnConstraints1);
+
+		HBox.setHgrow(gridPane, Priority.ALWAYS);
+
+		setContent(gridPane);
 
         Button proceedButton = new Button("proceed");
         proceedButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -102,7 +121,7 @@ public class SelectService extends Step {
     }
 
     public static List<String> getRecent() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (int i = 1; i <= Integer.valueOf(preferences.get(recentCount, "5")); i++) {
             String tmp = preferences.get(recent + i, "");
             if (!"".equals(tmp))

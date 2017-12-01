@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.crysil.errorhandling.CrySILException;
+import org.crysil.errorhandling.NotImplementedException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.header.U2FHeader;
 import org.crysil.protocol.payload.PayloadResponse;
+import org.crysil.protocol.payload.crypto.key.KeyHandle;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignRequest;
 import org.crysil.protocol.payload.crypto.sign.PayloadSignResponse;
 
@@ -22,6 +24,9 @@ public class Sign implements Command {
 	public PayloadResponse perform(Request request, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		PayloadSignRequest payload = (PayloadSignRequest) request.getPayload();
 
+		if (!(payload.getSignatureKey() instanceof KeyHandle))
+			throw new NotImplementedException();
+
 		List<byte[]> hashesToBeSigned = payload.getHashesToBeSigned();
 		List<byte[]> signedHashes = new ArrayList<>();
 		for (byte[] inputData : hashesToBeSigned) {
@@ -33,7 +38,7 @@ public class Sign implements Command {
 			byte[] signature = null;
 			try {
 				Signature sig = Signature.getInstance("SHA256withRSA");
-				sig.initSign((PrivateKey) keystore.getJCEPrivateKey(payload.getSignatureKey()));
+				sig.initSign((PrivateKey) keystore.getPrivateKey((KeyHandle) payload.getSignatureKey()));
 				sig.update(inputData);
 				signature = sig.sign();
 			} catch (Exception e) {

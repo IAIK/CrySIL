@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 
 public class Save extends Step {
@@ -22,6 +23,7 @@ public class Save extends Step {
 		this.data = data;
 
 		pathText = new TextField();
+		HBox.setHgrow(pathText, Priority.ALWAYS);
 		
 		if(data.getSourceFile().getName().endsWith(".cms"))
 			pathText.setText(data.getSourceFile().getAbsolutePath().replace(".cms", ""));
@@ -41,6 +43,7 @@ public class Save extends Step {
 		});
 		HBox fileSelectorGroup = new HBox();
 		fileSelectorGroup.getChildren().addAll(pathText, browseButton);
+		HBox.setHgrow(fileSelectorGroup, Priority.ALWAYS);
 		setContent(fileSelectorGroup);
 
 		Button proceedButton = new Button("proceed");

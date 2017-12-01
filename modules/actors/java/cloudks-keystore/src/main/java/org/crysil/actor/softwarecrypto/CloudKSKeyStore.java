@@ -21,7 +21,6 @@ import org.bouncycastle.util.encoders.Base64;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
-import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 /**
@@ -47,10 +46,7 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 	 * @throws KeyNotFoundException
 	 */
 	@Override
-	public java.security.Key getJCEPrivateKey(final Key current) throws KeyNotFoundException {
-		KeyHandle key = null;
-		if (current instanceof KeyHandle)
-			key = (KeyHandle) current;
+	public java.security.Key getPrivateKey(final KeyHandle key) throws KeyNotFoundException {
 		PreparedStatement st = null;
 		try {
 			st = connection.prepareStatement(
@@ -98,9 +94,9 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 	}
 
 	@Override
-	public PublicKey getJCEPublicKey(Key current) throws InvalidCertificateException, KeyNotFoundException {
+	public PublicKey getPublicKey(KeyHandle current) throws InvalidCertificateException, KeyNotFoundException {
 		try {
-			java.security.Key privateKey = getJCEPrivateKey(current);
+			java.security.Key privateKey = getPrivateKey(current);
 
 			// beat JCE to give up the public exponent...
 			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;

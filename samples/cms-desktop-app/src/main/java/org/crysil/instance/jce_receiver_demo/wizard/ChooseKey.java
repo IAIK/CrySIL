@@ -12,6 +12,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 public class ChooseKey extends Step {
 
@@ -21,13 +23,18 @@ public class ChooseKey extends Step {
 		setTitle("Select the key to use below");
 
 		// - display a select box to the user
-		listView = new ListView<String>();
+		listView = new ListView<>();
 		ObservableList<String> items = FXCollections.observableArrayList(availableKeys);
 		listView.setItems(items);
 		listView.getSelectionModel().select(0);
+		HBox.setHgrow(listView, Priority.ALWAYS);
+		VBox.setVgrow(listView, Priority.ALWAYS);
 
 		HBox hbox = new HBox();
+		HBox.setHgrow(hbox, Priority.ALWAYS);
+		VBox.setVgrow(hbox, Priority.ALWAYS);
 		hbox.getChildren().add(listView);
+
 		setContent(hbox);
 		
 		Button proceedButton = new Button("proceed");

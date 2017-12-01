@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 
 public class SelectFile extends Step {
@@ -23,6 +24,7 @@ public class SelectFile extends Step {
 		this.data = data;
 
 		pathText = new TextField();
+		HBox.setHgrow(pathText, Priority.ALWAYS);
 		Button browseButton = new Button("Browse...");
 		browseButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -36,6 +38,7 @@ public class SelectFile extends Step {
 		});
 		HBox fileSelectorGroup = new HBox();
 		fileSelectorGroup.getChildren().addAll(pathText, browseButton);
+		HBox.setHgrow(fileSelectorGroup, Priority.ALWAYS);
 		setContent(fileSelectorGroup);
 
 		Button proceedButton = new Button("proceed");

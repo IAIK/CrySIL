@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 public class Message extends Step {
 
@@ -18,6 +19,7 @@ public class Message extends Step {
 		Label messageLabel = new Label(message);
 		
 		HBox hbox = new HBox();
+		HBox.setHgrow(hbox, Priority.ALWAYS);
 		hbox.getChildren().add(messageLabel);
 
 		setContent(hbox);
