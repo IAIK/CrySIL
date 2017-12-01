@@ -6,17 +6,20 @@ import java.util.List;
 
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
-import org.crysil.protocol.payload.crypto.key.Key;
+import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public interface SoftwareCryptoKeyStore {
 
-	public java.security.Key getJCEPrivateKey(Key decryptionKey) throws KeyNotFoundException;
+	public java.security.Key getPrivateKey(KeyHandle decryptionKey)
+			throws KeyNotFoundException, KeyStoreUnavailableException;
 
-	public X509Certificate getX509Certificate(KeyHandle keyHandle);
+	public X509Certificate getX509Certificate(KeyHandle keyHandle)
+			throws InvalidCertificateException, KeyNotFoundException, KeyStoreUnavailableException;
 
-	public PublicKey getJCEPublicKey(Key currentKey) throws InvalidCertificateException, KeyNotFoundException;
+	public PublicKey getPublicKey(KeyHandle currentKey)
+			throws InvalidCertificateException, KeyNotFoundException, KeyStoreUnavailableException;
 
-	public List<KeyHandle> getKeyList();
+	public List<KeyHandle> getKeyList() throws KeyStoreUnavailableException;
 
 }

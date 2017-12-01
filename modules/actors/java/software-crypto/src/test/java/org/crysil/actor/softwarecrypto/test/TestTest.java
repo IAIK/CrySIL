@@ -81,9 +81,9 @@ public class TestTest {
       InvalidCertificateException, CertificateEncodingException {
 
 		final TestKeystore DUT = new TestKeystore();
-    Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPublicKey(new KeyHandle()).getEncoded()),
+    Assert.assertEquals(BaseEncoding.base64().encode(DUT.getPublicKey(new KeyHandle()).getEncoded()),
         rawPublicKey, "public key value does not match");
-    Assert.assertEquals(BaseEncoding.base64().encode(DUT.getJCEPrivateKey(new KeyHandle()).getEncoded()),
+    Assert.assertEquals(BaseEncoding.base64().encode(DUT.getPrivateKey(new KeyHandle()).getEncoded()),
         rawPrivateKey, "private key value does not match");
     Assert.assertEquals(BaseEncoding.base64().encode(DUT.getX509Certificate(new KeyHandle()).getEncoded())
         .replace("\r", "").replace("\n", "").replace(" ", ""), rawCert, "cert does not match");

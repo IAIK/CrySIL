@@ -11,11 +11,13 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import org.crysil.errorhandling.CrySILException;
+import org.crysil.errorhandling.NotImplementedException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptRequest;
 import org.crysil.protocol.payload.crypto.decrypt.PayloadDecryptResponse;
+import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public class Decrypt implements Command {
 
@@ -23,16 +25,20 @@ public class Decrypt implements Command {
 	public PayloadResponse perform(Request input, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		PayloadDecryptRequest request = (PayloadDecryptRequest) input.getPayload();
 
+		if (!(request.getDecryptionKey() instanceof KeyHandle))
+			throw new NotImplementedException();
+
 		try {
 			// prepare stuff
 			Cipher cipher = null;
 
-			Key key = keystore.getJCEPrivateKey(request.getDecryptionKey());
+
+				Key key = keystore.getPrivateKey((KeyHandle) request.getDecryptionKey());
 			if (key instanceof SecretKey)
 				cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 			else {
 				cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-				key = keystore.getJCEPublicKey(request.getDecryptionKey());
+					key = keystore.getPublicKey((KeyHandle) request.getDecryptionKey());
 			}
 
 			cipher.init(Cipher.DECRYPT_MODE, key);

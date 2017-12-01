@@ -12,18 +12,24 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import org.crysil.errorhandling.CrySILException;
+import org.crysil.errorhandling.NotImplementedException;
 import org.crysil.errorhandling.UnknownErrorException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadResponse;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptRequest;
 import org.crysil.protocol.payload.crypto.encrypt.PayloadEncryptResponse;
 import org.crysil.protocol.payload.crypto.key.Key;
+import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public class Encrypt implements Command {
 
 	@Override
 	public PayloadResponse perform(Request input, SoftwareCryptoKeyStore keystore) throws CrySILException {
 		PayloadEncryptRequest request = (PayloadEncryptRequest) input.getPayload();
+
+		for (Key currentKey : request.getKeys())
+			if (!(currentKey instanceof KeyHandle))
+				throw new NotImplementedException();
 
 		try {
 			// prepare stuff
@@ -34,13 +40,13 @@ public class Encrypt implements Command {
 
 			// for each key
 			for (Key currentKey : request.getKeys()) {
-				java.security.Key key = keystore.getJCEPrivateKey(currentKey);
+				java.security.Key key = keystore.getPrivateKey((KeyHandle) currentKey);
 
 				if (key instanceof SecretKey)
 					cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 				else {
 					cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-					key = keystore.getJCEPublicKey(currentKey);
+					key = keystore.getPublicKey((KeyHandle) currentKey);
 				}
 
 				cipher.init(Cipher.ENCRYPT_MODE, key);

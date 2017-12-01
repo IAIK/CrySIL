@@ -14,7 +14,6 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -35,8 +34,6 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
-import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
-import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 import com.google.common.io.BaseEncoding;
@@ -96,18 +93,8 @@ public class SimpleKeyStore implements SoftwareCryptoKeyStore {
 	 * @throws KeyNotFoundException
 	 */
 	@Override
-	public PublicKey getJCEPublicKey(final Key current) throws InvalidCertificateException, KeyNotFoundException {
-		if (current instanceof KeyHandle) {
-			return pubKey;
-		} else if (current instanceof ExternalCertificate) {
-			try {
-				return ((ExternalCertificate) current).getCertificate().getPublicKey();
-			} catch (final CertificateException e) {
-				throw new InvalidCertificateException();
-			}
-		} else {
-      throw new KeyNotFoundException();
-    }
+	public PublicKey getPublicKey(final KeyHandle current) throws InvalidCertificateException, KeyNotFoundException {
+		return pubKey;
 	}
 
 	/**
@@ -118,12 +105,8 @@ public class SimpleKeyStore implements SoftwareCryptoKeyStore {
 	 * @throws KeyNotFoundException
 	 */
 	@Override
-	public PrivateKey getJCEPrivateKey(final Key current) throws KeyNotFoundException {
-		if (current instanceof KeyHandle) {
-			return privKey;
-		} else {
-      throw new KeyNotFoundException();
-    }
+	public PrivateKey getPrivateKey(final KeyHandle current) throws KeyNotFoundException {
+		return privKey;
 	}
 
 	public PrivateKey getJCEPrivateKey() {
@@ -138,18 +121,10 @@ public class SimpleKeyStore implements SoftwareCryptoKeyStore {
 	 * @throws InvalidCertificateException
 	 * @throws KeyNotFoundException
 	 */
-	public X509Certificate getX509Certificate(final Key current) throws InvalidCertificateException, KeyNotFoundException {
-		if (current instanceof KeyHandle) {
-			return cert;
-		} else if (current instanceof ExternalCertificate) {
-			try {
-				return ((ExternalCertificate) current).getCertificate();
-			} catch (final CertificateException e) {
-				throw new InvalidCertificateException();
-			}
-		} else {
-      throw new KeyNotFoundException();
-    }
+	@Override
+	public X509Certificate getX509Certificate(final KeyHandle current)
+			throws InvalidCertificateException, KeyNotFoundException {
+		return cert;
 	}
 
 	public PublicKey getJCEPublicKeyECDSA() {
@@ -162,11 +137,6 @@ public class SimpleKeyStore implements SoftwareCryptoKeyStore {
 
 	public X509Certificate getX509CertificateEC() {
 		return certEC;
-	}
-
-	@Override
-	public X509Certificate getX509Certificate(KeyHandle keyHandle) {
-		return cert;
 	}
 
 	@Override
