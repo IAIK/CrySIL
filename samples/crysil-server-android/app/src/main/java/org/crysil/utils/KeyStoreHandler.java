@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.crysil.communications.websocket.KeyStoreInterface;
+import org.crysil.actor.softwarecrypto.FileKeyStore;
 import org.crysil.ErrorActivity;
 import org.crysil.R;
 import iaik.x509.X509Certificate;
@@ -27,7 +28,7 @@ import iaik.x509.X509Certificate;
 /**
  * Singleton for handling access to the Android KeyStore, and for importing keys
  */
-public class KeyStoreHandler implements KeyStoreInterface {
+public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
 
     private static final String TAG = KeyStoreHandler.class.getSimpleName();
     private static final String ANDROID_KEYSTORE = "AndroidKeyStore";
@@ -36,7 +37,6 @@ public class KeyStoreHandler implements KeyStoreInterface {
     private static final String IMPORT_KEYSTORE_PROVIDER = "IAIK";
 
     protected static KeyStoreHandler instance;
-    private KeyStore keyStore;
 
     public static synchronized KeyStoreHandler getInstance() {
         if (instance == null) {
@@ -130,7 +130,6 @@ public class KeyStoreHandler implements KeyStoreInterface {
         return null;
     }
 
-    @Override
     public PrivateKey getKey(String alias) {
         try {
             return (PrivateKey) getKeyStore().getKey(alias, null);

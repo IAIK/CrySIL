@@ -54,7 +54,7 @@ dependencies {
     compile ("org.crysil.actor:software-crypto:2.0-1") {
         exclude module: 'commons'
     }
-    compile ("org.crysil.actor:singlekey-keystore:2.0-1") {
+    compile ("org.crysil.actor:filekeystore:2.0-1") {
         exclude module: 'commons'
     }
     compile ("org.crysil.communications:websocket-receiver:2.0-1") {

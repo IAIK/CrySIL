@@ -4,7 +4,6 @@ import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.crysil.actor.softwarecrypto.SimpleKeyStore;
 import org.crysil.actor.softwarecrypto.SoftwareCrypto;
 import org.crysil.authentication.AuthHandlerFactory;
 import org.crysil.authentication.AutomaticAuthSelector;
@@ -16,6 +15,7 @@ import org.crysil.commons.OneToOneInterlink;
 import org.crysil.communications.websocket.WebSocketReceiver;
 import org.crysil.gatekeeper.Configuration;
 import org.crysil.gatekeeper.Gatekeeper;
+import org.crysil.utils.KeyStoreHandler;
 
 
 public class CrySILElementFactory {
@@ -31,7 +31,7 @@ public class CrySILElementFactory {
 	public static void initialize(KeyStore keyStore, KeyStore trustStore) {
 
 		try {
-			Module jceActor = new SoftwareCrypto(new SimpleKeyStore());
+			Module jceActor = new SoftwareCrypto(KeyStoreHandler.getInstance());
 
 			receiver = new WebSocketReceiver(keyStore, null, trustStore);
 
