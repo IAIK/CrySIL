@@ -1,14 +1,13 @@
 package org.crysil.actor.softwarecrypto;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.cms.CMSEnvelopedDataParser;
 import org.bouncycastle.cms.CMSTypedStream;
 import org.bouncycastle.cms.RecipientInformation;
@@ -30,7 +29,7 @@ public class DecryptCMS implements Command {
 
 		if (!(input.getPayload() instanceof PayloadDecryptRequest))
 			throw new UnknownErrorException();
-		
+
 		if (!(((PayloadDecryptRequest) input.getPayload()).getDecryptionKey() instanceof KeyHandle))
 			throw new NotImplementedException();
 		
@@ -52,11 +51,29 @@ public class DecryptCMS implements Command {
 				Iterator<RecipientInformation> it = c.iterator();
 				if (it.hasNext()) {
 					RecipientInformation recipient = it.next();
-					Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-					CMSTypedStream recData = recipient .getContentStream(new JceKeyTransEnvelopedRecipient(decryptionKey).setProvider("BC"));
+					CMSTypedStream recData = recipient
+							.getContentStream(new JceKeyTransEnvelopedRecipient(decryptionKey).setProvider("BC"));
 					InputStream decryptedCMSdata = recData.getContentStream();
-					// FIXME
-					decryptedCMSdataList.add(IOUtils.toByteArray(decryptedCMSdata));
+
+					/*
+					 * copied from https://stackoverflow.com/a/2436413
+					 */
+					// this dynamically extends to take the bytes you read
+					ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+
+					// this is storage overwritten on each iteration with bytes
+					int bufferSize = 1024;
+					byte[] buffer = new byte[bufferSize];
+
+					// we need to know how may bytes were read to write them to the
+					// byteBuffer
+					int len = 0;
+					while ((len = decryptedCMSdata.read(buffer)) != -1) {
+						byteBuffer.write(buffer, 0, len);
+					}
+
+					// and then we can serve your byte array.
+					decryptedCMSdataList.add(byteBuffer.toByteArray());
 				}
 				
 				PayloadDecryptResponse payloadDecryptCMSResponse = new PayloadDecryptResponse();
