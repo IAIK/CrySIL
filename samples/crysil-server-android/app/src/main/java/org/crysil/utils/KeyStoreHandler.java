@@ -54,9 +54,9 @@ public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
 
     protected KeyStoreHandler() {
         try {
-            keyStore = KeyStore.getInstance(ANDROID_KEYSTORE);
-            keyStore.load(null, null);
-            Log.d(TAG, "Key store loaded successfully: " + keyStore);
+            keystore = KeyStore.getInstance(ANDROID_KEYSTORE);
+            keystore.load(null, null);
+            Log.d(TAG, "Key store loaded successfully: " + keystore);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
             Intent intent = new Intent(ApplicationContextProvider.getAppContext(), ErrorActivity.class);
@@ -77,13 +77,13 @@ public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
     }
 
     public KeyStore getKeyStore() {
-        return keyStore;
+        return keystore;
     }
 
     public boolean deleteKey(String alias) {
         try {
-            if (keyStore.containsAlias(alias)) {
-                keyStore.deleteEntry(alias);
+            if (keystore.containsAlias(alias)) {
+                keystore.deleteEntry(alias);
                 return true;
             }
         } catch (KeyStoreException e) {
@@ -94,7 +94,7 @@ public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
 
     public boolean hasKey(String alias) {
         try {
-            return keyStore.containsAlias(alias);
+            return keystore.containsAlias(alias);
         } catch (KeyStoreException e) {
             Log.e(TAG, e.getMessage(), e);
         }
@@ -103,8 +103,8 @@ public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
 
     public boolean addKey(String alias, Key key, Certificate[] certChain, boolean overwrite) {
         try {
-            if (!keyStore.containsAlias(alias) || overwrite) {
-                keyStore.setKeyEntry(alias, key, null, certChain);
+            if (!keystore.containsAlias(alias) || overwrite) {
+                keystore.setKeyEntry(alias, key, null, certChain);
                 return true;
             }
         } catch (KeyStoreException e) {
@@ -115,9 +115,9 @@ public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
 
     public X509Certificate getCertificate(String alias) {
         try {
-            Key key = keyStore.getKey(alias, null);
+            Key key = keystore.getKey(alias, null);
             if (key != null) {
-                Certificate cert = keyStore.getCertificate(alias);
+                Certificate cert = keystore.getCertificate(alias);
                 if (cert != null) {
                     return new X509Certificate(cert.getEncoded());
                 }
