@@ -1,6 +1,7 @@
 package org.crysil.utils;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.google.common.collect.Lists;
@@ -23,6 +24,12 @@ import org.crysil.communications.websocket.KeyStoreInterface;
 import org.crysil.actor.softwarecrypto.FileKeyStore;
 import org.crysil.ErrorActivity;
 import org.crysil.R;
+import org.crysil.authentication.auth_android.ui.CurrentActivityTracker;
+import org.crysil.builders.KeyBuilder;
+import org.crysil.database.DatabaseHandler;
+import org.crysil.database.webservice.WebserviceEntry;
+import org.crysil.protocol.payload.crypto.key.KeyHandle;
+
 import iaik.x509.X509Certificate;
 
 /**
@@ -180,5 +187,23 @@ public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
             }
         }
         return imported;
+    }
+
+    @Override
+    public List<KeyHandle> getKeyList() {
+        List<KeyHandle> result = super.getKeyList();
+
+        //exclude system keys
+        result.remove(KeyBuilder.buildKeyHandle("crysil-ca", ""));
+
+        DatabaseHandler databaseHandler = new DatabaseHandler(CurrentActivityTracker.getActivity());
+        Cursor cursor = databaseHandler.getWebserviceCursor();
+        while(cursor.moveToNext()) {
+            String alias = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_ALIAS));
+            result.remove(KeyBuilder.buildKeyHandle(alias, ""));
+        }
+        databaseHandler.close();
+
+        return result;
     }
 }
