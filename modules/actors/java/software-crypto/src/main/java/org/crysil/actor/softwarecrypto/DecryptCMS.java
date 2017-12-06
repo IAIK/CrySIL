@@ -52,7 +52,7 @@ public class DecryptCMS implements Command {
 				if (it.hasNext()) {
 					RecipientInformation recipient = it.next();
 					CMSTypedStream recData = recipient
-							.getContentStream(new JceKeyTransEnvelopedRecipient(decryptionKey).setProvider("BC"));
+							.getContentStream(new JceKeyTransEnvelopedRecipient(decryptionKey));
 					InputStream decryptedCMSdata = recData.getContentStream();
 
 					/*

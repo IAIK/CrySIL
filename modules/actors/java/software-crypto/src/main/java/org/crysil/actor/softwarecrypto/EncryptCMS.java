@@ -50,8 +50,9 @@ public class EncryptCMS implements Command {
 				CMSTypedData msg = new CMSProcessableByteArray(plainData);
 				CMSEnvelopedDataGenerator edGen = new CMSEnvelopedDataGenerator();
 				Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-				edGen.addRecipientInfoGenerator(new JceKeyTransRecipientInfoGenerator(recipientCert).setProvider("BC"));
-				CMSEnvelopedData ed = edGen.generate(msg, new JceCMSContentEncryptorBuilder(CMSAlgorithm.DES_EDE3_CBC).setProvider("BC").build());
+				edGen.addRecipientInfoGenerator(new JceKeyTransRecipientInfoGenerator(recipientCert));
+				CMSEnvelopedData ed = edGen.generate(msg,
+						new JceCMSContentEncryptorBuilder(CMSAlgorithm.DES_EDE3_CBC).build());
 
 				byte[] encryptedData = ed.getEncoded();
 				
