@@ -94,15 +94,6 @@
             android:onClick="btManageWebservicesOnClick"
             android:text="@string/main_btmanage_webservices"/>
 
-        <Button
-            android:id="@+id/bt_main_manage_accounts"
-            style="@style/boldButtonBlack"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:onClick="btManageAccountsOnClick"
-            android:text="@string/main_btmanage_accounts"/>
-
         <TextView
             android:id="@+id/tvMessage"
             android:layout_width="fill_parent"

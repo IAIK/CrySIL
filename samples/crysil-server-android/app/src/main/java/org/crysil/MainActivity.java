@@ -178,7 +178,7 @@ public class MainActivity extends AbstractActivity {
         int countGoogle = databaseHandler.getAccountGoogleCount();
         int countUsername = databaseHandler.getAccountUsernameCount();
         if (countGoogle == 0 && countUsername == 0) {
-            tvMessage.append(getString(R.string.warn_accounts_empty));
+//            tvMessage.append(getString(R.string.warn_accounts_empty));
         }
         if (webserviceCursorAdapter.isEmpty()) {
             tvMessage.append(getString(R.string.warn_webservices_empty));
