@@ -17,6 +17,7 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +28,7 @@ import org.crysil.R;
 import org.crysil.authentication.auth_android.ui.CurrentActivityTracker;
 import org.crysil.builders.KeyBuilder;
 import org.crysil.database.DatabaseHandler;
-import org.crysil.database.webservice.WebserviceEntry;
+import org.crysil.database.keys.KeyEntry;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 import iaik.x509.X509Certificate;
@@ -191,16 +192,14 @@ public class KeyStoreHandler extends FileKeyStore implements KeyStoreInterface {
 
     @Override
     public List<KeyHandle> getKeyList() {
-        List<KeyHandle> result = super.getKeyList();
-
-        //exclude system keys
-        result.remove(KeyBuilder.buildKeyHandle("crysil-ca", ""));
+        List<KeyHandle> result = new ArrayList<>();
 
         DatabaseHandler databaseHandler = new DatabaseHandler(CurrentActivityTracker.getActivity());
-        Cursor cursor = databaseHandler.getWebserviceCursor();
+        Cursor cursor = databaseHandler.getKeyCursor();
+
         while(cursor.moveToNext()) {
-            String alias = cursor.getString(cursor.getColumnIndex(WebserviceEntry.COLUMN_NAME_ALIAS));
-            result.remove(KeyBuilder.buildKeyHandle(alias, ""));
+            String alias = cursor.getString(cursor.getColumnIndex(KeyEntry.COLUMN_NAME_ALIAS));
+            result.add(KeyBuilder.buildKeyHandle(alias, ""));
         }
         databaseHandler.close();
 
