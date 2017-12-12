@@ -7,10 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
+import java.security.NoSuchProviderException;
 import java.security.Principal;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -38,6 +40,7 @@ import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcRSAContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
 import org.crysil.instance.AppConfiguration;
 import org.crysil.instance.datastore.DeviceRegistration;
 import org.crysil.instance.datastore.DeviceRepository;
@@ -134,6 +137,23 @@ public class CertificateUtil {
 		} catch (OperatorCreationException e) {
 			logger.error("Could not instantiate CertificateUtil", e);
 		}
+	}
+
+	/**
+	 * nasty workaround for when the service is not run under / of the TLD
+	 * 
+	 * @param certificate String PEM
+	 * @return X509Certificate Object
+	 * @throws CertificateException
+	 * @throws NoSuchProviderException
+	 */
+	public static X509Certificate parseCertificate(String certificate)
+			throws CertificateException, NoSuchProviderException {
+		CertificateFactory factory = CertificateFactory.getInstance("X.509", KEYPAIR_GENERATOR_PROVIDER);
+		return (X509Certificate) factory
+				.generateCertificate(
+						new ByteArrayInputStream(Base64.decode(certificate.replace("-----BEGIN CERTIFICATE-----", "")
+								.replace("-----END CERTIFICATE-----", "").replace(" ", ""))));
 	}
 
 	/**

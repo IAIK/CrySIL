@@ -92,12 +92,12 @@ public class Application extends SpringBootServletInitializer implements WebSock
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(serverWebSocketHandler(), Constants.API_CRYSIL_SERVER)
 				.addInterceptors(serverWebSocketHandshakeInterceptor())
-				.setHandshakeHandler(websocketSecurityHandshakeHandler());
+				.setHandshakeHandler(websocketSecurityHandshakeHandler()).setAllowedOrigins("*");
 		registry.addHandler(registrationWebSocketHandler(), Constants.API_REGISTER).addInterceptors(
-				serverWebSocketHandshakeInterceptor());
+				serverWebSocketHandshakeInterceptor()).setAllowedOrigins("*");
 		registry.addHandler(managementWebSocketHandler(), Constants.API_MANAGE)
 				.addInterceptors(serverWebSocketHandshakeInterceptor())
-				.setHandshakeHandler(websocketSecurityHandshakeHandler());
+				.setHandshakeHandler(websocketSecurityHandshakeHandler()).setAllowedOrigins("*");
 	}
 
 	/**

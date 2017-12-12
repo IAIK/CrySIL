@@ -5,14 +5,11 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.crysil.communications.json.JsonUtils;
 import org.crysil.instance.datastore.DeviceRegistration;
 import org.crysil.instance.datastore.DeviceRepository;
 import org.crysil.instance.datastore.ServerInfo;
 import org.crysil.instance.util.Constants;
 import org.crysil.instance.util.StringUtils;
-import org.crysil.protocol.Request;
-import org.crysil.protocol.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +49,10 @@ public class ClientController {
 	 * @return Response from the CrySIL Android server (received over its WebSocket connection to us)
 	 */
 	@RequestMapping(value = Constants.API_CRYSIL_CLIENT, method = RequestMethod.POST, produces = Constants.APPLICATION_JSON, consumes = Constants.APPLICATION_JSON)
-	public @ResponseBody Response crysil(@RequestBody Request crysilRequest,
+	public @ResponseBody String crysil(@RequestBody String crysilRequest,
 			@RequestParam(value = Constants.PARAM_ID) Long crysilId, HttpServletRequest request) {
-		String responseJson = forwardToCrysilServer(JsonUtils.toJson(crysilRequest), crysilId, request);
-		return JsonUtils.fromJson(responseJson, Response.class);
+		return forwardToCrysilServer(crysilRequest, crysilId, request);
+		// return JsonUtils.fromJson(responseJson, Response.class);
 	}
 
 	/**
@@ -110,7 +107,10 @@ public class ClientController {
 			token = UUID.randomUUID().toString();
 			logger.debug("Creating new channel with token {}", token);
 			try {
-				if (!postToGCM(token, crysilId, reg.getDeviceId(), request.getLocalAddr(), request.getLocalPort())) {
+				String url = config.getLocalUrl();
+				if (url.isEmpty())
+					url = String.format("%s:%d", request.getLocalAddr(), request.getLocalPort());
+				if (!postToGCM(token, crysilId, reg.getDeviceId(), url)) {
 					return null;
 				}
 			} catch (IOException e) {
@@ -154,8 +154,8 @@ public class ClientController {
 	 *            The port we are running on, to build the WebSocket URI
 	 * @return <b>true</b> on success
 	 */
-	private boolean postToGCM(String token, Long crysilId, String deviceId, String host, int port) throws IOException {
-		String path = String.format("wss://%s:%d%s?token=%s", host, port, Constants.API_CRYSIL_SERVER, token);
+	private boolean postToGCM(String token, Long crysilId, String deviceId, String url) throws IOException {
+		String path = String.format("%s%s?token=%s", url, Constants.API_CRYSIL_SERVER, token);
 		logger.debug("GCM: Sending path {} to device {}", path, StringUtils.cutDown(deviceId, 32));
 		Message message = new Message.Builder().timeToLive(100).addData(Constants.PARAM_URI, path).build();
 		Sender sender = new Sender(config.getGcmServerKey());

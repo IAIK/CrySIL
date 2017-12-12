@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.crysil" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <permission
+        android:name="at.tugraz.iaik.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
+
+    <application
+        android:name="org.crysil.utils.ApplicationContextProvider"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        >
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="org.crysil.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <activity
+            android:name="org.crysil.MainActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="org.crysil.push.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="at.tugraz.iaik" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="org.crysil.push.GcmIntentService" />
+
+        <activity
+            android:name="org.crysil.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="org.crysil.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.crysil.MainActivity" />
+        </activity>
+        <activity
+            android:name="org.crysil.WebserviceListActivity"
+            android:label="@string/title_activity_webservice_list"
+            android:parentActivityName="org.crysil.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.crysil.MainActivity" />
+        </activity>
+
+        <activity
+            android:name="org.crysil.KeyListActivity"
+            android:label="@string/title_activity_key_list"
+            android:parentActivityName="org.crysil.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.crysil.MainActivity" />
+        </activity>
+        <activity
+            android:name="org.crysil.CreateKeyActivity"
+            android:label="@string/title_activity_create_key"
+            android:parentActivityName="org.crysil.KeyListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.crysil.KeyListActivity" />
+        </activity>
+        <activity
+            android:name="org.crysil.ImportKeyActivity"
+            android:label="@string/title_activity_import_keys"
+            android:parentActivityName="org.crysil.KeyListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.crysil.KeyListActivity" />
+        </activity>
+        <activity
+            android:name="org.crysil.NotificationBarAcceptActivity"
+            android:label="Accept"
+            android:parentActivityName="org.crysil.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.crysil.MainActivity" />
+        </activity>
+        <activity
+            android:name="org.crysil.WizardActivity"
+            android:label="@string/wizard_title" />
+        <activity
+            android:name="org.crysil.WizardExportActivity"
+            android:label="@string/wizard_export_title" />
+        <activity
+            android:name="org.crysil.WizardCreateActivity"
+            android:label="@string/wizard_create_title" />
+        <activity
+            android:name="org.crysil.AccountListActivity"
+            android:label="@string/title_activity_list_accounts"
+            android:parentActivityName="org.crysil.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.crysil.MainActivity" />
+        </activity>
+        <activity
+            android:name="org.crysil.ErrorActivity"
+            android:label="@string/title_activity_error" >
+        </activity>
+    </application>
+
+</manifest>

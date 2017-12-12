@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MyActivity" >
+    <item android:id="@+id/action_wizard_rerun"
+        android:title="@string/action_wizard_rerun"
+        android:orderInCategory="300"
+        android:showAsAction="never" />
+    <item android:id="@+id/action_export_certificate"
+        android:title="@string/action_wizard_export"
+        android:orderInCategory="400"
+        android:showAsAction="never" />
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="1000"
+        android:showAsAction="never" />
+</menu>

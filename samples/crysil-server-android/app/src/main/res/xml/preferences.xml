@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Security settings">
+        <CheckBoxPreference
+            android:key="@string/pref_key_crysil_dialog"
+            android:title="@string/pref_text_crysil_dialog"
+            android:summary="@string/pref_sum_crysil_dialog"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

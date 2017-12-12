@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name"><b>CrySIL</b> on Android</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_importkeystore">Import Keys</string>
+    <string name="action_wizard_rerun">Restart setup wizard</string>
+    <string name="title_activity_create_key">Create Key</string>
+    <string name="title_activity_import_keys">Import Key Store</string>
+    <string name="title_activity_key_list">Key List</string>
+    <string name="title_activity_webservice_list">Webservice List</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="main_text_webservice_address">Select a webservice</string>
+    <string name="main_button_pause">Pause</string>
+    <string name="main_button_resume">Resume</string>
+    <string name="main_button_register">Register</string>
+    <string name="main_button_unregister">Unregister</string>
+    <string name="pref_key_crysil_dialog">pref_crysil_dialog</string>
+    <string name="pref_text_crysil_dialog">Confirmation dialog</string>
+    <string name="pref_sum_crysil_dialog">Show a confirmation dialog on each CrySIL request</string>
+    <string name="wizard_export_title">Export the CA certificate</string>
+    <string name="wizard_export_placeholder">Touch to show details</string>
+    <string name="wizard_export_btexport">Export</string>
+    <string name="wizard_export_choose_application">Choose an Application:</string>
+    <string name="no_mail_clients_available">There are no email clients installed.</string>
+    <string name="export_certificate_error">Error at certificate export.</string>
+    <string name="activity_wizard_export_email">Recipient mail address</string>
+    <string name="email_error">No valid mail address</string>
+    <string name="alias_error">Alias is already in use</string>
+    <string name="wizard_text" formatted="true"><b>CrySIL</b> enables you to create cryptographic keys. In order to
+        use it for digital signature (e.g. email signature), the corresponding certificate has to be signed with a
+        certificate you trust.\nYou can choose to either <b>import</b> existing keys or <b>create</b> a new one
+    and export the certificate.</string>
+    <string name="wizard_create_text">Please enter your contact information to create a personal mail certificate.</string>
+    <string name="keystore_import_text">Provide an existing keystore file in PKCS12 format to be imported into your CrySIL keystore. Note that only private keys can be imported.</string>
+    <string name="keystore_import_password">Password for the existing keystore:</string>
+    <string name="wizard_export_text">You can now optionally export the certificate that has signed your mail certificate. You can import that certificate into your mail client.</string>
+    <string name="wizard_create_title">Welcome to CrySIL on Android</string>
+    <string name="wizard_export_mail_subject">Your CA certificate from CrySIL on Android</string>
+    <string name="wizard_export_mail_body">The CA Certificate is attached to this email.\n-- \nCheers\nCrySIL-Android-Team</string>
+    <string name="keystore_alias">Keystore Alias</string>
+    <string name="keystore_alias_def">android-1</string>
+    <string name="common_name">Your name</string>
+    <string name="common_name_def">John Doe</string>
+    <string name="email_address">Your mail address</string>
+    <string name="email_address_def">mail@example.com</string>
+    <string name="country">Country (optional)</string>
+    <string name="organization">Organization (optional)</string>
+    <string name="organizational_unit">Organizational Unit (optional)</string>
+    <string name="create_key">Create Key</string>
+    <string name="recreate_key">Recreate Key</string>
+    <string name="certificate_initialization_error">An error occurred during the initialization.</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_account_assign_key">Assign keys</string>
+    <string name="keylist_delete_confirm">Delete selected keys?</string>
+    <string name="webservicelist_delete_confirm">Delete selected webservice entry? This will also try to
+        unregister this device on the webservice.</string>
+    <string name="webservicelist_edit_confirm">Only change the address if you are sure that the server will still
+        recognize your device under the new address</string>
+    <string name="action_keylist_assign_account">Assign accounts</string>
+    <string name="accountlist_delete_confirm">Delete selected account?</string>
+    <string name="accountlist_map_keys">Select the keys to which this account should have access to</string>
+    <string name="wizard_export_error_no_file">Something went wrong, there is no certificate to export</string>
+    <string name="wizard_export_btskip">Skip</string>
+    <string name="wizard_create_btcontinue">Continue</string>
+    <string name="wizard_title">Welcome to CrySIL on Android</string>
+    <string name="wizard_btimport">Import</string>
+    <string name="wizard_btcreate">Create</string>
+    <string name="main_btmanage_keys">Manage Keys</string>
+    <string name="main_btmanage_webservices">Manage Webservices</string>
+    <string name="main_btmanage_accounts">Manage Accounts</string>
+    <string name="text_crysilid">CrySIL ID</string>
+    <string name="keylist_create_toast_wait">Key is being created in the background (list will be updated)</string>
+    <string name="keylist_create_toast_finished">Key creation finished</string>
+    <string name="title_activity_list_accounts">Manage Accounts</string>
+    <string name="action_wizard_export">Export certificate</string>
+    <string name="accountlist_create_google_address">GMail Address</string>
+    <string name="accountlist_create_username_username">Username</string>
+    <string name="accountlist_create_username_password">Password</string>
+    <string name="accountlist_create_google_error">Not a valid email address!</string>
+    <string name="accountlist_create_username_error">Username or password empty!</string>
+    <string name="webservicelist_create_error">Title or address empty!</string>
+    <string name="dialog_webservice_title">Add new Webservice</string>
+    <string name="dialog_webservice_edit_title">Edit Webservice</string>
+    <string name="webservice_delete_error">Couldn\'t unregister from webservice, deleting anyway</string>
+    <string name="keystore_import_choosefile">Choose file …</string>
+    <string name="keystore_import_intent_chooser">Select the keystore to import</string>
+    <string name="keystore_import_password_warning">Please enter a password for the existing keystore</string>
+    <string name="keystore_import_toast_wait">Keys are imported in background (list will be updated)</string>
+    <string name="keystore_import_toast_finished">Import has finished</string>
+    <string name="keystore_import_success_message">Successfully imported the following keys:</string>
+    <string name="keystore_import_failed_message">No keys could be imported</string>
+    <string name="keystore_import_finish">Finish</string>
+    <string name="title_activity_error">Error</string>
+    <string name="error_keystore">We are sorry, but we can\'t continue executing CrySIL on Android: Your system does
+        not support the Android KeyStore. This is absolutely necessary to run CrySIL on Android. See the details
+        of the error message:</string>
+    <string name="error_gcm">We are sorry, but we can\'t continue executing CrySIL on Android: Your system does
+        not have the Google Play Services installed. This is absolutely necessary to run CrySIL on Android.</string>
+    <string name="warn_keys_empty">The are no keys defined, you may want to add one\n</string>
+    <string name="warn_accounts_empty">There are no accounts defined, you may want to add some\n</string>
+    <string name="warn_webservices_empty">There are no webservices defined, you may want to add one\n</string>
+    <string name="warn_webservices_error">Can\'t connect to the webservice\n</string>
+    <string name="notification_text">Do you want to allow the pending request?</string>
+    <string name="notification_accept">Accept</string>
+    <string name="notification_reject">Reject</string>
+</resources>

@@ -1,9 +1,9 @@
 package org.crysil.authentication.interceptor;
 
-import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.crysil.authentication.AuthException;
@@ -95,35 +95,35 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
     if (authPlugins.size() == 1 && authPlugins.get(0).authenticatesAuthomatically()) {
       return authPlugins.get(0);
     }
-    final CountDownLatch latch = new CountDownLatch(1);
 
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          final IAuthenticationSelector selector = selectorType.newInstance();
-          selector.setAuthenticationPlugins(authPlugins);
-          selector.setAuthPluginSelected(new ActionPerformedCallback() {
-            @Override
-            public void actionPerformed() {
-              authPlugin.set(selector.getSelectedAuthenticationPlugin());
-              selector.dismiss();
-              latch.countDown();
-            }
-          });
-          selector.present();
+		try {
+			Executors.newSingleThreadExecutor().submit(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						final IAuthenticationSelector selector = selectorType.newInstance();
+						selector.setAuthenticationPlugins(authPlugins);
+						selector.setAuthPluginSelected(new ActionPerformedCallback() {
+							@Override
+							public void actionPerformed() {
+								authPlugin.set(selector.getSelectedAuthenticationPlugin());
+								selector.dismiss();
+							}
+						});
+						selector.present();
 
-        } catch (final InstantiationException e) {
-          latch.countDown();
-          e.printStackTrace();
-        } catch (final IllegalAccessException e) {
-          latch.countDown();
-          e.printStackTrace();
-        }
-      }
-    });
+					} catch (final InstantiationException e) {
+						e.printStackTrace();
+					} catch (final IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
+			}).get();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-    latch.await();
 
     return authPlugin.get();
   }

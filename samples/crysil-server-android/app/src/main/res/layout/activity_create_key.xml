@@ -1,0 +1,107 @@
+<LinearLayout
+    android:id="@+id/activity_createkey"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="org.crysil.CreateKeyActivity">
+
+    <TextView
+        android:id="@+id/tvAlias"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/keystore_alias"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/edAlias"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/keystore_alias_def"/>
+
+    <TextView
+        android:id="@+id/tvCommonName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/common_name"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/edCommonName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:text="@string/common_name_def"/>
+
+    <TextView
+        android:id="@+id/tvEmailAddress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/email_address"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/edEmailAdress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:text="@string/email_address_def"/>
+
+    <TextView
+        android:id="@+id/tvCountry"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/country"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/edCountry"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:text=""/>
+
+    <TextView
+        android:id="@+id/tvOrganization"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/organization"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/edOrganization"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:text=""/>
+
+    <TextView
+        android:id="@+id/tvOrganizationalUnit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/organizational_unit"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/edOrganizationalUnit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:text=""/>
+
+    <Button
+        android:id="@+id/btCreateKey"
+        style="@style/boldButtonBlue"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:onClick="btCreateKeyOnClick"
+        android:text="@string/create_key"/>
+
+</LinearLayout>
