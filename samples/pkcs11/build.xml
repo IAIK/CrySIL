@@ -1,0 +1,109 @@
+<project name="PKCS11" basedir=".">
+
+    <property name="name" value="PKCS11"/>
+	
+    <property name="java.dir"     value="src/JAVA"/>
+    <property name="java.src.dir"     value="src/JAVA/src"/>
+    <property name="java.build.dir"   value="src/JAVA/build"/>
+    <property name="java.classes.dir" value="${java.build.dir}/classes"/>
+
+		<property name="c.dir"     value="C"/>
+		<property name="c.src.dir"     value="C/src"/>
+    <property name="c.build.dir"   location="C/build"/>
+    <property name="c.lib.name"   value="skytrustpkcs11"/>
+    <property name="c.wrapperlib.name"   value="pkcs11_java_wrap"/>
+    <property name="c.exec.dir"     value="${c.build.dir}"/>
+
+		<property name="c.lib.dir" location="lib/"/>
+		<property name="c.include.dir" location="include/"/>
+    <property name="c.include.java.dir" location="include/java/"/>
+
+		<property name="swig.dir"     value="swig"/>
+    <property name="swig.file"     value="${swig.dir}/generateProxys.i"/>
+		<property name="swig.preproc.file"     value="${swig.dir}/resolve_macros_for_swig.sh"/>
+    <property name="swig.generated.dir"     value="${java.src.dir}/proxys"/>
+
+    <property name="debug" value="false"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+     
+     
+     <path id="skytrust.classpath">
+	<pathelement location="skytrust-element-java/common/target/classes/"/>
+        <pathelement location="skytrust-element-java/core/target/classes/"/>
+        <!--<pathelement location="${c.lib.dir}/dependencies.jar"/>-->
+        <pathelement location="${c.lib.dir}/instance-jce-to-remote-1.0-SNAPSHOT-jar-with-dependencies.jar"/>
+        <pathelement location="${c.lib.dir}/okhttp-2.3.0-SNAPSHOT.jar"/>
+    </path>
+	
+    <target name="init" depends="SWIG-preprocess,SWIG,cmake"/>
+    <target name="compile" depends="C-compile,JAVA-compile"/>
+    <target name="build" depends="C-compile,jar"/>
+    <target name="clean-build" depends="clean,jar,C-compile"/>
+    <target name="cmake">
+    	<mkdir dir="${c.build.dir}"/>
+    	<exec osfamily="Unix" failonerror="true" dir="${c.build.dir}" executable="cmake" searchpath="true">
+          <arg line="-D DEBUG=${debug} -D JAR='${c.lib.dir}/${ant.project.name}.jar' ../ "/>
+     </exec>
+    </target>
+    <target name="JAVA-clean">
+        <delete dir="${java.build.dir}"/>
+    </target>
+    <target name="C-clean" >
+    		<exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.build.dir} clean"/>
+        </exec>
+    </target>
+    <target name="SWIG-clean" >
+        <delete dir="${swig.generated.dir}"/>
+    	<delete file="${c.src.dir}/pkcs11_java_wrap.c"/>
+    </target>
+    <target name="clean" depends="C-clean,JAVA-clean,SWIG-clean"/>
+<!-- SWIG -->  
+    <target name="SWIG-preprocess">
+      <exec input="${c.src.dir}/pkcs11t.h" executable="${swig.preproc.file}" output="${swig.dir}/pkcs11t_processed.h" failonerror="true"/>
+      <exec dir="${swig.dir}" executable="./enums.sh" failonerror="true"/> 
+    </target>
+    <target name="SWIG" depends="SWIG-preprocess">
+      <mkdir dir="${swig.generated.dir}"/>
+      <exec executable="swig2.0" failonerror="true" searchpath="true">
+        <arg line="-java -package proxys -outdir ${swig.generated.dir} -o ${c.src.dir}/pkcs11_java_wrap.c ${swig.file}"/>
+      </exec>
+    </target>
+<!-- COMPILE -->   
+    <target name="JAVA-compile">
+        <mkdir dir="${java.classes.dir}"/>
+        <javac srcdir="${java.src.dir}" debug="${debug}" debuglevel="${debuglevel}" destdir="${java.classes.dir}" includeantruntime="false">
+            <classpath refid="skytrust.classpath"/>
+        </javac>
+    </target>
+    <target name="C-compile">
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.build.dir} DEBUG=${debug} all"/>
+        </exec>
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.build.dir} DEBUG=${debug} install"/>
+        </exec>
+    </target>
+    <target name="C-runtest">
+        <exec osfamily="Unix" failonerror="true" executable="make" searchpath="true">
+          <arg line="-C ${c.dir} DEBUG=${debug}
+           runtest"/>
+        </exec>
+    </target>
+
+<!-- JAR -->   
+    <target name="jar" depends="JAVA-compile">
+     <jar destfile="${c.lib.dir}/${ant.project.name}.jar">
+				<fileset dir="${java.classes.dir}"/>
+				<fileset file="config"/>
+			<!--	<fileset dir="skytrust-element-java/common/target/classes/"/>
+				<fileset dir="skytrust-element-java/core/target/classes/"/> -->
+				<!-- <zipfileset includes="**/*.class" src="lib/dependencies.jar"/>-->
+				<zipfileset includes="**/*.class" src="lib/instance-jce-to-remote-1.0-SNAPSHOT-jar-with-dependencies.jar"/>
+			<manifest>
+			    <attribute name="Class-Path" value="/usr/share/java/"/> 
+			</manifest>
+     </jar>
+    </target>
+
+</project>
