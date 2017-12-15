@@ -1,0 +1,9 @@
+<ivy-module version="2.0" >
+    <info organisation="org.crysil.receiver" module="pkcs11"/>
+
+    <dependencies>
+        <dependency org="org.crysil.communications" name="jce-receiver" rev="2.0-1"/>
+        <dependency org="org.crysil" name="auth-basic" rev="2.0-1"/>
+<!--    	<dependency org="iaik" name="iaik_jce_full_signed" rev="5.25"/>-->
+    </dependencies>
+</ivy-module>

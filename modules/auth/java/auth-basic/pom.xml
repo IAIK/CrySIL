@@ -9,6 +9,7 @@
     <version>2.0-1</version>
     <relativePath>../../..</relativePath>
   </parent>
+  <groupId>org.crysil</groupId>
   <artifactId>auth-basic</artifactId>
 
   <dependencies>

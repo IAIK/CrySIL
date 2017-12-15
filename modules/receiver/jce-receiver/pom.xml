@@ -4,7 +4,6 @@
 
   <groupId>org.crysil.communications</groupId>
   <artifactId>jce-receiver</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>jce-receiver</name>
@@ -101,4 +100,5 @@
   
 
     
+   <version>2.0-1</version>
 </project>

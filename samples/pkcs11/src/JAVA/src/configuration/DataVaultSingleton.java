@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import at.iaik.skytrust.element.skytrustprotocol.payload.auth.credentials.SUserPasswordAuthInfo;
+import org.crysil.protocol.payload.auth.credentials.UserPasswordAuthInfo;
 
 import configuration.Server.ServerInfo;
 
@@ -47,7 +47,7 @@ public class DataVaultSingleton {
 					// empty line... new server!
 					L.log("DataVAultSingleton.java: found server in configfile", 0);
 					server = new Server(serverurl, tokenname);
-					SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
+					UserPasswordAuthInfo cre = new UserPasswordAuthInfo();
 					cre.setUserName(username);
 					cre.setPassWord(password);
 					server.setCredentials(cre);
@@ -85,7 +85,7 @@ public class DataVaultSingleton {
 			if(serverurl!=null){
 					server = new Server(serverurl, tokenname);
 					L.log("DataVAultSingleton.java: found server in configfile", 0);
-					SUserPasswordAuthInfo cre = new SUserPasswordAuthInfo();
+				UserPasswordAuthInfo cre = new UserPasswordAuthInfo();
 					cre.setUserName(username);
 					cre.setPassWord(password);
 					server.setCredentials(cre);
@@ -102,7 +102,7 @@ public class DataVaultSingleton {
 
 	public ArrayList<ServerInfo> getServerInfoList() {
 		L.log("DataVaultSingleton.java: getServerInfoList", 3);
-		ArrayList<Server.ServerInfo> res = new ArrayList<ServerInfo>();
+		ArrayList<Server.ServerInfo> res = new ArrayList<>();
 		for (Server s : servers) {
 			res.add(s.getInfo());
 		}

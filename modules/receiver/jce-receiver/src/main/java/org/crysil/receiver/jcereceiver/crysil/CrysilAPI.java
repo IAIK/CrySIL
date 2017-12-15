@@ -13,7 +13,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.errorhandling.UnknownErrorException;
@@ -62,12 +61,12 @@ public class CrysilAPI extends OneToOneInterlink {
     /** The current command id. */
     private String currentCommandID;
 
-    /**
-     * Instantiates a new crysil api.
-     */
-	public CrysilAPI(Module module) {
-		attach(module);
-    }
+	// /**
+	// * Instantiates a new crysil api.
+	// */
+	// public CrysilAPI(Module module) {
+	// attach(module);
+	// }
 
     /**
      * Forward request.

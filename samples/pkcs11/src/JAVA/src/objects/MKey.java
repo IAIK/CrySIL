@@ -1,7 +1,7 @@
 package objects;
 
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SInternalCertificate;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
+import org.crysil.protocol.payload.crypto.key.InternalCertificate;
+import org.crysil.protocol.payload.crypto.key.Key;
 
 /**
  * 
@@ -11,8 +11,8 @@ import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
  */
 public class MKey {
 
-	protected SKey key;
-	protected String encodedCertificate = "";
+	protected Key key;
+	protected byte[] certificate;
 	protected String id;
 	protected String subId;
 	protected String type = "certificate";
@@ -22,44 +22,47 @@ public class MKey {
 
 	}
 
-	public static MKey fromBase64String(String label, String base64) {
-		MKey mKey = new MKey();
-		mKey.isCertificate = false;
-		mKey.id = label;
-		mKey.encodedCertificate = base64;
-		return mKey;
-	}
+	// public static MKey fromBase64String(String label, String base64) {
+	// MKey mKey = new MKey();
+	// mKey.isCertificate = false;
+	// mKey.id = label;
+	// mKey.encodedCertificate = base64;
+	// return mKey;
+	// }
 
-	public static MKey fromSKey(SKey key) {
+	public static MKey fromKey(Key key) {
+		try {
+			if (key.getType().compareTo("externalCertificate") == 0) {
+				InternalCertificate certKey = (InternalCertificate) key;
+				MKey mKey = new MKey();
+				mKey.key = key;
+				mKey.id = certKey.getId();
+				mKey.subId = certKey.getSubId();
+				mKey.certificate = certKey.getCertificate().getEncoded();
+				return mKey;
+			}
 
-		if (key.getType().compareTo("externalCertificate") == 0) {
-			SInternalCertificate certKey = (SInternalCertificate) key;
-			MKey mKey = new MKey();
-			mKey.key = key;
-			mKey.id = certKey.getId();
-			mKey.subId = certKey.getSubId();
-			mKey.encodedCertificate = certKey.getEncodedCertificate();
-			return mKey;
-		}
-
-		if (key.getType().compareTo("internalCertificate") == 0) {
-			SInternalCertificate certKey = (SInternalCertificate) key;
-			MKey mKey = new MKey();
-			mKey.key = key;
-			mKey.id = certKey.getId();
-			mKey.subId = certKey.getSubId();
-			mKey.encodedCertificate = certKey.getEncodedCertificate();
-			return mKey;
+			if (key.getType().compareTo("internalCertificate") == 0) {
+				InternalCertificate certKey = (InternalCertificate) key;
+				MKey mKey = new MKey();
+				mKey.key = key;
+				mKey.id = certKey.getId();
+				mKey.subId = certKey.getSubId();
+				mKey.certificate = certKey.getCertificate().getEncoded();
+				return mKey;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public SKey getSKey() {
+	public Key getKey() {
 		return key;
 	}
 
-	public String getEncodedCertificate() {
-		return encodedCertificate;
+	public byte[] getCertificate() {
+		return certificate;
 	}
 
 	public String getId() {

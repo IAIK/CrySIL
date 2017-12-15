@@ -1,9 +1,15 @@
 package pkcs11;
 
-import at.iaik.skytrust.common.SkyTrustAlgorithm;
+import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import common.CrySilAlgorithm;
+import configuration.L;
 import iaik.security.rsa.RSAPublicKey;
-import iaik.utils.Base64Exception;
-import iaik.utils.Util;
 import iaik.x509.X509Certificate;
 import obj.CK_ATTRIBUTE;
 import obj.CK_ATTRIBUTE_TYPE;
@@ -13,16 +19,9 @@ import obj.CK_MECHANISM;
 import obj.CK_MECHANISM_TYPE;
 import obj.CK_OBJECT_TYPE;
 import obj.CK_RETURN_TYPE;
-import objects.*;
-
-import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import configuration.L;
+import objects.MKey;
+import objects.ObjectBuilder;
+import objects.PKCS11Object;
 /**
  * 
  * maps skytrust objects to PKCS#11 objects, creates the templates for PKCS11#11.
@@ -31,7 +30,7 @@ import configuration.L;
  */
 public class PKCS11SkyTrustMapper {
 
-	private static HashMap<Long, SkyTrustAlgorithm> mechanism_map = new HashMap<>();
+	private static HashMap<Long, CrySilAlgorithm> mechanism_map = new HashMap<>();
 	private static ArrayList<CK_ATTRIBUTE> skytrust_template;
 	private static Long architekturkorrektur = 1L;
 
@@ -62,23 +61,23 @@ public class PKCS11SkyTrustMapper {
 			L.log("32-bit is really okay!", 1);
 		}
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS,
-				SkyTrustAlgorithm.RSAES_PKCS1_V1_5);
+				CrySilAlgorithm.RSAES_PKCS1_V1_5);
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS_PSS,
-				SkyTrustAlgorithm.RSA_PSS);
-		// mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS_OAEP,SkyTrustAlgorithm.RSA_OAEP);
+				CrySilAlgorithm.RSA_PSS);
+		// mechanism_map.put(CK_MECHANISM_TYPE.CKM_RSA_PKCS_OAEP,CrySilAlgorithm.RSA_OAEP);
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_SHA1_RSA_PKCS,
-				SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_1);
+				CrySilAlgorithm.RSASSA_PKCS1_V1_5_SHA_1);
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_SHA256_RSA_PKCS,
-				SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_256);
+				CrySilAlgorithm.RSASSA_PKCS1_V1_5_SHA_256);
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_SHA512_RSA_PKCS,
-				SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_512);
+				CrySilAlgorithm.RSASSA_PKCS1_V1_5_SHA_512);
 		mechanism_map.put(CK_MECHANISM_TYPE.CKM_SHA224_RSA_PKCS,
-				SkyTrustAlgorithm.RSASSA_PKCS1_V1_5_SHA_224);
+				CrySilAlgorithm.RSASSA_PKCS1_V1_5_SHA_224);
 	}
 
-	public static SkyTrustAlgorithm mapMechanism(CK_MECHANISM mech)
+	public static CrySilAlgorithm mapMechanism(CK_MECHANISM mech)
 			throws PKCS11Error {
-		SkyTrustAlgorithm algo = mechanism_map.get(mech.getMechanism());
+		CrySilAlgorithm algo = mechanism_map.get(mech.getMechanism());
 		if (algo == null) {
 			throw new PKCS11Error(CK_RETURN_TYPE.CKR_MECHANISM_INVALID);
 		}
@@ -140,9 +139,8 @@ public class PKCS11SkyTrustMapper {
 		// CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_PUBLIC_EXPONENT,data,
 		// data.length));
 
-		String certb64 = key.getEncodedCertificate();
 		try {
-			byte[] cert = Util.fromBase64String(certb64);
+			byte[] cert = key.getCertificate();
 			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_VALUE, cert, cert.length));
 
 			X509Certificate iaikcert = new X509Certificate(cert);
@@ -154,7 +152,7 @@ public class PKCS11SkyTrustMapper {
 			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SUBJECT, subject, subject.length));
 			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SERIAL_NUMBER, serialNr, serialNr.length));
 
-		} catch (CertificateException | Base64Exception e) {
+		} catch (CertificateException e) {
 			cert_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ISSUER,
 					"ISSUER".getBytes(), "ISSUER".getBytes().length));
 			cert_template.add(new CK_ATTRIBUTE(
@@ -166,7 +164,7 @@ public class PKCS11SkyTrustMapper {
 		}
 
 		PKCS11Object obj = ObjectBuilder
-				.createFromTemplate((CK_ATTRIBUTE[]) cert_template
+				.createFromTemplate(cert_template
 						.toArray(new CK_ATTRIBUTE[cert_template.size()]));
 		obj.setTag(key);
 		return obj;
@@ -200,9 +198,8 @@ public class PKCS11SkyTrustMapper {
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_ENCRYPT, true, 1));
 		pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_WRAP, false, 1));
 
-		String certb64 = key.getEncodedCertificate();
 		try {
-			byte[] cert = Util.fromBase64String(certb64);
+			byte[] cert = key.getCertificate();
 			X509Certificate iaikcert = new X509Certificate(cert);
 
 			PublicKey k = iaikcert.getPublicKey();
@@ -225,13 +222,13 @@ public class PKCS11SkyTrustMapper {
 			byte[] subject = iaikcert.getSubjectX500Principal().getEncoded();
 			pub_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_SUBJECT, subject, subject.length));
 
-		} catch (CertificateException | Base64Exception | InvalidKeyException e) {
+		} catch (CertificateException | InvalidKeyException e) {
 			e.printStackTrace();
 			return null;
 		}
 
 		PKCS11Object obj = ObjectBuilder
-				.createFromTemplate((CK_ATTRIBUTE[]) pub_template
+				.createFromTemplate(pub_template
 						.toArray(new CK_ATTRIBUTE[pub_template.size()]));
 		obj.setTag(key);
 		return obj;
@@ -261,9 +258,8 @@ public class PKCS11SkyTrustMapper {
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_DECRYPT, true, 1));
 		private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_UNWRAP, false, 1));
 
-		String certb64 =key.getEncodedCertificate();
 		try {
-			byte[] cert = Util.fromBase64String(certb64);
+			byte[] cert = key.getCertificate();
 			X509Certificate iaikcert = new X509Certificate(cert);
 
 			PublicKey k = iaikcert.getPublicKey();
@@ -273,7 +269,7 @@ public class PKCS11SkyTrustMapper {
 			BigInteger mod = rsakey.getModulus();
 			byte[] modb = mod.toByteArray();
 			private_template.add(new CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE.CKA_MODULUS, modb, modb.length));
-		} catch (CertificateException | Base64Exception | InvalidKeyException e) {
+		} catch (CertificateException | InvalidKeyException e) {
 			e.printStackTrace();
 		}
 
@@ -281,7 +277,7 @@ public class PKCS11SkyTrustMapper {
 		// ATTRIBUTE(ATTRIBUTE_TYPE.PRIVATE_EXPONENT,data));
 
 		PKCS11Object obj = ObjectBuilder
-				.createFromTemplate((CK_ATTRIBUTE[]) private_template
+				.createFromTemplate(private_template
 						.toArray(new CK_ATTRIBUTE[private_template.size()]));
 		obj.setTag(key);
 		return obj;

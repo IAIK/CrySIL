@@ -1,45 +1,26 @@
 package pkcs11;
 
-import iaik.asn1.structures.AlgorithmID;
-import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import org.crysil.authentication.interceptor.InterceptorAuth;
+import org.crysil.authentication.ui.SwingAuthenticationSelector;
+import org.crysil.communications.http.HttpJsonTransmitter;
+import org.crysil.errorhandling.CrySILException;
+import org.crysil.protocol.payload.crypto.key.Key;
+import org.crysil.receiver.jcereceiver.crysil.CrysilAPI;
 
-import objects.MKey;
-
-import at.iaik.skytrust.SkyTrustAPIFactory;
-import at.iaik.skytrust.common.SkyTrustAlgorithm;
-import at.iaik.skytrust.common.SkyTrustException;
-import at.iaik.skytrust.element.receiver.skytrust.SkyTrustAPI;
-import at.iaik.skytrust.element.skytrustprotocol.payload.crypto.key.SKey;
-import configuration.L;
+import common.CrySilAlgorithm;
 import configuration.Server;
+import iaik.asn1.structures.AlgorithmID;
+import iaik.pkcs.pkcs1.RSASSAPkcs1v15ParameterSpec;
+import objects.MKey;
 
 /**
  * 
@@ -53,7 +34,7 @@ public class ServerSession implements IServerSession, ActionListener {
 	// private String sessionID;
 	private Server.ServerInfo server;
 
-	private SkyTrustAPI api = null;
+	private CrysilAPI api = null;
 	JFrame frame;
 	JTextField field;
 
@@ -105,10 +86,18 @@ public class ServerSession implements IServerSession, ActionListener {
 	}
 
 	private void initAPI(String url) {
-		SkyTrustAPIFactory.initialize(url);
-		api = SkyTrustAPI.getInstance();
+		InterceptorAuth<SwingAuthenticationSelector> interceptor = new InterceptorAuth<>(
+				SwingAuthenticationSelector.class);
+
+		HttpJsonTransmitter uplink = new HttpJsonTransmitter();
+		uplink.setTargetURI(url);
+
+		api = new CrysilAPI();
+		api.attach(interceptor);
+		interceptor.attach(uplink);
 	}
 
+	@Override
 	public Server.ServerInfo getInfo() {
 		return server;
 	}
@@ -118,14 +107,14 @@ public class ServerSession implements IServerSession, ActionListener {
 
 		try {
 			List<MKey> mKeys = new ArrayList<>();
-			List<SKey> keys = api.discoverKeys("certificate");
+			List<Key> keys = api.discoverKeys("certificate");
 
-			for (SKey k : keys) {
-				mKeys.add(MKey.fromSKey(k));
+			for (Key k : keys) {
+				mKeys.add(MKey.fromKey(k));
 			}
 
 			return mKeys;
-		} catch (SkyTrustException e) {
+		} catch (CrySILException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -133,7 +122,7 @@ public class ServerSession implements IServerSession, ActionListener {
 	}
 
 	@Override
-	public byte[] sign(byte[] pData, MKey key, SkyTrustAlgorithm mech)
+	public byte[] sign(byte[] pData, MKey key, CrySilAlgorithm mech)
 			throws PKCS11Error {
 
 		ArrayList<byte[]> list = new ArrayList<>();
@@ -141,15 +130,15 @@ public class ServerSession implements IServerSession, ActionListener {
 		List<byte[]> signedData;
 		try {
 			signedData = api.signHashRequest(mech.getAlgorithmName(), list,
-					key.getSKey());
+					key.getKey());
 			return signedData.get(0);
-		} catch (SkyTrustException e) {
+		} catch (CrySILException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public String mapSkytrustToJCE(SkyTrustAlgorithm m) {
+	public String mapSkytrustToJCE(CrySilAlgorithm m) {
 		switch (m) {
 		case RSAES_RAW:
 			return "";
@@ -199,7 +188,7 @@ public class ServerSession implements IServerSession, ActionListener {
 		return "";
 	}
 
-	public AlgorithmParameterSpec mapSkytrustToJCEPara(SkyTrustAlgorithm m) {
+	public AlgorithmParameterSpec mapSkytrustToJCEPara(CrySilAlgorithm m) {
 		switch (m) {
 		case RSAES_RAW:
 			return null;
@@ -250,24 +239,24 @@ public class ServerSession implements IServerSession, ActionListener {
 
 	@Override
 	public boolean verify(byte[] data, byte[] signature, MKey key,
-			SkyTrustAlgorithm mech) {
+			CrySilAlgorithm mech) {
 		// TODO: implement this!
 		return false;
 	}
 
 	@Override
-	public byte[] encrypt(byte[] plaindata, MKey key, SkyTrustAlgorithm mech)
+	public byte[] encrypt(byte[] plaindata, MKey key, CrySilAlgorithm mech)
 			throws PKCS11Error {
 
 		ArrayList<byte[]> list = new ArrayList<>();
 		list.add(plaindata);
-		ArrayList<SKey> keyList = new ArrayList<>();
-		keyList.add(key.getSKey());
+		ArrayList<Key> keyList = new ArrayList<>();
+		keyList.add(key.getKey());
 		List<List<byte[]>> cipher = null;
 		try {
 			cipher = api.encryptDataRequest(mech.getAlgorithmName(), list,
 					keyList);
-		} catch (SkyTrustException e) {
+		} catch (CrySILException e) {
 			e.printStackTrace();
 		}
 
@@ -275,7 +264,7 @@ public class ServerSession implements IServerSession, ActionListener {
 	}
 
 	@Override
-	public byte[] decrypt(byte[] encdata, MKey key, SkyTrustAlgorithm mech)
+	public byte[] decrypt(byte[] encdata, MKey key, CrySilAlgorithm mech)
 			throws PKCS11Error {
 
 		ArrayList<byte[]> list = new ArrayList<>();
@@ -283,8 +272,8 @@ public class ServerSession implements IServerSession, ActionListener {
 		List<byte[]> plain = null;
 		try {
 			plain = api.decryptDataRequest(mech.getAlgorithmName(), list,
-					key.getSKey());
-		} catch (SkyTrustException e) {
+					key.getKey());
+		} catch (CrySILException e) {
 			e.printStackTrace();
 		}
 

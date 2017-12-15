@@ -212,7 +212,9 @@ public class CrysilProvider extends Provider
 	public void attach(Module module) {
 		this.module = module;
 
-		api = new CrysilHighLevelAPI(new CrysilAPI(module));
+		CrysilAPI lowlevelapi = new CrysilAPI();
+		lowlevelapi.attach(module);
+		api = new CrysilHighLevelAPI(lowlevelapi);
 	}
 
 	@Override

@@ -1,11 +1,11 @@
 package configuration;
 
-import at.iaik.skytrust.element.skytrustprotocol.payload.auth.SAuthInfo;
+import org.crysil.protocol.payload.auth.AuthInfo;
 
 public class Server{
 
 	private ServerInfo info;
-	private SAuthInfo credentials = null;
+	private AuthInfo credentials = null;
 	
 	public class ServerInfo{
 		ServerInfo(String url,String name){
@@ -24,10 +24,12 @@ public class Server{
 	public Server(String url,String name){
 		info = new ServerInfo(url,name);
 	}
-	public void setCredentials(SAuthInfo cre){
+
+	public void setCredentials(AuthInfo cre) {
 		credentials = cre;
 	}
-	public SAuthInfo getCredentials(){
+
+	public AuthInfo getCredentials() {
 		return credentials;
 	}
 	public ServerInfo getInfo(){
@@ -41,6 +43,7 @@ public class Server{
 	public boolean isAutheticated(){
 		return credentials != null;
 	}
+	@Override
 	public String toString(){
 		return "url: "+info.url;
 	}

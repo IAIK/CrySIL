@@ -1,0 +1,6 @@
+<ivysettings>
+    <settings defaultResolver="localm2"/>
+    <resolvers >
+        <ibiblio name="localm2" root="file://${user.home}/.m2/repository/" m2compatible="true" />
+    </resolvers>
+</ivysettings>
