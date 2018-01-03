@@ -124,7 +124,18 @@
      <jar destfile="bin/${ant.project.name}.jar">
 				<fileset dir="${java.classes.dir}"/>
 				<fileset file="config"/>
-     			<fileset dir="${c.lib.dir}"/>
+				<restrict>
+					<not>
+     					<name name="META-INF*"/>
+					</not>
+
+					<archives>
+						<zips>
+							<fileset dir="${c.lib.dir}" includes="**/*.jar"/>
+						</zips>
+					</archives>
+				</restrict>
+
 			<manifest>
 			    <attribute name="Class-Path" value="/usr/share/java/"/> 
 			</manifest>
