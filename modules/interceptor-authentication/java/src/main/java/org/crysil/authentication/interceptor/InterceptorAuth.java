@@ -36,11 +36,11 @@ public class InterceptorAuth<T extends IAuthenticationSelector> extends OneToOne
 
   @Override
   public Response take(final Request request) throws CrySILException {
-    final Response resp = this.getAttachedModule().take(request);
+		Response resp = this.getAttachedModule().take(request);
 
-    if (resp.getPayload() instanceof PayloadAuthResponse) {
+		while (resp.getPayload() instanceof PayloadAuthResponse) {
       try {
-        return intercept(resp);
+				resp = intercept(resp);
       } catch (final ResponseInterceptorException e) {
         throw new UnsupportedRequestException();
       }
