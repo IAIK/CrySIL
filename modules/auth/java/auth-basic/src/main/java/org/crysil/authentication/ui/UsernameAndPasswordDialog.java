@@ -3,6 +3,8 @@ package org.crysil.authentication.ui;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Map;
 
 import javax.swing.GroupLayout;
@@ -57,6 +59,26 @@ public class UsernameAndPasswordDialog extends JFrame implements IAuthUI<char[][
     textUsername = new JTextField();
     textUsername.setFont(new Font("Tahoma", Font.PLAIN, 13));
     textUsername.setColumns(10);
+		textUsername.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (KeyEvent.VK_ENTER == e.getKeyCode())
+					textPassword.requestFocus();
+			}
+		});
 
     final JLabel lblPassword = new JLabel("Password:");
     lblPassword.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -64,6 +86,27 @@ public class UsernameAndPasswordDialog extends JFrame implements IAuthUI<char[][
     textPassword = new JPasswordField();
     textPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
     textPassword.setColumns(10);
+		textPassword.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (KeyEvent.VK_ENTER == e.getKeyCode())
+					callbackAuthenticate.actionPerformed();
+
+			}
+		});
 
     final JButton btnAuthenticate = new JButton("Authenticate");
     btnAuthenticate.setFont(new Font("Tahoma", Font.PLAIN, 15));
