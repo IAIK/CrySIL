@@ -9,8 +9,13 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
+import org.crysil.authentication.AuthHandlerFactory;
+import org.crysil.authentication.authplugins.AuthSecret;
+import org.crysil.authentication.authplugins.AuthUsernameAndPassword;
 import org.crysil.authentication.interceptor.InterceptorAuth;
-import org.crysil.authentication.ui.SwingAuthenticationSelector;
+import org.crysil.authentication.ui.AutomaticAuthSelector;
+import org.crysil.authentication.ui.SecretDialog;
+import org.crysil.authentication.ui.UsernameAndPasswordDialog;
 import org.crysil.communications.http.HttpJsonTransmitter;
 import org.crysil.errorhandling.CrySILException;
 import org.crysil.protocol.payload.crypto.key.Key;
@@ -86,8 +91,12 @@ public class ServerSession implements IServerSession, ActionListener {
 	}
 
 	private void initAPI(String url) {
-		InterceptorAuth<SwingAuthenticationSelector> interceptor = new InterceptorAuth<>(
-				SwingAuthenticationSelector.class);
+
+		final List<AuthHandlerFactory<?, ?, ?>> authPluginFactories = new ArrayList<>();
+		authPluginFactories.add(new AuthSecret.Factory<>(SecretDialog.class));
+		authPluginFactories.add(new AuthUsernameAndPassword.Factory<>(UsernameAndPasswordDialog.class));
+		final InterceptorAuth<AutomaticAuthSelector> interceptor = new InterceptorAuth<>(AutomaticAuthSelector.class);
+		interceptor.setAuthenticationPlugins(authPluginFactories);
 
 		HttpJsonTransmitter uplink = new HttpJsonTransmitter();
 		uplink.setTargetURI(url);
