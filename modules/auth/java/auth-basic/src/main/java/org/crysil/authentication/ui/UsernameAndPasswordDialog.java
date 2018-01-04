@@ -31,12 +31,6 @@ public class UsernameAndPasswordDialog extends JFrame implements IAuthUI<char[][
   @Override
   public void present() {
 
-    setCallbackAuthenticate(new ActionPerformedCallback() {
-      @Override
-      public void actionPerformed() {
-        dispose();
-      }
-    });
     setVisible(true);
 
   }
