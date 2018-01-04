@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.prefs.Preferences;
 
+import org.crysil.commons.OneToOneInterlink;
 import org.crysil.communications.http.HttpJsonTransmitter;
 import org.crysil.instance.jce_receiver_demo.Main;
 import org.crysil.instance.jce_receiver_demo.model.Data;
@@ -37,7 +38,8 @@ public class FetchKeys extends Step {
 			protected Integer call() throws Exception {
 				try {
 					// set url
-					((HttpJsonTransmitter) ((CrysilProvider) data.getProvider()).getAttachedModule())
+					((HttpJsonTransmitter) ((OneToOneInterlink) ((CrysilProvider) data.getProvider())
+							.getAttachedModule()).getAttachedModule())
 							.setTargetURI(Preferences.userNodeForPackage(Main.class).get("last", ""));
 
 					// - fetch keys

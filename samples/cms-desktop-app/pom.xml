@@ -28,6 +28,16 @@
     	<artifactId>jce-receiver</artifactId>
     	<version>2.0-1</version>
     </dependency>
+    <dependency>
+    	<groupId>org.crysil</groupId>
+    	<artifactId>interceptor-authentication</artifactId>
+    	<version>2.0-1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.crysil</groupId>
+    	<artifactId>auth-basic</artifactId>
+    	<version>2.0-1</version>
+    </dependency>
   </dependencies>
     <build>
     <plugins>
