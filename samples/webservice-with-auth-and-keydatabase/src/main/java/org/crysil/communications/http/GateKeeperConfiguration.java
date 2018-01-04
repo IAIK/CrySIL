@@ -35,9 +35,7 @@ public class GateKeeperConfiguration implements Configuration {
 		if (features.containKey("Operation")
 				&& ((Operation) features.get("Operation")).getOperation().equals("discoverKeys"))
 			plugins.add(new NoAuthPlugin());
-		else if (features.containKey("Operation")
-				&& (((Operation) features.get("Operation")).getOperation().equals("encrypt")
-						|| ((Operation) features.get("Operation")).getOperation().equals("decrypt"))) {
+		else if (features.containKey("Operation")) {
 			PreparedStatement st = null;
 			try {
 				// find appropriate auth information
@@ -70,13 +68,13 @@ public class GateKeeperConfiguration implements Configuration {
 						if (authblob.contains("PIN")) {
 							plugin = new SecretAuthPlugin();
 							plugin.setExpectedValue(authblob.substring(authblob.indexOf("\"secret\":") + 11,
-									authblob.indexOf("\",", authblob.indexOf("\"secret\":") + 11)));
+									authblob.indexOf("\"", authblob.indexOf("\"secret\":") + 11)));
 						} else if (authblob.contains("PASSWORD")) {
 							plugin = new UsernamePasswordAuthPlugin();
 							String expectedValue = authblob.substring(authblob.indexOf("\"username\":") + 13,
-									authblob.indexOf("\",", authblob.indexOf("\"username\":") + 13));
+									authblob.indexOf("\"", authblob.indexOf("\"username\":") + 13));
 							expectedValue += authblob.substring(authblob.indexOf("\"secret\":") + 11,
-									authblob.indexOf("\",", authblob.indexOf("\"secret\":") + 11));
+									authblob.indexOf("\"", authblob.indexOf("\"secret\":") + 11));
 							plugin.setExpectedValue(expectedValue);
 						} else
 							// if we do not know how to handle a given auth
