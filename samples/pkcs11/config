@@ -1,2 +1,5 @@
-tokenname=jartoken
-serverurl=http://skytrust-dev.iaik.tugraz.at/skytrust-server-no-auth-2.0/rest/json
+tokenname=CrySIL's simple webservice
+serverurl=https://crysil.iaik.tugraz.at/tomcat/simple-webservice/json
+
+tokenname=CrySIL's advanced webservice
+serverurl=https://crysil.iaik.tugraz.at/tomcat/webservice-with-auth-and-keydatabase/json
