@@ -1,8 +1,10 @@
 package org.crysil.actor.softwarecrypto;
 
+import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Security;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -61,6 +63,8 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 				String keydata = rs.getString("keydata");
 				String type = rs.getString("type");
 
+				type = type.substring(0, 3);
+
 				keydata = keydata.replaceAll("-----.*KEY-----", "");
 				keydata = keydata.replaceAll("\\n", "");
 
@@ -88,8 +92,38 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 	}
 
 	@Override
-	public X509Certificate getX509Certificate(KeyHandle keyHandle) {
-		// TODO Auto-generated method stub
+	public X509Certificate getX509Certificate(final KeyHandle key) {
+		PreparedStatement st = null;
+		try {
+			st = connection.prepareStatement(
+					"SELECT keys.certificate FROM `keys` INNER JOIN keyslots ON keyslots.id=keys.keyslot_id INNER JOIN users ON keyslots.user_id=users.id WHERE users.username=? AND keyslots.name=?");
+			st.setString(1, key.getId());
+			st.setString(2, key.getSubId());
+
+			ResultSet rs = st.executeQuery();
+
+			// iterate through the java resultset
+			while (rs.next()) {
+				String certificate = rs.getString("certificate");
+
+				certificate = certificate.replaceAll("-----.*-----", "");
+				certificate = certificate.replaceAll("\\n", "");
+
+				CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+				return (X509Certificate) certFactory
+						.generateCertificate(new ByteArrayInputStream(Base64.decode(certificate)));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != st)
+				try {
+					st.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+
 		return null;
 	}
 

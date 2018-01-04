@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.crysil.errorhandling.CrySILException;
-import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.errorhandling.UnsupportedRequestException;
 import org.crysil.protocol.Request;
 import org.crysil.protocol.payload.PayloadResponse;
@@ -43,8 +42,8 @@ public class DiscoverKeys implements Command {
 				try {
 					internalcertificate.setCertificate(keystore.getX509Certificate(keyhandle));
 					keys.add(internalcertificate);
-				} catch (CertificateEncodingException e) {
-					throw new KeyStoreUnavailableException();
+				} catch (CertificateEncodingException | NullPointerException e) {
+					// only add those to the list which have a valid certificate
 				}
 			}
 			break;
