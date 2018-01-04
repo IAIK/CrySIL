@@ -45,9 +45,11 @@ public class Sign implements Command {
 				throw new UnknownErrorException();
 			}
 
-			if (signature != null) {
-				signedHashes.add(U2FUtil.ensureASN1(signature));
+			if (signature != null && request.getHeader() instanceof U2FHeader) {
+				signature = U2FUtil.ensureASN1(signature);
 			}
+
+			signedHashes.add(signature);
 		}
 
 		PayloadSignResponse response = new PayloadSignResponse();
