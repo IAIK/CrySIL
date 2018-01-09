@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.WindowConstants;
@@ -60,7 +61,7 @@ public class SecretDialog extends JFrame implements IAuthUI<char[][], Void> {
 		final JLabel lblSecret = new JLabel("Secret:");
 		lblSecret.setFont(new Font("Tahoma", Font.BOLD, 13));
 
-		textSecret = new JTextField();
+		textSecret = new JPasswordField();
 		textSecret.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		textSecret.setColumns(10);
 
