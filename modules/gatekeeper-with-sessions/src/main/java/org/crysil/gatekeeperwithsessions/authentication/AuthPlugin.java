@@ -26,10 +26,9 @@ public abstract class AuthPlugin {
     public void authenticate(PayloadAuthRequest authRequest) throws AuthenticationFailedException {
         String identifier = getReceivedIdentifier(authRequest);
 
-        if (null != expected)
-            if (!identifier.equals(expected)) {
-                throw new AuthenticationFailedException();
-            }
+		if (null == expected || !identifier.equals(expected)) {
+			throw new AuthenticationFailedException();
+		}
     }
 
     /**
