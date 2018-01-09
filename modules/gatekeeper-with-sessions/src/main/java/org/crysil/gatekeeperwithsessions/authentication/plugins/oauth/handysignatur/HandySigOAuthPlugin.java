@@ -1,6 +1,5 @@
 package org.crysil.gatekeeperwithsessions.authentication.plugins.oauth.handysignatur;
 
-import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.UserBean;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.oauth.OAuthPlugin;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -19,11 +18,6 @@ public class HandySigOAuthPlugin extends OAuthPlugin {
         } else {
             return response;
         }
-    }
-
-    @Override
-    public AuthPlugin newInstance() {
-        return new HandySigOAuthPlugin();
     }
 
 }

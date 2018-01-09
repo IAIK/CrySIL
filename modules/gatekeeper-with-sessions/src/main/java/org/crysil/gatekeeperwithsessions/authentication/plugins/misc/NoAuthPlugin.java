@@ -28,11 +28,6 @@ public class NoAuthPlugin extends AuthPlugin {
         // everything is valid
     }
 
-    @Override
-    public AuthPlugin newInstance() {
-        return new NoAuthPlugin();
-    }
-
     /**
      * Unused because {@link NoAuthPlugin#generateAuthChallenge(Response)} does not use this method.
      */

@@ -33,11 +33,6 @@ public class IdentifierAuthPlugin extends AuthPlugin {
     }
 
     @Override
-    public AuthPlugin newInstance() {
-        return new IdentifierAuthPlugin();
-    }
-
-    @Override
     public Feature getAuthenticationResult() {
         if (null != userPasswordAuthInfo)
             return new IdentifierAuthResult(userPasswordAuthInfo.getIdentifier());

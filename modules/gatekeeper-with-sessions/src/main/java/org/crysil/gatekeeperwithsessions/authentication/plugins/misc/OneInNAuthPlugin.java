@@ -79,11 +79,6 @@ public class OneInNAuthPlugin extends AuthPlugin {
     }
 
     @Override
-    public AuthPlugin newInstance() {
-        return new OneInNAuthPlugin();
-    }
-
-    @Override
     public Feature getAuthenticationResult() {
         for (AuthPlugin current : methods) {
             if (null != current.getAuthenticationResult())

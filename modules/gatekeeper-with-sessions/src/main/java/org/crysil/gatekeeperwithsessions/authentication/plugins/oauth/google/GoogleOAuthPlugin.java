@@ -1,6 +1,5 @@
 package org.crysil.gatekeeperwithsessions.authentication.plugins.oauth.google;
 
-import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.UserBean;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.oauth.OAuthPlugin;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -22,10 +21,5 @@ public class GoogleOAuthPlugin extends OAuthPlugin {
         } else {
             return response;
         }
-    }
-
-    @Override
-    public AuthPlugin newInstance() {
-        return new GoogleOAuthPlugin();
     }
 }

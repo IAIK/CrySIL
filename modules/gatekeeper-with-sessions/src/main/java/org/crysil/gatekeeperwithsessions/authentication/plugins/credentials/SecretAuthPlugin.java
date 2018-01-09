@@ -30,11 +30,6 @@ public class SecretAuthPlugin extends AuthPlugin {
     }
 
     @Override
-    public AuthPlugin newInstance() {
-        return new SecretAuthPlugin();
-    }
-
-    @Override
     public Feature getAuthenticationResult() {
         if (null != userPasswordAuthInfo)
             return new SecretAuthResult(userPasswordAuthInfo.getSecret());

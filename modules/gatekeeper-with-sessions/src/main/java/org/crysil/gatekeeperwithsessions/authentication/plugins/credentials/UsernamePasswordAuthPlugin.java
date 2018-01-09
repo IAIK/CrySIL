@@ -30,11 +30,6 @@ public class UsernamePasswordAuthPlugin extends AuthPlugin {
     }
 
     @Override
-    public AuthPlugin newInstance() {
-        return new UsernamePasswordAuthPlugin();
-    }
-
-    @Override
     public Feature getAuthenticationResult() {
         if (null != userPasswordAuthInfo)
             return new UsernamePasswordAuthResult(userPasswordAuthInfo.getUserName(), userPasswordAuthInfo.getPassWord());

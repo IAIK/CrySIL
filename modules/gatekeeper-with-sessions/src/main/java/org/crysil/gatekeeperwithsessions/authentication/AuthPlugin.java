@@ -69,12 +69,5 @@ public abstract class AuthPlugin {
      */
     abstract public String getReceivedIdentifier(PayloadAuthRequest authRequest) throws AuthenticationFailedException;
 
-    /**
-     * New instance.
-     *
-     * @return the auth plugin
-     */
-    public abstract AuthPlugin newInstance();
-
     public abstract Feature getAuthenticationResult();
 }
