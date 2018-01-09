@@ -22,6 +22,8 @@ import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public class GateKeeperConfiguration implements Configuration {
 
+	private String url = "ldap://yoururlhere";
+
 	private Connection conn;
 
 	public GateKeeperConfiguration(Connection connection) {
@@ -76,6 +78,12 @@ public class GateKeeperConfiguration implements Configuration {
 							expectedValue += authblob.substring(authblob.indexOf("\"secret\":") + 11,
 									authblob.indexOf("\"", authblob.indexOf("\"secret\":") + 11));
 							plugin.setExpectedValue(expectedValue);
+						} else if (authblob.contains("ActiveDirectory")) {
+							String username = authblob.substring(authblob.indexOf("\"username\":") + 13,
+									authblob.indexOf("\"", authblob.indexOf("\"username\":") + 13));
+							username = username.replace("\\\\", "\\");
+
+							plugin = new ActiveDirectoryAuthPlugin(url, username);
 						} else
 							// if we do not know how to handle a given auth
 							// method
