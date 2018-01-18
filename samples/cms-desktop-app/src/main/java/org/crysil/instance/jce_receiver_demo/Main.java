@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.crysil.authentication.AuthHandlerFactory;
+import org.crysil.authentication.authplugins.AuthIdentifier;
 import org.crysil.authentication.authplugins.AuthSecret;
 import org.crysil.authentication.authplugins.AuthUsernameAndPassword;
 import org.crysil.authentication.interceptor.InterceptorAuth;
 import org.crysil.authentication.ui.AutomaticAuthSelector;
+import org.crysil.authentication.ui.IdentifierDialog;
 import org.crysil.authentication.ui.SecretDialog;
 import org.crysil.authentication.ui.UsernameAndPasswordDialog;
 import org.crysil.communications.http.HttpJsonTransmitter;
@@ -34,6 +36,7 @@ public class Main extends Application {
 		final List<AuthHandlerFactory<?, ?, ?>> authPluginFactories = new ArrayList<>();
 		authPluginFactories.add(new AuthSecret.Factory<>(SecretDialog.class));
 		authPluginFactories.add(new AuthUsernameAndPassword.Factory<>(UsernameAndPasswordDialog.class));
+		authPluginFactories.add(new AuthIdentifier.Factory<>(IdentifierDialog.class));
 		final InterceptorAuth<AutomaticAuthSelector> interceptor = new InterceptorAuth<>(AutomaticAuthSelector.class);
 		interceptor.setAuthenticationPlugins(authPluginFactories);
 
