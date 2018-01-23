@@ -53,6 +53,8 @@ public class SoftwareCrypto implements Module {
 		if (null == command)
 			throw new UnsupportedRequestException();
 
+		keystore.addFilter(request.getHeader());
+
 		// let someone else do the actual work
 		response.setPayload(command.perform(request, keystore));
 

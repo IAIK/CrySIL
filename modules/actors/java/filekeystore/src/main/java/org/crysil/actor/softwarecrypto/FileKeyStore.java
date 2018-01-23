@@ -17,6 +17,7 @@ import java.util.List;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
+import org.crysil.protocol.header.Header;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public class FileKeyStore implements SoftwareCryptoKeyStore {
@@ -107,5 +108,10 @@ public class FileKeyStore implements SoftwareCryptoKeyStore {
 		}
 
 		return result;
+	}
+
+	@Override
+	public void addFilter(Header header) {
+		// TODO Auto-generated method stub
 	}
 }

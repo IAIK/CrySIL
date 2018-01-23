@@ -7,6 +7,7 @@ import java.util.List;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
+import org.crysil.protocol.header.Header;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public interface SoftwareCryptoKeyStore {
@@ -21,5 +22,7 @@ public interface SoftwareCryptoKeyStore {
 			throws InvalidCertificateException, KeyNotFoundException, KeyStoreUnavailableException;
 
 	public List<KeyHandle> getKeyList() throws KeyStoreUnavailableException;
+
+	public void addFilter(Header header);
 
 }

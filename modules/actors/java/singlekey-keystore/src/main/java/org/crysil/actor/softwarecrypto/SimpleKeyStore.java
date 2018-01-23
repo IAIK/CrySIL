@@ -34,6 +34,7 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
+import org.crysil.protocol.header.Header;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 import com.google.common.io.BaseEncoding;
@@ -148,6 +149,12 @@ public class SimpleKeyStore implements SoftwareCryptoKeyStore {
 		tmp.setSubId("key");
 		result.add(tmp);
 		return result;
+	}
+
+	@Override
+	public void addFilter(Header header) {
+		// we do not support filtering keys as we only have one :)
+
 	}
 
 	/**

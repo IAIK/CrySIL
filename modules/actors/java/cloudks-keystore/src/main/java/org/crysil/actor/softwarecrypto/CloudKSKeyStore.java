@@ -23,6 +23,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
+import org.crysil.protocol.header.Header;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 /**
@@ -178,5 +179,10 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void addFilter(Header header) {
+		// TODO Auto-generated method stub
 	}
 }

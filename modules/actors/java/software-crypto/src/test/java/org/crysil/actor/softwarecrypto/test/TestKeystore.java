@@ -16,6 +16,7 @@ import org.crysil.actor.softwarecrypto.SoftwareCryptoKeyStore;
 import org.crysil.errorhandling.InvalidCertificateException;
 import org.crysil.errorhandling.KeyNotFoundException;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
+import org.crysil.protocol.header.Header;
 import org.crysil.protocol.payload.crypto.key.ExternalCertificate;
 import org.crysil.protocol.payload.crypto.key.Key;
 import org.crysil.protocol.payload.crypto.key.KeyHandle;
@@ -144,6 +145,11 @@ public class TestKeystore implements SoftwareCryptoKeyStore {
 		tmp.setSubId("key");
 		result.add(tmp);
 		return result;
+	}
+
+	@Override
+	public void addFilter(Header header) {
+		// TODO Auto-generated method stub
 	}
 
   // /**
