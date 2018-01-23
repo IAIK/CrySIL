@@ -40,7 +40,7 @@ public class Gatekeeper extends OneToOneInterlink implements Module
     /**
      * The configuration data source for the gatekeeper.
      */
-    private Configuration configuration;
+	protected Configuration configuration;
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
@@ -53,7 +53,7 @@ public class Gatekeeper extends OneToOneInterlink implements Module
         this.configuration = configuration;
     }
 
-    private final Map<String, AuthorizationProcess> pendingAuthorizationProcesses = new HashMap<>();
+	protected final Map<String, AuthorizationProcess> pendingAuthorizationProcesses = new HashMap<>();
 
 	@Override
 	public Response take(Request request) throws CrySILException {
@@ -83,8 +83,8 @@ public class Gatekeeper extends OneToOneInterlink implements Module
             // if yes, see if the command is already authorized
             if (session != null && session.checkFeatureSet(featureSet)) {
 
-                // return the result to the caller
-                return getAttachedModule().take(request);
+				// forward
+				return preprocess(request);
             }
 
             // fetch required AuthorizationProcess from config
@@ -124,8 +124,8 @@ public class Gatekeeper extends OneToOneInterlink implements Module
 
             // TODO recheck if the new info leads to more auth info gathering
 
-            // return the result to the caller
-			return getAttachedModule().take(updatedOriginalRequest);
+			// forward
+			return preprocess(updatedOriginalRequest);
         } catch (AuthenticationRequiredException e) {
             // we came here because user-interaction is necessary to perform the authorization
             // thus, get the servergenerated commandId of the AuthChallenge package and memorize the according process
@@ -135,6 +135,11 @@ public class Gatekeeper extends OneToOneInterlink implements Module
         }
     }
 
+	protected Response preprocess(Request request) throws CrySILException {
+
+		return getAttachedModule().take(request);
+	}
+
     /**
      * Extract features from a given request.
      *
@@ -142,7 +147,7 @@ public class Gatekeeper extends OneToOneInterlink implements Module
      *            the s request
      * @return the feature set
      */
-    private FeatureSet extractFeatures(Request Request) {
+	protected FeatureSet extractFeatures(Request Request) {
         List<Feature> result = new ArrayList<>();
 
         PayloadRequest payload = Request.getPayload();
