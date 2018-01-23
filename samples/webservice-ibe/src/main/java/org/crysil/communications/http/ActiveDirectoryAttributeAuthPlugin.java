@@ -29,6 +29,8 @@ public class ActiveDirectoryAttributeAuthPlugin extends AuthPlugin {
 	private final String searchRoot;
 	private final String searchFilter;
 	private Object targetAttribute;
+	private IdentifierAuthInfo credentials;
+	private String mail;
 
 	public ActiveDirectoryAttributeAuthPlugin(String url, String adminuser, String adminpassword, String searchRoot,
 			String searchFilter, String targetAttribute)
@@ -75,7 +77,7 @@ public class ActiveDirectoryAttributeAuthPlugin extends AuthPlugin {
 		if (!(authInfo instanceof IdentifierAuthInfo)) {
             throw new AuthenticationFailedException();
         }
-		IdentifierAuthInfo credentials = (IdentifierAuthInfo) authInfo;
+		credentials = (IdentifierAuthInfo) authInfo;
 
 		/*
 		 * having username:password notation
@@ -113,8 +115,11 @@ public class ActiveDirectoryAttributeAuthPlugin extends AuthPlugin {
 
 			// note that we only need to close the context when it was
 			// successfully created.
-			if (tmp.hasMore())
+			if (tmp.hasMore()) {
+
+				mail = (String) tmp.next().getAttributes().get("mail").get(0);
 				return "granted";
+			}
 			else
 				return "denied";
 		} catch (Exception e) {
@@ -134,6 +139,6 @@ public class ActiveDirectoryAttributeAuthPlugin extends AuthPlugin {
 
     @Override
     public Feature getAuthenticationResult() {
-        return null;
+		return new ActiveDirectoryAttributeAuthResult(credentials.getIdentifier(), mail);
     }
 }

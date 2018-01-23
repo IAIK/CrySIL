@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClientConfig xmlns="http://iaik.tugraz.at/capso/config#" xmlns:certExt="http://iaik.tugraz.at/capso/cert-extensions/config#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ConnectionConfig>
+		<Host>yoururlhere</Host>
+		<Port>9443</Port>
+		<TLSConfig>
+			<KeyStore>
+				<SoftwareKeyStore type="keystoretype">
+					<FileName>file.keystore</FileName>
+					<KeyName>IAIK CAPSO GUI CLIENT 2</KeyName>
+					<PassWord>topSecret</PassWord>
+				</SoftwareKeyStore>
+			</KeyStore>
+			<TrustStore>
+				<SoftwareKeyStore type="keystoretype">
+					<FileName>file.keystore</FileName>
+				</SoftwareKeyStore>
+			</TrustStore>
+			<ResumePeriod>55000</ResumePeriod>
+			<CacheSizeLimit>200</CacheSizeLimit>
+			<CipherSuites>
+				<CipherSuite>SSL_RSA_WITH_AES_128_CBC_SHA</CipherSuite>
+			</CipherSuites>
+		</TLSConfig>
+		<TimeOut>90000</TimeOut>
+		<ConnectionTimeOut>90000</ConnectionTimeOut>
+	</ConnectionConfig>
+</ClientConfig>

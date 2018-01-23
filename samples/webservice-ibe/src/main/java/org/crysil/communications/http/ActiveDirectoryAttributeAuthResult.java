@@ -9,14 +9,17 @@ public class ActiveDirectoryAttributeAuthResult extends AuthenticationResult {
 
 	/** The username. */
 	private String username;
+	private String mail;
 
 	/**
 	 * Instantiates a new active directory auth result.
 	 *
 	 * @param username the username
+	 * @param mail 
 	 */
-	public ActiveDirectoryAttributeAuthResult(String username) {
+	public ActiveDirectoryAttributeAuthResult(String username, String mail) {
 		this.username = username;
+		this.mail = mail;
 	}
 
 	/**
@@ -26,6 +29,15 @@ public class ActiveDirectoryAttributeAuthResult extends AuthenticationResult {
 	 */
 	public String getUsername() {
 		return username;
+	}
+
+	/**
+	 * Gets the email address.
+	 *
+	 * @return the email address
+	 */
+	public String geteMailAddress() {
+		return mail;
 	}
 
 }

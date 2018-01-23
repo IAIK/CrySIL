@@ -27,7 +27,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.crysil.actor</groupId>
-			<artifactId>cloudks-keystore</artifactId>
+			<artifactId>software-crypto</artifactId>
 			<version>${crysil.version}</version>
 		</dependency>
 
@@ -38,12 +38,6 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <version>5.1.43</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.crysil.communications</groupId>
 			<artifactId>http-json-receiver</artifactId>
 			<version>${crysil.version}</version>
@@ -51,23 +45,25 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.crysil.communications</groupId>
-			<artifactId>http-json-receiver</artifactId>
-			<version>${crysil.version}</version>
-			<type>war</type>
-		</dependency>
-
-		<!-- Test -->
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>${testng.version}</version>
-			<scope>test</scope>
+			<groupId>iaik.capso</groupId>
+			<artifactId>capso-client</artifactId>
+			<version>2.7.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.crysil.actor</groupId>
-			<artifactId>singlekey-keystore</artifactId>
-			<version>2.0-1</version>
+			<groupId>iaik.capso.nca</groupId>
+			<artifactId>capso-nca-activation</artifactId>
+			<version>0.1.9</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>iaik</groupId>
+			<artifactId>iaik_ssl</artifactId>
+			<version>4.6</version>
+		</dependency>
+		<dependency>
+			<groupId>iaik.pkcs11</groupId>
+			<artifactId>iaikPkcs11Provider</artifactId>
+			<version>1.5</version>
 		</dependency>
 	</dependencies>
 
