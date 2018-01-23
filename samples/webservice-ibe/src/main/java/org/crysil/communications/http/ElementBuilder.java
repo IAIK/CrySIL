@@ -28,7 +28,7 @@ public class ElementBuilder {
 	public static Module build()
 			throws ClassNotFoundException, SQLException, KeyStoreUnavailableException, IOException {
 		Properties props = new Properties();
-		InputStream in = ElementBuilder.class.getClassLoader().getResourceAsStream("activedirectory.properties");
+		InputStream in = ElementBuilder.class.getClassLoader().getResourceAsStream("settings.properties");
 		props.load(in);
 		in.close();
 
@@ -38,8 +38,9 @@ public class ElementBuilder {
 		OneToOneInterlink gatekeeper = new MyGatekeeper(config);
 		try {
 			gatekeeper.attach(new SoftwareCrypto(
-					new CreateKeyOnDemandFileKeyStore("classpath:keystore.jks", "changeit".toCharArray(),
-							"capso-test.xml")));
+					new CreateKeyOnDemandFileKeyStore(props.getProperty("keystorefile"),
+							props.getProperty("keystorepassword").toCharArray(),
+							props.getProperty("capsoconfigfile"))));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
