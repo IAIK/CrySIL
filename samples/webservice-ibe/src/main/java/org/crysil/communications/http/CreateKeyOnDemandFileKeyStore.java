@@ -50,6 +50,8 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
     private String keyStoreType = "JKS";
 	private String userMail = null;
 	private ClientConfig clientConfig;
+	private String username;
+	private String alias;
 
 	public CreateKeyOnDemandFileKeyStore(String file, char[] password, String capsoConfigFile) throws Exception {
 		this.file = file;
@@ -84,7 +86,7 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 	public Key getPrivateKey(KeyHandle keyHandle) throws KeyNotFoundException {
 
 		try {
-			return keystore.getKey(keyHandle.getId() + keyHandle.getSubId(), password);
+			return keystore.getKey(keyHandle.getId() + "/" + keyHandle.getSubId(), password);
 		} catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
 			throw new KeyNotFoundException();
 		}
@@ -94,7 +96,7 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 	public java.security.cert.X509Certificate getX509Certificate(KeyHandle keyHandle) {
 		try {
 			return (java.security.cert.X509Certificate) keystore
-					.getCertificate(keyHandle.getId() + keyHandle.getSubId());
+					.getCertificate(keyHandle.getId() + "/" + keyHandle.getSubId());
 		} catch (KeyStoreException e) {
 		}
 
@@ -113,19 +115,19 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 
 		// in case we got no valid filter. And yes, that is sketchy.
 		// Prototype...
-		if (null == userMail)
+		if (null == alias)
 			return result;
 
 		try {
-			if (!keystore.containsAlias(userMail)) {
+			if (!keystore.containsAlias(alias)) {
 				// create the key on demand
 				createKey();
 			}
 
 			// finally, add the key to the result set
 			KeyHandle tmp = new KeyHandle();
-			tmp.setId(userMail);
-			tmp.setSubId("");
+			tmp.setId(username);
+			tmp.setSubId(userMail);
 			result.add(tmp);
 		} catch (Exception e) {
 			// well, we were not able to retrieve any key
@@ -147,6 +149,8 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 			return;
 
 		userMail = ((ActiveDirectoryAttributeAuthResult) feature).geteMailAddress();
+		username = ((ActiveDirectoryAttributeAuthResult) feature).getUsername();
+		alias = username + "/" + userMail;
 	}
 
 	private void createKey() throws Exception {
@@ -174,12 +178,12 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 
 		request.setRequester(Requester.Browser);
 		request.setRequestDate(new Date());
-		request.setOwnerID(userMail); // A String to connect the certificate
+		request.setOwnerID(username); // A String to connect the certificate
 										// with a user account, e.g., freimair
 		request.setRevocationPwd("revocationPassword");
 		request.setRevocationPwdHint("revocationPasswordHint");
 
-		Name subjectDN = new Name("CN=" + userMail);
+		Name subjectDN = new Name("CN=" + username);
 		request.setSubjectDN(subjectDN);
 
 		request.setPkcs12Request(true);
@@ -199,7 +203,7 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 
 		Certificate[] certChain = new Certificate[1];
 		certChain[0] = issuedRequest.getCertificate();
-		keystore.setKeyEntry(userMail, key, password, certChain);
+		keystore.setKeyEntry(alias, key, password, certChain);
 
 		// TODO synchronize!
 		if (file.startsWith("classpath:")) {

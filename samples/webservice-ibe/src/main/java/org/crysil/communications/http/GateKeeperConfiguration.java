@@ -19,15 +19,18 @@ public class GateKeeperConfiguration implements Configuration {
 	private String url;
 	private String adminuser;
 	private String adminpassword;
+	private String domainPrefix;
 	private String searchRoot;
 	private String searchFilter;
 	private String targetAttribute;
 
-	public GateKeeperConfiguration(String url, String adminuser, String adminpassword, String searchRoot,
+	public GateKeeperConfiguration(String url, String domainPrefix, String adminuser, String adminpassword,
+			String searchRoot,
 			String searchFilter, String targetAttribute) {
 		this.url = url;
 		this.adminuser = adminuser;
 		this.adminpassword = adminpassword;
+		this.domainPrefix = domainPrefix;
 		this.searchRoot = searchRoot;
 		this.searchFilter = searchFilter;
 		this.targetAttribute = targetAttribute;
@@ -42,6 +45,8 @@ public class GateKeeperConfiguration implements Configuration {
 			operation = ((Operation) features.get("Operation")).getOperation();
 		try {
 			if ("discoverKeys".equals(operation)) {
+				plugins.add(new ActiveDirectoryAttributeAuthPlugin(url, domainPrefix + "\\" + adminuser, adminpassword,
+						searchRoot, searchFilter, targetAttribute));
 			} else if ("sign".equals(operation) || "encrypt".equals(operation)) {
 				// plugins.add(new ActiveDirectoryAuthPlugin(url,
 				// features.get("username")), element);

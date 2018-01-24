@@ -32,7 +32,8 @@ public class ElementBuilder {
 		props.load(in);
 		in.close();
 
-		Configuration config = new GateKeeperConfiguration(props.getProperty("url"), props.getProperty("adminuser"), props.getProperty("adminpassword"),
+		Configuration config = new GateKeeperConfiguration(props.getProperty("url"), props.getProperty("domainPrefix"),
+				props.getProperty("adminuser"), props.getProperty("adminpassword"),
 				props.getProperty("searchRoot"), props.getProperty("searchFilter"),
 				props.getProperty("targetAttribute"));
 		OneToOneInterlink gatekeeper = new MyGatekeeper(config);
