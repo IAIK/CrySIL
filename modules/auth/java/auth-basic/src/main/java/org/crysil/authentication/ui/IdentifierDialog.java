@@ -48,7 +48,7 @@ public class IdentifierDialog extends JFrame implements IAuthUI<char[][], Void> 
   @Override
   public void init(final Map<String, Void> nothig) {
     setResizable(false);
-		setTitle("Secret Authentication");
+		setTitle("Identifier Authentication");
     setType(Type.NORMAL);
     setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     setBounds(100, 100, 351, 199);
