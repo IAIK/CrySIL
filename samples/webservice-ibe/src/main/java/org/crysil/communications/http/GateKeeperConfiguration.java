@@ -11,8 +11,10 @@ import org.crysil.gatekeeperwithsessions.Configuration;
 import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
 import org.crysil.gatekeeperwithsessions.authentication.plugins.misc.NoAuthPlugin;
 import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
+import org.crysil.gatekeeperwithsessions.configuration.Key;
 import org.crysil.gatekeeperwithsessions.configuration.Operation;
 import org.crysil.gatekeeperwithsessions.configuration.TimeLimit;
+import org.crysil.protocol.payload.crypto.key.KeyHandle;
 
 public class GateKeeperConfiguration implements Configuration {
 
@@ -47,9 +49,12 @@ public class GateKeeperConfiguration implements Configuration {
 			if ("discoverKeys".equals(operation)) {
 				plugins.add(new ActiveDirectoryAttributeAuthPlugin(url, domainPrefix + "\\" + adminuser, adminpassword,
 						searchRoot, searchFilter, targetAttribute));
-			} else if ("sign".equals(operation) || "encrypt".equals(operation)) {
-				// plugins.add(new ActiveDirectoryAuthPlugin(url,
-				// features.get("username")), element);
+			} else if ("sign".equals(operation) || "decrypt".equals(operation)) {
+				// extract keyid so we know the username we have to authenticate
+				// for
+				Key keyFeature = ((Key) features.get(Key.class.getSimpleName()));
+				String username = ((KeyHandle) keyFeature.getKeyObject()).getId();
+				plugins.add(new ActiveDirectoryAuthPlugin(url, domainPrefix + "\\" + username));
 			} else if ("encrypt".equals(operation)) {
 				plugins.add(new NoAuthPlugin());
 			}
