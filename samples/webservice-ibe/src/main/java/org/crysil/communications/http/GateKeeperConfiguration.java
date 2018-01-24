@@ -9,6 +9,7 @@ import org.crysil.errorhandling.AuthenticationFailedException;
 import org.crysil.gatekeeperwithsessions.AuthorizationProcess;
 import org.crysil.gatekeeperwithsessions.Configuration;
 import org.crysil.gatekeeperwithsessions.authentication.AuthPlugin;
+import org.crysil.gatekeeperwithsessions.authentication.plugins.misc.NoAuthPlugin;
 import org.crysil.gatekeeperwithsessions.configuration.FeatureSet;
 import org.crysil.gatekeeperwithsessions.configuration.Operation;
 import org.crysil.gatekeeperwithsessions.configuration.TimeLimit;
@@ -41,11 +42,11 @@ public class GateKeeperConfiguration implements Configuration {
 			operation = ((Operation) features.get("Operation")).getOperation();
 		try {
 			if ("discoverKeys".equals(operation)) {
-				plugins.add(new ActiveDirectoryAttributeAuthPlugin(url, adminuser, adminpassword, searchRoot,
-						searchFilter, targetAttribute));
 			} else if ("sign".equals(operation) || "encrypt".equals(operation)) {
 				// plugins.add(new ActiveDirectoryAuthPlugin(url,
 				// features.get("username")), element);
+			} else if ("encrypt".equals(operation)) {
+				plugins.add(new NoAuthPlugin());
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
