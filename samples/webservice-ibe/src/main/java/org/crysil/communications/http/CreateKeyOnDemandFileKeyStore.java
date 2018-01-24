@@ -153,7 +153,7 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 		alias = username + "/" + userMail;
 	}
 
-	private void createKey() throws Exception {
+	private synchronized void createKey() throws Exception {
 
 		// The actual Capso Client
 		Client client = new DefaultClientFactory().createClient(clientConfig);
@@ -205,7 +205,6 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 		certChain[0] = issuedRequest.getCertificate();
 		keystore.setKeyEntry(alias, key, password, certChain);
 
-		// TODO synchronize!
 		if (file.startsWith("classpath:")) {
 			keystore.store(
 					new FileOutputStream(new File(Resources.getResource(file.replace("classpath:", "")).getPath())),
