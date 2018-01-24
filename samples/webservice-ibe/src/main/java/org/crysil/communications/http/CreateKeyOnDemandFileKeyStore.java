@@ -59,7 +59,10 @@ public class CreateKeyOnDemandFileKeyStore implements SoftwareCryptoKeyStore {
 			keystore = KeyStore.getInstance(keyStoreType);
 
 			if (this.file.startsWith("classpath:")) {
-				keystore.load(CreateKeyOnDemandFileKeyStore.class.getResourceAsStream(file.replace("classpath:", "")), password);
+				keystore.load(
+						new FileInputStream(
+								getClass().getClassLoader().getResource(file.replace("classpath:", "")).getFile()),
+						password);
 			} else {
 				keystore.load(new FileInputStream(file), password);
 			}
