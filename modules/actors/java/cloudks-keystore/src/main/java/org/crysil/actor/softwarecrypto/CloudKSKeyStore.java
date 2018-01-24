@@ -106,6 +106,8 @@ public class CloudKSKeyStore implements SoftwareCryptoKeyStore {
 			// iterate through the java resultset
 			while (rs.next()) {
 				String certificate = rs.getString("certificate");
+				if (null == certificate)
+					return null;
 
 				certificate = certificate.replaceAll("-----.*-----", "");
 				certificate = certificate.replaceAll("\\n", "");
