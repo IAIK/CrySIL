@@ -138,7 +138,7 @@ public class CrysilKeyStore extends KeyStoreSpi {
 			List<CrysilKey> crysilKeys = provider.getApi().discoverKeys(KeyRepresentation.CERTIFICATE);
             for (CrysilKey crysilKey : crysilKeys) {
                 CrysilKeyHandle handle = (CrysilKeyHandle)crysilKey;
-                table.put(handle.getId() + handle.getSubId(), crysilKey);
+				table.put(handle.getId() + " - " + handle.getSubId(), crysilKey);
             }
         } catch (CrySILException e) {
             throw new IOException(e);
