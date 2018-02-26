@@ -2,6 +2,7 @@ package org.crysil.communications.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Security;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -10,6 +11,8 @@ import org.crysil.commons.Module;
 import org.crysil.commons.OneToOneInterlink;
 import org.crysil.errorhandling.KeyStoreUnavailableException;
 import org.crysil.gatekeeperwithsessions.Configuration;
+
+import iaik.security.provider.IAIK;
 
 /**
  * exemplary element builder without the need for specifying the whole CrySIL node with xml
@@ -32,6 +35,8 @@ public class ElementBuilder {
 		props.load(in);
 		in.close();
 
+		Security.addProvider(new IAIK());
+
 		Configuration config = new GateKeeperConfiguration(props.getProperty("url"), props.getProperty("domainPrefix"),
 				props.getProperty("adminuser"), props.getProperty("adminpassword"),
 				props.getProperty("searchRoot"), props.getProperty("searchFilter"),
@@ -39,7 +44,7 @@ public class ElementBuilder {
 		OneToOneInterlink gatekeeper = new MyGatekeeper(config);
 		try {
 			gatekeeper.attach(new SoftwareCrypto(
-					new CreateKeyOnDemandFileKeyStore(props.getProperty("keystorefile"),
+					new EmulatedCreateKeyOnDemandFileKeyStore(props.getProperty("keystorefile"),
 							props.getProperty("keystorepassword").toCharArray(),
 							props.getProperty("capsoconfigfile"))));
 		} catch (Exception e) {

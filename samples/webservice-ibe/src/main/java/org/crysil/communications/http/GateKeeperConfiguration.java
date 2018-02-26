@@ -47,14 +47,15 @@ public class GateKeeperConfiguration implements Configuration {
 			operation = ((Operation) features.get("Operation")).getOperation();
 		try {
 			if ("discoverKeys".equals(operation)) {
-				plugins.add(new ActiveDirectoryAttributeAuthPlugin(url, domainPrefix + "\\" + adminuser, adminpassword,
+				plugins.add(new EmulatedActiveDirectoryAttributeAuthPlugin(url, domainPrefix + "\\" + adminuser,
+						adminpassword,
 						searchRoot, searchFilter, targetAttribute));
 			} else if ("sign".equals(operation) || "decrypt".equals(operation)) {
 				// extract keyid so we know the username we have to authenticate
 				// for
 				Key keyFeature = ((Key) features.get(Key.class.getSimpleName()));
 				String username = ((KeyHandle) keyFeature.getKeyObject()).getId();
-				plugins.add(new ActiveDirectoryAuthPlugin(url, domainPrefix + "\\" + username));
+				plugins.add(new EmulatedActiveDirectoryAuthPlugin(domainPrefix + "\\" + username));
 			} else if ("encrypt".equals(operation)) {
 				plugins.add(new NoAuthPlugin());
 			}
