@@ -38,7 +38,6 @@ public class Decrypt implements Command {
 				cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 			else {
 				cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-					key = keystore.getPublicKey((KeyHandle) request.getDecryptionKey());
 			}
 
 			cipher.init(Cipher.DECRYPT_MODE, key);
