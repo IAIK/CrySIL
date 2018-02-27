@@ -49,6 +49,7 @@
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
+          <archive><manifest><mainClass>org.crysil.instance.jce_receiver_demo.Main</mainClass></manifest></archive>
         </configuration>
       </plugin>
       <plugin>
